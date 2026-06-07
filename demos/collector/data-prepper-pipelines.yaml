@@ -1,0 +1,13 @@
+otel-trace-pipeline:
+  source:
+    otel_trace_source:
+      ssl: false
+  processor:
+    - otel_trace_raw:
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch:9200"]
+        insecure: true
+        username: admin
+        password: "My_password_123!@#"
+        index_type: trace-analytics-raw

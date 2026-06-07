@@ -1,0 +1,27 @@
+receivers:
+  otlp:
+    protocols:
+      grpc: { endpoint: 0.0.0.0:4317 }
+      http: { endpoint: 0.0.0.0:4318 }
+
+processors:
+  gen_ai_normalizer:
+    sources:
+      - name: openinference
+        remove_originals: true
+      - name: openllmetry
+        remove_originals: true
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlp/openlit:
+    endpoint: openlit:4318
+    tls: { insecure: true }
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [gen_ai_normalizer]
+      exporters: [debug, otlp/openlit]

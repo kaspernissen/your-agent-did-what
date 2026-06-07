@@ -1,0 +1,5 @@
+otelcol-genai/
+.venv/
+agent/.venv/
+__pycache__/
+*.pyc

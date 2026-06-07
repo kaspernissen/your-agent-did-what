@@ -1,0 +1,16 @@
+# OCB builder manifest for a custom collector with gen_ai_normalizer.
+# Core module versions pinned to match genainormalizerprocessor v0.153.0 go.mod
+# (go.opentelemetry.io/collector/* components require v1.59.0 / v0.153.0).
+dist:
+  name: otelcol-genai
+  output_path: ./otelcol-genai
+
+processors:
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/genainormalizerprocessor v0.153.0
+
+receivers:
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.153.0
+
+exporters:
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.153.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.153.0
