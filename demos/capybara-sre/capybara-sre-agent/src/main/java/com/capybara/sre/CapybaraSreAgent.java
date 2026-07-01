@@ -1,5 +1,6 @@
 package com.capybara.sre;
 
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
@@ -30,5 +31,5 @@ public interface CapybaraSreAgent {
         """)
     @UserMessage("Incident: {incident}")
     @McpToolBox("capybara-db")
-    String investigate(String incident);
+    Result<String> investigate(String incident);
 }
