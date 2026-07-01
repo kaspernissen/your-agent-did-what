@@ -3,7 +3,9 @@ package com.capybara.db;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class CapybaraDbTools {
 
     @Inject CapybaraDatabase db;
