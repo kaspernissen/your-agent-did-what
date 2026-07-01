@@ -28,7 +28,7 @@ class InvestigationResourceTest {
         ToolExecutionRequest toolRequest = ToolExecutionRequest.builder()
                 .id("tool-1")
                 .name("list_records")
-                .arguments("{}")
+                .arguments("{\"plan\":\"free\"}")
                 .build();
 
         // ToolExecution requires InvocationContext in 1.16.2 — mock it to keep the test hermetic
@@ -55,6 +55,7 @@ class InvestigationResourceTest {
                 .body("toolCalls", notNullValue())
                 .body("toolCalls", hasSize(1))
                 .body("toolCalls[0].name", is("list_records"))
-                .body("toolCalls[0].result", is("42 records found"));
+                .body("toolCalls[0].result", is("42 records found"))
+                .body("toolCalls[0].args.plan", org.hamcrest.Matchers.equalTo("free"));
     }
 }

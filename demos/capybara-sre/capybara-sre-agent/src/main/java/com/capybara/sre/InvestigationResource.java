@@ -3,6 +3,7 @@ package com.capybara.sre;
 import com.capybara.sre.model.ChatRequest;
 import com.capybara.sre.model.ChatResponse;
 import com.capybara.sre.model.ToolCall;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.service.Result;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -14,8 +15,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Path("/chat")
 public class InvestigationResource {
@@ -25,6 +26,9 @@ public class InvestigationResource {
 
     @Inject
     Tracer tracer;
+
+    @Inject
+    ObjectMapper objectMapper;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -41,11 +45,21 @@ public class InvestigationResource {
             List<ToolCall> toolCalls = r.toolExecutions() == null
                     ? List.of()
                     : r.toolExecutions().stream()
-                            .map(te -> new ToolCall(
-                                    te.request().name(),
-                                    te.request().arguments(),
-                                    te.result()))
-                            .collect(Collectors.toList());
+                            .map(te -> {
+                                String argsJson = te.request().arguments();
+                                Object args;
+                                if (argsJson == null || argsJson.isBlank()) {
+                                    args = Map.of();
+                                } else {
+                                    try {
+                                        args = objectMapper.readValue(argsJson, Object.class);
+                                    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                                        args = argsJson;
+                                    }
+                                }
+                                return new ToolCall(te.request().name(), args, te.result());
+                            })
+                            .toList();
             return new ChatResponse(text, toolCalls, runId);
         } finally {
             span.end();
