@@ -20,11 +20,14 @@ fi
 # -------------------------------------------------------
 # Pre-flight: Require ANTHROPIC_API_KEY
 # -------------------------------------------------------
+# Source the shared demos/.env (same pattern as demos/agent/run.sh) so secrets
+# live in one git-ignored file instead of a manual export.
+if [ -f "$PROJECT_ROOT/../.env" ]; then set -a; . "$PROJECT_ROOT/../.env"; set +a; fi
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-  echo "ERROR: ANTHROPIC_API_KEY environment variable is not set."
+  echo "ERROR: ANTHROPIC_API_KEY is not set."
   echo "The agent services require an Anthropic API key to function."
   echo ""
-  echo "Set it before running this script:"
+  echo "Set it in demos/.env (cp demos/.env.template demos/.env) or export it:"
   echo "  export ANTHROPIC_API_KEY=<YOUR_KEY>"
   exit 1
 fi
