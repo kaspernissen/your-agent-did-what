@@ -38,6 +38,7 @@ if kind get clusters 2>/dev/null | grep -q "^${CLUSTER_NAME}$"; then
 else
   kind create cluster --name "$CLUSTER_NAME"
 fi
+kubectl config use-context "kind-${CLUSTER_NAME}"
 kubectl cluster-info --context "kind-${CLUSTER_NAME}"
 echo ""
 
@@ -56,6 +57,7 @@ echo ""
 # -------------------------------------------------------
 echo "--- Step 3: Installing Jaeger ---"
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts 2>/dev/null || true
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts 2>/dev/null || true
 helm repo update
 if helm status jaeger &>/dev/null; then
   echo "Jaeger is already installed, skipping."
@@ -76,8 +78,6 @@ echo ""
 # Agent points to: http://otel-collector-opentelemetry-collector.default.svc.cluster.local:4317
 # Collector forwards to: jaeger-collector.default.svc.cluster.local:4317
 echo "--- Step 4: Installing OpenTelemetry Collector ---"
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts 2>/dev/null || true
-helm repo update
 if helm status otel-collector &>/dev/null; then
   echo "OpenTelemetry Collector is already installed, upgrading with current config."
   helm upgrade otel-collector open-telemetry/opentelemetry-collector \
@@ -112,6 +112,8 @@ echo ""
 # -------------------------------------------------------
 echo "--- Step 6: Deploying application manifests ---"
 kubectl apply -f "$PROJECT_ROOT/k8s/"
+kubectl rollout status deployment/capybara-db-mcp --timeout=120s
+kubectl rollout status deployment/capybara-sre-agent --timeout=180s || true
 echo ""
 
 echo "=== Setup complete ==="
