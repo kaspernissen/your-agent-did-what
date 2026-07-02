@@ -6,7 +6,6 @@ allInOne:
   enabled: true
   args:
     - "--memory.max-traces=5000"
-    - "--query.base-path=/jaeger/ui"
   extraEnv:
     - name: COLLECTOR_OTLP_GRPC_HOST_PORT
       value: 0.0.0.0:4317
