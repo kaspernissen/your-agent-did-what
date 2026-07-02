@@ -1,0 +1,70 @@
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+
+config:
+  data-prepper-config.yaml: |
+    ssl: false
+
+pipelineConfig:
+  enabled: true
+  config:
+    otel-trace-pipeline:
+      workers: 2
+      delay: 5000
+      source:
+        otel_trace_source:
+          ssl: false
+          port: 21890
+      processor:
+        - otel_trace_raw:
+      sink:
+        - opensearch:
+            hosts:
+              - "https://opensearch-cluster-master:9200"
+            username: admin
+            password: "SecureP@ssw0rd123"
+            insecure: true
+            index_type: trace-analytics-raw
+
+    otel-metrics-pipeline:
+      workers: 2
+      delay: 5000
+      source:
+        otel_metrics_source:
+          ssl: false
+          port: 21891
+      processor:
+        - otel_metrics_raw_processor:
+      sink:
+        - opensearch:
+            hosts:
+              - "https://opensearch-cluster-master:9200"
+            username: admin
+            password: "SecureP@ssw0rd123"
+            insecure: true
+            index: otel-metrics
+            index_type: custom
+
+    otel-logs-pipeline:
+      workers: 2
+      delay: 5000
+      source:
+        otel_logs_source:
+          ssl: false
+          port: 21892
+      sink:
+        - opensearch:
+            hosts:
+              - "https://opensearch-cluster-master:9200"
+            username: admin
+            password: "SecureP@ssw0rd123"
+            insecure: true
+            index: otel-logs
+            index_type: custom

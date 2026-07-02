@@ -29,6 +29,18 @@ config:
       endpoint: jaeger-collector.default.svc.cluster.local:4317
       tls:
         insecure: true
+    otlp/dp-traces:
+      endpoint: data-prepper.default.svc.cluster.local:21890
+      tls:
+        insecure: true
+    otlp/dp-metrics:
+      endpoint: data-prepper.default.svc.cluster.local:21891
+      tls:
+        insecure: true
+    otlp/dp-logs:
+      endpoint: data-prepper.default.svc.cluster.local:21892
+      tls:
+        insecure: true
 
   extensions:
     health_check:
@@ -40,4 +52,12 @@ config:
       traces:
         receivers: [otlp]
         processors: [batch]
-        exporters: [debug, otlp/jaeger]
+        exporters: [debug, otlp/jaeger, otlp/dp-traces]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [otlp/dp-metrics]
+      logs:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [otlp/dp-logs]
