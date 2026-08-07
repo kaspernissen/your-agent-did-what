@@ -90,7 +90,8 @@ deck-stage>section{
   clip-path:polygon(0 0,calc(100% - 44px) 0,100% 44px,100% 100%,0 100%)}
 .code-block pre{margin:0;font-family:var(--font-mono);font-size:34px;
   line-height:1.9;color:var(--on-ink)}
-.code-block .c-str{color:var(--amber-lift)}
+.code-block .c-str{color:var(--amber-text)}
+.ground-ink .code-block .c-str{color:var(--amber-lift)}
 .code-block .c-key{color:#6E7BA8}
 .code-block .c-attr{color:#9FADEE}
 
@@ -106,6 +107,7 @@ deck-stage>section{
 .wf-bar.is-blue-mute{background:var(--blue-mute)}
 .wf-dur{font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim);
   width:150px;flex:none}
-.wf-row.is-amber .wf-label,.wf-row.is-amber .wf-dur{color:var(--amber-lift)}
+.wf-row.is-amber .wf-label,.wf-row.is-amber .wf-dur{color:var(--amber-text)}
+.ground-ink .wf-row.is-amber .wf-label,.ground-ink .wf-row.is-amber .wf-dur{color:var(--amber-lift)}
 
 .mascot{position:absolute;height:auto}
