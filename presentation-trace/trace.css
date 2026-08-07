@@ -1,1 +1,111 @@
-/* tokens land in Task 2 */
+/* ── Trace — design tokens ─────────────────────────────────────────── */
+:root{
+  --ink:#10142E; --navy:#202C5F; --paper:#FAF7F2; --paper-2:#F2ECE0;
+  --amber:#F5A800; --amber-lift:#FFC842; --amber-text:#8A5B00;
+  --blue:#425CC7; --blue-lift:#6E85E0; --blue-mute:#A9B6EE;
+  --muted-ink:#5B6180; --on-ink:#C9CEE8; --on-ink-dim:#8A93BC;
+  --font-display:"Space Grotesk",system-ui,sans-serif;
+  --font-body:"Public Sans",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --chamfer:40px; --chamfer-sm:24px;
+  --pad-x:120px;
+}
+
+*{box-sizing:border-box}
+
+deck-stage>section{
+  font-family:var(--font-body); background:var(--paper); color:var(--ink);
+  padding:110px var(--pad-x); overflow:hidden; position:relative;
+}
+.ground-ink{background:var(--ink); color:var(--paper)}
+.ground-paper{background:var(--paper); color:var(--ink)}
+.ground-paper-2{background:var(--paper-2); color:var(--ink)}
+
+/* ── Type ramp (authored at 1920×1080) ─────────────────────────────── */
+.kicker{font-family:var(--font-mono);font-size:26px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--blue);margin:0 0 40px}
+.ground-ink .kicker{color:var(--blue-mute)}
+.title{font-family:var(--font-display);font-weight:500;font-size:96px;
+  line-height:1.02;letter-spacing:-.03em;margin:0}
+.subtitle{font-family:var(--font-display);font-weight:400;font-size:52px;
+  line-height:1.25;letter-spacing:-.015em;margin:0}
+.body{font-size:34px;line-height:1.45;font-weight:300;margin:0;text-wrap:pretty}
+.small{font-size:28px;line-height:1.4;color:var(--muted-ink);margin:0}
+.ground-ink .small{color:var(--on-ink-dim)}
+.amber-text{color:var(--amber-text)}
+.ground-ink .amber-text{color:var(--amber-lift)}
+
+/* ── Geometry ──────────────────────────────────────────────────────── */
+.chamfer{clip-path:polygon(0 0,calc(100% - var(--chamfer)) 0,100% var(--chamfer),100% 100%,0 100%)}
+.chamfer-sm{clip-path:polygon(0 0,calc(100% - var(--chamfer-sm)) 0,100% var(--chamfer-sm),100% 100%,0 100%)}
+.diagonal-split{position:absolute;inset:0;clip-path:polygon(0 0,58% 0,42% 100%,0 100%)}
+
+/* ── The signal axis ───────────────────────────────────────────────── */
+.axis{position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue) 10%,var(--blue) 60%,var(--amber) 86%,transparent)}
+.axis-node{position:absolute;width:26px;height:26px;border-radius:50%;
+  background:var(--blue);margin:-13px 0 0 -13px}
+.axis-node.is-amber{background:var(--amber)}
+.axis-node.is-hollow{background:transparent;border:3px solid var(--blue)}
+.axis-node.is-halo{box-shadow:0 0 0 9px rgba(66,92,199,.18)}
+
+/* ── Span bar — the list primitive; replaces bullets ───────────────── */
+.span-bar{height:40px;border-radius:20px;background:var(--blue);width:var(--w,100%)}
+.span-bar.is-amber{background:var(--amber)}
+.span-bar.is-blue-lift{background:var(--blue-lift)}
+.span-bar.is-blue-mute{background:var(--blue-mute)}
+
+/* ── Axis list — the other bullet replacement ──────────────────────── */
+.axis-list{position:relative;padding-left:52px;display:flex;
+  flex-direction:column;gap:44px}
+.axis-list::before{content:"";position:absolute;left:13px;top:14px;bottom:14px;
+  width:2px;background:linear-gradient(180deg,transparent,var(--blue-mute) 12%,var(--blue-mute) 88%,transparent)}
+.axis-list-item{position:relative;font-size:34px;line-height:1.4;font-weight:300}
+.axis-list-item::before{content:"";position:absolute;left:-46px;top:12px;
+  width:18px;height:18px;border-radius:50%;background:var(--blue)}
+.axis-list-item.is-amber::before{background:var(--amber)}
+
+/* ── Parts ─────────────────────────────────────────────────────────── */
+.tag{font-family:var(--font-mono);font-size:24px;letter-spacing:.1em;
+  text-transform:uppercase;padding:14px 26px;display:inline-block;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}
+.tag.is-solid{background:var(--amber);color:var(--ink)}
+.tag.is-outline{border:1.5px solid var(--blue);color:var(--blue)}
+.tag.is-navy{background:var(--navy);color:var(--on-ink)}
+
+.attr-chip{display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:26px;padding:12px 22px;
+  border-radius:24px;background:var(--paper-2);color:var(--navy)}
+.attr-chip::before{content:"";width:10px;height:10px;border-radius:50%;
+  background:var(--blue)}
+.attr-chip.is-amber::before{background:var(--amber)}
+
+.stat{display:flex;flex-direction:column;gap:18px}
+.stat-figure{font-family:var(--font-display);font-weight:500;font-size:132px;
+  letter-spacing:-.04em;line-height:1}
+.stat-label{font-size:32px;line-height:1.4;font-weight:300;color:#3C4266}
+.ground-ink .stat-label{color:var(--on-ink)}
+
+.code-block{background:#080B1E;padding:56px 64px;
+  clip-path:polygon(0 0,calc(100% - 44px) 0,100% 44px,100% 100%,0 100%)}
+.code-block pre{margin:0;font-family:var(--font-mono);font-size:34px;
+  line-height:1.9;color:var(--on-ink)}
+.code-block .c-str{color:var(--amber-lift)}
+.code-block .c-key{color:#6E7BA8}
+.code-block .c-attr{color:#9FADEE}
+
+.waterfall{display:flex;flex-direction:column;gap:26px}
+.wf-row{display:flex;align-items:center;gap:32px}
+.wf-label{font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim);
+  width:300px;flex:none;text-align:right}
+.wf-track{flex:1;height:40px;position:relative}
+.wf-bar{position:absolute;top:0;bottom:0;border-radius:20px;
+  background:var(--blue);left:var(--x,0);width:var(--w,100%)}
+.wf-bar.is-amber{background:var(--amber)}
+.wf-bar.is-blue-lift{background:var(--blue-lift)}
+.wf-bar.is-blue-mute{background:var(--blue-mute)}
+.wf-dur{font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim);
+  width:150px;flex:none}
+.wf-row.is-amber .wf-label,.wf-row.is-amber .wf-dur{color:var(--amber-lift)}
+
+.mascot{position:absolute;height:auto}

@@ -12,10 +12,44 @@
   <section data-label="Cover" class="ground-ink">
     <h1 class="title">Your Agent Did What?</h1>
   </section>
+  <section data-label="Kitchen sink" class="ground-paper">
+    <p class="kicker">every primitive, once</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px">
+      <div class="axis-list">
+        <p class="axis-list-item is-amber">Span bars replace bullets.</p>
+        <p class="axis-list-item">Nodes mark events on the axis.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="span-bar" style="--w:100%"></div>
+        <div class="span-bar is-blue-lift" style="--w:72%"></div>
+        <div class="span-bar is-amber" style="--w:41%" data-emphasis="amber"></div>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <span class="tag is-solid">Experimental</span>
+        <span class="tag is-outline">Stable</span>
+        <span class="tag is-navy">Traces</span>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <span class="attr-chip is-amber">gen_ai.evaluation.name</span>
+        <span class="attr-chip">gen_ai.request.model</span>
+      </div>
+      <div class="waterfall">
+        <div class="wf-row"><span class="wf-label">agent.run</span>
+          <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
+          <span class="wf-dur">4.2 s</span></div>
+        <div class="wf-row is-amber"><span class="wf-label">chat</span>
+          <div class="wf-track"><div class="wf-bar is-amber" style="--x:19%;--w:71%"></div></div>
+          <span class="wf-dur">3.0 s</span></div>
+      </div>
+      <div class="code-block"><pre><span class="c-key">span</span>.set_attribute(<span class="c-attr">"gen_ai.tool.name"</span>, <span class="c-str">"delete_records"</span>)</pre></div>
+    </div>
+    <div class="axis" style="top:940px"></div>
+    <div class="axis-node is-amber" style="left:200px;top:940px"></div>
+  </section>
 </deck-stage>
 
 <script type="application/json" id="speaker-notes">
-["Cover — hold here while the room settles."]
+["Cover — hold here while the room settles.", "Kitchen sink — demonstrates every class and primitive the token system provides."]
 </script>
 <script src="deck-stage.js"></script>
 </body>
