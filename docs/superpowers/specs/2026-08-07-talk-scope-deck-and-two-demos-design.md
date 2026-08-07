@@ -264,9 +264,89 @@ on `capybara-sre-demo` and can be picked up after the talk.
 
 ---
 
-## 10. Deliverables
+## 10. Deck design system — "Trace"
 
-1. `outline.md` rewritten to the nine-beat arc; slides updated to match.
+The deck is built on a design system exported from Claude Design (project **Nocturne**,
+`9a0cdbc4-…`) as `OpenTelemetry talk design system-handoff.zip`. Note the project URL
+originally supplied (`a82ab81b-…`) does not resolve to a writable project; the bundle is
+the authority. The manifest advertises a `templates/deck/Deck.dc.html` that is **not in
+the bundle** — the eight layouts are nonetheless fully specified inline in
+`OTel Talk System.dc.html`, so nothing is missing in practice.
+
+**Core idea:** a trace is a line with events on it. Every slide hangs off a horizontal
+**signal axis**; content attaches as **nodes** (circles) and **spans** (stadium bars).
+Nothing gets boxed in.
+
+### 10.1 Tokens
+
+| Role | Value | Use |
+|---|---|---|
+| Ink | `#10142E` | dark ground; body text on paper |
+| Paper | `#FAF7F2` / `#F2ECE0` | light ground / panel fill |
+| Signal amber | `#F5A800` | **one emphasis per slide, never two** |
+| Amber text | `#8A5B00` | amber-toned copy below 40px (amber fails contrast on paper) |
+| Amber lift | `#FFC842` | on ink only |
+| Structure blue | `#425CC7` | axes, spans, diagram plumbing |
+| Blue lift / mute | `#6E85E0` / `#A9B6EE` | secondary spans |
+| Deep navy | `#202C5F` | section grounds, diagram fills |
+| Muted ink | `#5B6180` | captions, secondary copy |
+
+No pure white, no pure black. The capybara's browns are mascot-only and never enter the
+interface palette.
+
+**Type.** Space Grotesk (display, 500/600, tracking −.025em, **never bolder than 600**);
+Public Sans (body, 300 for long lines / 400 for short); JetBrains Mono (code, attribute
+names, kickers, all-caps labels at .2em tracking). Slide-scale ramp: title 96/1.02,
+subtitle 52/1.25, body 34/1.45, small 28/1.4 (the projector floor), kicker 26/.2em.
+
+**Geometry.** 45° chamfer lifted from the OTel mark's angled joints — **one** corner cut
+(top-right), 40px at slide scale, never four rounded corners. Span bars are full stadiums
+and are the **list primitive: they replace bullets**. Nodes are filled / hollow / haloed,
+the halo meaning "you are here". Section dividers split on a ~72° diagonal. Right angles
+are reserved for imagery and code.
+
+**Mascot.** `assets/capybara-mascot.png` appears on the cover, the close, and at most one
+mid-deck breath. Never on a data slide, never below 90px, never twice on a slide. It sits
+*on* the axis rather than floating above it.
+
+### 10.2 Layouts → beats
+
+Eight layouts ship with the system. Indicative mapping to §2's arc, refined when the slides
+are written:
+
+| Layout | Beats it serves |
+|---|---|
+| L01 Cover | 0 |
+| L02 Section divider | one per beat transition |
+| L03 Statement — "use sparingly, twice a talk" | 0, 6 |
+| L04 Text + diagram | 3, 5 |
+| L05 Waterfall — the signature slide | 1, 6 |
+| L06 Code | 4, 5, 7 |
+| L07 Figures | 4, 7 |
+| L08 Close | 8 |
+
+### 10.3 Build decisions
+
+- **New deck at `presentation-trace/`.** The existing 48-slide `presentation/` deck is left
+  untouched and keeps working until the new one supersedes it.
+- **Reuse the framework.** `deck-stage.js` already authors at `1920×1080` — the exact size
+  the design system is drawn at — and brings the speaker-notes follower, timer and PPTX
+  export. It is copied across so `presentation-trace/` is self-contained.
+- **Title stays "Your Agent Did What?"** The design mock's cover reads "Watching the model
+  think"; that is mockup filler and is replaced by the real title and subtitle. Speaker
+  handles `@adrianamvillela` / `@phennex` are kept.
+- **Fix the close slide's link.** The mock points at `opentelemetry.io/docs/specs/semconv/gen-ai`,
+  which is now only a redirect notice (§2.1) — it must point at `semantic-conventions-genai`.
+- **Vendor the fonts.** Space Grotesk / Public Sans / JetBrains Mono load from Google Fonts
+  in the mock. The existing deck is deliberately offline-safe, and a conference network is
+  not worth trusting, so the three families are vendored locally.
+
+---
+
+## 11. Deliverables
+
+1. `outline.md` rewritten to the nine-beat arc, and a new deck at `presentation-trace/`
+   built on the Trace design system (§10) to match.
 2. Demo 1: version bump, forensic tool content resolved, judge emitting both evaluation
    events, capybara theming, compose service.
 3. Demo 2: contrib 0.158.0, OCB path deleted, capybara scenario aligned with Demo 1.
