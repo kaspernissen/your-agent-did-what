@@ -90,8 +90,7 @@ deck-stage>section{
   clip-path:polygon(0 0,calc(100% - 44px) 0,100% 44px,100% 100%,0 100%)}
 .code-block pre{margin:0;font-family:var(--font-mono);font-size:34px;
   line-height:1.9;color:var(--on-ink)}
-.code-block .c-str{color:var(--amber-text)}
-.ground-ink .code-block .c-str{color:var(--amber-lift)}
+.code-block .c-str{color:var(--amber-lift)}
 .code-block .c-key{color:#6E7BA8}
 .code-block .c-attr{color:#9FADEE}
 
