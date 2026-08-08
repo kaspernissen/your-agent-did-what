@@ -116,9 +116,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ### 2.3 — These are legitimate differences, not naming preferences
 - **Layout:** L07 Figures
 - **Headline:** Legitimate differences, not naming preferences
-- **Content:** each one optimizes for something — vendor neutrality · evaluation workflows · developer ergonomics · framework-native shape. Credit Salaboy. They are not going away soon.
+- **Content:** each one optimizes for something — OTel GenAI **vendor-neutral** · OpenInference **eval workflows** · OpenLLMetry **dev ergonomics** · LangSmith **LangChain-native** · Langfuse **maps the others in**. Credit Salaboy. They are not going away soon.
 - **Amber emphasis:** **"legitimate differences"** in the headline
-- **Source:** [LS] §2 (Salaboy's framing, stated verbatim there). The per-tool "what it optimizes for" split is carried from the previous outline §3.1 and is **[NEEDS SOURCE]** at the level of *which* tool optimizes for *which* — say it as a characterization, not an attribution.
+- **Source:** [LS] §2 (Salaboy's framing, stated verbatim there) for "legitimate differences, not naming preferences". The per-tool attribution is **[PC]** `presentation/index.html:292-296`, where each of the five cards already carries its optimization label verbatim alongside its provider attribute — lift the pairs from there rather than restating them.
 
 ### 2.4 — Measured: the provider key alone fragments three ways
 - **Layout:** L06 Code
