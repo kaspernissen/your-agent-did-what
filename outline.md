@@ -10,7 +10,9 @@
 >
 > Source tags used per slide: **[PC]** = PlatformCon 2026 deck, **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
 >
-> **[PC] and [KC] are external speaker material — no copy of either deck exists in this repository.** Both tags are inherited from the previous outline and every slide citing them assumes Kasper supplies the original. Before the deck is built, each cited asset must be produced or the slide re-sourced; do not assume a repo asset exists. The [KC] citations in particular (slide 1.2's "Evolution of architectures", and the "cognitive-load curve" in the assets map) could not be located anywhere in this repository.
+> **The two external tags are not equally available, and the difference matters when building slides.**
+> - **[PC] is in this repo** — the existing 48-slide deck at **`presentation/index.html`** carries the material: "Opaque decisions" (`:153`), "Five conventions for the same span" (`:286`) with the five provider/attribute pairs (`:292-296`), and the "Without conventions, correlation fails" wall (`:493`), plus its speaker notes (`:735`, `:761`). **Lift from that file; do not recreate it.** `presentation/` stays untouched as a source ([SPEC] §10.3) — read it, don't edit it.
+> - **[KC] is not in this repo.** "Taming Complexity", "Evolution of architectures" and the cognitive-load curve could not be located anywhere in the repository. Those slides are **external speaker material Kasper must supply**, or they get redrawn from scratch.
 
 ---
 
@@ -68,7 +70,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Layout:** L04 Text + diagram
 - **Headline:** Monolith → microservices → event-driven → **agent-based**
 - **Amber emphasis:** the final **agent-based** node on the axis
-- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **external speaker material, not in this repo; Kasper must supply it or the slide gets redrawn from scratch.** Each step solved a problem and added complexity: building got easier, *understanding* got harder.
+- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **[KC] specifically is external speaker material with no copy in this repo; Kasper must supply it or the slide gets redrawn from scratch.** (This is a [KC] problem, not a general one — [PC] slides *are* in `presentation/index.html`; see the source-tag note at the top.) Each step solved a problem and added complexity: building got easier, *understanding* got harder.
 
 ### 1.3 — Four properties we've never operated against
 - **Layout:** L04 Text + diagram
@@ -316,7 +318,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Content:** **four `gen_ai.evaluation.*` attributes** — `.name` (Required), `.score.value` and `.score.label` (Conditionally Required), `.explanation` (Recommended) — plus **two general attributes that accompany the event**: `gen_ai.response.id` (Recommended) for correlation, and `error.type` (Conditionally Required) when the evaluation itself errored. The spec says the event SHOULD be parented to the GenAI operation span being evaluated, or carry `gen_ai.response.id` when the span id isn't available. There is still **no standard span or operation name** for "an evaluation happened" — that is open PR **#185**, which cites this exact fragmentation as its rationale.
 - **Callback to 4.3:** `error.type` is the **only Stable attribute anywhere near this event**, and it is Stable because it is a general OTel attribute, not a GenAI one. Every `gen_ai.evaluation.*` attribute is Development. That is the concrete referent for "Stable: zero".
 - **Amber emphasis:** the event name **`gen_ai.evaluation.result`**
-- **Source:** [R-E] §1, verified against `semantic-conventions-genai` `docs/gen-ai/gen-ai-events.md`; [SPEC] §3.4. Verified negatives worth a sentence: `gen_ai.evaluation.score.units` does not exist, and `gen_ai.evaluation.outcome` was proposed and closed without merge.
+- **Source:** [R-E] §1, verified against `semantic-conventions-genai` `docs/gen-ai/gen-ai-events.md`; [SPEC] §3.4. **`error.type` specifically:** `research-evaluations.md:45` (the attribute table row giving it Conditionally Required + **Stable**) and [SPEC] §3.4 (which lists it among the event's requirement levels). Verified negatives worth a sentence: `gen_ai.evaluation.score.units` does not exist, and `gen_ai.evaluation.outcome` was proposed and closed without merge.
 
 ### 7.3 — Two judgements on one span
 - **Layout:** L06 Code
@@ -367,9 +369,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | Beat | What it can salvage | From |
 |---|---|---|
 | 0 | Title/cover treatment, closing style — recolored into the Trace palette, no Dash0 logo | **[PC]**; cover replaced per [SPEC] §10.3 |
-| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[KC]** + **[PC]** — **external speaker material, no copy in this repo (see the source-tag note at the top); Kasper must supply these or they get redrawn.** The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
-| 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
-| 3 | "Without conventions, correlation fails" three-line wall; `assets/collector-pipeline.svg` | **[PC]** + design-system assets. Everything else is new writing. |
+| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[PC]** "Four properties" is in `presentation/index.html:153` — lift it. **[KC]** "Evolution of architectures" and the cognitive-load curve are **not in this repo**; Kasper must supply them or they get redrawn. The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
+| 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** `presentation/index.html:286` (+ the five provider/attribute pairs at `:292-296`) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
+| 3 | "Without conventions, correlation fails" three-line wall; `assets/collector-pipeline.svg` | **[PC]** `presentation/index.html:493` (speaker notes at `:761`) + design-system assets. Everything else is new writing. |
 | 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** Demo 1 + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
 | 5 | Normalizer before/after table; "what it did NOT touch" list; Arconia flavor diff table; `assets/collector-pipeline.svg` | **[ANALYSIS]** Demos 2 and 3 — all already captured, no re-run needed for the tables |
 | 6 | The waterfall primitive from 1.5; `execute_tool delete_records` attribute block; the forensic-gap trio | **[ANALYSIS]** + **[R-F]** |
