@@ -9,6 +9,8 @@
 > **Deck:** built at `presentation-trace/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears exactly three times: cover, one mid-deck breath (slide 17), close.
 >
 > Source tags used per slide: **[PC]** = PlatformCon 2026 deck, **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
+>
+> **[PC] and [KC] are external speaker material — no copy of either deck exists in this repository.** Both tags are inherited from the previous outline and every slide citing them assumes Kasper supplies the original. Before the deck is built, each cited asset must be produced or the slide re-sourced; do not assume a repo asset exists. The [KC] citations in particular (slide 1.2's "Evolution of architectures", and the "cognitive-load curve" in the assets map) could not be located anywhere in this repository.
 
 ---
 
@@ -66,7 +68,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Layout:** L04 Text + diagram
 - **Headline:** Monolith → microservices → event-driven → **agent-based**
 - **Amber emphasis:** the final **agent-based** node on the axis
-- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored). Each step solved a problem and added complexity: building got easier, *understanding* got harder.
+- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **external speaker material, not in this repo; Kasper must supply it or the slide gets redrawn from scratch.** Each step solved a problem and added complexity: building got easier, *understanding* got harder.
 
 ### 1.3 — Four properties we've never operated against
 - **Layout:** L04 Text + diagram
@@ -111,9 +113,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ### 2.3 — These are legitimate differences, not naming preferences
 - **Layout:** L07 Figures
-- **Headline:** Each one optimizes for something
-- **Content:** vendor neutrality · evaluation workflows · developer ergonomics · framework-native shape. Credit Salaboy. They are not going away soon.
-- **Amber emphasis:** **"legitimate differences"**
+- **Headline:** Legitimate differences, not naming preferences
+- **Content:** each one optimizes for something — vendor neutrality · evaluation workflows · developer ergonomics · framework-native shape. Credit Salaboy. They are not going away soon.
+- **Amber emphasis:** **"legitimate differences"** in the headline
 - **Source:** [LS] §2 (Salaboy's framing, stated verbatim there). The per-tool "what it optimizes for" split is carried from the previous outline §3.1 and is **[NEEDS SOURCE]** at the level of *which* tool optimizes for *which* — say it as a characterization, not an attribution.
 
 ### 2.4 — Measured: the provider key alone fragments three ways
@@ -154,8 +156,8 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ### 3.3 — An agent incident is also a database incident
 - **Layout:** L04 Text + diagram
 - **Headline:** Agent telemetry is not a separate telemetry system
-- **Content:** the capybara incident is a *database* incident with an LLM in front of it. A GenAI-only convention gives you a GenAI-only island; the span you need next is the SQL span, the pod restart, the deploy.
-- **Amber emphasis:** **"one correlation domain"**
+- **Content:** the capybara incident is a *database* incident with an LLM in front of it. A GenAI-only convention gives you a GenAI-only island; the span you need next is the SQL span, the pod restart, the deploy. **One correlation domain, not two.**
+- **Amber emphasis:** **"one correlation domain"** — the closing line of the content
 - **Source:** [PC] "Without conventions, correlation fails / Without correlation, AI guesses / With structure and context, AI reasons" — salvageable as the closing line of this slide. **[NEEDS SOURCE]:** the claim that cross-domain correlation is the *decisive* practical advantage over the GenAI-only conventions is an argument we are making, not a measured finding — phrase it as our position.
 
 ### 3.4 — The enforcement point is a pipeline you already run
@@ -270,10 +272,10 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ### 6.2 — The capybara incident, as a trace
 - **Layout:** L05 Waterfall
-- **Headline:** 02:47 — `invoke_agent capybara-sre`
+- **Headline:** `invoke_agent capybara-sre` — one run, four spans, one of them destructive
 - **Content:** `invoke_agent capybara-sre` → `chat` (the model decides) → `execute_tool list_records` → `execute_tool` **`delete_records`**. The waterfall from 1.5, now carrying the incident.
 - **Amber emphasis:** the **`execute_tool delete_records`** row
-- **Source:** [D1]; span shape per [SPEC] §3.3 and [ANALYSIS] Demo 1. **[NEEDS SOURCE]:** span *durations* for the waterfall are not captured anywhere yet — take them from a real Demo 1 run rather than drawing plausible bars.
+- **Source:** [D1]; span shape per [SPEC] §3.3 and [ANALYSIS] Demo 1. **[NEEDS SOURCE]:** span *durations* for the waterfall are not captured anywhere yet — take them from a real Demo 1 run rather than drawing plausible bars. **No wall-clock timestamp goes on this slide.** No source in the repo records an incident time; any "it was 02:47" in the spoken cold open is narrative framing, and putting it in a headline beside real span names would read as captured data on a slide whose whole job is to show measured telemetry.
 
 ### 6.3 — The two attributes that answer the question
 - **Layout:** L06 Code
@@ -284,8 +286,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ### 6.4 — The footprint exists. The footprint is empty.
 - **Layout:** L03 Statement
-- **Headline:** With default instrumentation you can prove the span fired. You cannot prove what it executed.
-- **Amber emphasis:** the word **"empty"**
+- **Headline:** The footprint exists. The footprint is **empty**.
+- **Content:** with default instrumentation you can prove the span fired. You cannot prove what it executed.
+- **Amber emphasis:** the word **"empty"** in the headline
 - **Source:** [R-F] "Talk framing" block. Second and last statement slide in the deck.
 
 ### 6.5 — Three things you still cannot get
@@ -310,7 +313,8 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ### 7.2 — OTel's answer is an event, not a span
 - **Layout:** L04 Text + diagram
 - **Headline:** `gen_ai.evaluation.result`
-- **Content:** four attributes — `gen_ai.evaluation.name` (Required), `score.value` and `score.label` (Conditionally Required), `explanation` and `gen_ai.response.id` (Recommended). The spec says the event SHOULD be parented to the GenAI operation span being evaluated, or carry `gen_ai.response.id` when the span id isn't available. There is still **no standard span or operation name** for "an evaluation happened" — that is open PR **#185**, which cites this exact fragmentation as its rationale.
+- **Content:** **four `gen_ai.evaluation.*` attributes** — `.name` (Required), `.score.value` and `.score.label` (Conditionally Required), `.explanation` (Recommended) — plus **two general attributes that accompany the event**: `gen_ai.response.id` (Recommended) for correlation, and `error.type` (Conditionally Required) when the evaluation itself errored. The spec says the event SHOULD be parented to the GenAI operation span being evaluated, or carry `gen_ai.response.id` when the span id isn't available. There is still **no standard span or operation name** for "an evaluation happened" — that is open PR **#185**, which cites this exact fragmentation as its rationale.
+- **Callback to 4.3:** `error.type` is the **only Stable attribute anywhere near this event**, and it is Stable because it is a general OTel attribute, not a GenAI one. Every `gen_ai.evaluation.*` attribute is Development. That is the concrete referent for "Stable: zero".
 - **Amber emphasis:** the event name **`gen_ai.evaluation.result`**
 - **Source:** [R-E] §1, verified against `semantic-conventions-genai` `docs/gen-ai/gen-ai-events.md`; [SPEC] §3.4. Verified negatives worth a sentence: `gen_ai.evaluation.score.units` does not exist, and `gen_ai.evaluation.outcome` was proposed and closed without merge.
 
@@ -363,7 +367,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | Beat | What it can salvage | From |
 |---|---|---|
 | 0 | Title/cover treatment, closing style — recolored into the Trace palette, no Dash0 logo | **[PC]**; cover replaced per [SPEC] §10.3 |
-| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[KC]** + **[PC]** — the equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
+| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[KC]** + **[PC]** — **external speaker material, no copy in this repo (see the source-tag note at the top); Kasper must supply these or they get redrawn.** The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
 | 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
 | 3 | "Without conventions, correlation fails" three-line wall; `assets/collector-pipeline.svg` | **[PC]** + design-system assets. Everything else is new writing. |
 | 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** Demo 1 + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
@@ -380,7 +384,7 @@ Assets that exist in `presentation-trace/assets/` today: `capybara-mascot.png`, 
 
 ## Open decisions before building slides
 
-1. **No buffer.** The previous outline reserved ~4 minutes of the 30 for buffer and Q&A handoff; the nine-beat arc spends all 30 on content. Either the beats need trimming to ~26 or the session has separate Q&A time — confirm with the CFP before the deck is built.
+1. **Slide density — which slides get cut?** The real change from the previous outline is density, not a lost buffer. Its *header* claimed "≈26 min content + 4 min buffer/Q&A handoff", but its own beat table already summed to 30 (1.5+4+5+6+5+5.5+3) — the file contradicted itself and the buffer was never actually reserved in the arc. So nothing was taken away. What changed is **28 slides → 39 slides in the same 30 minutes: ~64 s/slide → ~46 s/slide.** Seven of the 39 are dividers that take seconds, so content slides land nearer ~54 s, but the deck is materially denser and has no slack for a demo that misbehaves. The lever is cutting slides, not asking the CFP about Q&A. Cheapest cuts, in order: beat 3 (3 min, new writing, no demo, and 3.3/3.4 make one argument between them), then beat 1 (1.2 and 1.3 can merge). Decide before the slides are built, not while rehearsing.
 2. **Live vs pre-captured.** [SPEC] §9 says pre-record or pre-capture; both demos must run offline from captured data. Decide per beat whether 5.3 and 6.2/6.3 are video, screenshots, or a live terminal.
 3. **Hero visualizer.** [SPEC] §5 defers the choice until we can see which UI renders `gen_ai.evaluation.result` most legibly. Slides 2.5, 7.3 and 7.4 all depend on the answer.
 4. **The 1.12.2 outcome.** Slide 4.6's framing changes depending on which branch of [SPEC] §3.3 lands. Written above as "the kind of gap you hit"; if 1.12.2 fixes it, the slide becomes a better story (the gap *and* the fix), not a worse one.
