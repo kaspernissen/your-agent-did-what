@@ -28,7 +28,7 @@
       <p style="font-size:44px;line-height:1.3;font-weight:300;color:var(--blue-mute);margin:34px 0 0;max-width:1180px">Forensic observability for systems that don't leave obvious footprints</p>
     </div>
     <div class="axis" style="top:786px"></div>
-    <div class="axis-node" style="left:214px;top:786px;width:34px;height:34px;margin:-17px 0 0 -17px"></div>
+    <div class="axis-node is-amber" style="left:214px;top:786px;width:34px;height:34px;margin:-17px 0 0 -17px"></div>
     <div class="axis-node is-hollow" style="left:492px;top:786px;width:22px;height:22px;margin:-11px 0 0 -11px"></div>
     <div style="position:absolute;left:120px;top:812px;display:flex;gap:120px">
       <div style="display:flex;align-items:center;gap:26px">
@@ -48,36 +48,40 @@
     </div>
   </section>
 
-  <!-- 0.2 — L07 Figures · Who? — portraits as axis nodes -->
+  <!-- 0.2 — L07 Figures · Who? — chamfered cards, portraits straddling the top edge -->
   <section data-label="Who?" class="ground-paper">
     <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Before we start</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;font-size:104px">Who?</h2>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">Before we start</p>
+    <h2 class="title" style="position:absolute;left:120px;top:190px;font-size:96px">Who?</h2>
 
-    <!-- The axis runs behind both portraits; the portraits are the events on it. -->
-    <div class="axis" style="left:0;right:0;top:500px"></div>
-    <div class="axis-node" style="left:1750px;top:500px"></div>
+    <!-- The axis passes behind both cards; the portraits are the events on it. -->
+    <div class="axis" style="left:0;right:0;top:430px"></div>
 
-    <div style="position:absolute;left:120px;right:120px;top:400px;display:grid;grid-template-columns:1fr 1fr;gap:100px">
-
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <span class="speaker-photo is-adriana is-lead" role="img" aria-label="Adriana Villela" data-emphasis="amber"></span>
-        <span style="font-family:var(--font-display);font-size:48px;font-weight:500;letter-spacing:-.02em;margin-top:40px">Adriana Villela</span>
-        <span style="font-size:30px;font-weight:300;color:var(--muted-ink)">Principal Developer Advocate</span>
-        <span class="employer-mark is-dynatrace" role="img" aria-label="Dynatrace"></span>
-        <span style="font-size:26px;font-weight:300;line-height:1.5;margin-top:10px">CNCF Ambassador · AAIF Ambassador<br>OpenTelemetry Community Manager · End User SIG maintainer</span>
-        <span style="font-family:var(--font-mono);font-size:24px;color:var(--muted-ink);margin-top:4px">Geeking Out podcast · @adrianamvillela</span>
+    <div style="position:absolute;left:120px;right:120px;top:330px;display:grid;grid-template-columns:1fr 1fr;gap:90px">
+      <div style="position:relative">
+        <div class="chamfer" style="position:absolute;left:0;right:0;top:100px;height:510px;background:var(--paper-2)"></div>
+        <span class="speaker-photo is-adriana is-lead" role="img" aria-label="Adriana Villela" data-emphasis="amber"
+              style="position:absolute;left:56px;top:0"></span>
+        <div style="position:absolute;left:56px;right:56px;top:250px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:var(--font-display);font-size:44px;font-weight:500;letter-spacing:-.02em">Adriana Villela</span>
+          <span style="font-size:28px;font-weight:300;color:var(--muted-ink)">Principal Developer Advocate</span>
+          <span class="employer-mark is-dynatrace" role="img" aria-label="Dynatrace" style="margin-top:14px"></span>
+          <span style="font-size:24px;font-weight:300;line-height:1.55;margin-top:14px">CNCF Ambassador · AAIF Ambassador<br>OpenTelemetry Community Manager<br>End User SIG maintainer</span>
+          <span style="font-family:var(--font-mono);font-size:22px;color:var(--muted-ink);margin-top:6px">Geeking Out podcast</span>
+        </div>
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <span class="speaker-photo is-kasper" role="img" aria-label="Kasper Borg Nissen"></span>
-        <span style="font-family:var(--font-display);font-size:48px;font-weight:500;letter-spacing:-.02em;margin-top:40px">Kasper Borg Nissen</span>
-        <span style="font-size:30px;font-weight:300;color:var(--muted-ink)">Director of Developer Relations</span>
-        <span class="employer-mark is-dash0" role="img" aria-label="Dash0"></span>
-        <span style="font-size:26px;font-weight:300;line-height:1.5;margin-top:10px">CNCF Ambassador · AAIF Ambassador · Golden Kubestronaut<br>Former Co-Chair, KubeCon + CloudNativeCon EU &amp; NA</span>
-        <span style="font-family:var(--font-mono);font-size:24px;color:var(--muted-ink);margin-top:4px">Cloud Native Nordics · @phennex</span>
+      <div style="position:relative">
+        <div class="chamfer" style="position:absolute;left:0;right:0;top:100px;height:510px;background:var(--paper-2)"></div>
+        <span class="speaker-photo is-kasper" role="img" aria-label="Kasper Borg Nissen"
+              style="position:absolute;left:56px;top:0"></span>
+        <div style="position:absolute;left:56px;right:56px;top:250px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:var(--font-display);font-size:44px;font-weight:500;letter-spacing:-.02em">Kasper Borg Nissen</span>
+          <span style="font-size:28px;font-weight:300;color:var(--muted-ink)">Director of Developer Relations</span>
+          <span class="employer-mark is-dash0" role="img" aria-label="Dash0" style="margin-top:14px"></span>
+          <span style="font-size:24px;font-weight:300;line-height:1.55;margin-top:14px">CNCF Ambassador · AAIF Ambassador<br>Golden Kubestronaut<br>Former Co-Chair, KubeCon + CloudNativeCon EU &amp; NA</span>
+          <span style="font-family:var(--font-mono);font-size:22px;color:var(--muted-ink);margin-top:6px">Cloud Native Nordics</span>
+        </div>
       </div>
-
     </div>
   </section>
 
@@ -86,9 +90,6 @@
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The problem</p>
     <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">It deleted the rows. The incident is over. Now prove <span class="amber-text" data-emphasis="amber">why</span>.</h2>
-    <div class="axis" style="left:120px;right:120px;top:800px"></div>
-    <div class="axis-node" style="left:120px;top:800px"></div>
-    <div class="axis-node is-amber" style="left:1680px;top:800px"></div>
     <p class="small" style="position:absolute;left:120px;top:860px">The logs say the call succeeded. The trace says it took four seconds. Neither says what it was thinking.</p>
   </section>
 
@@ -96,7 +97,6 @@
 
   <!-- 1.1 — L02 Section divider -->
   <section data-label="Divider — 01" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">01</div>
@@ -180,7 +180,6 @@
         <span style="font-family:var(--font-display);font-size:38px;font-weight:500">non-deterministic run</span>
       </div>
     </div>
-    <div class="axis" style="left:120px;right:120px;top:820px"></div>
     <p class="small" style="position:absolute;left:120px;top:870px">The old practice was right for its time. We have to build the equivalents.</p>
   </section>
 
@@ -217,7 +216,6 @@
 
   <!-- 02 — L02 Section divider -->
   <section data-label="Divider — 02" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">02</div>
@@ -272,7 +270,6 @@
       <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">LangSmith</span><span style="font-size:32px;font-weight:300">LangChain-native</span></div>
       <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">Langfuse</span><span style="font-size:32px;font-weight:300">maps the others in</span></div>
     </div>
-    <div class="axis" style="left:120px;right:120px;top:820px"></div>
     <p class="small" style="position:absolute;left:120px;top:872px">Each optimizes for something real. They are not going away soon.</p>
   </section>
 
@@ -302,7 +299,6 @@
 
   <!-- 03 — L02 Section divider -->
   <section data-label="Divider — 03" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">03</div>
@@ -358,7 +354,6 @@
   </section>
   <!-- 4.1 — L02 Section divider · the single mid-deck mascot -->
   <section data-label="Meet Capybara, SRE" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:120px;top:520px;width:420px;z-index:1;transform:rotate(13deg)">
     <div style="position:absolute;left:120px;top:280px;width:900px">
@@ -399,7 +394,6 @@
         <span style="font-size:38px;font-weight:300;line-height:1.4;color:var(--muted-ink)">Every one of them is Development — subject to breaking change.</span>
       </div>
     </div>
-    <div class="axis" style="left:120px;right:120px;top:820px"></div>
     <p class="small" style="position:absolute;left:120px;top:872px">Say it plainly rather than implying more maturity than exists.</p>
   </section>
 
@@ -477,7 +471,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 05 — L02 Section divider -->
   <section data-label="Divider — 05" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">05</div>
@@ -545,7 +538,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   </section>
   <!-- 06 — L02 Section divider -->
   <section data-label="Divider — 06" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">06</div>
@@ -596,7 +588,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 <span class="c-attr">gen_ai.tool.call.result</span>     {"deleted": 2, "remaining": 1}</pre>
     </div>
     <p class="small" style="position:absolute;left:120px;top:640px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong>. The spec explicitly says instrumentation SHOULD NOT capture this by default — privacy, and payload size.</p>
-    <div class="axis" style="left:120px;right:120px;top:830px"></div>
     <p class="small" style="position:absolute;left:120px;top:880px">Two records deleted. One survived. That is the whole forensic answer, and it was one flag away from not existing.</p>
   </section>
 
@@ -605,9 +596,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The limit of default instrumentation</p>
     <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">The footprint exists. The footprint is <span class="amber-text" data-emphasis="amber">empty</span>.</h2>
-    <div class="axis" style="left:120px;right:120px;top:800px"></div>
-    <div class="axis-node" style="left:120px;top:800px"></div>
-    <div class="axis-node is-amber" style="left:1680px;top:800px"></div>
     <p class="small" style="position:absolute;left:120px;top:860px">With default instrumentation you can prove the span fired. You cannot prove what it executed.</p>
   </section>
 
@@ -625,7 +613,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 07 — L02 Section divider -->
   <section data-label="Divider — 07" class="ground-ink">
-    <div class="deck-footer"></div>
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">07</div>

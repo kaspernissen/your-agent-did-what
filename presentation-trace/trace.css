@@ -212,7 +212,4 @@ deck-stage>section{
   opacity:.55;pointer-events:none}
 .deck-footer::after{content:"";position:absolute;right:110px;bottom:-38px;
   width:96px;height:77px;background:url("assets/capybara-mascot.png") no-repeat center/contain;
-  transform:rotate(13deg);opacity:.85}
-/* Brown fur on a near-black ground loses definition before it loses presence,
-   so the ink grounds get it back rather than reading as a smudge. */
-.ground-ink .deck-footer::after{opacity:1}
+  transform:rotate(13deg)}
