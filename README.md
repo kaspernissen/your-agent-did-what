@@ -18,7 +18,7 @@ Conference talk by **Kasper Borg Nissen** & **Adriana Villela** — on OpenTelem
 | **`abstract.md`** | The talk abstract + ecosystem benefits. |
 | **`outline.md`** | The 30-minute talk outline (timing, beats, source-deck map). |
 | **`presentation/`** | The **slide deck** (HTML, reveal-free `<deck-stage>` framework) + speaker notes. |
-| **`presentation-trace/`** | The **Trace rebuild** of the deck — new design system + conformance checker, scaffold only (2 slides) so far. |
+| **`presentation-trace/`** | The **Trace rebuild** of the deck — new design system + conformance checker + the eight layouts (`LAYOUTS.md`), scaffold only (2 slides) so far. |
 | **`research.md`** | Deep research on agent forensics (sourced, adversarially verified). |
 | **`landscape.md`** | The visualization/normalization landscape + the Jaeger roadmap. |
 | **`resources.md`** | Annotated links (conventions, tools, backends, CNCF projects). |
@@ -54,9 +54,16 @@ the deck on the projector.
   Roboto and Martian Mono live from `fonts.googleapis.com`/`fonts.gstatic.com` — presenting
   it offline loses the title and mono faces.
 - `presentation-trace/` also ships `check-deck.py` — run `python3 check-deck.py` from
-  inside it before committing slide changes; it enforces the Trace design-system rules
-  (one amber emphasis per slide, no bullets, one chamfered corner, mascot placement, no
-  pure white/black) and exits non-zero on violation.
+  inside it before committing slide changes; it exits non-zero on violation. It checks the
+  **mechanically checkable** subset of the Trace rules only: every slide has a
+  `data-label`; no `<ul>`/`<ol>`/`<li>`; no raw hex in slide markup outside inline `<svg>`
+  artwork; **at most one** `data-emphasis="amber"` marker per slide; **at most one**
+  element with `class="…mascot…"` per slide; speaker-notes JSON present and the same length
+  as the slide count; and no pure white/black in `trace.css`. It does **not** check the
+  type ramp, the chamfer rule, *where* the mascot may appear or how big it is, or any
+  layout budget — those are on the author. See
+  [`presentation-trace/README.md`](presentation-trace/README.md) for the full split and
+  [`presentation-trace/LAYOUTS.md`](presentation-trace/LAYOUTS.md) for the eight layouts.
 - More detail: [`presentation/README.md`](presentation/README.md) ·
   [`presentation-trace/README.md`](presentation-trace/README.md).
 
