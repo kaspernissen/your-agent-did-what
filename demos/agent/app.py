@@ -19,7 +19,7 @@ from opentelemetry.trace import SpanKind
 
 import tools
 
-MODEL = os.environ.get("DEMO_MODEL", "claude-sonnet-4-20250514")
+MODEL = os.environ.get("DEMO_MODEL", "claude-sonnet-5")
 OTLP_ENDPOINT = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4318")
 AGENT_NAME = "db-ops-agent"
 

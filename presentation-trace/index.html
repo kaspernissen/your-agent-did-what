@@ -210,26 +210,26 @@
       <div class="wf-row">
         <span class="wf-label">invoke_agent</span>
         <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
-        <span class="wf-dur">Internal</span>
+        <span class="wf-dur">12.26 s</span>
       </div>
       <div class="wf-row">
         <span class="wf-label">chat claude-sonnet-5</span>
-        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:6%;--w:62%"></div></div>
-        <span class="wf-dur">Client</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:0;--w:32.4%"></div></div>
+        <span class="wf-dur">3.97 s</span>
       </div>
       <div class="wf-row is-amber">
         <span class="wf-label">└ POST</span>
-        <div class="wf-track"><div class="wf-bar is-amber" style="--x:8%;--w:56%" data-emphasis="amber"></div></div>
-        <span class="wf-dur">Client</span>
+        <div class="wf-track"><div class="wf-bar is-amber" style="--x:0.4%;--w:31.9%" data-emphasis="amber"></div></div>
+        <span class="wf-dur">3.91 s</span>
       </div>
       <div class="wf-row">
         <span class="wf-label">execute_tool</span>
-        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:30%;--w:22%"></div></div>
-        <span class="wf-dur">Internal</span>
+        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:32.5%;--w:0.4%"></div></div>
+        <span class="wf-dur">54 µs</span>
       </div>
     </div>
     <div style="position:absolute;left:452px;right:120px;top:790px;height:1px;background:var(--navy)"></div>
-    <p class="small" style="position:absolute;left:452px;top:820px">The <span style="font-family:var(--font-mono)">POST</span> comes free from your HTTP instrumentation. It carries no GenAI meaning whatsoever.</p>
+    <p class="small" style="position:absolute;left:452px;top:820px">Measured on a real run. The <span style="font-family:var(--font-mono)">POST</span> comes free from your HTTP instrumentation and carries no GenAI meaning — yet it is 3.91 of the 3.97 seconds the model call took.</p>
   </section>
 
 
@@ -340,7 +340,7 @@
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Same bytes. The viewer decides whether it's legible.</h2>
     <div style="position:absolute;left:120px;right:120px;top:360px" data-emphasis="amber"><svg viewBox="0 0 1680 260" style="width:100%;height:auto"><rect x="0" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="22" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Jaeger</text><text x="22" y="86" font-family="JetBrains Mono" font-size="17" fill="#5B6180">llm.model_name=…</text><text x="22" y="120" font-family="JetBrains Mono" font-size="17" fill="#5B6180">gen_ai.usage.in=983</text><text x="22" y="154" font-family="JetBrains Mono" font-size="17" fill="#5B6180">mcp.method.name=…</text><text x="22" y="188" font-family="JetBrains Mono" font-size="17" fill="#5B6180">jsonrpc.request.id=5</text><text x="22" y="228" font-family="Public Sans" font-size="19" fill="#5B6180">raw tags, no meaning</text><rect x="430" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="452" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Phoenix</text><rect x="452" y="76" width="330" height="26" rx="13" fill="#A9B6EE"/><rect x="452" y="116" width="230" height="26" rx="13" fill="#A9B6EE"/><text x="452" y="196" font-family="Public Sans" font-size="19" fill="#8A5B00">plain spans —</text><text x="452" y="222" font-family="Public Sans" font-size="19" fill="#8A5B00">no tokens, no cost, no model</text><rect x="860" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="882" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenLIT</text><rect x="882" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="882" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="934.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="994" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1046.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1106" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1158.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="882" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="882" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="1290" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="1312" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text><rect x="1312" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="1312" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1364.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="1424" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1476.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1536" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1588.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="1312" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="1312" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="430" y="0" width="390" height="250" rx="12" fill="none" stroke="#F5A800" stroke-width="3"/></svg></div>
     <p class="small" style="position:absolute;left:120px;top:730px;width:1680px">Phoenix is GenAI-native but <em>OpenInference</em>-native: it accepts <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and renders them as plain spans. That is the fragmentation tax, visible.</p>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Honesty: Jaeger's arrival was API-confirmed. The Phoenix, OpenLIT and Langfuse renderings are from documentation, not captured screenshots — these are wireframes of what the docs describe.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Honesty: Jaeger and Phoenix ingestion are both confirmed on a live run — Phoenix took the <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and reported 2 traces at 6.5s p50. How each UI <em>renders</em> them is drawn from documentation; these panes are wireframes, not screenshots.</p>
   </section>
 
   <!-- 03 — L02 Section divider -->
@@ -658,34 +658,45 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     </div>
   </section>
 
-  <!-- 6.2 — L05 Waterfall -->
+  <!-- 6.2 — L05 Waterfall · measured durations from a real run -->
   <section data-label="The capybara incident, as a trace" class="ground-ink">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1600px;font-size:64px"><span style="font-family:var(--font-mono);font-size:56px">invoke_agent capybara-sre</span> — one run, four spans, one destructive</h2>
-    <div class="waterfall" style="position:absolute;left:120px;right:120px;top:380px">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
+    <h2 class="title" style="position:absolute;left:120px;top:100px;width:1600px;font-size:60px"><span style="font-family:var(--font-mono);font-size:52px">invoke_agent</span> — 12.26s, nine spans, one of them destructive</h2>
+    <div class="waterfall" style="position:absolute;left:120px;right:120px;top:330px">
       <div class="wf-row">
         <span class="wf-label">invoke_agent</span>
         <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
-        <span class="wf-dur">—</span>
+        <span class="wf-dur">12.26 s</span>
       </div>
       <div class="wf-row">
         <span class="wf-label">chat</span>
-        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:4%;--w:44%"></div></div>
-        <span class="wf-dur">—</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:0;--w:32.4%"></div></div>
+        <span class="wf-dur">3.97 s</span>
       </div>
       <div class="wf-row">
-        <span class="wf-label">execute_tool list_records</span>
-        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:50%;--w:14%"></div></div>
-        <span class="wf-dur">—</span>
+        <span class="wf-label">execute_tool query</span>
+        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:32.5%;--w:0.4%"></div></div>
+        <span class="wf-dur">54 µs</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">chat</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:32.6%;--w:41%"></div></div>
+        <span class="wf-dur">5.02 s</span>
       </div>
       <div class="wf-row is-amber">
         <span class="wf-label">execute_tool delete_records</span>
-        <div class="wf-track"><div class="wf-bar is-amber" style="--x:66%;--w:30%" data-emphasis="amber"></div></div>
-        <span class="wf-dur">—</span>
+        <div class="wf-track"><div class="wf-bar is-amber" style="--x:73.7%;--w:0.6%" data-emphasis="amber"></div></div>
+        <span class="wf-dur">145 µs</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">chat</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:74.3%;--w:25.7%"></div></div>
+        <span class="wf-dur">3.27 s</span>
       </div>
     </div>
-    <div style="position:absolute;left:452px;right:120px;top:760px;height:1px;background:var(--navy)"></div>
-    <p class="small" style="position:absolute;left:452px;top:790px;width:1350px">The model decided. The tool ran. <strong style="font-weight:600;color:var(--paper)">These bars show structure, not timings</strong> — the duration column is deliberately empty rather than plausible.</p>
+    <div style="position:absolute;left:452px;right:120px;top:790px;height:1px;background:var(--navy)"></div>
+    <p class="small" style="position:absolute;left:120px;top:820px;width:1680px">Measured. The destructive call took <strong style="font-weight:600;color:var(--paper)">145 microseconds</strong> — 0.001% of a 12-second trace. The thing that deleted production is the one span you can barely see.</p>
   </section>
 
   <!-- 6.3 — L06 Code -->

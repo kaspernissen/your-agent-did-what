@@ -218,6 +218,32 @@ pins `claude-sonnet-4-6`. Model-parameter incompatibility, not a telemetry one.
 
 ---
 
+### Measured span durations — one full capybara run (Jaeger, 2026-08-09)
+
+Trace `d0c84fad265483b9fe4bae5af20fe464`, 9 spans, depth 3, **12.26s total**:
+
+```
+invoke_agent db-ops-agent          12.26 s
+  chat claude-sonnet-5              3.97 s
+    POST                            3.91 s
+  execute_tool query                  54 µs
+  chat claude-sonnet-5              5.02 s
+    POST                            5.01 s
+  execute_tool delete_records        145 µs
+  chat claude-sonnet-5              3.27 s
+    POST                            3.26 s
+```
+
+**The tool calls are microseconds; the model calls are seconds.** Both `execute_tool`
+spans together account for ~199µs — 0.0016% of the trace. The span that deleted production
+records is the one you can barely see, and the `POST` you get free from HTTP
+instrumentation accounts for almost all of each model call's wall time while carrying no
+GenAI meaning at all.
+
+Phoenix ingestion confirmed on the same run: 2 traces, 6.5s p50, from `gen_ai.*` spans.
+
+---
+
 ## Cross-cutting synthesis — the state of the space (measured)
 
 1. **The ecosystem really is converging on `gen_ai.*`.** OpenLIT (Python SDK), Spring AI/Arconia (Java), and the `gen_ai_normalizer` output all land on OpenTelemetry GenAI semconv attribute names. The shared vocabulary is real, not aspirational — for the core dimensions.

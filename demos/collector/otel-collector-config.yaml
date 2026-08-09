@@ -22,10 +22,10 @@ exporters:
   otlphttp/phoenix:
     endpoint: http://phoenix:6006
 
-  otlp/openlit:
-    endpoint: openlit:4318
-    tls:
-      insecure: true
+  # OpenLIT ingests OTLP/HTTP on 4318; the otlp exporter is gRPC, so this must
+  # be otlphttp or it loops on connection refused and delivers nothing.
+  otlphttp/openlit:
+    endpoint: http://openlit:4318
 
   otlphttp/langfuse:
     endpoint: http://langfuse-web:3000/api/public/otel
@@ -48,11 +48,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlp/jaeger, otlphttp/phoenix, otlp/openlit, otlphttp/langfuse, otlp/dash0, otlp/dataprepper]
+      exporters: [debug, otlp/jaeger, otlphttp/phoenix, otlphttp/openlit, otlphttp/langfuse, otlp/dash0, otlp/dataprepper]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlp/openlit, otlp/dash0]
+      exporters: [debug, otlphttp/openlit, otlp/dash0]
     logs:
       receivers: [otlp]
       processors: [batch]
