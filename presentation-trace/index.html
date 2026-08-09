@@ -423,9 +423,9 @@
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">semconv v1.42.0 · June 2026</p>
     <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px">In June, <span style="font-family:var(--font-mono);font-size:64px">gen_ai</span> moved out</h2>
     <div class="axis-list" style="position:absolute;left:120px;top:450px;width:1650px">
-      <p class="axis-list-item">v1.42.0 deprecated all <span style="font-family:var(--font-mono);font-size:30px">gen_ai</span> content in <span style="font-family:var(--font-mono);font-size:30px">open-telemetry/semantic-conventions</span>.</p>
+      <p class="axis-list-item">v1.42.0 (12 June 2026) deprecated all <span style="font-family:var(--font-mono);font-size:30px">gen_ai</span> content in <span style="font-family:var(--font-mono);font-size:30px">open-telemetry/semantic-conventions</span>.</p>
       <p class="axis-list-item is-amber">It now lives in <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono)">open-telemetry/semantic-conventions-genai</span>.</p>
-      <p class="axis-list-item">The old docs URL is a redirect notice — including the one on our own design mock's close slide.</p>
+      <p class="axis-list-item">The new repo has <strong style="font-weight:600">no releases or tags yet</strong> — there is no versioned schema URL to pin against.</p>
     </div>
     <p class="small" style="position:absolute;left:120px;top:880px">If your bookmarks still point at the old page, that is the move you missed.</p>
   </section>
@@ -556,7 +556,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 <span class="c-key">llm.token_count.completion</span>→ <span class="c-attr">gen_ai.usage.output_tokens</span>
 <span class="c-key">openinference.span.kind</span>   → <span class="c-attr">gen_ai.operation.name</span></pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">With <span style="font-family:var(--font-mono);color:var(--on-ink)">remove_originals: true</span> the source keys are dropped. Merged, <strong style="font-weight:600;color:var(--paper)">alpha</strong>, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donation issue #46069.</p>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">With <span style="font-family:var(--font-mono);color:var(--on-ink)">remove_originals: true</span> the source keys are dropped. Merged, <strong style="font-weight:600;color:var(--paper)">alpha</strong>, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donated and accepted — issue #46069 closed 1 June 2026.</p>
   </section>
 
   <!-- 5.4 — L06 Code -->
@@ -578,7 +578,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="deck-footer"></div>
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on <span class="amber-text" data-emphasis="amber">the same target</span></h2>
     <div class="axis-list" style="position:absolute;left:120px;top:400px;width:1650px">
-      <p class="axis-list-item">The collector processor — merged, alpha, donation under discussion (#46069).</p>
+      <p class="axis-list-item">The collector processor — donated, accepted and merged (#46069, closed June 2026). Still alpha.</p>
       <p class="axis-list-item">Arconia re-emits Spring AI spans under a chosen flavor, no code change.</p>
       <p class="axis-list-item">Phoenix publishes a convention-translation guide. OpenLIT emits <span style="font-family:var(--font-mono);font-size:30px">gen_ai.*</span> natively.</p>
     </div>
@@ -685,7 +685,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="axis-list" style="position:absolute;left:120px;top:490px;width:1680px">
       <p class="axis-list-item">Four <span style="font-family:var(--font-mono);font-size:30px">gen_ai.evaluation.*</span> attributes, plus two general ones: <span style="font-family:var(--font-mono);font-size:30px">gen_ai.response.id</span> and <span style="font-family:var(--font-mono);font-size:30px">error.type</span>.</p>
       <p class="axis-list-item">It SHOULD be parented to the GenAI operation span being evaluated.</p>
-      <p class="axis-list-item">There is still no standard span or operation name for "an evaluation happened" — open PR #185.</p>
+      <p class="axis-list-item">No standard span or operation name for "an evaluation happened" yet. Open PR #185 proposes both: an <span style="font-family:var(--font-mono);font-size:30px">evaluation</span> operation name and a <span style="font-family:var(--font-mono);font-size:30px">gen_ai.evaluate.internal</span> span.</p>
     </div>
     <p class="small" style="position:absolute;left:120px;top:900px;width:1680px">Callback to "Stable: zero" — <span style="font-family:var(--font-mono)">error.type</span> is the only Stable attribute near this event, and only because it is a general OTel attribute, not a GenAI one.</p>
   </section>
@@ -805,7 +805,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="axis-list" style="position:absolute;left:120px;top:340px;width:1150px;gap:30px">
       <p class="axis-list-item" style="font-size:28px">Instrument every layer. None gets a pass.</p>
       <p class="axis-list-item" style="font-size:28px">Adopt the conventions now — and turn the forensic content on deliberately.</p>
-      <p class="axis-list-item" style="font-size:28px">Normalize at the edge. Contribute to issue #46069 and the SIG.</p>
+      <p class="axis-list-item" style="font-size:28px">Normalize at the edge. The SIG and the GenAI conventions repo need contributors.</p>
       <p class="axis-list-item" style="font-size:28px">The missing decision-provenance field is the gap worth raising.</p>
     </div>
 
