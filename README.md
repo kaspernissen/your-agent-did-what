@@ -18,6 +18,7 @@ Conference talk by **Kasper Borg Nissen** & **Adriana Villela** — on OpenTelem
 | **`abstract.md`** | The talk abstract + ecosystem benefits. |
 | **`outline.md`** | The 30-minute talk outline (timing, beats, source-deck map). |
 | **`presentation/`** | The **slide deck** (HTML, reveal-free `<deck-stage>` framework) + speaker notes. |
+| **`presentation-trace/`** | The **Trace rebuild** of the deck — new design system + conformance checker, scaffold only (2 slides) so far. |
 | **`research.md`** | Deep research on agent forensics (sourced, adversarially verified). |
 | **`landscape.md`** | The visualization/normalization landscape + the Jaeger roadmap. |
 | **`resources.md`** | Annotated links (conventions, tools, backends, CNCF projects). |
@@ -29,8 +30,17 @@ Conference talk by **Kasper Borg Nissen** & **Adriana Villela** — on OpenTelem
 
 ## Run the slide deck
 
+Two decks live in this repo:
+
+| Deck | What it is |
+|---|---|
+| **`presentation/`** | The **current, presentable 48-slide deck** — what you'd actually show at the conference today. |
+| **`presentation-trace/`** | The **Trace rebuild in progress** — a new design system + conformance checker, but only **2 scaffold slides** so far (cover + a "kitchen sink" of every layout primitive). The talk's real 39 slides land in a later plan; this deck does not yet carry the talk content. Kept alongside `presentation/` until it supersedes it. |
+
+Both use the same `<deck-stage>` framework and the same run/navigate pattern:
+
 ```bash
-cd presentation
+cd presentation          # or: cd presentation-trace
 ./start.sh
 ```
 
@@ -39,8 +49,13 @@ Serves locally and opens **two** windows: the **deck** and a **speaker-notes fol
 the deck on the projector.
 
 - Navigate: `←` `→` · Space · `Home`/`End` · number keys · `R` resets.
-- The deck is offline-safe (engine vendored); only fonts/logos load best with a network.
-- More detail + theming notes: [`presentation/README.md`](presentation/README.md).
+- Both decks are offline-safe (engine + fonts vendored).
+- `presentation-trace/` also ships `check-deck.py` — run `python3 check-deck.py` from
+  inside it before committing slide changes; it enforces the Trace design-system rules
+  (one amber emphasis per slide, no bullets, one chamfered corner, mascot placement, no
+  pure white/black) and exits non-zero on violation.
+- More detail: [`presentation/README.md`](presentation/README.md) ·
+  [`presentation-trace/README.md`](presentation-trace/README.md).
 
 ---
 
