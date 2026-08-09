@@ -96,9 +96,13 @@ function overlaps(a, b){
     }
     // Text must also stay inside any panel it sits on. Slide-bounds checks miss
     // this entirely: a bio overflowing its card is still well inside the slide.
-    const panels = [...clone.querySelectorAll('.chamfer')].map(el => {
+    // Every surface that PAINTS a background, not just .chamfer cards. Text can
+    // land on a code block's padding without touching the <pre> inside it: the
+    // text-vs-text pass sees no collision, but the slide shows a caption sitting
+    // on a dark panel. Slides 23 and 37 both shipped that way and audited CLEAN.
+    const panels = [...clone.querySelectorAll('.chamfer, .code-block')].map(el => {
       const r = el.getBoundingClientRect();
-      return {left:r.left-stageBox.left, top:r.top-stageBox.top,
+      return {el, left:r.left-stageBox.left, top:r.top-stageBox.top,
               right:r.right-stageBox.left, bottom:r.bottom-stageBox.top};
     });
     for (const p of panels){
@@ -110,6 +114,23 @@ function overlaps(a, b){
                              t.top >= p.top - PAD && t.top < p.bottom - PAD;
         if (startsInside && t.bottom > p.bottom + PAD){
           findings.push(`slide ${i+1} [${label}] ESCAPES PANEL  text bottom=${Math.round(t.bottom)} > panel bottom=${Math.round(p.bottom)}  "${t.text}"`);
+        }
+      }
+    }
+
+    // Text overlapping a painted surface it does not belong to. Descendants are
+    // the panel's own content and are expected; anything else is ink on a box.
+    for (const p of panels){
+      for (const t of texts){
+        if (p.el.contains(t.el)) continue;
+        // Text laid fully INSIDE a panel is a deliberate overlay (the Who
+        // slide's bios sit on their card as positioned siblings). The defect is
+        // text that STRADDLES a panel edge — a caption drifting up onto a box.
+        const fullyInside = t.left >= p.left - PAD && t.right <= p.right + PAD &&
+                            t.top  >= p.top  - PAD && t.bottom <= p.bottom + PAD;
+        if (fullyInside) continue;
+        if (overlaps(t, p)){
+          findings.push(`slide ${i+1} [${label}] ON PANEL  "${t.text}"  sits on a ${p.el.className.split(' ')[0]} box`);
         }
       }
     }
