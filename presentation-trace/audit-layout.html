@@ -28,6 +28,10 @@
  *   OVERFLOW — a text element extends past the slide's bounds
  *   OVERLAP  — two text elements occupy the same pixels
  *
+ * KNOWN BLIND SPOT: <text> inside one <svg> is not compared against its
+ * siblings, because they all resolve to the same block ancestor. A diagram
+ * whose labels collide with each other will pass. Look at SVG slides.
+ *
  * Run headless:  chrome --headless --dump-dom http://localhost:PORT/audit-layout.html
  */
 const SLIDE_W = 1920, SLIDE_H = 1080, PAD = 4;

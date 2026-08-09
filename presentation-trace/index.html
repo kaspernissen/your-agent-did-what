@@ -422,6 +422,47 @@
     </div>
     <p class="small" style="position:absolute;right:120px;top:872px;font-family:var(--font-mono);font-size:24px">opentelemetry.io · CC BY 4.0</p>
   </section>
+  <!-- 3.5 — L04 · what OTel covers today -->
+  <section data-label="OTel covers what they were built to fill" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Why the calculus changed</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1560px;font-size:68px">They filled a real gap. OTel has since filled it too.</h2>
+    <div style="position:absolute;left:120px;right:120px;top:400px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">the model call itself</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">chat span · gen_ai.operation.name</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">token accounting and cost</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.usage.input_tokens / output_tokens</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">which tool ran</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">execute_tool · gen_ai.tool.name</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">the prompt and the completion</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.prompt / gen_ai.completion — opt-in</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">structured messages</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.input.messages / output.messages</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">&quot;was it any good?&quot;</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono);font-size:25px">gen_ai.evaluation.result</span>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Every attribute on the right is one we measured coming out of a running agent today — not a roadmap item. Choosing OpenInference or OpenLLMetry was a reasonable call when that column was empty.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">It is a different call now — with the caveat from three slides ago: none of it is marked Stable.</p>
+  </section>
+
   <!-- 4.1 — L02 Section divider · the single mid-deck mascot -->
   <section data-label="Meet Capybara, SRE" class="ground-ink">
     <div class="diagonal-split" style="background:var(--amber)"></div>
@@ -848,6 +889,51 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:900px">"Good enough" is a risk-calibrated product decision, not a number the tooling hands you.</p>
   </section>
 
+  <!-- 8.0 — L04 · the realistic path (ink) -->
+  <section data-label="A realistic path" class="ground-ink">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:110px;margin:0">If you are on someone else's convention today</p>
+    <h2 class="title" style="position:absolute;left:120px;top:175px;width:1560px;font-size:64px">A realistic path, in the order that actually works</h2>
+    <div style="position:absolute;left:120px;right:120px;top:330px;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;align-items:flex-start;gap:30px">
+        <span style="background:var(--blue);color:var(--paper);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">1</span>
+        <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
+          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Emit whatever your framework emits</span>
+          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">Don't rewrite the app first.</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:30px">
+        <span style="background:var(--blue);color:var(--paper);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">2</span>
+        <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
+          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Normalize at the edge</span>
+          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">One processor block. Any language. No redeploy.</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:30px">
+        <span data-emphasis="amber" style="background:var(--amber);color:var(--ink);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">3</span>
+        <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
+          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Turn the forensic content on — then check it fired</span>
+          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">The flags are not the same as the data.</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:30px">
+        <span style="background:var(--blue);color:var(--paper);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">4</span>
+        <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
+          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Attach evaluations to the span you already have</span>
+          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)"><span style="font-family:var(--font-mono);font-size:24px">gen_ai.evaluation.result</span> — no new pipeline.</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:30px">
+        <span style="background:var(--blue);color:var(--paper);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">5</span>
+        <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
+          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Send the gaps back to the SIG</span>
+          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">The missing field will not add itself.</span>
+        </div>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Step 1 is the counterintuitive one: <strong style="font-weight:600;color:var(--paper)">do not start by rewriting instrumentation.</strong> Step 3 is the one that bit us — turning it on and <em>verifying</em> it are different jobs.</p>
+  </section>
+
   <!-- 8.1 — L04 · Jaeger as a collector pipeline (ink, breaks beat 8's paper run) -->
   <section data-label="Jaeger v2 runs on the Collector" class="ground-ink">
     <div class="deck-footer"></div>
@@ -984,6 +1070,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Three independent stacks already emit gen_ai.*. The measured spine of the whole argument.",
   "One correlation domain. The capybara incident is a DATABASE incident with an LLM in front. Flag clearly: that this is the decisive advantage is our position, not a measurement.",
   "The collector as enforcement point. Do NOT assert 'you already run a collector' \u2014 ask for a show of hands.",
+  "They filled a real gap. This is the abstract's argument made explicit: choosing OpenInference or OpenLLMetry was RIGHT when OTel's GenAI support was thin. Everything in the right column is measured from a running agent today, so the calculus has changed. Do not be smug - the alternatives were the correct call at the time. End on the caveat: still nothing Stable.",
   "Meet Capybara SRE. The one mid-deck mascot moment. Let the room enjoy it, then point at delete_records.",
   "The conventions moved house in June. If your bookmarks point at the old URL, that's the move you missed. Describe the move; don't quote the redirect banner.",
   "Stable: zero. Land this plainly. Every GenAI attribute is Development \u2014 subject to breaking change.",
@@ -1004,6 +1091,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Two judgements on one span. A metric you improve and a gate you don't cross. Be clear these values are the designed contract \u2014 the judge is new work.",
   "Three placements. Ours are one of each: safety is gate-shaped, correctness is metric-shaped. Same run, two philosophies.",
   "Where we cheated. Say plainly that in-process synchronous judging is not how you'd do this in production. Name the three biases; do NOT quote percentage figures.",
+  "A realistic path. This is what the abstract promises and it is the practical takeaway of the whole talk - five steps in the order that actually works. Land step 1 hardest: do NOT start by rewriting instrumentation, that is why teams stall. And step 3 is our own scar - we set both documented flags and got nothing, so turning it on and verifying it are different jobs.",
   "Jaeger v2 on the Collector. The substrate argument isn't ours \u2014 the oldest tracing project in the CNCF made it. Caveat the epics: open proposals, no milestones.",
   "Who reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads. The model isn't the answer, the legible data is. This is the whole talk argued by the tools rather than by us.",
   "Watch your own coding agent. AAIF shout-out - we're both ambassadors, aaif.io. Practical hook: goose and Claude Code both ship OTel built in, one flag each, into the collector you already run. Then the finding, which is the whole talk in miniature: run goose WITH Claude Code over ACP and you get two sibling streams, not one nested trace. Two agents in one workflow and nothing joins them. Credit Adriana - she captured this.",

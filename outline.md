@@ -189,6 +189,13 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 **Message:** The conventions give you a genuine vocabulary for agent runs — but they moved repository in June, nothing in them is marked Stable, and getting the forensic content turned on is not always as easy as the documentation implies.
 
+### 3.5 — They filled a real gap. OTel has since filled it too.
+- **Layout:** L04 Text + diagram
+- **Headline:** They filled a real gap. OTel has since filled it too.
+- **Content:** six things you needed an alternative convention for, each against the `gen_ai.*` that now provides it — the model call, token accounting, which tool ran, prompt/completion content, structured messages, and "was it any good?". Every right-hand item is measured from a running agent, not a roadmap.
+- **Amber emphasis:** **`gen_ai.evaluation.result`** — the newest arrival, and the one that closes the last gap
+- **Source:** the abstract's own argument ("that made sense when OTel's GenAI support was thin; it makes less sense today") made explicit. Right column measured across [D1] and [D2]. **Say it without smugness** — the alternatives were the correct call at the time. Close on the caveat: still nothing Stable.
+
 ### 4.1 — Meet Capybara, SRE
 - **Layout:** L02 Section divider
 - **Headline:** Meet Capybara, SRE — motto: "Deploy Calmly"
@@ -355,6 +362,13 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ## 8 · Where this is going + close (1 min) — **both**
 
 **Message:** The substrate argument is not ours — the oldest tracing project in the CNCF rebuilt itself on the Collector, and is designing its GenAI features as collector-pipeline hooks.
+
+### 8.0 — A realistic path
+- **Layout:** L04 Text + diagram (ink)
+- **Headline:** A realistic path, in the order that actually works
+- **Content:** five numbered steps — (1) emit whatever your framework emits, don't rewrite the app first · (2) normalize at the edge, one processor block, any language · (3) **turn the forensic content on, then check it fired** · (4) attach evaluations to the span you already have · (5) send the gaps back to the SIG.
+- **Amber emphasis:** **step 3** — the one that bit us
+- **Source:** [D1] and [D2] together. This is what the abstract promises by "a concrete path toward OTel-native GenAI observability", and it was the promise the deck did not previously deliver. Step 1 is the counterintuitive one: teams stall because they start by rewriting instrumentation.
 
 ### 8.1 — Even the ten-year-old tracer runs on the Collector now
 - **Layout:** L04 Text + diagram
