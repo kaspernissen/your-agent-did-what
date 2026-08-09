@@ -144,10 +144,17 @@ deck-stage>section{
 /* Square, per the system's "right angles are reserved for imagery" rule.
    Delivered as a background-image so a missing file degrades to an empty
    --paper-2 tile instead of a broken-image icon on stage. */
+/* Circular, because in this system a circle is an .axis-node — an event on the
+   trace. The speakers are the first two events on it, so their portraits ARE
+   nodes, haloed the way the system haloes "you are here". This is the one place
+   imagery is not right-angled, and it earns it by carrying the metaphor. */
 .speaker-photo{
-  width:170px;height:170px;flex:none;
+  width:200px;height:200px;flex:none;border-radius:50%;
   background-color:var(--paper-2);
   background-size:cover;background-position:center top;
+  box-shadow:0 0 0 6px var(--paper), 0 0 0 12px var(--blue-mute);
+  position:relative;z-index:1;
 }
+.ground-ink .speaker-photo{box-shadow:0 0 0 6px var(--ink), 0 0 0 12px var(--blue)}
 .speaker-photo.is-kasper{background-image:url("assets/kasper.jpg")}
 .speaker-photo.is-adriana{background-image:url("assets/adriana.jpg")}

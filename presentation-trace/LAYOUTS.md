@@ -318,3 +318,25 @@ else — title, subtitle, speakers, handles, employer marks — is constant.
 If a future event needs more than the name (a track, a date, a hashtag), extend that one
 line rather than scattering event details across slides; a stale conference name on a
 cover is the kind of error the room notices immediately.
+
+---
+
+## Speaker portraits — the one imagery exception
+
+The system says **right angles are reserved for imagery**, and **never four rounded
+corners**. The Who slide's portraits are nonetheless **circles**, deliberately.
+
+A circle in this system is not decoration — it is an `.axis-node`, an event on the trace.
+The Who slide runs a full-bleed `.axis` at y = 500 and sits both portraits on it, so the
+speakers are literally the first two events on the talk's own trace. The cover already
+makes the same move with plain nodes. `.speaker-photo` carries the system's halo treatment
+(a `--paper` gap ring, then a `--blue-mute` ring) — the same "you are here" device.
+
+So this is the metaphor being carried, not the rule being broken. **Rounded boxes are
+still out**: they would be neither a right angle nor a node, just a soft corner, which is
+exactly what the chamfer exists to avoid.
+
+The two portraits come from different sources and keep their own backgrounds — one cyan
+stage, one neutral. Left deliberately unretouched (speaker's call): they are honestly two
+photographs from two places, and a filter to fake a matched set is not worth altering
+someone's likeness for.
