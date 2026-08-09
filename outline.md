@@ -29,11 +29,13 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~35 — the top of the 30–35 min range; see the note below** | | |
+| | **Total** | **~35 — top of the 30–35 min range; expanding first, cut list parked below** | | |
 
-**Timing pressure.** Beat 1 grew from 4 to 5.5 min when 1.3 (the vocabulary) and 1.4 (the
-telemetry path) were added, which puts the deck at the top of the range with no slack. Two
-trim candidates, in order:
+**Cut list — parked, not actioned.** The deck is deliberately in an *expand first, cut later*
+phase: material is being added while the argument is still settling, and trimming waits until
+the full picture is on the table. Beat 1 grew from 4 to 5.5 min when 1.3 (the vocabulary) and
+1.4 (the telemetry path) were added, which puts the total at the top of the range. When it is
+time to cut, these are the candidates in order — recorded now, while the reasoning is fresh:
 
 1. **2.4 — "Both of these claim to be OTel GenAI"** (the Arconia `flavor` slide). It is the only
    slide where Arconia carries an argument rather than getting a mention, which is more prominence
@@ -43,7 +45,7 @@ trim candidates, in order:
 2. **1.2 — the architecture run-up** (monolith → microservices → event-driven → agent-based). Now
    that 1.3 defines an agent directly, the run-up is the more cuttable of the two. Saves ~45s.
 
-Cutting either brings the total back to ~34.
+Cutting either brings the total back to ~34. Neither is cut today.
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
