@@ -187,9 +187,12 @@ deck-stage>section{
    --paper on --ink, so the deck stays offline-safe. Quiet zone comes from the
    tile's own padding: a QR pressed to the edge of a dark slide does not scan. */
 /* White modules on transparent — the ink ground shows through and serves as the
-   quiet zone. This exact configuration was confirmed scanning on a phone.
-   Do NOT restyle the modules: a dotted variant with rounded finder patterns
-   looked better and stopped scanning. Solid squares stay. */
+   quiet zone. Confirmed scanning on a phone.
+   Data modules are dots; the three finder patterns and the alignment pattern
+   are SOLID SQUARES. That split is load-bearing and was established the hard
+   way: dots alone scanned fine, and the codes stopped scanning the moment the
+   finders were drawn as rounded rings. Those patterns are what a scanner uses
+   to locate and orient the code — style the data, never the finders. */
 .qr-tile{
   width:132px;height:132px;flex:none;padding:10px;
   display:block;
