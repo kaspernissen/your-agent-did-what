@@ -224,3 +224,24 @@ deck-stage>section{
 .deck-footer::after{content:"";position:absolute;right:110px;bottom:-38px;
   width:96px;height:77px;background:url("assets/capybara-mascot.png") no-repeat center/contain;
   transform:rotate(13deg)}
+
+/* ── Normalizer flow (beat 5) ───────────────────────────────────────── */
+/* The rewrite IS the slide, so it moves: a dot travels each row left→right,
+   staggered, entering the processor as llm.* and leaving as gen_ai.*. The one
+   row the processor has no mapping for rides a dashed amber track straight
+   through and arrives unchanged — that is the "partial" in partial
+   normalization, made visual instead of asserted.
+   The columns carry the content on their own, so the slide is fully legible
+   with motion disabled; the dot is decoration, never the only carrier. */
+.flow-track{flex:none;position:relative;height:2px;background:var(--navy)}
+.flow-track.is-amber{background:none;border-top:2px dashed var(--amber);height:0}
+.flow-dot{position:absolute;top:50%;width:11px;height:11px;margin:-5px 0 0 -5px;
+  border-radius:50%;background:var(--blue-lift);
+  animation:flow-travel 4.6s cubic-bezier(.5,0,.5,1) infinite}
+.flow-dot.is-amber{background:var(--amber)}
+@keyframes flow-travel{
+  0%{left:0;opacity:0} 6%{opacity:1} 94%{opacity:1} 100%{left:100%;opacity:0}
+}
+/* Motion is never load-bearing: hide it rather than freeze it mid-track. */
+@media (prefers-reduced-motion:reduce){.flow-dot{animation:none;opacity:0}}
+@media print{.flow-dot{animation:none;opacity:0}}

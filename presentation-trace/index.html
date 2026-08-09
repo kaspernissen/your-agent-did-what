@@ -422,19 +422,6 @@
     <p class="small" style="position:absolute;left:120px;top:830px">Each optimizes for something real. They are not going away soon.</p>
   </section>
 
-  <!-- 2.4 — L06 Code -->
-  <section data-label="The provider key fragments three ways" class="ground-ink">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:68px">Both of these claim to be OTel GenAI</h2>
-    <div class="code-block" style="position:absolute;left:120px;right:120px;top:300px">
-      <pre><span class="c-key">OpenLIT (Python)</span>        → <span class="c-attr">gen_ai.provider.name</span>   <span class="c-key">// current spec</span>
-<span class="c-key">Arconia flavor=otel</span>     → <span class="c-attr">gen_ai.provider.name</span>
-<span class="c-key">Arconia flavor=openlit</span>  → <span class="c-str" data-emphasis="amber">gen_ai.system</span>          <span class="c-key">// deprecated</span></pre>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1600px">Same code. One property apart. "Conforms to OTel GenAI" is necessary but not sufficient — <strong style="font-weight:600;color:var(--paper)">which revision</strong> matters.</p>
-  </section>
-
-  <!-- 2.5 — L04 · four renderings of one span -->
   <section data-label="Same bytes, four renderings" class="ground-paper">
     <div class="deck-footer"></div>
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Same bytes. The viewer decides whether it's legible.</h2>
@@ -722,40 +709,82 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 5.3 — L06 Code -->
   <!-- 5.3 — L06 Code · rewritten and untouched, side by side -->
+  <!-- 5.3 — L07 · the rewrite as a pipeline, animated; see .flow-* in trace.css -->
   <section data-label="Before / after" class="ground-ink">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:100px;width:1600px;font-size:64px">Same capybara, wrong convention, fixed in flight</h2>
-
-    <div style="position:absolute;left:120px;right:120px;top:250px;display:grid;grid-template-columns:1.25fr 1fr;gap:44px">
-      <div>
-        <p style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--on-ink-dim);margin:0 0 18px">Rewritten — 18 removed, 7 written</p>
-        <div class="code-block" style="padding:38px 42px">
-          <pre style="font-size:26px;line-height:1.8"><span class="c-key">llm.provider</span>              → <span class="c-attr">gen_ai.provider.name</span>
-<span class="c-key">llm.model_name</span>            → <span class="c-attr">gen_ai.request.model</span>
-<span class="c-key">llm.token_count.prompt</span>    → <span class="c-attr">gen_ai.usage.input_tokens</span>
-<span class="c-key">llm.token_count.completion</span>→ <span class="c-attr">gen_ai.usage.output_tokens</span>
-<span class="c-key">openinference.span.kind</span>   → <span class="c-attr">gen_ai.operation.name</span>
-<span class="c-key">llm.input_messages.*</span>      → <span class="c-attr">gen_ai.input.messages</span>
-<span class="c-key">llm.output_messages.*</span>     → <span class="c-attr">gen_ai.output.messages</span></pre>
-        </div>
+    <h2 class="title" style="position:absolute;left:120px;top:100px;width:1600px;font-size:64px">Same capybara, wrong convention, <span class="amber-text" data-emphasis="amber">fixed in flight</span></h2>
+    <div style="position:absolute;left:120px;top:250px;display:flex;width:1680px">
+      <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--on-ink-dim)">OPENINFERENCE, IN</span>
+      <span style="width:640px;flex:none"></span>
+      <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue-mute)">OTEL GENAI, OUT</span>
+    </div>
+    <div style="position:absolute;left:120px;top:310px;width:1680px">
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.provider</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:0.00s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:0.50s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.provider.name</span>
       </div>
-      <div>
-        <p style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber-lift);margin:0 0 18px">Untouched — 9 survive</p>
-        <div class="code-block is-muted" style="padding:38px 42px">
-          <pre style="font-size:26px;line-height:1.8"><span class="c-str" data-emphasis="amber">llm.system</span>
-<span class="c-key">llm.tools.*</span>
-<span class="c-key">llm.invocation_parameters</span>
-<span class="c-key">input.value / output.value</span>
-<span class="c-key">span name: messages.create</span></pre>
-        </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.model_name</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:0.42s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:0.92s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.request.model</span>
+      </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.token_count.prompt</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:0.84s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:1.34s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.usage.input_tokens</span>
+      </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.token_count.completion</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:1.26s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:1.76s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.usage.output_tokens</span>
+      </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">openinference.span.kind</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:1.68s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:2.18s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.operation.name</span>
+      </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.input_messages.*</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:2.10s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:2.60s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.input.messages</span>
+      </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.output_messages.*</span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:2.52s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:3.02s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink)">gen_ai.output.messages</span>
+      </div>
+      <div style="display:flex;align-items:center;height:46px">
+        <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--amber)">llm.system</span>
+        <span class="flow-track is-amber" style="width:180px"><span class="flow-dot is-amber" style="animation-delay:2.94s"></span></span>
+        <span style="width:280px;flex:none"></span>
+        <span class="flow-track is-amber" style="width:180px"><span class="flow-dot is-amber" style="animation-delay:3.44s"></span></span>
+        <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--amber)">llm.system</span>
       </div>
     </div>
-
-    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px"><strong style="font-weight:600;color:var(--paper)">27 span attributes down to 16.</strong> <span style="font-family:var(--font-mono)">llm.system</span> survives <em>even with</em> <span style="font-family:var(--font-mono)">remove_originals: true</span> — it is simply not in the mapping table. Partial normalization is the honest word.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Alpha, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donated and accepted; issue #46069 closed 1 June 2026.</p>
+    <div class="chamfer" style="position:absolute;left:880px;top:296px;width:280px;height:396px;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px">
+      <span style="font-family:var(--font-mono);font-size:20px;color:var(--paper);text-align:center;line-height:1.3">gen_ai_<br>normalizer</span>
+      <span style="font-family:var(--font-mono);font-size:17px;color:var(--on-ink-dim);text-align:center;line-height:1.5">sources:<br>openinference<br>openllmetry</span>
+      <span style="font-family:var(--font-mono);font-size:17px;color:var(--amber);text-align:center">remove_originals<br>: true</span>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:740px;width:1680px"><strong style="font-weight:600;color:var(--paper)">27 span attributes down to 16</strong> — 18 removed, 7 written. But <span style="font-family:var(--font-mono);color:var(--amber)">llm.system</span> rides straight through: <span style="font-family:var(--font-mono)">remove_originals</span> is <em>true</em> and it survives anyway, because it is simply not in the mapping table.</p>
+    <p class="small" style="position:absolute;left:120px;top:848px;width:1680px">Nine attributes survive untouched, and the span is still named <span style="font-family:var(--font-mono)">messages.create</span>. <strong style="font-weight:600;color:var(--paper)">Partial normalization is the honest word.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:920px;width:1680px">Alpha, traces only, no auto-detection — and it ships in contrib 0.158.0, so adopting it is an image pull.</p>
   </section>
-
-  <!-- 5.5 — L04 · convergence, the mirror of slide 11's fan-out -->
   <section data-label="Nobody is proposing a fifth convention" class="ground-paper">
     <div class="deck-footer"></div>
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on the same target</h2>
@@ -850,6 +879,23 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   </section>
 
   <!-- 6.4 — L03 Statement -->
+  <!-- 6.3 — L06 Code · the model's own output, and what it does and does not prove -->
+  <section data-label="What the model asked for" class="ground-ink">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1560px;font-size:64px">The model&rsquo;s output remembers what it <span class="amber-text" data-emphasis="amber">asked for</span></h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:270px">
+      <pre><span class="c-attr">gen_ai.output.messages</span>
+[ { <span class="c-key">"role"</span>: <span class="c-str">"assistant"</span>,
+    <span class="c-key">"parts"</span>: [
+      { <span class="c-key">"type"</span>: <span class="c-str">"reasoning"</span>, <span class="c-key">"content"</span>: <span class="c-str">"the free-plan rows are the ones over quota"</span> },
+      { <span class="c-key">"type"</span>: <span class="c-str">"tool_call"</span>,  <span class="c-key">"name"</span>: <span class="c-str">"delete_records"</span>,
+                            <span class="c-key">"arguments"</span>: { <span class="c-str">"plan"</span>: <span class="c-str">"free"</span> } } ],
+    <span class="c-key">"finish_reason"</span>: <span class="c-str">"tool_call"</span> } ]</pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:762px;width:1680px">The <span style="font-family:var(--font-mono);color:var(--on-ink)">tool_call</span> part carries the name <em>and the arguments</em> — the content the <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span> span did not have. <strong style="font-weight:600;color:var(--paper)">But this is what the model asked for, not what ran.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:848px;width:1680px">Parts are typed: <span style="font-family:var(--font-mono)">text · reasoning · tool_call · tool_call_response · blob · file · uri</span>. Our run carried text and tool_call; <span style="font-family:var(--font-mono)">reasoning</span> parts appear when the model emits thinking.</p>
+    <p class="small" style="position:absolute;left:120px;top:926px;width:1680px">This attribute replaced <span style="font-family:var(--font-mono)">gen_ai.prompt</span> / <span style="font-family:var(--font-mono)">gen_ai.completion</span>, which are gone from the registry — our stack still emits the old pair.</p>
+  </section>
   <section data-label="The footprint is empty" class="ground-paper">
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The limit of default instrumentation</p>
@@ -883,7 +929,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <text x="1110" y="206" font-family="Public Sans" font-size="22" fill="#5B6180">not persisted · not deterministic</text>
   <text x="1110" y="236" font-family="Public Sans" font-size="22" fill="#5B6180">output, not an audit trail</text>
 </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is <strong style="font-weight:600;color:var(--ink)">no schema slot for <em>why</em></strong> — the closest thing anywhere is a reasoning-token count.</p>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">OTel can carry the model&rsquo;s <em>narrated</em> reasoning — a <span style="font-family:var(--font-mono)">reasoning</span> part inside <span style="font-family:var(--font-mono)">gen_ai.output.messages</span>. What no convention has is a field for <strong style="font-weight:600;color:var(--ink)">why the agent chose an action</strong> — and narration is output, not a record of the decision.</p>
     <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG — and the honest limit of everything else in this talk.</p>
   </section>
 
@@ -1158,32 +1204,32 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 "The path the spans take, on the stack we actually demo. Keep it quick \u2014 this is orientation, not architecture review. Land the headline: nothing in this path is GenAI-specific. It is the same OTLP, the same collector and the same backends you already run, which is the entire reason OTel is the right target and is the argument beat 3 then makes properly. Point at the middle column: the agent does not know what is downstream, so attributes can be rewritten there without touching application code \u2014 that is beat 5's demo in one sentence. Careful: gen_ai_normalizer is listed as a processor because it is one, but do not explain it here; it gets its own beat. If asked why Jaeger is the demo default: it is what the run script brings up, and beat 2 shows what it does and does not render.",
 "Fast through the first three properties. Slow right down on the fourth: there is no stack trace for why. Land: the first three are uncomfortable, the fourth is what this talk is about \u2014 and it comes back as the hard limit at slide 36.",
 "The old practice was not wrong, it was right for its time. Land: 'reasoning chain' is the equivalent we chase for the next twenty minutes. Careful: do not imply we deliver it \u2014 slide 36 is where we admit nobody can.",
-"What one agent run actually looks like. Point at POST: it comes free from your HTTP instrumentation, carries no GenAI meaning, and it is 3.91 of the 3.97 seconds the model call took. Land: your existing instrumentation already sees the time and none of the meaning. This waterfall returns at slide 33 carrying the deletion. If asked: measured, from the Python agent in demos/agent \u2014 the same trace as slide 33.",
-"\u25b8 ADRIANA CONTINUES \u00b7 Beat 2 (4 min, slides 12\u201316). The competing conventions, why they exist, and what they cost you.",
-"One model call, five vocabularies. Do not read all five \u2014 point at two and let the room feel the problem. Land: amber is OpenInference, which is what our second demo emits and what we normalize at slide 30; OTel GenAI is the one the others are converging on.",
+"What one agent run actually looks like. Point at POST: it comes free from your HTTP instrumentation, carries no GenAI meaning, and it is 3.91 of the 3.97 seconds the model call took. Land: your existing instrumentation already sees the time and none of the meaning. This waterfall returns at slide 32 carrying the deletion. If asked: measured, from the Python agent in demos/agent \u2014 the same trace as slide 32.",
+"\u25b8 ADRIANA CONTINUES \u00b7 Beat 2 (4 min, slides 12\u201315). The competing conventions, why they exist, and what they cost you.",
+"One model call, five vocabularies. Do not read all five \u2014 point at two and let the room feel the problem. Land: amber is OpenInference, which is what our second demo emits and what we normalize at slide 29; OTel GenAI is the one the others are converging on.",
 "These are NOT arbitrary naming preferences \u2014 each optimizes for something real, which is why they will not simply go away. Careful: credit Salaboy out loud here. The framing is his and it is deliberately not on the slide.",
-"Measured. Same code, one property apart, and one of them emits the deprecated gen_ai.system. Land: 'conforms to OTel GenAI' is necessary but not sufficient \u2014 which revision matters.",
 "Four renderings of identical bytes. Land: Phoenix is GenAI-native but OpenInference-native, so it accepts gen_ai.* spans and renders them as plain spans \u2014 the fragmentation tax, made visible. Careful: Jaeger AND Phoenix ingestion are both confirmed on a live run (Phoenix reported 2 traces at 6.5s p50). What each UI looks like is drawn from documentation \u2014 these panes are wireframes, not screenshots. The slide says so; say it too.",
-"\u25b8 HANDOFF \u2192 KASPER \u00b7 Beat 3 (3 min, slides 17\u201321). Why OTel is the right target, argued from measurement rather than loyalty.",
-"The measured spine of the whole argument: three independent stacks already emit gen_ai.* without being asked to agree. Careful: 'for the core dimensions' is load-bearing \u2014 beat 5 shows exactly what does not converge. Do not overclaim here and get caught at slide 30.",
+"\u25b8 HANDOFF \u2192 KASPER \u00b7 Beat 3 (3 min, slides 16\u201320). Why OTel is the right target, argued from measurement rather than loyalty.",
+"The measured spine of the whole argument: three independent stacks already emit gen_ai.* without being asked to agree. Careful: 'for the core dimensions' is load-bearing \u2014 beat 5 shows exactly what does not converge. Do not overclaim here and get caught at slide 29.",
 "The capybara incident is a DATABASE incident with an LLM in front of it. The span you need next is the SQL span, the pod restart, the deploy \u2014 and a GenAI-only convention gives you a GenAI-only island. Careful: flag clearly that 'decisive advantage' is our position, not a measurement. The slide says so on purpose.",
 "The collector is where a policy about telemetry can live: one place, any language, no application change. Careful: do NOT assert 'you already run a collector' \u2014 ask for a show of hands instead. This framing is what beat 5 then demonstrates.",
-"The abstract's argument made explicit: choosing OpenInference or OpenLLMetry was the RIGHT call when the right-hand column was empty. Every attribute on the right is one we measured coming out of a running agent today, not a roadmap item. Land: it is a different call now. Careful: do not be smug \u2014 the alternatives were correct at the time. And do NOT answer the Stable question here; this slide only hints, because the reveal is slide 24.",
-"\u25b8 KASPER CONTINUES \u00b7 Beat 4 (5 min, slides 22\u201327). What the conventions actually give you, and what setup really costs. The one mid-deck mascot moment \u2014 let the room enjoy it, then point at delete_records. The slide is deliberately just the mascot and the three tools, so the framing is yours to say: Capybara is a toy standing in for kagent or HolmesGPT, small enough that we can open it up and look at every span it emits. Careful: say that out loud, so nobody thinks we are proposing it as an architecture. If asked about the stack: Quarkus + LangChain4j over an MCP server, and the same scenario drives both demos.",
+"The abstract's argument made explicit: choosing OpenInference or OpenLLMetry was the RIGHT call when the right-hand column was empty. Every attribute on the right is one we measured coming out of a running agent today, not a roadmap item. Land: it is a different call now. Careful: do not be smug \u2014 the alternatives were correct at the time. And do NOT answer the Stable question here; this slide only hints, because the reveal is slide 23.",
+"\u25b8 KASPER CONTINUES \u00b7 Beat 4 (5 min, slides 21\u201326). What the conventions actually give you, and what setup really costs. The one mid-deck mascot moment \u2014 let the room enjoy it, then point at delete_records. The slide is deliberately just the mascot and the three tools, so the framing is yours to say: Capybara is a toy standing in for kagent or HolmesGPT, small enough that we can open it up and look at every span it emits. Careful: say that out loud, so nobody thinks we are proposing it as an architecture. If asked about the stack: Quarkus + LangChain4j over an MCP server, and the same scenario drives both demos.",
 "The conventions moved repo in June. If your bookmarks still point at the old URL, that is the move you missed \u2014 it is a redirect notice now. Land: no releases, no tags, nothing to pin. You can follow a commit or a dated snapshot, but there is no schema URL to pin against. Careful: describe the move; do not read the redirect banner aloud.",
-"Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development \u2014 subject to breaking change. Say it plainly rather than implying more maturity than exists; that sentence used to be printed on the slide, which is not where a stage direction belongs. This is the reveal slide 21 deliberately set up, so do not undercut it by having already given the number away. If asked how current this is: verified 2026-08-09 against the model YAML in semantic-conventions-genai \u2014 registry, spans, metrics and events are all stability:development.",
+"Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development \u2014 subject to breaking change. Say it plainly rather than implying more maturity than exists; that sentence used to be printed on the slide, which is not where a stage direction belongs. This is the reveal slide 20 deliberately set up, so do not undercut it by having already given the number away. If asked how current this is: verified 2026-08-09 against the model YAML in semantic-conventions-genai \u2014 registry, spans, metrics and events are all stability:development. Also worth saying here, now that the Arconia flavor slide is cut: a tool can claim OTel GenAI conformance and still emit the deprecated gen_ai.system rather than gen_ai.provider.name. 'Conforms to OTel GenAI' is necessary but not sufficient \u2014 which revision it targets matters, and our own Quarkus stack proves it by still emitting gen_ai.prompt/completion.",
 "What arrives with no work at all. Careful: these values are REAL \u2014 captured verbatim from a capybara run on quarkus-langchain4j 1.12.2, and nothing on the slide was hand-written. Say 'we wrote none of this'. If asked: this is the Quarkus MCP agent, which is why the model reads claude-sonnet-4-6 \u2014 the extension sends top_k, which claude-sonnet-5 now rejects, so the demo pins the older model. That is a model-parameter incompatibility, not a telemetry finding.",
-"Two documented flags, six correct attributes. This is exactly what the docs promise you. Careful: present it as the promise and do not hedge \u2014 the whole point is that slide 27 is the reversal.",
+"Two documented flags, six correct attributes. This is exactly what the docs promise you. Careful: present it as the promise and do not hedge \u2014 the whole point is that slide 26 is the reversal.",
 "\u2026and on the MCP path they never fire. ToolSpanWrapper only wraps locally declared @Tool methods; MCP tool calls route through TracingMcpClientListener instead, and that listener list is hardcoded in McpRecorder, so you cannot register your own alongside it. Land: the framework has the correct code, it just does not run where MCP tools live. Careful: this IS measured on 1.12.2, the current release \u2014 we re-ran it specifically so we would not be asserting it about a version we were no longer running. Say the version out loud; the slide no longer narrates that we re-ran it. Frame it as 'the kind of gap you hit', not as an attack on the project.",
-"\u25b8 HANDOFF \u2192 ADRIANA \u00b7 Beat 5 (4 min, slides 28\u201331). Your tool does not speak OTel semantics \u2014 now what?",
-"Two places to fix it: downstream in the collector, or upstream in the SDK. Both land on OTel semconv as the target. Arconia gets its proper shout-out at slide 31 \u2014 here just plant that there are two layers.",
+"\u25b8 HANDOFF \u2192 ADRIANA \u00b7 Beat 5 (4 min, slides 27\u201330). Your tool does not speak OTel semantics \u2014 now what?",
+"Two places to fix it: downstream in the collector, or upstream in the SDK. Both land on OTel semconv as the target. Arconia gets its proper shout-out at slide 30 \u2014 here just plant that there are two layers.",
 "The measured diff: 27 span attributes down to 16 \u2014 18 removed, 7 written, 9 untouched. Land llm.system: remove_originals is TRUE and it still comes through, because it is simply not in the processor's mapping table. That is why 'partial normalization' is the honest word. Careful: say the status out loud \u2014 alpha, traces only, no auto-detection \u2014 and that it ships in contrib 0.158.0, so adopting it is an image pull rather than a custom build. The donation is DONE: issue #46069 was closed 1 June 2026, so do not invite people to contribute to a finished thread.",
 "Nobody is proposing a fifth convention. This is a short survey, not a demo. Give Arconia a proper shout-out \u2014 Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream, one property and no code change. Careful: say clearly that we are NOT demoing it. Land: the fragmentation is being closed from several directions at once.",
-"\u25b8 HANDOFF \u2192 KASPER \u00b7 Beat 6 (4 min, slides 32\u201336). The forensic beat \u2014 what did it actually do, and what can you never recover?",
+"\u25b8 HANDOFF \u2192 KASPER \u00b7 Beat 6 (4 min, slides 31\u201336). The forensic beat \u2014 what did it actually do, and what can you never recover?",
 "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. Land: the destructive call took 145 microseconds, 0.001% of a 12-second trace \u2014 the thing that deleted production is the one span you can barely see. These durations are REAL, measured 2026-08-09 (trace d0c84fad\u2026). If asked for provenance: this is the Python agent (demos/agent, db-ops-agent), which hand-writes its execute_tool spans \u2014 NOT the Quarkus MCP demo, whose tool spans are named tools/call delete_records and carry no arguments. That is deliberate: this slide shows the waterfall you get when the tool spans are written properly, which is exactly what the MCP path fails to give you.",
 "The two attributes that answer the forensic question. Both are opt-in and off by default \u2014 the spec says instrumentation SHOULD NOT capture this by default, for privacy and payload size. Land: the whole forensic answer is one flag away from not existing. Careful: the slide already admits our MCP run emits neither, and that these values come from a Python agent writing the span by hand. Say it yourself rather than letting someone catch it, and lead from there into the next slide \u2014 the slide no longer says 'which is the point of the next slide', that hand-off is yours.",
+"Where the model's own output lives, and the partial recovery it gives you. Land the pair: the tool_call part carries the name AND the arguments \u2014 exactly the content the execute_tool span was missing two slides ago \u2014 but it is what the model ASKED for, not what ran. Intent, not execution. If the framework mutated the arguments, retried, or the tool failed, this will not tell you. That distinction is the whole reason the next slide still stands. Careful on the reasoning part: the example shows the spec's shape, NOT our capture. Our run carried text and tool_call parts only; say so if pressed. A reasoning part is the model's narration of its thinking, which is output, not an audit trail. Worth saying: this attribute replaced gen_ai.prompt and gen_ai.completion, which are gone from the registry entirely \u2014 and our own stack still emits the old pair, which is beat 2's 'which revision matters' showing up in our own demo. Forward link if it comes up: this is exactly what the judge in beat 7 reads. The model narrates its reasoning here; the judge's reasoning about it lands separately in gen_ai.evaluation.explanation. Two different kinds of reasoning, two different attributes \u2014 the model's own account of itself, and an outside assessment of it. Only the second one was produced by something with no stake in the answer.",
 "Second and last statement slide. Let it sit. With default instrumentation you can prove the span fired; you cannot prove what it executed.",
-"The honest limit of everything else in this talk. Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is no schema slot for why \u2014 the closest thing anywhere is a reasoning-token count. Careful: attribute the replay claim to the preprint rather than asserting it yourself. Land: normalizing names does not create the missing field. This is the gap worth raising with the SIG, and it returns as the ask on the close.",
+"The honest limit of everything else in this talk. Be precise here, because the easy version of this claim is now wrong: OTel DOES have somewhere to put reasoning \u2014 a reasoning part inside gen_ai.output.messages, carrying the model's thinking content, not just a token count. What is missing is a field for WHY the agent chose an action. Narration is output; nothing binds it to the decision, and nothing makes it faithful. Careful: attribute the replay claim to the preprint rather than asserting it yourself. Land: normalizing names does not create the missing field. If asked whether anyone is working on it \u2014 yes, and say so rather than implying the SIG is asleep: issue #239 and PR #368 propose gen_ai.agent.governance.ref, an opaque join key to a producer-owned governance record, and PR #370 proposes gen_ai.attribution.link_type to record which generation caused a tool call. Neither carries the reasoning itself, which is why the gap stands.",
 "\u25b8 HANDOFF \u2192 ADRIANA \u00b7 Beat 7 (3.5 min, slides 37\u201341). Was it any good? Evaluations as OTel already defines them.",
 "OTel's answer is an event, not a span. Four gen_ai.evaluation.* attributes plus two general ones, and it SHOULD be parented to the GenAI operation span being evaluated. Land the callback to 'Stable: zero' \u2014 error.type is the only Stable attribute anywhere near this event, and only because it is a general OTel attribute rather than a GenAI one. If asked: there is no standard span or operation name for 'an evaluation happened' yet; open PR #185 proposes both an evaluation operation name and a gen_ai.evaluate.internal span.",
 "Two judgements on one span, deliberately different shapes. Careful: these are REAL \u2014 captured from a live run, with the judge's own reasoning quoted in explanation. Land the pair: the authorized prompt scores 0.7 and passes, this one scores 0.3 and fails. Same agent, same tools, the same three tool calls \u2014 the prompt is the only difference, and the gate catches it. If asked why the first run passes: that is correct behaviour, not a miss. It carried explicit authorization and the agent investigated first.",

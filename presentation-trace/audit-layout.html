@@ -88,6 +88,18 @@ function overlaps(a, b){
       };
     });
 
+    // The footer rule sits at y=1000 with the mascot on it. Text running under
+    // it is inside the slide, so the slide-bounds check never fires — which is
+    // how the normalizer slide shipped with its last line through the footer.
+    const hasFooter = !!clone.querySelector('.deck-footer');
+    if (hasFooter){
+      for (const t of texts){
+        if (t.bottom > 1000 - PAD){
+          findings.push(`slide ${i+1} [${label}] UNDER FOOTER  text bottom=${Math.round(t.bottom)} > footer y=1000  "${t.text}"`);
+        }
+      }
+    }
+
     for (const t of texts){
       if (t.bottom > SLIDE_H + PAD || t.right > SLIDE_W + PAD ||
           t.top < -PAD || t.left < -PAD){
