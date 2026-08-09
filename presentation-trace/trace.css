@@ -36,8 +36,14 @@ deck-stage>section{
 .ground-ink .amber-text{color:var(--amber-lift)}
 
 /* ── Geometry ──────────────────────────────────────────────────────── */
-.chamfer{clip-path:polygon(0 0,calc(100% - var(--chamfer)) 0,100% var(--chamfer),100% 100%,0 100%)}
-.chamfer-sm{clip-path:polygon(0 0,calc(100% - var(--chamfer-sm)) 0,100% var(--chamfer-sm),100% 100%,0 100%)}
+/* Rounded surfaces, by the speaker's decision. The Trace system specifies a 45°
+   chamfer — one corner cut, "never four corners rounded" — lifted from the OTel
+   mark's angled joints. This replaces that signature geometry on the big
+   surfaces. Small marks (.tag) keep their chamfer, so the angled cut survives
+   where it reads as a detail rather than a container.
+   To revert: restore the two clip-path polygons below. */
+.chamfer{border-radius:22px}
+.chamfer-sm{border-radius:14px}
 .diagonal-split{position:absolute;inset:0;clip-path:polygon(0 0,58% 0,42% 100%,0 100%)}
 
 /* ── The signal axis ───────────────────────────────────────────────── */
@@ -89,8 +95,7 @@ deck-stage>section{
 .stat-label{font-size:32px;line-height:1.4;font-weight:300;color:#3C4266}
 .ground-ink .stat-label{color:var(--on-ink)}
 
-.code-block{background:#080B1E;padding:56px 64px;
-  clip-path:polygon(0 0,calc(100% - 44px) 0,100% 44px,100% 100%,0 100%)}
+.code-block{background:#080B1E;padding:56px 64px;border-radius:22px}
 .code-block pre{margin:0;font-family:var(--font-mono);font-size:34px;
   line-height:1.9;color:var(--on-ink)}
 .code-block .c-str{color:var(--amber-lift)}

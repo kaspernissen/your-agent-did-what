@@ -110,8 +110,11 @@ bars, nothing boxed in), and breaking one still ships.
 - **The type ramp.** title 96/1.02 · subtitle 52/1.25 · body 34/1.45 · small 28/1.4 (the
   projector floor) · kicker 26/.2em. Layouts legitimately deviate — see `LAYOUTS.md`.
 - **Never bolder than 600.** Space Grotesk at 500/600, Public Sans at 300/400/600.
-- **One chamfered corner.** `.chamfer` cuts exactly the **top-right** corner. Never four
-  rounded corners — that's a different design language. There is no chamfer check at all.
+- **Corner treatment.** The Trace system specifies a 45° chamfer — one corner cut, never
+  four rounded. **The speaker has overridden this for the big surfaces:** `.chamfer` and
+  `.code-block` now use `border-radius`. The angled cut survives on `.tag`, where it reads
+  as a detail rather than a container. `trace.css` carries the original polygons in a
+  comment if this is ever reverted. There is no check either way.
 - **Mascot placement.** The capybara appears only on the cover, the close, and at most
   **one** mid-deck breath; never on a data slide (so never on L05 or L07); never below
   **90px**; and it *sits on* the axis rather than floating above it. The checker only

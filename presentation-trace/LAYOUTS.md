@@ -364,3 +364,19 @@ full size — plus a persistent 96px footer presence.** The footer is chrome, no
 punctuation, which is why it can appear everywhere without becoming the wallpaper the
 original rule was guarding against. It stays above the 90px floor, never carries amber, and
 sits *on* the axis exactly as the rule requires.
+
+---
+
+## Corner treatment — a deliberate override
+
+The system's signature geometry is a **45° chamfer**: one corner cut, top-right, lifted
+from the OpenTelemetry mark's angled joints, and explicitly *never* four rounded corners.
+
+**The big surfaces no longer follow it.** By the speaker's decision, `.chamfer`,
+`.chamfer-sm` and `.code-block` use `border-radius` (22px / 14px). Every panel in this file
+described as "wearing `.chamfer`" is therefore rounded in the built deck — the L04 diagram
+panel, the Who cards, the code blocks, the close slide's QR area.
+
+`.tag` keeps its angled cut, so the chamfer survives where it reads as a detail rather than
+as a container. The original clip-path polygons are preserved in a comment in `trace.css`;
+restoring them is a two-line revert.
