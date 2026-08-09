@@ -253,12 +253,12 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Amber emphasis:** **`llm.input_messages.*`**
 - **Source:** [ANALYSIS] Demo 2 "What it did NOT touch". It fixes the dashboards and the cost math; it does not make an OpenInference trace fully OTel-native end to end.
 
-### 5.5 — Or flip one property, if you're on Spring
+### 5.5 — Nobody is proposing a fifth convention
 - **Layout:** L04 Text + diagram
-- **Headline:** `...ai.flavor = opentelemetry | openlit | openllmetry | langsmith`
-- **Content:** Arconia decouples Spring AI's *instrumentation* from the *schema*; the same spans re-emit under a different convention with no code change. Measured differences are real but **narrow**: the provider key, the streaming-flag key, and OpenLLMetry's added `traceloop.*` — the bulk of the attributes stay `gen_ai.*` across flavors.
-- **Amber emphasis:** the property **`...ai.flavor`**
-- **Source:** [ANALYSIS] Demo 3 (Arconia flavor diff, captured); [LS] §2. **Two honesty notes:** it needs the `arconia-opentelemetry-`**`ai`**`-semantic-conventions` artifact — we lost time to that — and the `langsmith` flavor is the one we did not run.
+- **Headline:** Everyone is converging on **the same target**
+- **Content:** a short survey, not a demo — the point is that the fragmentation is being actively closed, from several directions at once. The collector processor is merged and **alpha**, with a donation to contrib under discussion (issue #46069). Arconia re-emits Spring AI's spans under a chosen flavor, so a Java shop can switch schema without touching code. Phoenix publishes an explicit convention-translation guide. OpenLIT's SDK emits `gen_ai.*` natively. Different layers, one destination: OTel semconv.
+- **Amber emphasis:** **the same target** in the headline
+- **Source:** [LS] §2 (both answers "land on OTel semconv as the target"); [RES] genainormalizerprocessor + issue #46069, Phoenix "Translating conventions", OpenLIT. **Not demo-backed** — Arconia is a mention here, not a measured result; `demos/arconia` and its captured flavor diff in [ANALYSIS] Demo 3 are not on the critical path for this talk.
 
 ---
 
@@ -373,7 +373,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** `presentation/index.html:286` (+ the five provider/attribute pairs at `:292-296`) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
 | 3 | "Without conventions, correlation fails" three-line wall; `assets/collector-pipeline.svg` | **[PC]** `presentation/index.html:493` (speaker notes at `:761`) + design-system assets. Everything else is new writing. |
 | 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** Demo 1 + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
-| 5 | Normalizer before/after table; "what it did NOT touch" list; Arconia flavor diff table; `assets/collector-pipeline.svg` | **[ANALYSIS]** Demos 2 and 3 — all already captured, no re-run needed for the tables |
+| 5 | Normalizer before/after table; "what it did NOT touch" list; `assets/collector-pipeline.svg` | **[ANALYSIS]** Demo 2 — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
 | 6 | The waterfall primitive from 1.5; `execute_tool delete_records` attribute block; the forensic-gap trio | **[ANALYSIS]** + **[R-F]** |
 | 7 | Nothing salvageable — this beat did not exist in the previous outline | **[R-E]** + **[SPEC]** §3.4 (all new) |
 | 8 | Jaeger quotes and roadmap; the four takeaways and closing line | **[LS]** §3 + previous outline §6.4 |
