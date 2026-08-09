@@ -114,3 +114,10 @@ deck-stage>section{
 .ground-ink .wf-row.is-amber .wf-label,.ground-ink .wf-row.is-amber .wf-dur{color:var(--amber-lift)}
 
 .mascot{position:absolute;height:auto}
+
+/* ── Employer marks — L01 Cover and L08 Close only ─────────────────── */
+/* Both marks paint with fill="currentColor", so `color` drives them and one
+   file works on either ground. Capped at 28px: half the OTel mark. */
+.employer-mark{height:28px;width:auto;display:block;color:var(--paper);opacity:.85}
+.ground-paper .employer-mark,
+.ground-paper-2 .employer-mark{color:var(--ink)}

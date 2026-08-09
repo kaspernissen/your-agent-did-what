@@ -249,28 +249,39 @@ Rules:
 
 ### Assets
 
-| Mark | File | Status |
-|---|---|---|
-| Dash0 | `assets/dash0-logo.svg` | **Present.** Vendored from the dash0-website repo (`public/shared/logo_bw.svg`). It paints with `fill="currentColor"`, so it inherits whatever `color` the slide sets — one file works on ink and paper alike. |
-| Dynatrace | `assets/dynatrace-logo-white.svg` | **MISSING — must be supplied before L01/L08 are built.** |
+| Mark | File | Source | viewBox |
+|---|---|---|---|
+| Dash0 | `assets/dash0-logo.svg` | `~/dash0/presentations/design/assets/dash0-logo-full-white.svg` (the brand kit's full lockup) | `0 0 267 51` |
+| Dynatrace | `assets/dynatrace-logo.svg` | `Dt_Logo_White-Horzontal.svg`, supplied by the speaker | `0 0 800 142` |
 
-The Dynatrace mark needs the **white** variant for both bookends, because both are ink
-grounds and the black wordmark is invisible on `#10142E`. If a paper-ground use ever
-appears, add the black variant as `assets/dynatrace-logo-black.svg` rather than
-recolouring the white one.
+Both are **present**, and both are **horizontal wordmark lockups** — 5.2:1 and 5.6:1, so
+they sit together without one reading as an icon beside a wordmark. The earlier candidate
+for Dash0 was the 24×24 square icon from the website repo; it was replaced for exactly
+that reason.
 
-Do not substitute a redrawn or re-typeset wordmark for either company's official mark.
+**Both files were converted to `fill="currentColor"`** — 7 fills on Dash0 (from
+`var(--fill-0, white)`), 13 on Dynatrace (from `#FFFFFF`). Neither carries a hard-coded
+colour any more, so `.employer-mark`'s `color` drives both and a single file per company
+works on ink and paper alike. This is the standard single-colour reversed treatment, not
+a redraw — but it is a brand-guidelines question, and Dynatrace's in particular is the
+speaker's to confirm.
+
+Do not substitute a redrawn or re-typeset wordmark for either company's official mark, and
+do not reintroduce a hard-coded fill: that would break ground adaptation and silently
+produce an invisible mark on one of the two grounds.
 
 ### The `.employer-mark` class
 
-Not yet in `trace.css` — it is added by the task that builds L01. It should set the height
-cap and inherit colour, roughly:
+In `trace.css`, ready to use:
 
 ```css
-.employer-mark{height:28px;width:auto;color:var(--paper)}
-.ground-paper .employer-mark,.ground-paper-2 .employer-mark{color:var(--ink)}
+.employer-mark{height:28px;width:auto;display:block;color:var(--paper);opacity:.85}
+.ground-paper .employer-mark,
+.ground-paper-2 .employer-mark{color:var(--ink)}
 ```
 
-`color` is what drives the Dash0 mark (via `currentColor`); the Dynatrace mark is a fixed
-white file and ignores it, which is why the black variant is a separate asset rather than
-a CSS switch.
+`color` drives both marks through `currentColor`. The `opacity:.85` is what makes them
+*subtle* — present enough to read as affiliation, quiet enough that they never pull the
+eye from the slide's one amber emphasis. Both bookends are ink grounds, so both resolve to
+`--paper`; the `.ground-paper` rules exist so the marks stay correct if a bookend is ever
+reground.
