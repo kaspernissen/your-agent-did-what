@@ -59,7 +59,10 @@ into a diagonal down the right ~46%.
 handles in a row at (120, 836) — Space Grotesk 38px over mono 24px `--on-ink-dim`.
 `.mascot` at the right, 322px wide, at **top 634** — it is drawn asleep on its side, so it
 sits *across* the axis rather than on top of it: the rule passes behind its lower belly.
-The value was set by eye on a projector, not derived. It also needs `z-index:1`, otherwise the `.axis`
+The value was set by eye on a projector, not derived, together with
+`transform:rotate(13deg)` — the tilt is what sells it as sprawled across the rule rather
+than laid on it squarely. Both numbers are cover-specific; L08's mascot is placed
+separately and does not currently share them. It also needs `z-index:1`, otherwise the `.axis`
 (later in the DOM) paints straight through its body.
 
 **Amber.** The **first speaker's `.axis-node.is-amber`** (34px, at x = 214) — the two
