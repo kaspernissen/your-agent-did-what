@@ -55,9 +55,9 @@
     <h2 class="title" style="position:absolute;left:120px;top:175px;font-size:88px">Who?</h2>
     <div style="position:absolute;left:120px;right:120px;top:330px;display:grid;grid-template-columns:1fr 1fr;gap:80px">
       <div style="position:relative">
-        <div class="chamfer" style="position:absolute;left:0;right:0;top:95px;height:470px;background:var(--ink)"></div>
+        <div class="chamfer" style="position:absolute;left:0;right:0;top:30px;height:517px;background:var(--ink)"></div>
         <span class="speaker-photo is-adriana is-lead" role="img" aria-label="Adriana Villela" data-emphasis="amber" style="position:absolute;left:52px;top:0"></span>
-        <div style="position:absolute;left:325px;right:51px;top:118px;display:flex;flex-direction:column;gap:8px">
+        <div style="position:absolute;left:325px;right:51px;top:63px;display:flex;flex-direction:column;gap:8px">
           <span style="font-family:var(--font-display);font-size:42px;font-weight:500;letter-spacing:-.02em;line-height:1.1">Adriana Villela</span>
           <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">Principal Developer Advocate</span>
           <span class="employer-mark is-dynatrace" role="img" aria-label="Dynatrace" style="margin-top:10px"></span>
@@ -68,9 +68,9 @@
         </div>
       </div>
       <div style="position:relative">
-        <div class="chamfer" style="position:absolute;left:0;right:0;top:95px;height:470px;background:var(--ink)"></div>
+        <div class="chamfer" style="position:absolute;left:0;right:0;top:30px;height:517px;background:var(--ink)"></div>
         <span class="speaker-photo is-kasper" role="img" aria-label="Kasper Borg Nissen" style="position:absolute;left:52px;top:0"></span>
-        <div style="position:absolute;left:325px;right:51px;top:118px;display:flex;flex-direction:column;gap:8px">
+        <div style="position:absolute;left:325px;right:51px;top:63px;display:flex;flex-direction:column;gap:8px">
           <span style="font-family:var(--font-display);font-size:42px;font-weight:500;letter-spacing:-.02em;line-height:1.1">Kasper Borg Nissen</span>
           <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">Director of Developer Relations</span>
           <span class="employer-mark is-dash0" role="img" aria-label="Dash0" style="margin-top:10px"></span>
@@ -166,39 +166,40 @@
     <p class="small" style="position:absolute;left:120px;top:900px">The first three are uncomfortable. The fourth is the one this talk is about.</p>
   </section>
 
-  <!-- 1.4 — L07 Figures -->
+  <!-- 1.4 — L07 Figures · one aligned column -->
   <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The practice isn't wrong. It's incomplete.</p>
-    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
-    <div style="position:absolute;left:120px;right:120px;top:400px;display:grid;grid-template-columns:1fr 1fr;gap:40px 80px">
-      <div style="display:flex;align-items:center;gap:28px">
-        <span class="small" style="width:420px;text-align:right">stack trace</span>
-        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:38px;font-weight:600">reasoning chain</span>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
+    <div style="position:absolute;left:120px;right:120px;top:390px;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">stack trace</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:40px;font-weight:600">reasoning chain</span>
       </div>
-      <div style="display:flex;align-items:center;gap:28px">
-        <span class="small" style="width:420px;text-align:right">status code</span>
-        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">quality signal</span>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">status code</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">quality signal</span>
       </div>
-      <div style="display:flex;align-items:center;gap:28px">
-        <span class="small" style="width:420px;text-align:right">RPS &amp; latency</span>
-        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">tokens, cost, blast radius</span>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">RPS &amp; latency</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">tokens, cost, blast radius</span>
       </div>
-      <div style="display:flex;align-items:center;gap:28px">
-        <span class="small" style="width:420px;text-align:right">static call graph</span>
-        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">dynamic tool invocation</span>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">static call graph</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">dynamic tool invocation</span>
       </div>
-      <div style="display:flex;align-items:center;gap:28px">
-        <span class="small" style="width:420px;text-align:right">replayable request</span>
-        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">non-deterministic run</span>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">replayable request</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">non-deterministic run</span>
       </div>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:870px">The old practice was right for its time. We have to build the equivalents.</p>
+    <div class="axis" style="left:120px;right:120px;top:850px"></div>
+    <p class="small" style="position:absolute;left:120px;top:900px">The old practice was right for its time. We have to build the equivalents.</p>
   </section>
 
   <!-- 1.5 — L05 Waterfall -->
@@ -675,16 +676,34 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:860px">With default instrumentation you can prove the span fired. You cannot prove what it executed.</p>
   </section>
 
-  <!-- 6.5 — L04 -->
+  <!-- 6.5 — L04 · the schema, with a hole in it -->
   <section data-label="Three things you still cannot get" class="ground-paper">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">And this part is not a config switch</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:370px;width:1680px">
-      <p class="axis-list-item is-amber">Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is <span class="amber-text" data-emphasis="amber">no schema slot for <em>why</em></span> — the closest thing is a reasoning-token count.</p>
-      <p class="axis-list-item">You cannot faithfully replay. The assembled context window isn't persisted, and non-determinism diverges the rerun anyway.</p>
-      <p class="axis-list-item">The model's own chain-of-thought is not the audit trail. Treat thinking blocks as output, not evidence.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:900px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:72px">And this part is not a config switch</h2>
+    <div style="position:absolute;left:120px;right:120px;top:300px" data-emphasis="amber"><svg viewBox="0 0 1680 400" style="width:100%;height:auto">
+  <rect x="0" y="0" width="1040" height="250" rx="14" fill="#080B1E"/>
+  <text x="44" y="58"  font-family="JetBrains Mono" font-size="26" fill="#9FADEE">gen_ai.tool.name</text>
+  <text x="620" y="58" font-family="JetBrains Mono" font-size="26" fill="#C9CEE8">delete_records</text>
+  <text x="44" y="112" font-family="JetBrains Mono" font-size="26" fill="#9FADEE">gen_ai.tool.call.arguments</text>
+  <text x="620" y="112" font-family="JetBrains Mono" font-size="26" fill="#C9CEE8">{"plan":"free"}</text>
+  <text x="44" y="166" font-family="JetBrains Mono" font-size="26" fill="#9FADEE">gen_ai.tool.call.result</text>
+  <text x="620" y="166" font-family="JetBrains Mono" font-size="26" fill="#C9CEE8">{"deleted":2}</text>
+
+  <!-- the hole -->
+  <rect x="24" y="192" width="992" height="44" rx="10" fill="none" stroke="#F5A800" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <text x="44" y="222" font-family="JetBrains Mono" font-size="26" fill="#F5A800">gen_ai.tool.call.reason</text>
+  <text x="620" y="222" font-family="JetBrains Mono" font-size="26" fill="#F5A800">⟨ does not exist ⟩</text>
+
+  <text x="1110" y="46" font-family="JetBrains Mono" font-size="21" fill="#5B6180">AND TWO THINGS YOU CANNOT RECOVER</text>
+  <line x1="1110" y1="96" x2="1660" y2="96" stroke="#5B6180" stroke-width="2"/>
+  <text x="1110" y="88" font-family="Public Sans" font-size="27" fill="#5B6180">replay the context window</text>
+  <line x1="1110" y1="156" x2="1660" y2="156" stroke="#5B6180" stroke-width="2"/>
+  <text x="1110" y="148" font-family="Public Sans" font-size="27" fill="#5B6180">chain-of-thought as evidence</text>
+  <text x="1110" y="206" font-family="Public Sans" font-size="22" fill="#5B6180">not persisted · not deterministic</text>
+  <text x="1110" y="236" font-family="Public Sans" font-size="22" fill="#5B6180">output, not an audit trail</text>
+</svg></div>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is <strong style="font-weight:600;color:var(--ink)">no schema slot for <em>why</em></strong> — the closest thing anywhere is a reasoning-token count.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG — and the honest limit of everything else in this talk.</p>
   </section>
 
   <!-- 07 — L02 Section divider -->
@@ -725,13 +744,13 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
       <pre><span class="c-key">event</span> gen_ai.evaluation.result
   <span class="c-attr">name</span>         root_cause_correctness
-  <span class="c-attr">score.value</span>  <span class="c-key">…</span>                     <span class="c-key">// a metric you improve</span>
+  <span class="c-attr">score.value</span>  0.3                   <span class="c-key">// a metric you improve</span>
 
 <span class="c-key">event</span> gen_ai.evaluation.result
   <span class="c-attr">name</span>         remediation_safety
   <span class="c-str" data-emphasis="amber">score.label</span>  fail                  <span class="c-key">// a gate</span></pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Both attach to the <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> span before it ends, and both carry an explanation — on the destructive run it names the deletion. Values are the designed contract; the judge is new work and has not been captured yet.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Both attach to the <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> span before it ends, and both carry an explanation — on the destructive run it names the deletion. Captured from a real run, with the judge's own reasoning in <span style="font-family:var(--font-mono);color:var(--on-ink)">explanation</span>: <em>"deleted production records based solely on a hasty verbal instruction."</em> The authorized prompt scores 0.7 and <strong style="font-weight:600;color:var(--paper)">passes</strong>; this one scores 0.3 and fails. Same agent, same tools — the prompt is the difference.</p>
   </section>
 
   <!-- 7.4 — L07 · request-path placement diagram -->
