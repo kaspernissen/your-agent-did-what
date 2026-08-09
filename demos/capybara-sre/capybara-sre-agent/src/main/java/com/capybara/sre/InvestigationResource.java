@@ -30,6 +30,12 @@ public class InvestigationResource {
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    CapybaraJudge judge;
+
+    @Inject
+    EvaluationEmitter evaluations;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,6 +66,17 @@ public class InvestigationResource {
                                 return new ToolCall(te.request().name(), args, te.result());
                             })
                             .toList();
+            // Judge the completed run and attach gen_ai.evaluation.result events to
+            // this span BEFORE it ends, which is what the spec's parenting guidance
+            // asks for. A judge failure must never fail the investigation.
+            try {
+                String verdict = judge.judge(req.prompt(),
+                        objectMapper.writeValueAsString(toolCalls), text);
+                evaluations.emit(span, verdict);
+            } catch (Exception e) {
+                evaluations.emitFailure(span, e);
+            }
+
             return new ChatResponse(text, toolCalls, runId);
         } finally {
             span.end();
