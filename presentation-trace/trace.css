@@ -96,7 +96,7 @@ deck-stage>section{
 
 .waterfall{display:flex;flex-direction:column;gap:26px}
 .wf-row{display:flex;align-items:center;gap:32px}
-.wf-label{font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim);
+.wf-label{font-family:var(--font-mono);font-size:26px;color:var(--muted-ink);
   width:300px;flex:none;text-align:right}
 .wf-track{flex:1;height:40px;position:relative}
 .wf-bar{position:absolute;top:0;bottom:0;border-radius:20px;
@@ -104,8 +104,12 @@ deck-stage>section{
 .wf-bar.is-amber{background:var(--amber)}
 .wf-bar.is-blue-lift{background:var(--blue-lift)}
 .wf-bar.is-blue-mute{background:var(--blue-mute)}
-.wf-dur{font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim);
+.wf-dur{font-family:var(--font-mono);font-size:26px;color:var(--muted-ink);
   width:150px;flex:none}
+/* Waterfall labels sit directly on the slide ground, so they are ground-qualified
+   like .small: --muted-ink on paper (5.67:1 / 5.15:1), --on-ink-dim on ink (6.01:1).
+   --on-ink-dim unqualified was 2.82:1 on paper — under the 3:1 large-text floor. */
+.ground-ink .wf-label,.ground-ink .wf-dur{color:var(--on-ink-dim)}
 .wf-row.is-amber .wf-label,.wf-row.is-amber .wf-dur{color:var(--amber-text)}
 .ground-ink .wf-row.is-amber .wf-label,.ground-ink .wf-row.is-amber .wf-dur{color:var(--amber-lift)}
 
