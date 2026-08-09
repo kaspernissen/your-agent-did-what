@@ -8,7 +8,7 @@ those names mean.
 **Origin.** Transcribed from the design system's own reference sheet, vendored in-repo at
 [`design-system/OTel Talk System.dc.html`](design-system/OTel%20Talk%20System.dc.html)
 (§06 "Slide layouts"), which is the authority if this file and it ever disagree. The
-sheet is a *reference document*, not part of the deck: it is not served by `start.sh`, and
+sheet is a *reference document*, not part of the deck: the deck never loads it, and
 unlike the deck it does link out to `fonts.googleapis.com` and expects a `./support.js`
 runtime shim that was not vendored, so it renders as static HTML with fallback faces. Its
 `assets/` is a symlink to `../assets/` — the five files it references are byte-identical to
@@ -64,8 +64,14 @@ speakers are literally nodes on the trace, and one of them is the amber one. The
 gradient's amber tail is part of the axis primitive, not a second emphasis. The second
 speaker's node is `--blue-lift`, 22px.
 
+**Employer marks.** A small mono mark sits beside each speaker's handle in the (120, 836)
+row — Dash0 for Kasper, Dynatrace for Adriana. Cap them at **28px tall**, half the OTel
+logo's 54px: this is affiliation, and it must never compete with the community mark above
+it. They carry no colour of their own and introduce no second amber. See
+*Employer marks* at the end of this file.
+
 **Primitives:** `.ground-ink` · `.kicker` · `.title` · `.axis` · `.axis-node` (`.is-amber`)
-· `.mascot` · `.diagonal-split` (for the right-hand field).
+· `.mascot` · `.diagonal-split` (for the right-hand field) · `.employer-mark`.
 
 ---
 
@@ -211,9 +217,60 @@ canonical link in mono 30px `--amber-lift`, then the two speaker handles in mono
 **Amber.** The **link line** in `--amber-lift` (on ink, so lift is correct), with the
 axis's amber run underneath it pointing at it.
 
+**Employer marks.** Same treatment as L01 — beside the two handles at (120, 800), 28px
+tall. They must not sit near the amber link line: the link is this slide's one emphasis
+and the marks are the quietest thing on it.
+
 **Primitives:** `.ground-ink` · `.title` · `.axis` · `.mascot` · `.chamfer` · mono link and
-handles.
+handles · `.employer-mark`.
 
 > Per spec §10.3, the close link must point at the **`semantic-conventions-genai`** page.
 > The reference sheet's `opentelemetry.io/docs/specs/semconv/gen-ai` is now only a redirect
 > notice — do not copy it verbatim.
+
+---
+
+## Employer marks
+
+The two speakers' employers appear **only on L01 Cover and L08 Close** — nowhere else.
+This is a deliberate limit, not an oversight. The design system's own header states
+*"Vendor-neutral · community marks only"*, and beats 2 and 3 argue for a vendor-neutral
+standard; a vendor mark sitting on those slides would undercut the argument being made on
+them. Bookends read as affiliation and disclosure, which is what they are.
+
+Rules:
+
+- **28px tall, maximum** — half the OTel mark's 54px on the cover.
+- **Monochrome only.** No brand colours. They must not read as a second amber emphasis,
+  and neither slide has an emphasis to spare: L01's is the first speaker's amber node,
+  L08's is the link line.
+- **Never on a content slide**, never on a data slide, never in a section divider.
+- Both bookends are **ink grounds**, so both marks must be legible on `#10142E`.
+
+### Assets
+
+| Mark | File | Status |
+|---|---|---|
+| Dash0 | `assets/dash0-logo.svg` | **Present.** Vendored from the dash0-website repo (`public/shared/logo_bw.svg`). It paints with `fill="currentColor"`, so it inherits whatever `color` the slide sets — one file works on ink and paper alike. |
+| Dynatrace | `assets/dynatrace-logo-white.svg` | **MISSING — must be supplied before L01/L08 are built.** |
+
+The Dynatrace mark needs the **white** variant for both bookends, because both are ink
+grounds and the black wordmark is invisible on `#10142E`. If a paper-ground use ever
+appears, add the black variant as `assets/dynatrace-logo-black.svg` rather than
+recolouring the white one.
+
+Do not substitute a redrawn or re-typeset wordmark for either company's official mark.
+
+### The `.employer-mark` class
+
+Not yet in `trace.css` — it is added by the task that builds L01. It should set the height
+cap and inherit colour, roughly:
+
+```css
+.employer-mark{height:28px;width:auto;color:var(--paper)}
+.ground-paper .employer-mark,.ground-paper-2 .employer-mark{color:var(--ink)}
+```
+
+`color` is what drives the Dash0 mark (via `currentColor`); the Dynatrace mark is a fixed
+white file and ignores it, which is why the black variant is a separate asset rather than
+a CSS switch.

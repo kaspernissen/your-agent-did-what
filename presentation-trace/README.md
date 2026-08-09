@@ -67,7 +67,9 @@ it.
 
 Read `check-deck.py` if you doubt any of them; each maps to one block in `check_deck()`.
 
-- **At least one `<section>`** inside `<deck-stage>`.
+- **At least one `<section>`.** It looks inside `<deck-stage>` when that element is
+  present, and falls back to scanning the whole document when it is not — so a deck
+  missing its `<deck-stage>` wrapper entirely still passes this check.
 - **Every slide has a `data-label`.**
 - **No bullets** — any `<ul>`, `<ol>` or `<li>` in slide markup is rejected outright.
   `.span-bar` and `.axis-list` are what replace them.
@@ -78,8 +80,9 @@ Read `check-deck.py` if you doubt any of them; each maps to one block in `check_
   cannot tell whether the marker is on the element you actually meant to emphasise, and it
   is happy with a slide that has none.
 - **At most one element whose `class` contains `mascot` per slide.**
-- **Speaker notes**: a parseable `<script type="application/json" id="speaker-notes">`
-  whose array length equals the slide count.
+- **Speaker notes**: a parseable `<script id="speaker-notes">` whose array length equals
+  the slide count. It matches on the `id` alone — the `type="application/json"` attribute
+  is convention here, not something the checker verifies.
 - **No pure white or black in `trace.css`** — no `#fff`, `#ffffff`, `#000`, `#000000`.
 
 #### Why inline `<svg>` is exempt from the hex rule
@@ -127,8 +130,9 @@ bars, nothing boxed in), and breaking one still ships.
 
 - `design-system/OTel Talk System.dc.html` — the design system's own reference sheet, the
   authority behind `LAYOUTS.md` and `trace.css`. Vendored so it is never a temp directory
-  again. It is a reference *document*, not part of the deck: it is not served by
-  `start.sh`, and it does link out to Google Fonts, unlike the deck.
+  again. It is a reference *document*, not part of the deck: the deck never loads it, and
+  it does link out to Google Fonts, unlike the deck. (`start.sh` serves the whole
+  directory, so it is reachable in a browser — it just is not part of the presentation.)
 - `outline.md` (repo root) — the nine-beat, 39-slide talk arc this deck will fill in.
 - `../presentation/` — the current, presentable 48-slide deck. Untouched by this rebuild;
   read it as source material, don't edit it.
