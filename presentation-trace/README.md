@@ -4,10 +4,12 @@ The **Trace** rebuild of the conference deck for *Your Agent Did What? — Foren
 Observability for Systems That Don't Leave Obvious Footprints*, by **Kasper Borg Nissen**
 (`@phennex`) and **Adriana Villela** (`@adrianamvillela`). 30 minutes, two speakers.
 
-> **Status: foundation only.** `index.html` currently holds **two** slides — a cover and a
-> "Kitchen sink" slide that demonstrates every layout primitive the design system provides.
-> The talk's actual 39 slides (mapped beat-by-beat in `../outline.md`) land in a later plan.
-> Don't expect a presentable talk here yet — expect the scaffold it gets built on.
+> **Status: built.** `index.html` holds all **40 slides** across the nine beats mapped in
+> `../outline.md`, each with a speaker note. Three slides deliberately show structure
+> without data — the beat-6 waterfall's durations, the "what you get for free" attribute
+> values, and the evaluation event's values — because Demo 1 and its judge do not exist
+> yet. Those carry `[NEEDS SOURCE]` markers in `../outline.md`; fill them from a real run
+> rather than plausible numbers.
 
 ```
 presentation-trace/

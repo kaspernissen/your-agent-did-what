@@ -217,19 +217,34 @@
     </div>
   </section>
 
-  <!-- 2.2 — L04 -->
+  <!-- 2.2 — L04 · fan-out diagram -->
   <section data-label="One model call, five names" class="ground-paper">
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">One model call. Five names for the model.</h2>
-    <div style="position:absolute;left:120px;top:400px;display:flex;flex-direction:column;gap:26px">
-      <span class="attr-chip is-amber" data-emphasis="amber">llm.model_name</span>
-      <span class="attr-chip">gen_ai.request.model</span>
-    </div>
-    <div class="axis-list" style="position:absolute;left:700px;top:380px;width:1100px">
-      <p class="axis-list-item">OTel GenAI semconv · OpenInference (Arize)</p>
-      <p class="axis-list-item">OpenLLMetry (Traceloop) · LangSmith</p>
-      <p class="axis-list-item">Langfuse</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:880px">The same HTTP call to the same model, described five different ways.</p>
+    <div style="position:absolute;left:120px;right:120px;top:360px"><svg viewBox="0 0 1680 330" style="width:100%;height:auto">
+      <rect x="600" y="40" width="480" height="56" rx="28" fill="#202C5F"/>
+      <text x="840" y="77" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#FAF7F2">one model call</text>
+      <path d="M840 96 C840 150 168.0 140 168.0 196" fill="none" stroke="#A9B6EE" stroke-width="2"/>
+      <circle cx="168.0" cy="200" r="9" fill="#425CC7"/>
+      <text x="168.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OTel GenAI</text>
+      <text x="168.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">gen_ai.request.model</text>
+      <path d="M840 96 C840 150 504.0 140 504.0 196" fill="none" stroke="#F5A800" stroke-width="3"/>
+      <circle cx="504.0" cy="200" r="13" fill="#F5A800"/>
+      <text x="504.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenInference</text>
+      <text x="504.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#8A5B00">llm.model_name</text>
+      <path d="M840 96 C840 150 840.0 140 840.0 196" fill="none" stroke="#A9B6EE" stroke-width="2"/>
+      <circle cx="840.0" cy="200" r="9" fill="#425CC7"/>
+      <text x="840.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenLLMetry</text>
+      <text x="840.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">llm.request.model</text>
+      <path d="M840 96 C840 150 1176.0 140 1176.0 196" fill="none" stroke="#A9B6EE" stroke-width="2"/>
+      <circle cx="1176.0" cy="200" r="9" fill="#425CC7"/>
+      <text x="1176.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">LangSmith</text>
+      <text x="1176.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">invocation_params</text>
+      <path d="M840 96 C840 150 1512.0 140 1512.0 196" fill="none" stroke="#A9B6EE" stroke-width="2"/>
+      <circle cx="1512.0" cy="200" r="9" fill="#425CC7"/>
+      <text x="1512.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text>
+      <text x="1512.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">model</text>
+    </svg></div>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call to the same model, described five different ways. <span class="amber-text" data-emphasis="amber">Only one of them is the convention the others are converging on.</span></p>
   </section>
 
   <!-- 2.3 — L07 Figures -->
@@ -340,6 +355,7 @@
 
   <!-- 4.2 — L04 -->
   <section data-label="The conventions moved house" class="ground-paper">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">semconv v1.42.0 · June 2026</p>
     <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px">In June, <span style="font-family:var(--font-mono);font-size:64px">gen_ai</span> moved out</h2>
     <div class="axis-list" style="position:absolute;left:120px;top:450px;width:1650px">
@@ -352,6 +368,7 @@
 
   <!-- 4.3 — L07 Figures -->
   <section data-label="Stable: zero" class="ground-paper">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">As of July 2026</p>
     <h2 class="title" style="position:absolute;left:120px;top:210px;width:1400px;font-size:72px">How much of this is Stable?</h2>
     <div style="position:absolute;left:120px;top:400px;display:flex;align-items:center;gap:80px">
@@ -367,6 +384,7 @@
 
   <!-- 4.4 — L06 Code -->
   <section data-label="What a conforming run gives you" class="ground-ink">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">This much arrives without you doing anything</h2>
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
       <pre><span class="c-attr">gen_ai.operation.name</span>          chat
@@ -381,6 +399,7 @@
 
   <!-- 4.5 — L06 Code -->
   <section data-label="The forensic content is a config switch" class="ground-ink">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">The forensic content is a config switch</h2>
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
       <pre>quarkus.langchain4j.tracing.<span class="c-str" data-emphasis="amber">include-tool-arguments</span>=true
@@ -398,15 +417,41 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:860px">Two documented flags. Six correct attributes. This is the part the docs promise.</p>
   </section>
 
-  <!-- 4.6 — L04 -->
+  <!-- 4.6 — L04 · two-path flow diagram -->
   <section data-label="Right code, wrong path" class="ground-paper">
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">Right code. Wrong path.</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1650px">
-      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">ToolSpanWrapper only wraps locally declared <span style="font-family:var(--font-mono)">@Tool</span> methods.</span></p>
-      <p class="axis-list-item">MCP tool calls route through <span style="font-family:var(--font-mono);font-size:30px">TracingMcpClientListener</span> — tool <em>name</em>, no content.</p>
-      <p class="axis-list-item">That listener list is hardcoded in <span style="font-family:var(--font-mono);font-size:30px">McpRecorder</span>. You cannot register your own alongside it.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:860px;width:1650px">The framework has the correct code. It just does not run where our tools live. Measured on 1.11.2 — this is the kind of gap you hit, not a verdict on the current release.</p>
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">Right code. <span class="amber-text" data-emphasis="amber">Wrong path.</span></h2>
+    <div style="position:absolute;left:120px;right:120px;top:300px"><svg viewBox="0 0 1680 400" style="width:100%;height:auto">
+      <text x="0" y="30" font-family="JetBrains Mono" font-size="22" fill="#5B6180">LOCAL @Tool METHOD</text>
+      <rect x="0" y="52" width="330" height="74" rx="8" fill="#F2ECE0" stroke="#A9B6EE" stroke-width="2"/>
+      <text x="165" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#202C5F">@Tool method</text>
+      <path d="M340 89 L520 89" stroke="#425CC7" stroke-width="3" marker-end="url(#ar)"/>
+      <rect x="530" y="52" width="420" height="74" rx="8" fill="#425CC7"/>
+      <text x="740" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#FAF7F2">ToolSpanWrapper</text>
+      <path d="M960 89 L1140 89" stroke="#425CC7" stroke-width="3" marker-end="url(#ar)"/>
+      <rect x="1150" y="52" width="530" height="74" rx="8" fill="#F2ECE0" stroke="#425CC7" stroke-width="2"/>
+      <text x="1415" y="88" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#202C5F">six attributes, arguments + result</text>
+      <text x="1415" y="113" text-anchor="middle" font-family="JetBrains Mono" font-size="19" fill="#425CC7">the flags work here</text>
+
+      <text x="0" y="240" font-family="JetBrains Mono" font-size="22" fill="#8A5B00">MCP TOOL CALL</text>
+      <rect x="0" y="262" width="330" height="74" rx="8" fill="#F2ECE0" stroke="#F5A800" stroke-width="2"/>
+      <text x="165" y="307" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#202C5F">MCP tool</text>
+      <path d="M340 299 L520 299" stroke="#F5A800" stroke-width="3" marker-end="url(#ara)"/>
+      <rect x="530" y="262" width="420" height="74" rx="8" fill="#F5A800"/>
+      <text x="740" y="307" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#10142E">TracingMcpClientListener</text>
+      <path d="M960 299 L1140 299" stroke="#F5A800" stroke-width="3" marker-end="url(#ara)"/>
+      <rect x="1150" y="262" width="530" height="74" rx="8" fill="#F2ECE0" stroke="#F5A800" stroke-width="2"/>
+      <text x="1415" y="298" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#202C5F">tool name only</text>
+      <text x="1415" y="323" text-anchor="middle" font-family="JetBrains Mono" font-size="19" fill="#8A5B00">no arguments, no result</text>
+
+      <path d="M740 130 L740 250" stroke="#5B6180" stroke-width="2" stroke-dasharray="6 8"/>
+      <text x="762" y="200" font-family="Public Sans" font-size="21" fill="#5B6180">never reached</text>
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#425CC7"/></marker>
+        <marker id="ara" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#F5A800"/></marker>
+      </defs>
+    </svg></div>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1560px">The listener list is hardcoded in <span style="font-family:var(--font-mono)">McpRecorder</span>, so you cannot register your own alongside it. Measured on 1.11.2 — the kind of gap you hit, not a verdict on the current release.</p>
   </section>
 
   <!-- 05 — L02 Section divider -->
@@ -487,6 +532,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 6.2 — L05 Waterfall -->
   <section data-label="The capybara incident, as a trace" class="ground-ink">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:110px;width:1600px;font-size:64px"><span style="font-family:var(--font-mono);font-size:56px">invoke_agent capybara-sre</span> — one run, four spans, one destructive</h2>
     <div class="waterfall" style="position:absolute;left:120px;right:120px;top:380px">
       <div class="wf-row">
@@ -516,6 +562,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 6.3 — L06 Code -->
   <section data-label="The two attributes that answer it" class="ground-ink">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:80px;font-family:var(--font-mono)">{"plan": "free"}</h2>
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:300px">
       <pre><span class="c-str" data-emphasis="amber">gen_ai.tool.call.arguments</span>  {"plan": "free"}
@@ -528,6 +575,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 6.4 — L03 Statement -->
   <section data-label="The footprint is empty" class="ground-paper">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The limit of default instrumentation</p>
     <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">The footprint exists. The footprint is <span class="amber-text" data-emphasis="amber">empty</span>.</h2>
     <div class="axis" style="left:120px;right:120px;top:800px"></div>
@@ -538,6 +586,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 6.5 — L04 -->
   <section data-label="Three things you still cannot get" class="ground-paper">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">And this part is not a config switch</h2>
     <div class="axis-list" style="position:absolute;left:120px;top:370px;width:1680px">
       <p class="axis-list-item is-amber">Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is <span class="amber-text" data-emphasis="amber">no schema slot for <em>why</em></span> — the closest thing is a reasoning-token count.</p>
@@ -562,6 +611,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 7.2 — L04 -->
   <section data-label="gen_ai.evaluation.result" class="ground-paper">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1600px;font-size:72px;font-family:var(--font-mono)"><span class="amber-text" data-emphasis="amber">gen_ai.evaluation.result</span></h2>
     <div style="position:absolute;left:120px;top:340px;display:flex;gap:14px;flex-wrap:wrap;max-width:1680px">
       <span class="attr-chip is-amber">gen_ai.evaluation.name</span>
@@ -579,6 +629,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 7.3 — L06 Code -->
   <section data-label="Two judgements on one span" class="ground-ink">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">A number you improve, and a gate you don't cross</h2>
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
       <pre><span class="c-key">event</span> gen_ai.evaluation.result
@@ -592,29 +643,48 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Both attach to the <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> span before it ends, and both carry an explanation — on the destructive run it names the deletion. Values are the designed contract; the judge is new work and has not been captured yet.</p>
   </section>
 
-  <!-- 7.4 — L07 Figures -->
+  <!-- 7.4 — L07 · request-path placement diagram -->
   <section data-label="Three placements, three jobs" class="ground-paper">
-    <h2 class="title" style="position:absolute;left:120px;top:130px;width:1400px;font-size:72px">Three placements, three different jobs</h2>
-    <div style="position:absolute;left:120px;right:120px;top:400px;display:grid;grid-template-columns:repeat(3,1fr);gap:70px">
-      <div class="stat">
-        <span style="font-family:var(--font-display);font-size:52px;font-weight:500">offline</span>
-        <span class="stat-label">pre-deploy, curated datasets. Gates the <strong style="font-weight:600">deploy</strong>, prevents regressions.</span>
-      </div>
-      <div class="stat">
-        <span style="font-family:var(--font-display);font-size:52px;font-weight:500">online</span>
-        <span class="stat-label">live traffic, sampled, non-blocking. A background quality metric and drift alarm.</span>
-      </div>
-      <div class="stat">
-        <span style="font-family:var(--font-display);font-size:52px;font-weight:500" class="amber-text">inline</span>
-        <span class="stat-label">synchronous in the request path. <span class="amber-text" data-emphasis="amber">Gates the response</span> — clear-cut, high-impact failures only.</span>
-      </div>
-    </div>
-    <div class="axis" style="left:120px;right:120px;top:800px"></div>
-    <p class="small" style="position:absolute;left:120px;top:852px;width:1680px">Inline adds latency to <em>every</em> request. Online adds production cost, so sample. Our two dimensions are one of each: safety is gate-shaped, correctness is metric-shaped.</p>
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">Three placements, three different jobs</h2>
+    <div style="position:absolute;left:120px;right:120px;top:290px" data-emphasis="amber"><svg viewBox="0 0 1680 430" style="width:100%;height:auto">
+      <text x="0" y="26" font-family="JetBrains Mono" font-size="21" fill="#5B6180">THE REQUEST PATH</text>
+      <line x1="0" y1="120" x2="1680" y2="120" stroke="#A9B6EE" stroke-width="3"/>
+      <circle cx="60" cy="120" r="11" fill="#425CC7"/>
+      <text x="60" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">request</text>
+      <circle cx="1620" cy="120" r="11" fill="#425CC7"/>
+      <text x="1620" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">response</text>
+      <rect x="700" y="98" width="280" height="44" rx="22" fill="#202C5F"/>
+      <text x="840" y="128" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#FAF7F2">agent run</text>
+
+      <!-- offline: before the path exists -->
+      <rect x="0" y="250" width="470" height="150" rx="8" fill="#F2ECE0"/>
+      <text x="30" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">offline</text>
+      <text x="30" y="330" font-family="Public Sans" font-size="22" fill="#5B6180">pre-deploy, curated datasets</text>
+      <text x="30" y="362" font-family="Public Sans" font-size="22" fill="#10142E">gates the deploy</text>
+      <path d="M235 250 L235 190 L120 190 L120 134" fill="none" stroke="#A9B6EE" stroke-width="2" stroke-dasharray="6 7"/>
+
+      <!-- online: alongside, non-blocking -->
+      <rect x="605" y="250" width="470" height="150" rx="8" fill="#F2ECE0"/>
+      <text x="635" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">online</text>
+      <text x="635" y="330" font-family="Public Sans" font-size="22" fill="#5B6180">live traffic, sampled</text>
+      <text x="635" y="362" font-family="Public Sans" font-size="22" fill="#10142E">non-blocking</text>
+      <path d="M840 250 L840 150" fill="none" stroke="#A9B6EE" stroke-width="2" stroke-dasharray="6 7"/>
+
+      <!-- inline: in the path itself -->
+      <rect x="1210" y="250" width="470" height="150" rx="8" fill="#F5A800"/>
+      <text x="1240" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">inline</text>
+      <text x="1240" y="330" font-family="Public Sans" font-size="22" fill="#10142E">synchronous, in the path</text>
+      <text x="1240" y="362" font-family="Public Sans" font-size="22" font-weight="600" fill="#10142E">gates the response</text>
+      <path d="M1445 250 L1445 190 L1560 190 L1560 134" fill="none" stroke="#F5A800" stroke-width="3"/>
+      <circle cx="1560" cy="120" r="14" fill="#F5A800"/>
+    </svg></div>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">Inline adds latency to <em>every</em> request. Online adds production cost, so sample. Our two dimensions are one of each: <span style="font-family:var(--font-mono)">remediation_safety</span> is gate-shaped, <span style="font-family:var(--font-mono)">root_cause_correctness</span> is metric-shaped.</p>
   </section>
 
   <!-- 7.5 — L04 -->
   <section data-label="Where we cheated" class="ground-paper">
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">This is <span class="amber-text" data-emphasis="amber">not a reference architecture</span></h2>
     <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1680px">
       <p class="axis-list-item">We judge in-process and synchronously — it makes span parenting trivially correct and removes a container. Real setups evaluate offline against stored traces.</p>
