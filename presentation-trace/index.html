@@ -16,7 +16,9 @@
   <section data-label="Cover" class="ground-ink">
     <div class="diagonal-split" style="background:var(--navy);clip-path:polygon(70% 0,100% 0,100% 100%,40% 100%)"></div>
     <img src="assets/otel-logo.svg" alt="OpenTelemetry" style="position:absolute;left:120px;top:92px;height:54px;width:auto">
-    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:527px;width:322px">
+    <!-- Sleeping ON the axis: dropped 48px so the rule passes behind its belly,
+         and lifted above the axis in paint order so the line does not cut through it. -->
+    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:575px;width:322px;z-index:1">
     <div style="position:absolute;left:120px;top:262px;width:1250px">
       <p class="kicker">Observability track</p>
       <h1 class="title" style="font-size:110px">Your Agent <span class="amber-text" data-emphasis="amber">Did What?</span></h1>

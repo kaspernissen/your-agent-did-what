@@ -57,7 +57,10 @@ into a diagonal down the right ~46%.
 `.kicker` → `.title` (the cover runs it at **110px**, above the ramp's 96) → a 44px
 `--blue-mute` subtitle line. A full-bleed `.axis` at **y = 786**. Speaker names and
 handles in a row at (120, 836) — Space Grotesk 38px over mono 24px `--on-ink-dim`.
-`.mascot` at the right, 322px wide, its feet on the axis.
+`.mascot` at the right, 322px wide, at **top 575** — it is drawn asleep on its side, so it
+sits *across* the axis rather than on top of it: the rule passes behind its lower belly,
+47px above the image's lowest point. It also needs `z-index:1`, otherwise the `.axis`
+(later in the DOM) paints straight through its body.
 
 **Amber.** The **first speaker's `.axis-node.is-amber`** (34px, at x = 214) — the two
 speakers are literally nodes on the trace, and one of them is the amber one. The `.axis`
