@@ -16,11 +16,14 @@
   <section data-label="Cover" class="ground-ink">
     <div class="diagonal-split" style="background:var(--navy);clip-path:polygon(70% 0,100% 0,100% 100%,40% 100%)"></div>
     <img src="assets/otel-logo.svg" alt="OpenTelemetry" style="position:absolute;left:120px;top:92px;height:54px;width:auto">
-    <!-- Sleeping ON the axis: dropped 48px so the rule passes behind its belly,
-         and lifted above the axis in paint order so the line does not cut through it. -->
-    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:575px;width:322px;z-index:1">
+    <!-- Sleeping ON the axis. top:634 set by eye on the projector — the rule passes
+         behind its lower belly. z-index:1 keeps the .axis (later in the DOM) from
+         painting straight through its body. -->
+    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:634px;width:322px;z-index:1">
     <div style="position:absolute;left:120px;top:262px;width:1250px">
-      <p class="kicker">Observability track</p>
+      <!-- CONFERENCE NAME — change this one line per event. This talk is given at
+           several conferences; nothing else on the deck is event-specific. -->
+      <p class="kicker" data-conference>SREday London</p>
       <h1 class="title" style="font-size:110px">Your Agent <span class="amber-text" data-emphasis="amber">Did What?</span></h1>
       <p style="font-size:44px;line-height:1.3;font-weight:300;color:var(--blue-mute);margin:34px 0 0;max-width:1180px">Forensic observability for systems that don't leave obvious footprints</p>
     </div>
@@ -31,12 +34,12 @@
       <div style="display:flex;flex-direction:column;gap:10px">
         <span style="font-family:var(--font-display);font-size:38px;font-weight:500">Adriana Villela</span>
         <span style="font-family:var(--font-mono);font-size:24px;color:var(--on-ink-dim)">@adrianamvillela</span>
-        <img src="assets/dynatrace-logo.svg" alt="Dynatrace" class="employer-mark">
+        <span class="employer-mark is-dynatrace" role="img" aria-label="Dynatrace"></span>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <span style="font-family:var(--font-display);font-size:38px;font-weight:500">Kasper Nissen</span>
         <span style="font-family:var(--font-mono);font-size:24px;color:var(--on-ink-dim)">@phennex</span>
-        <img src="assets/dash0-logo.svg" alt="Dash0" class="employer-mark">
+        <span class="employer-mark is-dash0" role="img" aria-label="Dash0"></span>
       </div>
     </div>
   </section>

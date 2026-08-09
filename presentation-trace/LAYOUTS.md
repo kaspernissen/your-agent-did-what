@@ -57,9 +57,9 @@ into a diagonal down the right ~46%.
 `.kicker` → `.title` (the cover runs it at **110px**, above the ramp's 96) → a 44px
 `--blue-mute` subtitle line. A full-bleed `.axis` at **y = 786**. Speaker names and
 handles in a row at (120, 836) — Space Grotesk 38px over mono 24px `--on-ink-dim`.
-`.mascot` at the right, 322px wide, at **top 575** — it is drawn asleep on its side, so it
-sits *across* the axis rather than on top of it: the rule passes behind its lower belly,
-47px above the image's lowest point. It also needs `z-index:1`, otherwise the `.axis`
+`.mascot` at the right, 322px wide, at **top 634** — it is drawn asleep on its side, so it
+sits *across* the axis rather than on top of it: the rule passes behind its lower belly.
+The value was set by eye on a projector, not derived. It also needs `z-index:1`, otherwise the `.axis`
 (later in the DOM) paints straight through its body.
 
 **Amber.** The **first speaker's `.axis-node.is-amber`** (34px, at x = 214) — the two
@@ -68,8 +68,8 @@ gradient's amber tail is part of the axis primitive, not a second emphasis. The 
 speaker's node is `--blue-lift`, 22px.
 
 **Employer marks.** A small mono mark sits beside each speaker's handle in the (120, 836)
-row — Dash0 for Kasper, Dynatrace for Adriana. Cap them at **28px tall**, half the OTel
-logo's 54px: this is affiliation, and it must never compete with the community mark above
+row — Dash0 for Kasper, Dynatrace for Adriana. Cap them at **28px tall** (Dynatrace 34px — an optical
+correction, its wordmark sits smaller in its own box), against the OTel logo's 54px: this is affiliation, and it must never compete with the community mark above
 it. They carry no colour of their own and introduce no second amber. See
 *Employer marks* at the end of this file.
 
@@ -262,12 +262,21 @@ they sit together without one reading as an icon beside a wordmark. The earlier 
 for Dash0 was the 24×24 square icon from the website repo; it was replaced for exactly
 that reason.
 
-**Both files were converted to `fill="currentColor"`** — 7 fills on Dash0 (from
-`var(--fill-0, white)`), 13 on Dynatrace (from `#FFFFFF`). Neither carries a hard-coded
-colour any more, so `.employer-mark`'s `color` drives both and a single file per company
-works on ink and paper alike. This is the standard single-colour reversed treatment, not
-a redraw — but it is a brand-guidelines question, and Dynatrace's in particular is the
-speaker's to confirm.
+**They are delivered as CSS masks, not `<img>`.** This matters and is easy to get wrong:
+an SVG loaded through `<img src>` renders in an isolated document that cannot see
+`trace.css`, so `currentColor` inside it resolves to **black** — on the ink cover that is
+an invisible mark. Masking paints the shape in `.employer-mark`'s `background-color`
+instead, which is what actually makes one file work on both grounds. Use
+`<span class="employer-mark is-dash0" role="img" aria-label="Dash0">`, never an `<img>`.
+
+Recolouring to a single flat colour is the standard reversed treatment, not a redraw — but
+it is a brand-guidelines question, and Dynatrace's in particular is the speaker's to
+confirm.
+
+**The Dash0 file's root was also repaired.** The brand-kit export carried
+`preserveAspectRatio="none" width="100%" height="100%"`, which is designed to distort the
+mark to fill its container — it rendered visibly stretched. It now carries
+`width="267" height="51"` and its `viewBox`, so the shape is fixed.
 
 Do not substitute a redrawn or re-typeset wordmark for either company's official mark, and
 do not reintroduce a hard-coded fill: that would break ground adaptation and silently
@@ -277,14 +286,32 @@ produce an invisible mark on one of the two grounds.
 
 In `trace.css`, ready to use:
 
-```css
-.employer-mark{height:28px;width:auto;display:block;color:var(--paper);opacity:.85}
-.ground-paper .employer-mark,
-.ground-paper-2 .employer-mark{color:var(--ink)}
-```
+The class sets `height:28px`, `align-self:flex-start`, `opacity:.85`, a
+`background-color`, and a `mask-image` per brand. Each brand modifier also sets
+`aspect-ratio` from that mark's viewBox (`267/51`, `800/142`), so neither can be
+distorted no matter what container it lands in.
 
-`color` drives both marks through `currentColor`. The `opacity:.85` is what makes them
-*subtle* — present enough to read as affiliation, quiet enough that they never pull the
-eye from the slide's one amber emphasis. Both bookends are ink grounds, so both resolve to
-`--paper`; the `.ground-paper` rules exist so the marks stay correct if a bookend is ever
-reground.
+Three details that each fix a real failure seen on this slide:
+
+- **`background-color`, not `color`** — see above; `currentColor` cannot cross the `<img>`
+  boundary. It resolves to `--paper` on ink grounds and `--ink` on paper grounds.
+- **`align-self:flex-start`** — the speaker block is a flex *column*, whose default
+  `align-items:stretch` widened the mark to the column's full width.
+- **`opacity:.85`** is what makes them *subtle*: present enough to read as affiliation,
+  quiet enough that they never pull the eye from the slide's one amber emphasis.
+
+Both bookends are ink grounds, so both resolve to `--paper`; the `.ground-paper` rules
+exist so the marks stay correct if a bookend is ever reground.
+
+---
+
+## The one event-specific field
+
+The cover's `.kicker` carries the **conference name** — `data-conference` marks it, and a
+comment in `index.html` says so. This talk is given at several events (first: SREday
+London), and that line is the only thing on the deck that changes between them. Everything
+else — title, subtitle, speakers, handles, employer marks — is constant.
+
+If a future event needs more than the name (a track, a date, a hashtag), extend that one
+line rather than scattering event details across slides; a stale conference name on a
+cover is the kind of error the room notices immediately.

@@ -118,6 +118,24 @@ deck-stage>section{
 /* ── Employer marks — L01 Cover and L08 Close only ─────────────────── */
 /* Both marks paint with fill="currentColor", so `color` drives them and one
    file works on either ground. Capped at 28px: half the OTel mark. */
-.employer-mark{height:28px;width:auto;display:block;color:var(--paper);opacity:.85}
+/* Delivered as CSS masks, not <img>: an SVG loaded through <img> renders in an
+   isolated document and cannot see this stylesheet, so `currentColor` there
+   resolves to black. Masking paints the mark in whatever `background-color` we
+   set, which is what makes one file work on both grounds. */
+.employer-mark{
+  height:28px;display:block;align-self:flex-start;opacity:.85;margin-top:18px;
+  background-color:var(--paper);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:contain;mask-size:contain;
+  -webkit-mask-position:left center;mask-position:left center;
+}
 .ground-paper .employer-mark,
-.ground-paper-2 .employer-mark{color:var(--ink)}
+.ground-paper-2 .employer-mark{background-color:var(--ink)}
+/* aspect-ratio comes from each mark's viewBox, so nothing is ever distorted. */
+.employer-mark.is-dash0{aspect-ratio:267/51;
+  -webkit-mask-image:url("assets/dash0-logo.svg");mask-image:url("assets/dash0-logo.svg")}
+/* Optical correction, not a spec change: the Dynatrace lockup is longer and thinner
+   (5.63:1 vs 5.24:1) and its wordmark sits smaller inside its own box, so at a matched
+   28px it reads smaller than the Dash0 mark. 34px makes them look equal. */
+.employer-mark.is-dynatrace{height:34px;aspect-ratio:800/142;
+  -webkit-mask-image:url("assets/dynatrace-logo.svg");mask-image:url("assets/dynatrace-logo.svg")}
