@@ -60,7 +60,10 @@ deck-stage>section{
   flex-direction:column;gap:44px}
 .axis-list::before{content:"";position:absolute;left:13px;top:14px;bottom:14px;
   width:2px;background:linear-gradient(180deg,transparent,var(--blue-mute) 12%,var(--blue-mute) 88%,transparent)}
-.axis-list-item{position:relative;font-size:34px;line-height:1.4;font-weight:300}
+/* margin:0 is load-bearing — these are <p>, and the default 1em top/bottom
+   margin (34px each at this size) stacks on top of the flex gap, pushing the
+   last item off the bottom of the slide and into the caption. */
+.axis-list-item{position:relative;font-size:34px;line-height:1.4;font-weight:300;margin:0}
 .axis-list-item::before{content:"";position:absolute;left:-46px;top:12px;
   width:18px;height:18px;border-radius:50%;background:var(--blue)}
 .axis-list-item.is-amber::before{background:var(--amber)}
