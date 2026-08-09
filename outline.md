@@ -1,12 +1,12 @@
 # Your Agent Did What? — 30-Minute Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** 30 minutes, nine beats, no reserved buffer (see *Open decisions*)
+**Length:** 30 minutes, nine beats, **43 slides**. The beat table currently sums to 33.5 — see *Open decisions*.
 **Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
 **Spine:** one capybara incident, told twice in two conventions, with every claim measured rather than asserted.
 
-> **Deck:** built at `presentation-trace/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears exactly three times: cover, one mid-deck breath (slide 17), close.
+> **Deck:** built at `presentation-trace/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears at full size three times (cover, one mid-deck breath, close) and as a persistent 96px footer presence on every non-divider slide — see `presentation-trace/LAYOUTS.md`.
 >
 > Source tags used per slide: **[PC]** = PlatformCon 2026 deck, **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
 >
@@ -20,7 +20,7 @@
 
 | # | Beat | Time | Leads | The one thing it must land |
 |---|---|---|---|---|
-| 0 | Cold open — "your agent did what?" | 1.5 | Kasper | The incident is over; the only question left is *why* |
+| 0 | Cold open + who we are | 3 | Kasper | The incident is over; the only question left is *why* |
 | 1 | Agents aren't request/response | 4 | Adriana | The call graph is generated at runtime and the decision is not in it |
 | 2 | The competing semantics that exist | 4 | Adriana | Five conventions, one span — and we measured how far apart they are |
 | 3 | Why OpenTelemetry should be the standard | 3 | Kasper | Everyone is already normalizing *toward* `gen_ai.*` |
@@ -28,8 +28,8 @@
 | 5 | Your tool doesn't speak OTel? Normalize at the edge | 4 | Adriana | Two places to fix it, and exactly how far each gets you |
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
-| 8 | Where this is going + close | 1 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **30** | | |
+| 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
+| | **Total** | **33.5 — over budget, see Open decisions** | | |
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
@@ -47,7 +47,21 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Mascot:** yes — sitting *on* the axis, not floating
 - **Source:** existing [PC] title slide, retitled per [SPEC] §10.3 (the mock's "Watching the model think" is filler and is replaced)
 
-### 0.2 — The morning after
+### 0.2 — Who?
+- **Layout:** L07 Figures (navy ground, deep cards)
+- **Headline:** Who?
+- **Content:** both speakers on `--ink` cards over a `--navy` ground — circular portrait, then name / title / employer mark beside it, credentials below. Adriana: Principal Developer Advocate at Dynatrace, CNCF + AAIF Ambassador, OpenTelemetry Community Manager, End User SIG maintainer, Geeking Out podcast. Kasper: Director of Developer Relations at Dash0, CNCF + AAIF Ambassador, Golden Kubestronaut, author *OpenTelemetry for Dummies*, former KubeCon+CloudNativeCon EU & NA Co-Chair, Cloud Native Nordics.
+- **Amber emphasis:** the **lead speaker's portrait ring** — mirrors the cover, where the first speaker is the amber node
+- **Source:** speakers. **Say the capybara line out loud** (it is in the speaker note, not on the slide): Adriana loves capybaras, which is why one is asleep on the last slide and why the demo agent is called Capybara.
+
+### 0.3 — Two ways you meet an agent
+- **Layout:** L04 Text + diagram (two chamfered cards)
+- **Headline:** You either build one, or you run someone else's
+- **Content:** *You build it* — LangChain, LangGraph, Spring AI, LangChain4j; you choose the framework, so you choose what it emits; your problem is which convention and what it leaves out. *You run someone else's* — kagent, HolmesGPT, k8sgpt, Copilots in your tooling; you did not choose the instrumentation. **Two problems, not one:** it *reads* your telemetry, so it is only as good as what it reads — and it *acts* on your systems, so you need its telemetry too.
+- **Amber emphasis:** **"you need its telemetry too"**
+- **Source:** new, 2026-08-09. This slide exists because the instrumentation ecosystem the talk surveys is developer-facing while the demo is an SRE incident; without it the room cannot tell which of them the talk is for. Pays off at 8.3.
+
+### 0.4 — The morning after
 - **Layout:** L03 Statement
 - **Headline:** "It deleted the rows. The incident is over. Now prove **why**."
 - **Amber emphasis:** the single word **"why"**
@@ -354,7 +368,21 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Amber emphasis:** **"in the collector pipeline"**
 - **Source:** [LS] §3. **Honesty caveat, say it on stage:** epics #8416 and #7827 are open proposals from early-to-mid 2026 with no milestones — concrete *direction*, not shipped features. Neither yet commits to consuming `gen_ai.*` by name.
 
-### 8.2 — Close
+### 8.2 — Who reads your telemetry next
+- **Layout:** L07 Figures
+- **Headline:** Your next reader isn't a human
+- **Content:** kagent (agents as first-class Kubernetes workloads, every step a span) · HolmesGPT (an agentic SRE that reads your OTel data and calls tools over MCP) · k8sgpt (scans the cluster, explains what it finds). Then the line that closes the loop with 0.3: **if your spans lack semantic context, the AI SRE hallucinates — confidently, at scale.**
+- **Amber emphasis:** **"the AI SRE hallucinates — confidently, at scale"**
+- **Source:** [PC] speaker notes (the cut ecosystem slide, restored); `resources.md` entries for kagent, HolmesGPT, agentgateway. Land it: *the model isn't the answer, the legible data is.*
+
+### 8.3 — Watch your own coding agent
+- **Layout:** L04 Text + diagram (two chamfered cards)
+- **Headline:** The agent worth watching first is the one on your laptop
+- **Content:** **AAIF shout-out** (aaif.io — both speakers are ambassadors), carried by a practical hook. goose v1.43.0 ships built-in OTel via the Rust SDK behind `GOOSE_TELEMETRY_ENABLED: true`; Claude Code ships it via the Node SDK behind `CLAUDE_CODE_ENABLE_TELEMETRY=1`. Both land in the collector you already run. Then the finding: run goose *with* Claude Code over ACP and both emit — **as sibling streams, not one nested trace**. Two agents in one workflow and nothing joins them.
+- **Amber emphasis:** **"sibling streams, not one nested trace"**
+- **Source:** Adriana's companion repo (`your-agent-did-what-adriana`), `docs/goose-claude-code-telemetry.md` and `docs/goose-otel-enablement.md`. Credit her on stage — she captured it.
+
+### 8.4 — Close
 - **Layout:** L08 Close
 - **Headline:** Build the footprints before you need them.
 - **Content:** four takeaways — instrument every layer, none gets a pass · adopt the GenAI conventions now *and* turn the opt-in forensic content on deliberately · normalize at the edge, and contribute to contrib issue #46069 and the SIG · treat the missing decision-provenance field as the gap worth raising. Links point at **`open-telemetry/semantic-conventions-genai`**, not the redirect. QR + `@phennex` / `@adrianamvillela`.

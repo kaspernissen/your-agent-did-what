@@ -84,7 +84,16 @@ gen_ai.tool.call.result: {"deleted": 2, "remaining": 1}   # OPT-IN / off by defa
 
 ## Demo 2 — `gen_ai_normalizer` at the collector (OpenInference → OTel)
 
-The agent is instrumented with **OpenInference** (`openinference.instrumentation.anthropic 1.0.6`), emitting `llm.*` / `openinference.*`. The custom collector (built with `ocb`, modules pinned to `v0.153.0`; builder `v0.153.0` — note `v0.137.0` failed on a missing internal package) runs `gen_ai_normalizer` with `remove_originals: true`.
+The agent is instrumented with **OpenInference**, emitting `llm.*` / `openinference.*`. The
+collector is the **released contrib image, `0.158.0`** — no `ocb` build is needed any more;
+`gen_ai_normalizer` ships in it. `remove_originals: true` on both sources.
+
+**Re-measured 2026-08-09** on the capybara scenario with `claude-sonnet-5`, by running the
+same agent twice — once with `processors: []` and once with `processors:
+[gen_ai_normalizer]` — and diffing the attribute sets from the debug exporter.
+
+> **27 span attributes became 16**: 18 removed, 7 written, 9 untouched (resource attributes
+> excluded).
 
 ### What the processor rewrote (observed before → after)
 
@@ -95,20 +104,38 @@ The agent is instrumented with **OpenInference** (`openinference.instrumentation
 | `llm.token_count.prompt` | `gen_ai.usage.input_tokens` |
 | `llm.token_count.completion` | `gen_ai.usage.output_tokens` |
 | `openinference.span.kind` (`LLM`) | `gen_ai.operation.name` (`chat`) |
+| `llm.input_messages.*` — **9 flattened keys** | `gen_ai.input.messages` — one structured attribute |
+| `llm.output_messages.*` — **4 flattened keys** | `gen_ai.output.messages` — one structured attribute |
 
 Source keys were **dropped** (`remove_originals: true`).
 
-### What it did NOT touch (important)
+The message collapse is the largest single change and was **missing from the previous
+version of this table**, which listed the message attributes as untouched. Thirteen
+flattened `llm.*_messages.N.message.*` keys become two structured attributes.
 
-These passed through **unchanged** — the normalizer maps scalar/identity attributes but **not message content or tool schemas**:
-```
-llm.system, llm.invocation_parameters,
-llm.input_messages.*, llm.output_messages.*, llm.tools.*,
-input.value, input.mime_type, output.value, output.mime_type
-```
-So after normalization the span is a **hybrid**: core attributes are OTel `gen_ai.*`, but the prompt/completion bodies remain in OpenInference shape. A backend that needs the messages still has to understand OpenInference for those. **Partial normalization** is the honest takeaway — the processor canonicalizes the dimensions you'd group/cost/route on, not the full payload.
+### What it did NOT touch (measured, 9 attributes)
 
-> Also note the span name stayed `messages.create` (OpenInference's name) — `gen_ai_normalizer` rewrites attributes, not span names.
+```
+llm.system                     ← survives even with remove_originals: true
+llm.invocation_parameters
+llm.tools.0/1/2.tool.json_schema
+input.value, input.mime_type
+output.value, output.mime_type
+```
+
+**`llm.system` is the one to point at.** `remove_originals: true` is set and it still comes
+through, because it simply is not in the processor's mapping table — the processor removes
+what it *maps*, not everything belonging to the source convention. That is a sharper
+illustration of partial normalization than the old "messages are untouched" claim, which
+was wrong.
+
+After normalization the span is a **hybrid**: OTel `gen_ai.*` for the core dimensions and
+the message bodies, OpenInference for tool schemas and the raw `input.value`/`output.value`
+payloads. It fixes what you group, cost and route on. It does not make an OpenInference
+trace OTel-native end to end.
+
+> The span name stayed `messages.create` — `gen_ai_normalizer` rewrites attributes, not
+> span names.
 
 ---
 
@@ -138,6 +165,56 @@ POST /api/chat                  (Server)
    └─ call                      (Internal, advisor)
       └─ chat claude-haiku-4-5  (Internal, the LLM span with the flavor-dependent attributes above)
 ```
+
+---
+
+## Demo 1b — Capybara SRE on quarkus-langchain4j 1.12.2 (measured 2026-08-09)
+
+The Quarkus agent over an MCP server, `claude-sonnet-4-6`, both forensic flags set to
+`true` in `application.properties`.
+
+### What arrived for free — `chat` span, verbatim
+
+```
+gen_ai.operation.name          chat
+gen_ai.provider.name           anthropic          ← current spec key, not gen_ai.system
+gen_ai.request.model           claude-sonnet-4-6
+gen_ai.usage.input_tokens      983
+gen_ai.usage.output_tokens     115
+gen_ai.response.finish_reasons TOOL_EXECUTION
+gen_ai.response.id             msg_011CdsAL8i3UT7…
+gen_ai.request.temperature     0
+gen_ai.request.top_p           0
+gen_ai.prompt / gen_ai.completion   ← the opt-in content DOES land here
+```
+
+### The gap — `execute_tool` span, verbatim
+
+```
+Name  : tools/call delete_records
+Kind  : Client
+gen_ai.operation.name : execute_tool
+gen_ai.tool.name      : delete_records
+mcp.method.name       : tools/call
+jsonrpc.request.id    : 5
+```
+
+**`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`: 0 occurrences across the
+whole run**, with both flags on. `gen_ai.tool.name` appears 3 times, so the name is
+recorded and the content never is.
+
+`ToolSpanWrapper` sets exactly the six correct attributes but only wraps locally declared
+`@Tool` methods; MCP calls route through `TracingMcpClientListener`, whose listener list is
+hardcoded in `McpRecorder`. **This was re-measured on 1.12.2**, the current release — the
+earlier finding was on 1.11.2 and it would have been dishonest to keep asserting it about a
+version we no longer run.
+
+### Setup-cost finding: `top_k`
+
+`claude-sonnet-5` rejects `top_k` (`invalid_request_error: \`top_k\` is deprecated for this
+model`), and quarkus-langchain4j 1.12.2 sends it on every request. `chat-model.top-k` is an
+`OptionalInt` with no `@WithDefault`, and blanking it in config does not stop it. The demo
+pins `claude-sonnet-4-6`. Model-parameter incompatibility, not a telemetry one.
 
 ---
 
