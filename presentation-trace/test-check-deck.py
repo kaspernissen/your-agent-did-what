@@ -91,5 +91,22 @@ class TestCheckDeck(unittest.TestCase):
         self.assertTrue(any("mascot" in v.lower() for v in check.check_deck(html, CLEAN_CSS)))
 
 
+    def test_issue_reference_in_prose_is_not_a_color(self):
+        """GitHub issue refs are not hex colors — the rule scans style attrs only."""
+        html = CLEAN_HTML.replace(
+            '<h1 class="title">A</h1>',
+            '<p>Donation issue #46069, open PR #185, epics #8416 and #7827.</p>')
+        self.assertEqual(check.check_deck(html, CLEAN_CSS), [])
+
+    def test_hex_in_a_style_attribute_is_still_flagged(self):
+        html = CLEAN_HTML.replace(
+            '<h1 class="title">A</h1>',
+            '<p>Issue #46069</p><h1 class="title" style="color:#FF0000">A</h1>')
+        v = check.check_deck(html, CLEAN_CSS)
+        hexes = [x for x in v if "hex" in x.lower()]
+        self.assertEqual(len(hexes), 1, v)
+        self.assertIn("#FF0000", hexes[0])
+
+
 if __name__ == "__main__":
     unittest.main()

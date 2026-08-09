@@ -197,18 +197,507 @@
     <p class="small" style="position:absolute;left:452px;top:820px">The <span style="font-family:var(--font-mono)">POST</span> comes free from your HTTP instrumentation. It carries no GenAI meaning whatsoever.</p>
   </section>
 
+
+  <!-- 02 — L02 Section divider -->
+  <section data-label="Divider — 02" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">02</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Five conventions, one span</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px"><span style="font-size:36px;font-weight:300;color:var(--paper)">Same model call, five vocabularies</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Legitimate differences, not preferences</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Same bytes, four renderings</span></div>
+    </div>
+  </section>
+
+  <!-- 2.2 — L04 -->
+  <section data-label="One model call, five names" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">One model call. Five names for the model.</h2>
+    <div style="position:absolute;left:120px;top:400px;display:flex;flex-direction:column;gap:26px">
+      <span class="attr-chip is-amber" data-emphasis="amber">llm.model_name</span>
+      <span class="attr-chip">gen_ai.request.model</span>
+    </div>
+    <div class="axis-list" style="position:absolute;left:700px;top:380px;width:1100px">
+      <p class="axis-list-item">OTel GenAI semconv · OpenInference (Arize)</p>
+      <p class="axis-list-item">OpenLLMetry (Traceloop) · LangSmith</p>
+      <p class="axis-list-item">Langfuse</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px">The same HTTP call to the same model, described five different ways.</p>
+  </section>
+
+  <!-- 2.3 — L07 Figures -->
+  <section data-label="Legitimate differences" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Credit: Salaboy</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px"><span class="amber-text" data-emphasis="amber">Legitimate differences</span>, not naming preferences</h2>
+    <div style="position:absolute;left:120px;right:120px;top:430px;display:grid;grid-template-columns:1fr 1fr;gap:32px 90px">
+      <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">OTel GenAI</span><span style="font-size:32px;font-weight:300">vendor-neutral</span></div>
+      <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">OpenInference</span><span style="font-size:32px;font-weight:300">eval workflows</span></div>
+      <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">OpenLLMetry</span><span style="font-size:32px;font-weight:300">dev ergonomics</span></div>
+      <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">LangSmith</span><span style="font-size:32px;font-weight:300">LangChain-native</span></div>
+      <div style="display:flex;gap:24px;align-items:baseline"><span style="font-family:var(--font-mono);font-size:26px;color:var(--blue);width:280px">Langfuse</span><span style="font-size:32px;font-weight:300">maps the others in</span></div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:820px"></div>
+    <p class="small" style="position:absolute;left:120px;top:872px">Each optimizes for something real. They are not going away soon.</p>
+  </section>
+
+  <!-- 2.4 — L06 Code -->
+  <section data-label="The provider key fragments three ways" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:68px">Both of these claim to be OTel GenAI</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:300px">
+      <pre><span class="c-key">OpenLIT (Python)</span>        → <span class="c-attr">gen_ai.provider.name</span>   <span class="c-key">// current spec</span>
+<span class="c-key">Arconia flavor=otel</span>     → <span class="c-attr">gen_ai.provider.name</span>
+<span class="c-key">Arconia flavor=openlit</span>  → <span class="c-str" data-emphasis="amber">gen_ai.system</span>          <span class="c-key">// deprecated</span></pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1600px">Same code. One property apart. "Conforms to OTel GenAI" is necessary but not sufficient — <strong style="font-weight:600;color:var(--paper)">which revision</strong> matters.</p>
+  </section>
+
+  <!-- 2.5 — L04 -->
+  <section data-label="Same bytes, four renderings" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">Same bytes, four renderings</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1650px">
+      <p class="axis-list-item">Jaeger is generic — it shows the plumbing, raw tags.</p>
+      <p class="axis-list-item is-amber">Phoenix is GenAI-native but <em>OpenInference</em>-native: it accepts <span style="font-family:var(--font-mono);font-size:30px">gen_ai.*</span> spans and renders them as <span class="amber-text" data-emphasis="amber">plain spans</span>.</p>
+      <p class="axis-list-item">OpenLIT and Langfuse light up — tokens, cost, model.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px">Jaeger's arrival was API-confirmed. Phoenix and Langfuse renderings come from documentation, not captured screenshots.</p>
+  </section>
+
+  <!-- 03 — L02 Section divider -->
+  <section data-label="Divider — 03" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">03</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Why OpenTelemetry should be the standard</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px"><span style="font-size:36px;font-weight:300;color:var(--paper)">They already agree more than they admit</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Agent telemetry is not a separate system</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Developers instrument, platform canonicalizes</span></div>
+    </div>
+  </section>
+
+  <!-- 3.2 — L07 Figures -->
+  <section data-label="Three stacks, one vocabulary" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Measured across all three demos</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1400px;font-size:72px">They already agree more than they admit</h2>
+    <div style="position:absolute;left:120px;right:120px;top:450px;display:grid;grid-template-columns:repeat(3,1fr);gap:80px">
+      <div class="stat"><span style="font-family:var(--font-display);font-size:44px;font-weight:500">OpenLIT</span><span class="stat-label">Python SDK</span></div>
+      <div class="stat"><span style="font-family:var(--font-display);font-size:44px;font-weight:500">Spring AI</span><span class="stat-label">Java, via Arconia</span></div>
+      <div class="stat"><span style="font-family:var(--font-display);font-size:44px;font-weight:500">gen_ai_normalizer</span><span class="stat-label">collector output</span></div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:700px"></div>
+    <div class="axis-node is-amber" style="left:960px;top:700px;width:34px;height:34px;margin:-17px 0 0 -17px"></div>
+    <p style="position:absolute;left:120px;right:120px;top:760px;text-align:center;font-family:var(--font-mono);font-size:44px;color:var(--amber-text)" data-emphasis="amber">gen_ai.*</p>
+    <p class="small" style="position:absolute;left:120px;top:880px">The shared vocabulary is real, not aspirational — for the core dimensions.</p>
+  </section>
+
+  <!-- 3.3 — L04 -->
+  <section data-label="One correlation domain" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Agent telemetry is not a separate telemetry system</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1650px">
+      <p class="axis-list-item">The capybara incident is a <em>database</em> incident with an LLM in front of it.</p>
+      <p class="axis-list-item">A GenAI-only convention gives you a GenAI-only island.</p>
+      <p class="axis-list-item is-amber">The span you need next is the SQL span, the pod restart, the deploy. <span class="amber-text" data-emphasis="amber">One correlation domain, not two.</span></p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px">Without conventions, correlation fails. Without correlation, AI guesses. That this is the decisive advantage is our position, not a measurement.</p>
+  </section>
+
+  <!-- 3.4 — L04 -->
+  <section data-label="Developers instrument, platform canonicalizes" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Developers instrument. The platform canonicalizes.</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:400px;width:820px">
+      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">The collector</span> is where a policy about telemetry can live.</p>
+      <p class="axis-list-item">One place. Any language. No application change.</p>
+      <p class="axis-list-item">That framing is what the next beat demonstrates.</p>
+    </div>
+    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;padding:48px">
+      <img src="assets/collector-pipeline.svg" alt="OpenTelemetry collector pipeline" style="max-width:100%;max-height:100%;object-fit:contain">
+    </div>
+    <p class="small" style="position:absolute;right:120px;top:872px;font-family:var(--font-mono);font-size:24px">opentelemetry.io · CC BY 4.0</p>
+  </section>
+  <!-- 4.1 — L02 Section divider · the single mid-deck mascot -->
+  <section data-label="Meet Capybara, SRE" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:120px;top:520px;width:420px;z-index:1;transform:rotate(13deg)">
+    <div style="position:absolute;left:120px;top:280px;width:900px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)">04</div>
+      <h2 style="font-family:var(--font-display);font-size:76px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:30px 0 0">Meet Capybara, SRE</h2>
+      <p style="font-size:36px;font-weight:300;color:var(--ink);margin:24px 0 0">Motto: "Deploy Calmly"</p>
+    </div>
+    <div style="position:absolute;left:120px;top:800px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <span class="tag is-navy">list_records</span>
+      <span class="tag is-navy">query</span>
+      <span class="tag is-solid" data-emphasis="amber">delete_records</span>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px;width:1300px">Quarkus + LangChain4j, an MCP server holding the capybara customer database. One scenario, reused verbatim by both demos.</p>
+  </section>
+
+  <!-- 4.2 — L04 -->
+  <section data-label="The conventions moved house" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">semconv v1.42.0 · June 2026</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px">In June, <span style="font-family:var(--font-mono);font-size:64px">gen_ai</span> moved out</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:450px;width:1650px">
+      <p class="axis-list-item">v1.42.0 deprecated all <span style="font-family:var(--font-mono);font-size:30px">gen_ai</span> content in <span style="font-family:var(--font-mono);font-size:30px">open-telemetry/semantic-conventions</span>.</p>
+      <p class="axis-list-item is-amber">It now lives in <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono)">open-telemetry/semantic-conventions-genai</span>.</p>
+      <p class="axis-list-item">The old docs URL is a redirect notice — including the one on our own design mock's close slide.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px">If your bookmarks still point at the old page, that is the move you missed.</p>
+  </section>
+
+  <!-- 4.3 — L07 Figures -->
+  <section data-label="Stable: zero" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">As of July 2026</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1400px;font-size:72px">How much of this is Stable?</h2>
+    <div style="position:absolute;left:120px;top:400px;display:flex;align-items:center;gap:80px">
+      <span class="stat-figure amber-text" data-emphasis="amber" style="font-size:300px">0</span>
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:1100px">
+        <span style="font-size:38px;font-weight:300;line-height:1.4">No GenAI span, event, metric or attribute is marked Stable.</span>
+        <span style="font-size:38px;font-weight:300;line-height:1.4;color:var(--muted-ink)">Every one of them is Development — subject to breaking change.</span>
+      </div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:820px"></div>
+    <p class="small" style="position:absolute;left:120px;top:872px">Say it plainly rather than implying more maturity than exists.</p>
+  </section>
+
+  <!-- 4.4 — L06 Code -->
+  <section data-label="What a conforming run gives you" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">This much arrives without you doing anything</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
+      <pre><span class="c-attr">gen_ai.operation.name</span>          chat
+<span class="c-str" data-emphasis="amber">gen_ai.provider.name</span>           anthropic
+<span class="c-attr">gen_ai.request.model</span>           <span class="c-key">…</span>
+<span class="c-attr">gen_ai.usage.input_tokens</span>      <span class="c-key">…</span>
+<span class="c-attr">gen_ai.usage.output_tokens</span>     <span class="c-key">…</span>
+<span class="c-attr">gen_ai.response.finish_reasons</span> <span class="c-key">…</span></pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1650px">Plus the structural spans: <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> · <span style="font-family:var(--font-mono);color:var(--on-ink)">chat</span> · <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span>. Values to be filled from a real capybara run before the talk — the captured block we have is from the older Python agent.</p>
+  </section>
+
+  <!-- 4.5 — L06 Code -->
+  <section data-label="The forensic content is a config switch" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">The forensic content is a config switch</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
+      <pre>quarkus.langchain4j.tracing.<span class="c-str" data-emphasis="amber">include-tool-arguments</span>=true
+quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true</pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:560px;width:1650px">Behind those two flags, <span style="font-family:var(--font-mono);color:var(--on-ink)">ToolSpanWrapper</span> sets <strong style="font-weight:600;color:var(--paper)">exactly</strong> the six right attributes:</p>
+    <div style="position:absolute;left:120px;top:640px;display:flex;gap:14px;flex-wrap:wrap;max-width:1680px">
+      <span class="attr-chip">gen_ai.operation.name</span>
+      <span class="attr-chip">gen_ai.tool.call.id</span>
+      <span class="attr-chip">gen_ai.tool.name</span>
+      <span class="attr-chip">gen_ai.tool.type</span>
+      <span class="attr-chip">gen_ai.tool.call.arguments</span>
+      <span class="attr-chip">gen_ai.tool.call.result</span>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:860px">Two documented flags. Six correct attributes. This is the part the docs promise.</p>
+  </section>
+
+  <!-- 4.6 — L04 -->
+  <section data-label="Right code, wrong path" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">Right code. Wrong path.</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1650px">
+      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">ToolSpanWrapper only wraps locally declared <span style="font-family:var(--font-mono)">@Tool</span> methods.</span></p>
+      <p class="axis-list-item">MCP tool calls route through <span style="font-family:var(--font-mono);font-size:30px">TracingMcpClientListener</span> — tool <em>name</em>, no content.</p>
+      <p class="axis-list-item">That listener list is hardcoded in <span style="font-family:var(--font-mono);font-size:30px">McpRecorder</span>. You cannot register your own alongside it.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:860px;width:1650px">The framework has the correct code. It just does not run where our tools live. Measured on 1.11.2 — this is the kind of gap you hit, not a verdict on the current release.</p>
+  </section>
+
+  <!-- 05 — L02 Section divider -->
+  <section data-label="Divider — 05" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">05</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Normalize at the edge</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px"><span style="font-size:36px;font-weight:300;color:var(--paper)">Downstream in the pipeline, or upstream in the SDK</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Before / after, from the debug exporter</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">What it does not touch</span></div>
+    </div>
+  </section>
+
+  <!-- 5.2 — L04 -->
+  <section data-label="Two places to fix it" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Downstream in the pipeline, or upstream in the SDK</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:400px;width:820px">
+      <p class="axis-list-item is-amber">The collector fixes it <span class="amber-text" data-emphasis="amber">downstream</span> — no app changes, any language, central policy.</p>
+      <p class="axis-list-item">Arconia fixes it upstream — clean at the source, but per-framework and Java-only today.</p>
+      <p class="axis-list-item">Both land on OTel semconv as the target.</p>
+    </div>
+    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;padding:48px">
+      <img src="assets/collector-pipeline.svg" alt="OpenTelemetry collector pipeline" style="max-width:100%;max-height:100%;object-fit:contain">
+    </div>
+    <p class="small" style="position:absolute;right:120px;top:872px;font-family:var(--font-mono);font-size:24px">opentelemetry.io · CC BY 4.0</p>
+  </section>
+
+  <!-- 5.3 — L06 Code -->
+  <section data-label="Before / after" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1600px;font-size:68px">Same capybara, wrong convention, fixed in flight</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
+      <pre><span class="c-key">llm.provider</span>              → <span class="c-attr">gen_ai.provider.name</span>
+<span class="c-key">llm.model_name</span>            → <span class="c-attr">gen_ai.request.model</span>
+<span class="c-key">llm.token_count.prompt</span>    → <span class="c-str" data-emphasis="amber">gen_ai.usage.input_tokens</span>
+<span class="c-key">llm.token_count.completion</span>→ <span class="c-attr">gen_ai.usage.output_tokens</span>
+<span class="c-key">openinference.span.kind</span>   → <span class="c-attr">gen_ai.operation.name</span></pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">With <span style="font-family:var(--font-mono);color:var(--on-ink)">remove_originals: true</span> the source keys are dropped. Merged, <strong style="font-weight:600;color:var(--paper)">alpha</strong>, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donation issue #46069.</p>
+  </section>
+
+  <!-- 5.4 — L06 Code -->
+  <section data-label="What it does not touch" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">Partial normalization is the honest word</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
+      <pre><span class="c-str" data-emphasis="amber">llm.input_messages.*</span>       <span class="c-key">untouched</span>
+<span class="c-attr">llm.output_messages.*</span>      <span class="c-key">untouched</span>
+<span class="c-attr">llm.tools.*</span>                <span class="c-key">untouched</span>
+<span class="c-attr">input.value / output.value</span> <span class="c-key">untouched</span>
+<span class="c-attr">span name: messages.create</span> <span class="c-key">unchanged</span></pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">The processor rewrites attributes, not names. The span is a hybrid — OTel core dimensions, OpenInference message bodies. It fixes your dashboards and your cost maths; it does not make the trace OTel-native end to end.</p>
+  </section>
+
+  <!-- 5.5 — L04 -->
+  <section data-label="Nobody is proposing a fifth convention" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on <span class="amber-text" data-emphasis="amber">the same target</span></h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:400px;width:1650px">
+      <p class="axis-list-item">The collector processor — merged, alpha, donation under discussion (#46069).</p>
+      <p class="axis-list-item">Arconia re-emits Spring AI spans under a chosen flavor, no code change.</p>
+      <p class="axis-list-item">Phoenix publishes a convention-translation guide. OpenLIT emits <span style="font-family:var(--font-mono);font-size:30px">gen_ai.*</span> natively.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px">Different layers, one destination. The fragmentation is being actively closed.</p>
+  </section>
+  <!-- 06 — L02 Section divider -->
+  <section data-label="Divider — 06" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">06</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">What did it actually do?</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px"><span style="font-size:36px;font-weight:300;color:var(--paper)">The capybara incident, as a trace</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">The two attributes that answer it</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Three things you still cannot get</span></div>
+    </div>
+  </section>
+
+  <!-- 6.2 — L05 Waterfall -->
+  <section data-label="The capybara incident, as a trace" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1600px;font-size:64px"><span style="font-family:var(--font-mono);font-size:56px">invoke_agent capybara-sre</span> — one run, four spans, one destructive</h2>
+    <div class="waterfall" style="position:absolute;left:120px;right:120px;top:380px">
+      <div class="wf-row">
+        <span class="wf-label">invoke_agent</span>
+        <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
+        <span class="wf-dur">—</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">chat</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:4%;--w:44%"></div></div>
+        <span class="wf-dur">—</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">execute_tool list_records</span>
+        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:50%;--w:14%"></div></div>
+        <span class="wf-dur">—</span>
+      </div>
+      <div class="wf-row is-amber">
+        <span class="wf-label">execute_tool delete_records</span>
+        <div class="wf-track"><div class="wf-bar is-amber" style="--x:66%;--w:30%" data-emphasis="amber"></div></div>
+        <span class="wf-dur">—</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:452px;right:120px;top:760px;height:1px;background:var(--navy)"></div>
+    <p class="small" style="position:absolute;left:452px;top:790px;width:1350px">The model decided. The tool ran. Durations come from a real Demo 1 run — these bars show structure, not measured timings.</p>
+  </section>
+
+  <!-- 6.3 — L06 Code -->
+  <section data-label="The two attributes that answer it" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:80px;font-family:var(--font-mono)">{"plan": "free"}</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:300px">
+      <pre><span class="c-str" data-emphasis="amber">gen_ai.tool.call.arguments</span>  {"plan": "free"}
+<span class="c-attr">gen_ai.tool.call.result</span>     {"deleted": 2, "remaining": 1}</pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:640px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong>. The spec explicitly says instrumentation SHOULD NOT capture this by default — privacy, and payload size.</p>
+    <div class="axis" style="left:120px;right:120px;top:830px"></div>
+    <p class="small" style="position:absolute;left:120px;top:880px">Two records deleted. One survived. That is the whole forensic answer, and it was one flag away from not existing.</p>
+  </section>
+
+  <!-- 6.4 — L03 Statement -->
+  <section data-label="The footprint is empty" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The limit of default instrumentation</p>
+    <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">The footprint exists. The footprint is <span class="amber-text" data-emphasis="amber">empty</span>.</h2>
+    <div class="axis" style="left:120px;right:120px;top:800px"></div>
+    <div class="axis-node" style="left:120px;top:800px"></div>
+    <div class="axis-node is-amber" style="left:1680px;top:800px"></div>
+    <p class="small" style="position:absolute;left:120px;top:860px">With default instrumentation you can prove the span fired. You cannot prove what it executed.</p>
+  </section>
+
+  <!-- 6.5 — L04 -->
+  <section data-label="Three things you still cannot get" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">And this part is not a config switch</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:370px;width:1680px">
+      <p class="axis-list-item is-amber">Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is <span class="amber-text" data-emphasis="amber">no schema slot for <em>why</em></span> — the closest thing is a reasoning-token count.</p>
+      <p class="axis-list-item">You cannot faithfully replay. The assembled context window isn't persisted, and non-determinism diverges the rerun anyway.</p>
+      <p class="axis-list-item">The model's own chain-of-thought is not the audit trail. Treat thinking blocks as output, not evidence.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG.</p>
+  </section>
+
+  <!-- 07 — L02 Section divider -->
+  <section data-label="Divider — 07" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">07</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Was it any good?</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px"><span style="font-size:36px;font-weight:300;color:var(--paper)">OTel's answer is an event, not a span</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Two judgements on one span</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">A gate, or a metric you improve?</span></div>
+    </div>
+  </section>
+
+  <!-- 7.2 — L04 -->
+  <section data-label="gen_ai.evaluation.result" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1600px;font-size:72px;font-family:var(--font-mono)"><span class="amber-text" data-emphasis="amber">gen_ai.evaluation.result</span></h2>
+    <div style="position:absolute;left:120px;top:340px;display:flex;gap:14px;flex-wrap:wrap;max-width:1680px">
+      <span class="attr-chip is-amber">gen_ai.evaluation.name</span>
+      <span class="attr-chip">gen_ai.evaluation.score.value</span>
+      <span class="attr-chip">gen_ai.evaluation.score.label</span>
+      <span class="attr-chip">gen_ai.evaluation.explanation</span>
+    </div>
+    <div class="axis-list" style="position:absolute;left:120px;top:490px;width:1680px">
+      <p class="axis-list-item">Four <span style="font-family:var(--font-mono);font-size:30px">gen_ai.evaluation.*</span> attributes, plus two general ones: <span style="font-family:var(--font-mono);font-size:30px">gen_ai.response.id</span> and <span style="font-family:var(--font-mono);font-size:30px">error.type</span>.</p>
+      <p class="axis-list-item">It SHOULD be parented to the GenAI operation span being evaluated.</p>
+      <p class="axis-list-item">There is still no standard span or operation name for "an evaluation happened" — open PR #185.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px;width:1680px">Callback to "Stable: zero" — <span style="font-family:var(--font-mono)">error.type</span> is the only Stable attribute near this event, and only because it is a general OTel attribute, not a GenAI one.</p>
+  </section>
+
+  <!-- 7.3 — L06 Code -->
+  <section data-label="Two judgements on one span" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">A number you improve, and a gate you don't cross</h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
+      <pre><span class="c-key">event</span> gen_ai.evaluation.result
+  <span class="c-attr">name</span>         root_cause_correctness
+  <span class="c-attr">score.value</span>  <span class="c-key">…</span>                     <span class="c-key">// a metric you improve</span>
+
+<span class="c-key">event</span> gen_ai.evaluation.result
+  <span class="c-attr">name</span>         remediation_safety
+  <span class="c-str" data-emphasis="amber">score.label</span>  fail                  <span class="c-key">// a gate</span></pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Both attach to the <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> span before it ends, and both carry an explanation — on the destructive run it names the deletion. Values are the designed contract; the judge is new work and has not been captured yet.</p>
+  </section>
+
+  <!-- 7.4 — L07 Figures -->
+  <section data-label="Three placements, three jobs" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:130px;width:1400px;font-size:72px">Three placements, three different jobs</h2>
+    <div style="position:absolute;left:120px;right:120px;top:400px;display:grid;grid-template-columns:repeat(3,1fr);gap:70px">
+      <div class="stat">
+        <span style="font-family:var(--font-display);font-size:52px;font-weight:500">offline</span>
+        <span class="stat-label">pre-deploy, curated datasets. Gates the <strong style="font-weight:600">deploy</strong>, prevents regressions.</span>
+      </div>
+      <div class="stat">
+        <span style="font-family:var(--font-display);font-size:52px;font-weight:500">online</span>
+        <span class="stat-label">live traffic, sampled, non-blocking. A background quality metric and drift alarm.</span>
+      </div>
+      <div class="stat">
+        <span style="font-family:var(--font-display);font-size:52px;font-weight:500" class="amber-text">inline</span>
+        <span class="stat-label">synchronous in the request path. <span class="amber-text" data-emphasis="amber">Gates the response</span> — clear-cut, high-impact failures only.</span>
+      </div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:800px"></div>
+    <p class="small" style="position:absolute;left:120px;top:852px;width:1680px">Inline adds latency to <em>every</em> request. Online adds production cost, so sample. Our two dimensions are one of each: safety is gate-shaped, correctness is metric-shaped.</p>
+  </section>
+
+  <!-- 7.5 — L04 -->
+  <section data-label="Where we cheated" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">This is <span class="amber-text" data-emphasis="amber">not a reference architecture</span></h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1680px">
+      <p class="axis-list-item">We judge in-process and synchronously — it makes span parenting trivially correct and removes a container. Real setups evaluate offline against stored traces.</p>
+      <p class="axis-list-item">The judge is biased: position, verbosity and self-enhancement bias are all documented.</p>
+      <p class="axis-list-item">The mitigation is a human-labelled gold set, and reporting Cohen's κ rather than raw agreement.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px">"Good enough" is a risk-calibrated product decision, not a number the tooling hands you.</p>
+  </section>
+
+  <!-- 8.1 — L04 -->
+  <section data-label="Jaeger v2 runs on the Collector" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">CNCF, "Jaeger at 10", 2025-09-01</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px">Jaeger v2 is built on the OpenTelemetry Collector</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:450px;width:1680px">
+      <p class="axis-list-item">It "natively understands OTLP end to end, eliminating the need for translation layers." v1 reached EOL 2025-12-31.</p>
+      <p class="axis-list-item is-amber">Roadmap epics put PII sanitization and payload retention tiering <span class="amber-text" data-emphasis="amber">in the collector pipeline</span>.</p>
+      <p class="axis-list-item">Plus an ingestion endpoint for third-party eval scores, and an LLM trace-investigation agent in the UI — agents investigating agents.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px">Epics #8416 and #7827 are open proposals with no milestones — concrete direction, not shipped features. Neither yet commits to <span style="font-family:var(--font-mono)">gen_ai.*</span> by name.</p>
+  </section>
+
+  <!-- 8.2 — L08 Close · third and final mascot -->
+  <section data-label="Close" class="ground-ink">
+    <div class="axis" style="top:706px"></div>
+    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="left:1180px;top:560px;width:270px;z-index:1;transform:rotate(13deg)">
+    <h2 class="title" style="position:absolute;left:120px;top:180px;width:1000px;font-size:104px">Build the footprints before you need them.</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:420px;width:900px">
+      <p class="axis-list-item" style="font-size:30px">Instrument every layer. None gets a pass.</p>
+      <p class="axis-list-item" style="font-size:30px">Adopt the conventions now — and turn the forensic content on deliberately.</p>
+      <p class="axis-list-item" style="font-size:30px">Normalize at the edge. Contribute to #46069 and the SIG.</p>
+      <p class="axis-list-item" style="font-size:30px">The missing decision-provenance field is the gap worth raising.</p>
+    </div>
+    <div style="position:absolute;left:120px;top:790px;display:flex;flex-direction:column;gap:22px">
+      <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono);font-size:30px">github.com/open-telemetry/semantic-conventions-genai</span>
+      <div style="display:flex;gap:64px">
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--on-ink-dim)">@adrianamvillela</span>
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--on-ink-dim)">@phennex</span>
+      </div>
+      <span style="font-size:30px;font-weight:300;color:var(--paper);max-width:1000px">Your agent will do something you didn't expect. The only question is whether your telemetry can tell you why.</span>
+    </div>
+    <div class="chamfer" style="position:absolute;right:120px;top:200px;width:300px;height:300px;background:var(--paper);display:flex;align-items:center;justify-content:center">
+      <span style="font-family:var(--font-mono);font-size:24px;color:var(--muted-ink);text-align:center;line-height:1.5">slides<br>QR</span>
+    </div>
+  </section>
+
 </deck-stage>
 
 <script type="application/json" id="speaker-notes">
 [
   "Cover. Hold here while the room settles. Names, handles, and we're both here because we ran into this the hard way.",
-  "Who. Keep it short — 20 seconds each, no CV. The line at the bottom is the real introduction: we both went looking for what our agents were doing and didn't like the answer.",
-  "The morning after. This is the whole talk in one sentence. The incident is OVER — nobody is asking you to stop the bleeding. They're asking you to explain the decision. Pause on 'why'.",
-  "Divider 01 — handoff to Adriana.",
-  "Four architectures deep. Each one solved a real problem. Each one made understanding harder. Land the point: we're still reaching for tools designed for the monolith.",
-  "Four properties. Go fast through the first three — the room already feels those. Slow right down on the fourth. There is no stack trace for why. That is the gap the rest of the talk lives in.",
-  "Signal equivalents. The framing that matters: the old practice wasn't WRONG, it was right for its time. We have to build the equivalents. 'reasoning chain' is the one we chase for the next twenty minutes.",
-  "One agent run. Four kinds of span. Point at POST — you get that one free from HTTP instrumentation and it tells you absolutely nothing about the model. This waterfall comes back in beat 6 carrying the actual incident."
+  "Who. Keep it short \u2014 20 seconds each, no CV. The line at the bottom is the real introduction.",
+  "The morning after. The whole talk in one sentence. The incident is OVER \u2014 they're asking you to explain the decision. Pause on 'why'.",
+  "Divider 01 \u2014 handoff to Adriana.",
+  "Four architectures deep. Each solved a real problem, each made understanding harder. We still reach for tools designed for the monolith.",
+  "Four properties. Fast through the first three. Slow right down on the fourth \u2014 there is no stack trace for why.",
+  "Signal equivalents. The old practice wasn't WRONG, it was right for its time. 'reasoning chain' is what we chase for the next twenty minutes.",
+  "One agent run, four kinds of span. Point at POST \u2014 free from HTTP instrumentation, tells you nothing about the model. This waterfall returns in beat 6.",
+  "Divider 02 \u2014 Adriana continues.",
+  "One model call, five vocabularies. Don't read all five \u2014 point at the two chips and let the room feel the problem.",
+  "Legitimate differences. Credit Salaboy explicitly. These are NOT arbitrary \u2014 each optimizes for something real, which is why they won't just go away.",
+  "Measured. Both claim OTel GenAI, one emits the deprecated key. 'Conforms to OTel GenAI' is necessary but not sufficient \u2014 WHICH REVISION matters.",
+  "Same bytes, four renderings. Honesty: Jaeger was API-confirmed; Phoenix and Langfuse come from docs, not screenshots. Say that out loud.",
+  "Divider 03 \u2014 handoff Adriana to Kasper.",
+  "Three independent stacks already emit gen_ai.*. The measured spine of the whole argument.",
+  "One correlation domain. The capybara incident is a DATABASE incident with an LLM in front. Flag clearly: that this is the decisive advantage is our position, not a measurement.",
+  "The collector as enforcement point. Do NOT assert 'you already run a collector' \u2014 ask for a show of hands.",
+  "Meet Capybara SRE. The one mid-deck mascot moment. Let the room enjoy it, then point at delete_records.",
+  "The conventions moved house in June. If your bookmarks point at the old URL, that's the move you missed. Describe the move; don't quote the redirect banner.",
+  "Stable: zero. Land this plainly. Every GenAI attribute is Development \u2014 subject to breaking change.",
+  "What arrives for free. Values still to be captured from a real capybara run \u2014 do not present the old Python numbers as this stack's.",
+  "Two documented flags, six correct attributes. This is what the docs promise you.",
+  "...and on the MCP path they never fire. Present as 'the kind of gap you hit', measured on 1.11.2. Do NOT give a verdict on 1.12.2.",
+  "Divider 05 \u2014 handoff Kasper to Adriana.",
+  "Two places to fix it. Downstream vs upstream, both targeting OTel semconv.",
+  "Before and after, from the debug exporter. Say the version out loud: merged, alpha, traces-only, plain image pull on contrib 0.158.0. Mention the donation issue \u2014 raising it here is the point of doing it on this stage.",
+  "What it does NOT touch. The honesty slide of the beat. Message bodies stay OpenInference; the span name never changes.",
+  "Nobody is proposing a fifth convention. Short survey, not a demo. Arconia is a mention here, not a measured result.",
+  "Divider 06 \u2014 handoff Adriana to Kasper.",
+  "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. Durations are structural \u2014 take real ones from a Demo 1 run before the talk.",
+  "The two attributes that answer the question. Both opt-in, both off by default, for privacy and payload size. One flag away from not existing.",
+  "The footprint exists, the footprint is empty. Second and last statement slide. Let it sit.",
+  "Three things you still cannot get. Attribute the replay claim to the preprint rather than asserting it. The honest limit of the whole story.",
+  "Divider 07 \u2014 handoff Kasper to Adriana.",
+  "gen_ai.evaluation.result. Four eval attributes plus two general ones. Note the callback: error.type is the only Stable thing here, and only because it isn't a GenAI attribute.",
+  "Two judgements on one span. A metric you improve and a gate you don't cross. Be clear these values are the designed contract \u2014 the judge is new work.",
+  "Three placements. Ours are one of each: safety is gate-shaped, correctness is metric-shaped. Same run, two philosophies.",
+  "Where we cheated. Say plainly that in-process synchronous judging is not how you'd do this in production. Name the three biases; do NOT quote percentage figures.",
+  "Jaeger v2 on the Collector. The substrate argument isn't ours \u2014 the oldest tracing project in the CNCF made it. Caveat the epics: open proposals, no milestones.",
+  "Close. Four takeaways, the links, the QR. Land the last line and stop talking."
 ]
 </script>
 <script src="deck-stage.js"></script>

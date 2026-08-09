@@ -10,7 +10,11 @@ import re
 import sys
 
 # Colors the slide markup may never hard-code — everything comes from trace.css.
+# Scanned ONLY inside style="..." attributes — that is where colour actually gets
+# applied. Slide prose legitimately contains GitHub issue refs (#46069, #185,
+# #8416), which are not colours and must not trip this rule.
 HEX_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+STYLE_ATTR_RE = re.compile(r'style\s*=\s*"([^"]*)"', re.I)
 PURE_RE = re.compile(r"#(?:fff(?:fff)?|000(?:000)?)\b", re.I)
 SECTION_RE = re.compile(r"<section\b([^>]*)>(.*?)</section>", re.S | re.I)
 SVG_TAG_RE = re.compile(r"<(/?)svg\b[^>]*?(/?)>", re.S | re.I)
@@ -84,9 +88,10 @@ def check_deck(html, css):
             violations.append(
                 f"{where}: uses bullets — span bars and .axis-list replace them")
 
-        for hexval in HEX_RE.findall(attrs + _strip_svg(inner)):
+        styles = " ".join(STYLE_ATTR_RE.findall(attrs + _strip_svg(inner)))
+        for hexval in HEX_RE.findall(styles):
             violations.append(
-                f"{where}: raw hex {hexval} in slide markup — use trace.css tokens "
+                f"{where}: raw hex {hexval} in a style attribute — use trace.css tokens "
                 f"(inline <svg> artwork is exempt)")
 
         n_emph = len(re.findall(r'data-emphasis="amber"', attrs + inner))
