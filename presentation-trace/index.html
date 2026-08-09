@@ -554,9 +554,11 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 <span class="c-key">llm.model_name</span>            → <span class="c-attr">gen_ai.request.model</span>
 <span class="c-key">llm.token_count.prompt</span>    → <span class="c-str" data-emphasis="amber">gen_ai.usage.input_tokens</span>
 <span class="c-key">llm.token_count.completion</span>→ <span class="c-attr">gen_ai.usage.output_tokens</span>
-<span class="c-key">openinference.span.kind</span>   → <span class="c-attr">gen_ai.operation.name</span></pre>
+<span class="c-key">openinference.span.kind</span>   → <span class="c-attr">gen_ai.operation.name</span>
+<span class="c-key">llm.input_messages.*</span>      → <span class="c-attr">gen_ai.input.messages</span>
+<span class="c-key">llm.output_messages.*</span>     → <span class="c-attr">gen_ai.output.messages</span></pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">With <span style="font-family:var(--font-mono);color:var(--on-ink)">remove_originals: true</span> the source keys are dropped. Merged, <strong style="font-weight:600;color:var(--paper)">alpha</strong>, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donated and accepted — issue #46069 closed 1 June 2026.</p>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Measured on a real run: <strong style="font-weight:600;color:var(--paper)">27 span attributes down to 16</strong> — 18 removed, 7 written. Thirteen flattened message keys collapse into two structured ones. Merged, <strong style="font-weight:600;color:var(--paper)">alpha</strong>, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donated and accepted — issue #46069 closed 1 June 2026.</p>
   </section>
 
   <!-- 5.4 — L06 Code -->
@@ -564,13 +566,13 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="deck-footer"></div>
     <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">Partial normalization is the honest word</h2>
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
-      <pre><span class="c-str" data-emphasis="amber">llm.input_messages.*</span>       <span class="c-key">untouched</span>
-<span class="c-attr">llm.output_messages.*</span>      <span class="c-key">untouched</span>
+      <pre><span class="c-str" data-emphasis="amber">llm.system</span>                 <span class="c-key">survives — not in the mapping</span>
 <span class="c-attr">llm.tools.*</span>                <span class="c-key">untouched</span>
+<span class="c-attr">llm.invocation_parameters</span>  <span class="c-key">untouched</span>
 <span class="c-attr">input.value / output.value</span> <span class="c-key">untouched</span>
 <span class="c-attr">span name: messages.create</span> <span class="c-key">unchanged</span></pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">The processor rewrites attributes, not names. The span is a hybrid — OTel core dimensions, OpenInference message bodies. It fixes your dashboards and your cost maths; it does not make the trace OTel-native end to end.</p>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Nine attributes came through untouched, and <span style="font-family:var(--font-mono);color:var(--on-ink)">llm.system</span> survived <em>even with</em> <span style="font-family:var(--font-mono);color:var(--on-ink)">remove_originals: true</span> — it simply is not in the mapping table. The processor rewrites attributes, not span names. You get a hybrid: OTel core dimensions, OpenInference everything-else.</p>
   </section>
 
   <!-- 5.5 — L04 -->

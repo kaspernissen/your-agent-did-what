@@ -15,13 +15,14 @@ processors:
 exporters:
   debug:
     verbosity: detailed
-  otlp/openlit:
-    endpoint: openlit:4318
-    tls: { insecure: true }
+  # OpenLIT ingests OTLP/HTTP on 4318. The otlp exporter speaks gRPC, so this
+  # must be otlphttp — pointing the gRPC exporter at 4318 fails to connect.
+  otlphttp/openlit:
+    endpoint: http://openlit:4318
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [gen_ai_normalizer]
-      exporters: [debug, otlp/openlit]
+      exporters: [debug, otlphttp/openlit]

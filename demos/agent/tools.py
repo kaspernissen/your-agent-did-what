@@ -1,12 +1,12 @@
-"""An in-memory fake 'database' the demo agent operates on.
+"""The capybara customer database — in-memory, mutated by a single agent run.
 
 State is module-level so a single agent run mutates it; reload the module to reset.
 """
 
 _SEED = [
-    {"id": 1, "user": "alice", "plan": "pro"},
-    {"id": 2, "user": "bob", "plan": "free"},
-    {"id": 3, "user": "carol", "plan": "free"},
+    {"id": 1, "user": "cappuccino", "plan": "pro"},
+    {"id": 2, "user": "biscuit", "plan": "free"},
+    {"id": 3, "user": "nibbles", "plan": "free"},
 ]
 
 _RECORDS = [dict(r) for r in _SEED]

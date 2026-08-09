@@ -22,7 +22,7 @@ client = anthropic.Anthropic()
 def run(prompt):
     messages = [{"role": "user", "content": prompt}]
     for _ in range(6):
-        resp = client.messages.create(model=os.environ.get("DEMO_MODEL", "claude-sonnet-4-20250514"),
+        resp = client.messages.create(model=os.environ.get("DEMO_MODEL", "claude-sonnet-5"),
                                       max_tokens=1024, tools=tools.TOOL_SCHEMAS, messages=messages)
         messages.append({"role": "assistant", "content": resp.content})
         tus = [b for b in resp.content if getattr(b, "type", None) == "tool_use"]
