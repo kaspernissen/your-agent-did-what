@@ -21,7 +21,7 @@
 | # | Beat | Time | Leads | The one thing it must land |
 |---|---|---|---|---|
 | 0 | Cold open + who we are | 3 | Kasper | The incident is over; the only question left is *why* |
-| 1 | Agents aren't request/response | 4.5 | Adriana | An agent is a loop; the call graph is generated at runtime and the decision is not in it |
+| 1 | Agents aren't request/response | 5.5 | Adriana | An agent is a loop; the call graph is generated at runtime and the decision is not in it |
 | 2 | The competing semantics that exist | 4 | Adriana | Five conventions, one span — and we measured how far apart they are |
 | 3 | Why OpenTelemetry should be the standard | 3 | Kasper | Everyone is already normalizing *toward* `gen_ai.*` |
 | 4 | The conventions: what you get, what setup costs | 5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
@@ -29,7 +29,21 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~34 — within the 30–35 min the speakers are working to** | | |
+| | **Total** | **~35 — the top of the 30–35 min range; see the note below** | | |
+
+**Timing pressure.** Beat 1 grew from 4 to 5.5 min when 1.3 (the vocabulary) and 1.4 (the
+telemetry path) were added, which puts the deck at the top of the range with no slack. Two
+trim candidates, in order:
+
+1. **2.4 — "Both of these claim to be OTel GenAI"** (the Arconia `flavor` slide). It is the only
+   slide where Arconia carries an argument rather than getting a mention, which is more prominence
+   than intended, and it argues drift *within* one convention while its beat is about fragmentation
+   *across* conventions. Its insight — a tool can claim conformance and still emit deprecated keys —
+   survives as a spoken line on 4.3 ("Stable: zero"). Saves ~45s.
+2. **1.2 — the architecture run-up** (monolith → microservices → event-driven → agent-based). Now
+   that 1.3 defines an agent directly, the run-up is the more cuttable of the two. Saves ~45s.
+
+Cutting either brings the total back to ~34.
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
@@ -70,7 +84,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 1 · Agents aren't request/response (4.5 min) — **Adriana**
+## 1 · Agents aren't request/response (5.5 min) — **Adriana**
 
 **Message:** An agent's execution is a call graph generated at runtime by a non-deterministic process, and the artifact you most need — the decision — is not a thing your request/response instincts know how to capture.
 
@@ -95,14 +109,23 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Land it:** "Only two of these are yours: the prompt, and the list of tools you handed it. How many model calls, which tools, in what order — decided at runtime. Which means you cannot read the path off the code. You have to observe it."
 - **Why it exists:** the deck showed *spans* (1.6) before it ever showed the room the loop those spans describe, and an SRE audience running someone else's agent may never have had *agent* / *MCP server* / *token* defined out loud.
 
-### 1.4 — Four properties we've never operated against
+### 1.4 — Nothing in this path is GenAI-specific
+- **Layout:** L07 Figures (three panels, arrows between)
+- **Headline:** Nothing in this path is **GenAI-specific**
+- **Content:** the path the spans actually take, on the demo stack — **in your process** (`quarkus-langchain4j` auto instrumentation · `InvestigationResource` hand-written spans · MCP client tool-call spans) → **OTLP**, gRPC 4317 / HTTP 4318 → **collector** (receivers `otlp` · processors `gen_ai_normalizer` · exporters `otlp` + `debug`) → **backends** (Jaeger, OpenLIT, your vendor).
+- **Amber emphasis:** **"GenAI-specific"** in the headline
+- **Source:** [D1] + [D2] — this is literally both demos' pipeline
+- **Land it:** "One wire format the whole way, and your agent does not know what is downstream — which is why the middle can rewrite its attributes without touching a line of application code. Same collector, same pipeline, same backends you already run for everything else."
+- **Why it exists:** 1.6's waterfall used to appear with no account of how those spans got out of the process; this also plants the collector-as-control-point that beat 3 argues and beat 5 demonstrates.
+
+### 1.5 — Four properties we've never operated against
 - **Layout:** L04 Text + diagram
 - **Headline:** Four properties we've never operated against
 - **Content:** non-determinism (re-running doesn't reproduce the bug) · the call graph is *generated at runtime*, not declared · token economics, not RPS · **opaque decisions — there is no stack trace for *why***
 - **Amber emphasis:** **"opaque decisions"**
 - **Source:** [PC] "AI workloads aren't like anything we've operated"; property 4 is the one [R-F] turns into a concrete schema gap in beat 6
 
-### 1.5 — Every familiar signal has a new equivalent
+### 1.6 — Every familiar signal has a new equivalent
 - **Layout:** L07 Figures
 - **Headline:** Every familiar signal has a new equivalent
 - **Content (paired figures):** stack trace → reasoning chain · status code → quality signal · RPS & latency → tokens, cost, blast radius · static call graph → dynamic tool invocation · replayable request → non-deterministic run
@@ -110,7 +133,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Source:** [PC] "Every familiar signal has a new equivalent" table — salvageable, re-laid-out as figure pairs rather than a table (the system has no table primitive)
 - **Land it:** "The old practice wasn't wrong. It was right for its time. We have to build the equivalents."
 
-### 1.6 — What one agent run actually looks like
+### 1.7 — What one agent run actually looks like
 - **Layout:** L05 Waterfall
 - **Headline:** One run, four kinds of span
 - **Content:** `invoke_agent` (Internal, root) → `chat <model>` (Client) → `execute_tool` (Internal) → `POST` (Client, pure plumbing to the model API)
