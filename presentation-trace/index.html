@@ -477,7 +477,6 @@
       <span class="tag" style="border:1.5px solid var(--ink);color:var(--ink)">query</span>
       <span class="tag is-navy" data-emphasis="amber">delete_records</span>
     </div>
-    <p style="position:absolute;left:120px;top:900px;width:700px;font-size:26px;line-height:1.4;color:var(--ink)">A toy standing in for kagent or HolmesGPT — small enough that we can open it up and look at every span it emits. Quarkus + LangChain4j over an MCP server. One scenario, both demos.</p>
   </section>
 
   <!-- 4.2 — L04 · the move, drawn -->
@@ -994,7 +993,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <h2 class="title" style="position:absolute;left:120px;top:200px;width:1560px;font-size:72px">The agent worth watching first is the one on your laptop</h2>
     <div style="position:absolute;left:120px;right:120px;top:430px;display:grid;grid-template-columns:1fr 1fr;gap:80px">
       <div class="chamfer" style="background:var(--paper-2);padding:40px 44px;display:flex;flex-direction:column;gap:16px">
-        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)">goose · v1.43.0</span>
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)">goose · v1.45.0</span>
         <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">GOOSE_TELEMETRY_ENABLED: true</span>
         <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Rust SDK — traces, metrics and logs. One flag; the destination is plain <span style="font-family:var(--font-mono);font-size:23px">OTEL_*</span> variables.</span>
       </div>
@@ -1069,7 +1068,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 "The capybara incident is a DATABASE incident with an LLM in front of it. The span you need next is the SQL span, the pod restart, the deploy \u2014 and a GenAI-only convention gives you a GenAI-only island. Careful: flag clearly that 'decisive advantage' is our position, not a measurement. The slide says so on purpose.",
 "The collector is where a policy about telemetry can live: one place, any language, no application change. Careful: do NOT assert 'you already run a collector' \u2014 ask for a show of hands instead. This framing is what beat 5 then demonstrates.",
 "The abstract's argument made explicit: choosing OpenInference or OpenLLMetry was the RIGHT call when the right-hand column was empty. Every attribute on the right is one we measured coming out of a running agent today, not a roadmap item. Land: it is a different call now. Careful: do not be smug \u2014 the alternatives were correct at the time. And do NOT answer the Stable question here; this slide only hints, because the reveal is slide 22.",
-"\u25b8 KASPER CONTINUES \u00b7 Beat 4 (5 min, slides 20\u201325). What the conventions actually give you, and what setup really costs. The one mid-deck mascot moment \u2014 let the room enjoy it, then point at delete_records. Careful: say out loud that Capybara is a toy standing in for kagent or HolmesGPT, so nobody thinks we are proposing it as an architecture.",
+"\u25b8 KASPER CONTINUES \u00b7 Beat 4 (5 min, slides 20\u201325). What the conventions actually give you, and what setup really costs. The one mid-deck mascot moment \u2014 let the room enjoy it, then point at delete_records. The slide is deliberately just the mascot and the three tools, so the framing is yours to say: Capybara is a toy standing in for kagent or HolmesGPT, small enough that we can open it up and look at every span it emits. Careful: say that out loud, so nobody thinks we are proposing it as an architecture. If asked about the stack: Quarkus + LangChain4j over an MCP server, and the same scenario drives both demos.",
 "The conventions moved repo in June. If your bookmarks still point at the old URL, that is the move you missed \u2014 it is a redirect notice now. Land: no releases, no tags, nothing to pin. You can follow a commit or a dated snapshot, but there is no schema URL to pin against. Careful: describe the move; do not read the redirect banner aloud.",
 "Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development \u2014 subject to breaking change. This is the reveal slide 19 deliberately set up, so do not undercut it by having already given the number away.",
 "What arrives with no work at all. Careful: these values are REAL \u2014 captured verbatim from a capybara run on quarkus-langchain4j 1.12.2, and nothing on the slide was hand-written. Say 'we wrote none of this'. If asked: this is the Quarkus MCP agent, which is why the model reads claude-sonnet-4-6 \u2014 the extension sends top_k, which claude-sonnet-5 now rejects, so the demo pins the older model. That is a model-parameter incompatibility, not a telemetry finding.",
