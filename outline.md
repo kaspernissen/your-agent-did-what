@@ -1,7 +1,7 @@
 # Your Agent Did What? — 30-Minute Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** 30 minutes, nine beats, **43 slides**. The beat table currently sums to 33.5 — see *Open decisions*.
+**Length:** 30 minutes, nine beats, **42 slides** (5.3 and 5.4 merged into one contrast slide 2026-08-09). The beat table currently sums to 33.5 — see *Open decisions*.
 **Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
 **Spine:** one capybara incident, told twice in two conventions, with every claim measured rather than asserted.
@@ -29,7 +29,7 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **33.5 — over budget, see Open decisions** | | |
+| | **Total** | **~32 — still over, see Open decisions** | | |
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 

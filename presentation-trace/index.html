@@ -572,46 +572,68 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   </section>
 
   <!-- 5.3 — L06 Code -->
+  <!-- 5.3 — L06 Code · rewritten and untouched, side by side -->
   <section data-label="Before / after" class="ground-ink">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1600px;font-size:68px">Same capybara, wrong convention, fixed in flight</h2>
-    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
-      <pre><span class="c-key">llm.provider</span>              → <span class="c-attr">gen_ai.provider.name</span>
+    <h2 class="title" style="position:absolute;left:120px;top:100px;width:1600px;font-size:64px">Same capybara, wrong convention, fixed in flight</h2>
+
+    <div style="position:absolute;left:120px;right:120px;top:250px;display:grid;grid-template-columns:1.25fr 1fr;gap:44px">
+      <div>
+        <p style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--on-ink-dim);margin:0 0 18px">Rewritten — 18 removed, 7 written</p>
+        <div class="code-block" style="padding:38px 42px">
+          <pre style="font-size:26px;line-height:1.8"><span class="c-key">llm.provider</span>              → <span class="c-attr">gen_ai.provider.name</span>
 <span class="c-key">llm.model_name</span>            → <span class="c-attr">gen_ai.request.model</span>
-<span class="c-key">llm.token_count.prompt</span>    → <span class="c-str" data-emphasis="amber">gen_ai.usage.input_tokens</span>
+<span class="c-key">llm.token_count.prompt</span>    → <span class="c-attr">gen_ai.usage.input_tokens</span>
 <span class="c-key">llm.token_count.completion</span>→ <span class="c-attr">gen_ai.usage.output_tokens</span>
 <span class="c-key">openinference.span.kind</span>   → <span class="c-attr">gen_ai.operation.name</span>
 <span class="c-key">llm.input_messages.*</span>      → <span class="c-attr">gen_ai.input.messages</span>
 <span class="c-key">llm.output_messages.*</span>     → <span class="c-attr">gen_ai.output.messages</span></pre>
+        </div>
+      </div>
+      <div>
+        <p style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber-lift);margin:0 0 18px">Untouched — 9 survive</p>
+        <div class="code-block is-muted" style="padding:38px 42px">
+          <pre style="font-size:26px;line-height:1.8"><span class="c-str" data-emphasis="amber">llm.system</span>
+<span class="c-key">llm.tools.*</span>
+<span class="c-key">llm.invocation_parameters</span>
+<span class="c-key">input.value / output.value</span>
+<span class="c-key">span name: messages.create</span></pre>
+        </div>
+      </div>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Measured on a real run: <strong style="font-weight:600;color:var(--paper)">27 span attributes down to 16</strong> — 18 removed, 7 written. Thirteen flattened message keys collapse into two structured ones. Merged, <strong style="font-weight:600;color:var(--paper)">alpha</strong>, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donated and accepted — issue #46069 closed 1 June 2026.</p>
+
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px"><strong style="font-weight:600;color:var(--paper)">27 span attributes down to 16.</strong> <span style="font-family:var(--font-mono)">llm.system</span> survives <em>even with</em> <span style="font-family:var(--font-mono)">remove_originals: true</span> — it is simply not in the mapping table. Partial normalization is the honest word.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Alpha, traces only, no auto-detection — and it ships in contrib 0.158.0, so this is a plain image pull. Donated and accepted; issue #46069 closed 1 June 2026.</p>
   </section>
 
-  <!-- 5.4 — L06 Code -->
-  <section data-label="What it does not touch" class="ground-ink">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1500px;font-size:68px">Partial normalization is the honest word</h2>
-    <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
-      <pre><span class="c-str" data-emphasis="amber">llm.system</span>                 <span class="c-key">survives — not in the mapping</span>
-<span class="c-attr">llm.tools.*</span>                <span class="c-key">untouched</span>
-<span class="c-attr">llm.invocation_parameters</span>  <span class="c-key">untouched</span>
-<span class="c-attr">input.value / output.value</span> <span class="c-key">untouched</span>
-<span class="c-attr">span name: messages.create</span> <span class="c-key">unchanged</span></pre>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Nine attributes came through untouched, and <span style="font-family:var(--font-mono);color:var(--on-ink)">llm.system</span> survived <em>even with</em> <span style="font-family:var(--font-mono);color:var(--on-ink)">remove_originals: true</span> — it simply is not in the mapping table. The processor rewrites attributes, not span names. You get a hybrid: OTel core dimensions, OpenInference everything-else.</p>
-  </section>
-
-  <!-- 5.5 — L04 -->
+  <!-- 5.5 — L04 · convergence, the mirror of slide 11's fan-out -->
   <section data-label="Nobody is proposing a fifth convention" class="ground-paper">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on <span class="amber-text" data-emphasis="amber">the same target</span></h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:400px;width:1650px">
-      <p class="axis-list-item">The collector processor — donated, accepted and merged (#46069, closed June 2026). Still alpha.</p>
-      <p class="axis-list-item"><strong style="font-weight:600">Arconia</strong> (Thomas Vitale) does the same job for the Spring community — one property, <span style="font-family:var(--font-mono);font-size:28px">…ai.flavor</span>, and Spring AI re-emits under a different convention with no code change.</p>
-      <p class="axis-list-item">Phoenix publishes a convention-translation guide. OpenLIT emits <span style="font-family:var(--font-mono);font-size:30px">gen_ai.*</span> natively.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:880px">Different layers, one destination. The fragmentation is being actively closed.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on the same target</h2>
+    <div style="position:absolute;left:120px;right:120px;top:340px" data-emphasis="amber"><svg viewBox="0 0 1680 360" style="width:100%;height:auto">
+      <text x="210.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">collector processor</text>
+      <text x="210.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">gen_ai_normalizer</text>
+      <circle cx="210.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M210.0 118 C210.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <text x="630.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">Arconia</text>
+      <text x="630.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">…ai.flavor</text>
+      <circle cx="630.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M630.0 118 C630.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <text x="1050.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">Phoenix</text>
+      <text x="1050.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">translation guide</text>
+      <circle cx="1050.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M1050.0 118 C1050.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <text x="1470.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">OpenLIT</text>
+      <text x="1470.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">native gen_ai.*</text>
+      <circle cx="1470.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M1470.0 118 C1470.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <circle cx="840" cy="268" r="20" fill="#F5A800"/>
+      <text x="840" y="330" text-anchor="middle" font-family="JetBrains Mono" font-size="40" fill="#8A5B00">gen_ai.*</text>
+    </svg></div>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px"><strong style="font-weight:600;color:var(--ink)">Arconia</strong> (Thomas Vitale) is how the Spring community gets there — one property and Spring AI re-emits under a different convention, no code change.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Different layers, one destination. Four slides ago one call fanned out to five names; the fragmentation is being closed from every one of those directions.</p>
   </section>
+
   <!-- 06 — L02 Section divider -->
   <section data-label="Divider — 06" class="ground-ink">
     <div class="diagonal-split" style="background:var(--amber)"></div>
@@ -804,17 +826,33 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:900px">"Good enough" is a risk-calibrated product decision, not a number the tooling hands you.</p>
   </section>
 
-  <!-- 8.1 — L04 -->
-  <section data-label="Jaeger v2 runs on the Collector" class="ground-paper">
+  <!-- 8.1 — L04 · Jaeger as a collector pipeline (ink, breaks beat 8's paper run) -->
+  <section data-label="Jaeger v2 runs on the Collector" class="ground-ink">
     <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">CNCF, "Jaeger at 10", 2025-09-01</p>
-    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px">Jaeger v2 is built on the OpenTelemetry Collector</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:450px;width:1680px">
-      <p class="axis-list-item">It "natively understands OTLP end to end, eliminating the need for translation layers." v1 reached EOL 2025-12-31.</p>
-      <p class="axis-list-item is-amber">Roadmap epics put PII sanitization and payload retention tiering <span class="amber-text" data-emphasis="amber">in the collector pipeline</span>.</p>
-      <p class="axis-list-item">Plus an ingestion endpoint for third-party eval scores, and an LLM trace-investigation agent in the UI — agents investigating agents.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:900px">Epics #8416 and #7827 are open proposals with no milestones — concrete direction, not shipped features. Neither yet commits to <span style="font-family:var(--font-mono)">gen_ai.*</span> by name.</p>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">CNCF · "Jaeger at 10" · 2025-09-01</p>
+    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1500px;font-size:68px">Jaeger v2 is built on the OpenTelemetry Collector</h2>
+    <div style="position:absolute;left:120px;right:120px;top:420px" data-emphasis="amber"><svg viewBox="0 0 1680 300" style="width:100%;height:auto">
+  <rect x="0" y="96" width="230" height="80" rx="10" fill="#202C5F"/>
+  <text x="115" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#C9CEE8">OTLP in</text>
+  <path d="M240 136 L300 136" stroke="#425CC7" stroke-width="3" marker-end="url(#j)"/>
+
+  <rect x="310" y="60" width="1010" height="152" rx="12" fill="none" stroke="#F5A800" stroke-width="2.5" stroke-dasharray="10 8"/>
+  <text x="330" y="42" font-family="JetBrains Mono" font-size="20" fill="#F5A800">PROPOSED — COLLECTOR PIPELINE STAGES</text>
+  <rect x="340" y="96" width="290" height="80" rx="10" fill="#202C5F"/>
+  <text x="485" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#C9CEE8">PII sanitize</text>
+  <rect x="655" y="96" width="290" height="80" rx="10" fill="#202C5F"/>
+  <text x="800" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#C9CEE8">retention tier</text>
+  <rect x="970" y="96" width="330" height="80" rx="10" fill="#202C5F"/>
+  <text x="1135" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#C9CEE8">eval-score ingest</text>
+
+  <path d="M1330 136 L1390 136" stroke="#425CC7" stroke-width="3" marker-end="url(#j)"/>
+  <rect x="1400" y="96" width="280" height="80" rx="10" fill="#425CC7"/>
+  <text x="1540" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#FAF7F2">Jaeger UI</text>
+  <text x="1540" y="212" text-anchor="middle" font-family="Public Sans" font-size="21" fill="#8A93BC">+ an LLM investigating agent</text>
+  <defs><marker id="j" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#425CC7"/></marker></defs>
+</svg></div>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">It "natively understands OTLP end to end, eliminating the need for translation layers." v1 reached EOL 2025-12-31. Its GenAI plans are <strong style="font-weight:600;color:var(--paper)">pipeline stages</strong>, not features.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Epics #8416 and #7827 are open proposals with no milestones — concrete direction, not shipped features. Neither yet commits to <span style="font-family:var(--font-mono)">gen_ai.*</span> by name.</p>
   </section>
 
   <!-- 8.2 — L07 · the agentic-SRE tools that consume this -->
@@ -932,8 +970,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "...and on the MCP path they never fire. Present as 'the kind of gap you hit', measured on 1.11.2. Do NOT give a verdict on 1.12.2.",
   "Divider 05 \u2014 handoff Kasper to Adriana.",
   "Two places to fix it. Downstream vs upstream, both targeting OTel semconv.",
-  "Before and after, from the debug exporter. Say the version out loud: merged, alpha, traces-only, plain image pull on contrib 0.158.0. Mention the donation issue \u2014 raising it here is the point of doing it on this stage.",
-  "What it does NOT touch. The honesty slide of the beat. Message bodies stay OpenInference; the span name never changes.",
+  "Before and after, side by side. Left is what the processor rewrote, right is what survived. Land llm.system: remove_originals is TRUE and it still comes through, because it is not in the mapping table. 27 attributes down to 16. Say the version out loud - alpha, traces only, and it ships in the released contrib image now, so this is a plain image pull. The donation is done: #46069 closed in June.",
   "Nobody is proposing a fifth convention. Short survey, not a demo. Give Arconia a proper shout-out here - Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream. We are NOT demoing it, and we should say so; the point is that the fragmentation is being closed from several directions at once.",
   "Divider 06 \u2014 handoff Adriana to Kasper.",
   "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. Durations are structural \u2014 take real ones from a Demo 1 run before the talk.",

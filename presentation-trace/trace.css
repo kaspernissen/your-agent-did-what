@@ -99,6 +99,9 @@ deck-stage>section{
 .code-block pre{margin:0;font-family:var(--font-mono);font-size:34px;
   line-height:1.9;color:var(--on-ink)}
 .code-block .c-str{color:var(--amber-lift)}
+/* A second, slightly lifted code surface, so two panels on one slide read as a
+   contrast rather than one wide block. */
+.code-block.is-muted{background:#0E1226}
 .code-block .c-key{color:#6E7BA8}
 .code-block .c-attr{color:#9FADEE}
 
