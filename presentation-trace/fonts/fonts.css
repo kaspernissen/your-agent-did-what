@@ -1,4 +1,6 @@
-/* Vendored — no network at runtime. Regenerate with ./fetch-fonts.sh */
+/* Vendored — no network at runtime. This file is the source of truth for the seven
+   filenames; ./fetch-fonts.sh reads it to learn what it must produce. Google serves
+   variable fonts, so weights of one family are byte-identical files — that is expected. */
 @font-face{font-family:"Space Grotesk";font-style:normal;font-weight:500;font-display:swap;src:url("./SpaceGrotesk-500.woff2") format("woff2")}
 @font-face{font-family:"Space Grotesk";font-style:normal;font-weight:600;font-display:swap;src:url("./SpaceGrotesk-600.woff2") format("woff2")}
 @font-face{font-family:"Public Sans";font-style:normal;font-weight:300;font-display:swap;src:url("./PublicSans-300.woff2") format("woff2")}
