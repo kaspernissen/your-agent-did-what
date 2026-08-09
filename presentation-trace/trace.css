@@ -131,14 +131,17 @@ deck-stage>section{
    resolves to black. Masking paints the mark in whatever `background-color` we
    set, which is what makes one file work on both grounds. */
 .employer-mark{
-  height:28px;display:block;align-self:flex-start;opacity:.85;margin-top:18px;
-  background-color:var(--paper);
+  height:28px;display:block;align-self:flex-start;margin-top:18px;
+  /* Subtlety comes from the muted tokens rather than from opacity — the mark
+     stays a solid, crisp shape instead of a faded one, and it sits at the same
+     weight as the secondary type beside it. */
+  background-color:var(--on-ink-dim);
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-size:contain;mask-size:contain;
   -webkit-mask-position:left center;mask-position:left center;
 }
 .ground-paper .employer-mark,
-.ground-paper-2 .employer-mark{background-color:var(--ink)}
+.ground-paper-2 .employer-mark{background-color:var(--muted-ink)}
 /* aspect-ratio comes from each mark's viewBox, so nothing is ever distorted. */
 .employer-mark.is-dash0{aspect-ratio:267/51;
   -webkit-mask-image:url("assets/dash0-logo.svg");mask-image:url("assets/dash0-logo.svg")}
