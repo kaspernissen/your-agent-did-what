@@ -340,3 +340,27 @@ The two portraits come from different sources and keep their own backgrounds —
 stage, one neutral. Left deliberately unretouched (speaker's call): they are honestly two
 photographs from two places, and a filter to fake a matched set is not worth altering
 someone's likeness for.
+
+---
+
+## The deck footer
+
+Every slide except the cover and the close carries `.deck-footer`: the signal axis running
+across the bottom at `bottom: 80px`, with the capybara asleep at its right end.
+
+This makes the system's own idea literal — *a trace is a line with events on it* — at the
+scale of the whole talk: one continuous axis, and each slide an event on it. The bookends
+are excluded because both already run the axis as a design feature at their own height and
+carry the full mascot; a second line and a second capybara there would just be noise.
+
+**It supersedes the demo-thread marker.** An earlier pass put a 90px capybara on the 13
+demo-narrative slides in beats 4, 6 and 7 to distinguish them from the ecosystem survey.
+The footer puts the capybara on 38 slides, so that distinction no longer reads and the
+marker was removed. If the thread distinction matters again, mark it with something other
+than the mascot — a kicker, or the divider's "up next" list.
+
+The mascot rule in `README.md` is now, in practice: **cover, close, one mid-deck breath at
+full size — plus a persistent 96px footer presence.** The footer is chrome, not
+punctuation, which is why it can appear everywhere without becoming the wallpaper the
+original rule was guarding against. It stays above the 90px floor, never carries amber, and
+sits *on* the axis exactly as the rule requires.
