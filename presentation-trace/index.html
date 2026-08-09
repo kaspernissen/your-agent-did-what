@@ -793,7 +793,28 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">The model isn't the answer. The legible data is. That is the whole argument for conventions, made by the tools rather than by us.</p>
   </section>
 
-  <!-- 8.3 — L08 Close · third and final mascot -->
+  <!-- 8.3 — L04 · AAIF + coding agents -->
+  <section data-label="Watch your own coding agent" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Agentic AI Foundation · aaif.io</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1560px;font-size:72px">The agent worth watching first is the one on your laptop</h2>
+    <div style="position:absolute;left:120px;right:120px;top:430px;display:grid;grid-template-columns:1fr 1fr;gap:80px">
+      <div class="chamfer" style="background:var(--paper-2);padding:40px 44px;display:flex;flex-direction:column;gap:16px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)">goose · v1.43.0</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">GOOSE_TELEMETRY_ENABLED: true</span>
+        <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Rust SDK — traces, metrics and logs. One flag; the destination is plain <span style="font-family:var(--font-mono);font-size:23px">OTEL_*</span> variables.</span>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:40px 44px;display:flex;flex-direction:column;gap:16px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)">Claude Code</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">CLAUDE_CODE_ENABLE_TELEMETRY=1</span>
+        <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Node SDK. The same collector and pipeline you already run.</span>
+      </div>
+    </div>
+    <p style="position:absolute;left:120px;top:770px;width:1680px;font-size:32px;line-height:1.4;font-weight:300">Run goose <em>with</em> Claude Code and both emit — but as <span class="amber-text" data-emphasis="amber">sibling streams, not one nested trace</span>. Two agents in one workflow, and nothing joins them.</p>
+    <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">Captured by Adriana. We are both AAIF ambassadors — this is the foundation's problem space, and it is the same forensic gap, one layer closer to home.</p>
+  </section>
+
+  <!-- 8.4 — L08 Close · third and final mascot -->
   <section data-label="Close" class="ground-ink">
     <div class="axis" style="top:706px"></div>
     <!-- Mascot asleep on the axis, same treatment as the cover: the rule passes
@@ -872,6 +893,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Where we cheated. Say plainly that in-process synchronous judging is not how you'd do this in production. Name the three biases; do NOT quote percentage figures.",
   "Jaeger v2 on the Collector. The substrate argument isn't ours \u2014 the oldest tracing project in the CNCF made it. Caveat the epics: open proposals, no milestones.",
   "Who reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads. The model isn't the answer, the legible data is. This is the whole talk argued by the tools rather than by us.",
+  "Watch your own coding agent. AAIF shout-out - we're both ambassadors, aaif.io. Practical hook: goose and Claude Code both ship OTel built in, one flag each, into the collector you already run. Then the finding, which is the whole talk in miniature: run goose WITH Claude Code over ACP and you get two sibling streams, not one nested trace. Two agents in one workflow and nothing joins them. Credit Adriana - she captured this.",
   "Close. Four takeaways, the links, the QR. Land the last line and stop talking."
 ]
 </script>
