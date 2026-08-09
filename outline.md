@@ -29,13 +29,13 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~32 — within the 30–35 min the speakers are working to** | | |
+| | **Total** | **~33.5 — within the 30–35 min the speakers are working to** | | |
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
 ---
 
-## 0 · Cold open — "your agent did what?" (1.5 min) — **Kasper**
+## 0 · Cold open — "your agent did what?" (3 min) — **Kasper**
 
 **Message:** An agent deleted rows in production, the incident is already over, and the only question anyone actually cares about the next morning is *why did it do that?*
 
@@ -359,7 +359,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 8 · Where this is going + close (1 min) — **both**
+## 8 · Where this is going + close (3 min) — **both**
 
 **Message:** The substrate argument is not ours — the oldest tracing project in the CNCF rebuilt itself on the Collector, and is designing its GenAI features as collector-pipeline hooks.
 
