@@ -29,7 +29,7 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 4 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~35 — Arconia flavor slide cut, judge-concept slide added; expanding first, cut list parked below** | | |
+| | **Total** | **~35.5 — Arconia flavor slide cut, judge-concept slide added; expanding first, cut list parked below** | | |
 
 **Cut list — parked, not actioned.** The deck is deliberately in an *expand first, cut later*
 phase: material is being added while the argument is still settling, and trimming waits until
