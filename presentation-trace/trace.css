@@ -207,9 +207,12 @@ deck-stage>section{
    events on it, and each slide is an event on the talk's own trace.
    Not on the cover or the close — both already run the axis as a design
    feature at their own height and carry the full mascot. */
-.deck-footer{position:absolute;left:0;right:0;bottom:80px;height:2px;
-  background:linear-gradient(90deg,transparent,var(--blue) 8%,var(--blue) 62%,var(--amber) 88%,transparent);
-  opacity:.55;pointer-events:none}
+.deck-footer{position:absolute;left:0;right:0;bottom:80px;height:2px;pointer-events:none}
+/* The line's transparency lives on ::before, NOT on .deck-footer. Opacity on the
+   parent also fades ::after, which is why the capybara looked ghosted no matter
+   what opacity it was given. */
+.deck-footer::before{content:"";position:absolute;inset:0;opacity:.55;
+  background:linear-gradient(90deg,transparent,var(--blue) 8%,var(--blue) 62%,var(--amber) 88%,transparent)}
 .deck-footer::after{content:"";position:absolute;right:110px;bottom:-38px;
   width:96px;height:77px;background:url("assets/capybara-mascot.png") no-repeat center/contain;
   transform:rotate(13deg)}
