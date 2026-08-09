@@ -9,47 +9,175 @@
 </head>
 <body>
 <deck-stage width="1920" height="1080">
+
+  <!-- ═══ BEAT 0 · Cold open ═══════════════════════════════════════ -->
+
+  <!-- 0.1 — L01 Cover -->
   <section data-label="Cover" class="ground-ink">
-    <h1 class="title">Your Agent Did What?</h1>
-  </section>
-  <section data-label="Kitchen sink" class="ground-paper">
-    <p class="kicker">every primitive, once</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px">
-      <div class="axis-list">
-        <p class="axis-list-item is-amber">Span bars replace bullets.</p>
-        <p class="axis-list-item">Nodes mark events on the axis.</p>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <div class="span-bar" style="--w:100%"></div>
-        <div class="span-bar is-blue-lift" style="--w:72%"></div>
-        <div class="span-bar is-amber" style="--w:41%" data-emphasis="amber"></div>
-      </div>
-      <div style="display:flex;gap:16px;align-items:center">
-        <span class="tag is-solid">Experimental</span>
-        <span class="tag is-outline">Stable</span>
-        <span class="tag is-navy">Traces</span>
-      </div>
-      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-        <span class="attr-chip is-amber">gen_ai.evaluation.name</span>
-        <span class="attr-chip">gen_ai.request.model</span>
-      </div>
-      <div class="waterfall">
-        <div class="wf-row"><span class="wf-label">agent.run</span>
-          <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
-          <span class="wf-dur">4.2 s</span></div>
-        <div class="wf-row is-amber"><span class="wf-label">chat</span>
-          <div class="wf-track"><div class="wf-bar is-amber" style="--x:19%;--w:71%"></div></div>
-          <span class="wf-dur">3.0 s</span></div>
-      </div>
-      <div class="code-block"><pre><span class="c-key">span</span>.set_attribute(<span class="c-attr">"gen_ai.tool.name"</span>, <span class="c-str">"delete_records"</span>)</pre></div>
+    <div class="diagonal-split" style="background:var(--navy);clip-path:polygon(70% 0,100% 0,100% 100%,40% 100%)"></div>
+    <img src="assets/otel-logo.svg" alt="OpenTelemetry" style="position:absolute;left:120px;top:92px;height:54px;width:auto">
+    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:527px;width:322px">
+    <div style="position:absolute;left:120px;top:262px;width:1250px">
+      <p class="kicker">Observability track</p>
+      <h1 class="title" style="font-size:110px">Your Agent <span class="amber-text" data-emphasis="amber">Did What?</span></h1>
+      <p style="font-size:44px;line-height:1.3;font-weight:300;color:var(--blue-mute);margin:34px 0 0;max-width:1180px">Forensic observability for systems that don't leave obvious footprints</p>
     </div>
-    <div class="axis" style="top:940px"></div>
-    <div class="axis-node is-amber" style="left:200px;top:940px"></div>
+    <div class="axis" style="top:786px"></div>
+    <div class="axis-node" style="left:214px;top:786px;width:34px;height:34px;margin:-17px 0 0 -17px"></div>
+    <div class="axis-node is-hollow" style="left:492px;top:786px;width:22px;height:22px;margin:-11px 0 0 -11px"></div>
+    <div style="position:absolute;left:120px;top:836px;display:flex;gap:96px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">Adriana Villela</span>
+        <span style="font-family:var(--font-mono);font-size:24px;color:var(--on-ink-dim)">@adrianamvillela</span>
+        <img src="assets/dynatrace-logo.svg" alt="Dynatrace" class="employer-mark">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">Kasper Nissen</span>
+        <span style="font-family:var(--font-mono);font-size:24px;color:var(--on-ink-dim)">@phennex</span>
+        <img src="assets/dash0-logo.svg" alt="Dash0" class="employer-mark">
+      </div>
+    </div>
   </section>
+
+  <!-- 0.2 — L03 Statement -->
+  <section data-label="The morning after" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The problem</p>
+    <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">It deleted the rows. The incident is over. Now prove <span class="amber-text" data-emphasis="amber">why</span>.</h2>
+    <div class="axis" style="left:120px;right:120px;top:800px"></div>
+    <div class="axis-node" style="left:120px;top:800px"></div>
+    <div class="axis-node is-amber" style="left:1680px;top:800px"></div>
+    <p class="small" style="position:absolute;left:120px;top:860px">The logs say the call succeeded. The trace says it took four seconds. Neither says what it was thinking.</p>
+  </section>
+
+  <!-- ═══ BEAT 1 · Agents aren't request/response ══════════════════ -->
+
+  <!-- 1.1 — L02 Section divider -->
+  <section data-label="Divider — 01" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">01</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Agents aren't request/response</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <span style="font-size:36px;font-weight:300;color:var(--paper)">Four properties we've never operated against</span>
+        <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Every familiar signal has a new equivalent</span>
+        <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">What one agent run actually looks like</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.2 — L04 Text + diagram -->
+  <section data-label="We keep changing what we have to understand" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">We keep changing what we have to understand</h2>
+    <div style="position:absolute;left:120px;right:120px;top:470px">
+      <div class="axis" style="left:0;right:0;top:0"></div>
+      <div style="position:relative;display:flex;justify-content:space-between">
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-amber is-halo" style="position:relative;left:0;top:0;margin:-13px 0 0" data-emphasis="amber"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:44px">
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px">Monolith</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Microservices</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Event-driven</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:right">Agent-based</span>
+      </div>
+    </div>
+    <p class="body" style="position:absolute;left:120px;top:760px;width:1450px">Each step solved a real problem and added complexity somewhere else. Building got steadily easier. <strong style="font-weight:600">Understanding got harder every single time.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:900px">We are four architectures deep and still reaching for tools designed for the first one.</p>
+  </section>
+
+  <!-- 1.3 — L04 Text + diagram -->
+  <section data-label="Four properties" class="ground-paper">
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1300px;font-size:72px">Four properties we've never operated against</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1600px">
+      <p class="axis-list-item">Non-determinism — re-running it does not reproduce the bug.</p>
+      <p class="axis-list-item">The call graph is <em>generated at runtime</em>, not declared anywhere you can read.</p>
+      <p class="axis-list-item">Token economics, not requests per second.</p>
+      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">Opaque decisions</span> — there is no stack trace for <em>why</em>.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px">The first three are uncomfortable. The fourth is the one this talk is about.</p>
+  </section>
+
+  <!-- 1.4 — L07 Figures -->
+  <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The practice isn't wrong. It's incomplete.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
+    <div style="position:absolute;left:120px;right:120px;top:400px;display:grid;grid-template-columns:1fr 1fr;gap:40px 80px">
+      <div style="display:flex;align-items:center;gap:28px">
+        <span class="small" style="width:420px;text-align:right">stack trace</span>
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:38px;font-weight:600">reasoning chain</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px">
+        <span class="small" style="width:420px;text-align:right">status code</span>
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">quality signal</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px">
+        <span class="small" style="width:420px;text-align:right">RPS &amp; latency</span>
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">tokens, cost, blast radius</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px">
+        <span class="small" style="width:420px;text-align:right">static call graph</span>
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">dynamic tool invocation</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px">
+        <span class="small" style="width:420px;text-align:right">replayable request</span>
+        <span style="font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500">non-deterministic run</span>
+      </div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:820px"></div>
+    <p class="small" style="position:absolute;left:120px;top:870px">The old practice was right for its time. We have to build the equivalents.</p>
+  </section>
+
+  <!-- 1.5 — L05 Waterfall -->
+  <section data-label="One run, four kinds of span" class="ground-ink">
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">One run, four kinds of span</h2>
+    <div class="waterfall" style="position:absolute;left:120px;right:120px;top:340px">
+      <div class="wf-row">
+        <span class="wf-label">invoke_agent</span>
+        <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
+        <span class="wf-dur">Internal</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">chat claude-sonnet-5</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:6%;--w:62%"></div></div>
+        <span class="wf-dur">Client</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">execute_tool</span>
+        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:30%;--w:22%"></div></div>
+        <span class="wf-dur">Internal</span>
+      </div>
+      <div class="wf-row is-amber">
+        <span class="wf-label">POST</span>
+        <div class="wf-track"><div class="wf-bar is-amber" style="--x:8%;--w:56%" data-emphasis="amber"></div></div>
+        <span class="wf-dur">Client</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:452px;right:120px;top:790px;height:1px;background:var(--navy)"></div>
+    <p class="small" style="position:absolute;left:452px;top:820px">The <span style="font-family:var(--font-mono)">POST</span> comes free from your HTTP instrumentation. It carries no GenAI meaning whatsoever.</p>
+  </section>
+
 </deck-stage>
 
 <script type="application/json" id="speaker-notes">
-["Cover — hold here while the room settles.", "Kitchen sink — demonstrates every class and primitive the token system provides."]
+[
+  "Cover. Hold here while the room settles. Names, handles, and we're both here because we ran into this the hard way.",
+  "The morning after. This is the whole talk in one sentence. The incident is OVER — nobody is asking you to stop the bleeding. They're asking you to explain the decision. Pause on 'why'.",
+  "Divider 01 — handoff to Adriana.",
+  "Four architectures deep. Each one solved a real problem. Each one made understanding harder. Land the point: we're still reaching for tools designed for the monolith.",
+  "Four properties. Go fast through the first three — the room already feels those. Slow right down on the fourth. There is no stack trace for why. That is the gap the rest of the talk lives in.",
+  "Signal equivalents. The framing that matters: the old practice wasn't WRONG, it was right for its time. We have to build the equivalents. 'reasoning chain' is the one we chase for the next twenty minutes.",
+  "One agent run. Four kinds of span. Point at POST — you get that one free from HTTP instrumentation and it tells you absolutely nothing about the model. This waterfall comes back in beat 6 carrying the actual incident."
+]
 </script>
 <script src="deck-stage.js"></script>
 </body>
