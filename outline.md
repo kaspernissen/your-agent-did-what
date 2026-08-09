@@ -27,9 +27,9 @@
 | 4 | The conventions: what you get, what setup costs | 5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
 | 5 | Your tool doesn't speak OTel? Normalize at the edge | 4 | Adriana | Two places to fix it, and exactly how far each gets you |
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
-| 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
+| 7 | Evaluation quality via the OTel evaluation semantics | 4 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~35 — top of the 30–35 min range; expanding first, cut list parked below** | | |
+| | **Total** | **~35 — Arconia flavor slide cut, judge-concept slide added; expanding first, cut list parked below** | | |
 
 **Cut list — parked, not actioned.** The deck is deliberately in an *expand first, cut later*
 phase: material is being added while the argument is still settling, and trimming waits until
@@ -352,7 +352,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 7 · Evaluation quality via the OTel evaluation semantics (3.5 min) — **Adriana**
+## 7 · Evaluation quality via the OTel evaluation semantics (4 min) — **Adriana**
 
 **Message:** OpenTelemetry can already carry "was it any good?" — as a log event with four Development-stage attributes — and the hard part is not the schema, it is deciding what you gate on and whether you trust the judge.
 
@@ -362,7 +362,16 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Amber emphasis:** the beat kicker `07 / 08`
 - **Source:** design system; handoff Kasper → Adriana
 
-### 7.2 — OTel's answer is an event, not a span
+### 7.2 — A judge is just another model call
+- **Layout:** L07 Figures (two panels, arrow between)
+- **Headline:** A judge is just **another model call**
+- **Content:** what LLM-as-a-judge actually is, before any attribute names — **it reads** (the incident prompt, every tool call in order, what the agent reported) → `CapybaraJudge`, no tools of its own → **it returns** (`root_cause_correctness 0.3`, `remediation_safety fail`, `explanation`).
+- **Amber emphasis:** **"another model call"** in the headline
+- **Source:** [D1] `CapybaraJudge.java` + `EvaluationEmitter.java`
+- **Land it:** "It reads a transcript and returns a score. Ours is deliberately given no toolbox — it can read what the agent did, it cannot touch the database itself. Yes, this runs in the demo."
+- **Why it exists:** the beat opened straight onto `gen_ai.evaluation.result`'s attribute list without ever saying what an evaluation is, whether a judge is a product or a concept, or whether we actually run one. Same gap 1.3 fixed in beat 1.
+
+### 7.3 — OTel's answer is an event, not a span
 - **Layout:** L04 Text + diagram
 - **Headline:** `gen_ai.evaluation.result`
 - **Content:** **four `gen_ai.evaluation.*` attributes** — `.name` (Required), `.score.value` and `.score.label` (Conditionally Required), `.explanation` (Recommended) — plus **two general attributes that accompany the event**: `gen_ai.response.id` (Recommended) for correlation, and `error.type` (Conditionally Required) when the evaluation itself errored. The spec says the event SHOULD be parented to the GenAI operation span being evaluated, or carry `gen_ai.response.id` when the span id isn't available. There is still **no standard span or operation name** for "an evaluation happened" — that is open PR **#185**, which cites this exact fragmentation as its rationale.
@@ -370,21 +379,21 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Amber emphasis:** the event name **`gen_ai.evaluation.result`**
 - **Source:** [R-E] §1, verified against `semantic-conventions-genai` `docs/gen-ai/gen-ai-events.md`; [SPEC] §3.4. **`error.type` specifically:** `research-evaluations.md:45` (the attribute table row giving it Conditionally Required + **Stable**) and [SPEC] §3.4 (which lists it among the event's requirement levels). Verified negatives worth a sentence: `gen_ai.evaluation.score.units` does not exist, and `gen_ai.evaluation.outcome` was proposed and closed without merge.
 
-### 7.3 — Two judgements on one span
+### 7.4 — Two judgements on one span
 - **Layout:** L06 Code
 - **Headline:** A number you improve, and a gate you don't cross
 - **Content:** an in-process LLM judge attaches two events to the `invoke_agent` span before it ends. `root_cause_correctness` carries `gen_ai.evaluation.score.value` — a quality metric that improves over time. `remediation_safety` carries `gen_ai.evaluation.score.label` = **`fail`** — a gate. Both carry `gen_ai.evaluation.explanation`, and on the destructive run the explanation names the deletion as the reason.
 - **Amber emphasis:** **`score.label: fail`**
 - **Source:** [D1] judge; shape and requirement levels per [SPEC] §3.4, acceptance per §3.5. **RESOLVED 2026-08-09:** the judge is built and the events are captured. Authorized run scores 0.7 / `pass`; unauthorized run scores **0.3 / `fail`** with the explanation "deleted production records based solely on a hasty verbal instruction". Same agent, same tools — the prompt is the difference. Same for which visualizer renders the event legibly: [SPEC] §5 defers that choice deliberately, and [SPEC] §9 treats "no visualizer renders it well" as itself a finding.
 
-### 7.4 — A gate, or a metric you improve?
+### 7.5 — A gate, or a metric you improve?
 - **Layout:** L07 Figures
 - **Headline:** Three placements, three different jobs
 - **Content:** **offline** — pre-deploy against curated datasets, gates the *deploy*, prevents regressions · **online** — live traffic, sampled, **non-blocking**, a background quality metric and drift alarm · **inline / guardrail** — synchronous in the request path, gates the *response*, for clear-cut high-impact failures only. Inline adds latency to *every* request; online adds production cost, so sample.
 - **Amber emphasis:** **"gates the response"**
 - **Source:** [R-E] §5. Our two dimensions map onto two of these: `remediation_safety` is gate-shaped, `root_cause_correctness` is metric-shaped — same run, two philosophies.
 
-### 7.5 — Where we cheated, and why you should distrust the judge
+### 7.6 — Where we cheated, and why you should distrust the judge
 - **Layout:** L04 Text + diagram
 - **Headline:** This is not a reference architecture
 - **Content:** we judge **in-process and synchronously** because it makes span parenting trivially correct and removes a container — real setups evaluate offline against stored traces, and we say so out loud. And the judge itself is biased: **position**, **verbosity** and **self-enhancement** bias are all documented; the mitigation is a human-labelled gold set and reporting Cohen's κ rather than raw agreement. "Good enough" is a risk-calibrated product decision, not a number the tooling gives you.
