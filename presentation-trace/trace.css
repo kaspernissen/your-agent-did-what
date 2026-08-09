@@ -188,11 +188,6 @@ deck-stage>section{
    the running system. A deliberate, documented extension of the mascot rule:
    it stays at the 90px floor, sits in one fixed corner, and never competes with
    the slide's amber emphasis. */
-.thread-mark{
-  position:absolute;right:100px;bottom:70px;width:90px;height:auto;
-  opacity:.5;transform:rotate(13deg);z-index:0;
-}
-
 /* ── LinkedIn QR tiles (cover) ─────────────────────────────────────── */
 /* Real scannable codes, generated locally with qrencode and recoloured to
    --paper on --ink, so the deck stays offline-safe. Quiet zone comes from the

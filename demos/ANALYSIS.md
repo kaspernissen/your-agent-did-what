@@ -220,6 +220,11 @@ pins `claude-sonnet-4-6`. Model-parameter incompatibility, not a telemetry one.
 
 ### Measured span durations — one full capybara run (Jaeger, 2026-08-09)
 
+From the **Python agent** (`demos/agent`, `db-ops-agent`), which hand-writes its
+`execute_tool` spans — not the Quarkus MCP agent, whose tool spans are named
+`tools/call <name>` and carry no arguments. Slide 31 uses this trace for exactly that
+reason: it is what the waterfall looks like when the tool spans are written properly.
+
 Trace `d0c84fad265483b9fe4bae5af20fe464`, 9 spans, depth 3, **12.26s total**:
 
 ```

@@ -274,7 +274,7 @@
       <text x="1512.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text>
       <text x="1512.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">model</text>
     </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call to the same model, described five different ways. Only one of them is the convention the others are converging on.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call, described five different ways. OTel GenAI is what the others are converging on — amber is what our second demo actually emits, and what we normalize.</p>
   </section>
 
   <!-- 2.3 — L07 Figures · project marks -->
@@ -460,7 +460,7 @@
       </div>
     </div>
     <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Every attribute on the right is one we measured coming out of a running agent today — not a roadmap item. Choosing OpenInference or OpenLLMetry was a reasonable call when that column was empty.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">It is a different call now — with the caveat from three slides ago: none of it is marked Stable.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">It is a different call now — with a caveat about how settled any of this is that we come back to shortly.</p>
   </section>
 
   <!-- 4.1 — L02 Section divider · the single mid-deck mascot -->
@@ -483,7 +483,6 @@
   <!-- 4.2 — L04 · the move, drawn -->
   <section data-label="The conventions moved house" class="ground-paper">
     <div class="deck-footer"></div>
-    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">semconv v1.42.0 · June 2026</p>
     <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">In June, <span style="font-family:var(--font-mono);font-size:64px">gen_ai</span> moved out</h2>
     <div style="position:absolute;left:120px;right:120px;top:400px" data-emphasis="amber"><svg viewBox="0 0 1680 300" style="width:100%;height:auto">
@@ -499,7 +498,7 @@
   <rect x="810" y="40" width="870" height="180" rx="14" fill="#10142E"/>
   <text x="852" y="90" font-family="JetBrains Mono" font-size="24" fill="#8A93BC">open-telemetry/</text>
   <text x="852" y="128" font-family="JetBrains Mono" font-size="30" fill="#F5A800">semantic-conventions-genai</text>
-  <rect x="852" y="152" width="470" height="44" rx="10" fill="none" stroke="#F5A800" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="852" y="152" width="540" height="44" rx="10" fill="none" stroke="#F5A800" stroke-width="2" stroke-dasharray="8 6"/>
   <text x="874" y="181" font-family="JetBrains Mono" font-size="22" fill="#F5A800">no releases · no tags · nothing to pin</text>
   <defs><marker id="mv" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#425CC7"/></marker></defs>
 </svg></div>
@@ -683,7 +682,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <text x="840" y="330" text-anchor="middle" font-family="JetBrains Mono" font-size="40" fill="#8A5B00">gen_ai.*</text>
     </svg></div>
     <p class="small" style="position:absolute;left:120px;top:790px;width:1680px"><strong style="font-weight:600;color:var(--ink)">Arconia</strong> (Thomas Vitale) is how the Spring community gets there — one property and Spring AI re-emits under a different convention, no code change.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Different layers, one destination. Four slides ago one call fanned out to five names; the fragmentation is being closed from every one of those directions.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Different layers, one destination. Back in beat 2 one call fanned out to five names; the fragmentation is being closed from every one of those directions.</p>
   </section>
 
   <!-- 06 — L02 Section divider -->
@@ -702,7 +701,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <!-- 6.2 — L05 Waterfall · measured durations from a real run -->
   <section data-label="The capybara incident, as a trace" class="ground-ink">
     <div class="deck-footer"></div>
-    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <h2 class="title" style="position:absolute;left:120px;top:100px;width:1600px;font-size:60px"><span style="font-family:var(--font-mono);font-size:52px">invoke_agent</span> — 12.26s, nine spans, one of them destructive</h2>
     <div class="waterfall" style="position:absolute;left:120px;right:120px;top:330px">
       <div class="wf-row">
@@ -737,7 +735,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       </div>
     </div>
     <div style="position:absolute;left:452px;right:120px;top:790px;height:1px;background:var(--navy)"></div>
-    <p class="small" style="position:absolute;left:120px;top:820px;width:1680px">Measured. The destructive call took <strong style="font-weight:600;color:var(--paper)">145 microseconds</strong> — 0.001% of a 12-second trace. The thing that deleted production is the one span you can barely see.</p>
+    <p class="small" style="position:absolute;left:120px;top:820px;width:1680px">Measured. The destructive call took <strong style="font-weight:600;color:var(--paper)">145 microseconds</strong> — 0.001% of a 12-second trace. The thing that deleted production is the one span you can barely see. Three HTTP <code>POST</code> children are omitted here — they carry almost all the wall time and no GenAI meaning.</p>
   </section>
 
   <!-- 6.3 — L06 Code -->
@@ -780,9 +778,9 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <text x="620" y="222" font-family="JetBrains Mono" font-size="26" fill="#F5A800">⟨ does not exist ⟩</text>
 
   <text x="1110" y="46" font-family="JetBrains Mono" font-size="21" fill="#5B6180">AND TWO THINGS YOU CANNOT RECOVER</text>
-  <line x1="1110" y1="96" x2="1660" y2="96" stroke="#5B6180" stroke-width="2"/>
+  <line x1="1110" y1="80" x2="1610" y2="80" stroke="#5B6180" stroke-width="2"/>
   <text x="1110" y="88" font-family="Public Sans" font-size="27" fill="#5B6180">replay the context window</text>
-  <line x1="1110" y1="156" x2="1660" y2="156" stroke="#5B6180" stroke-width="2"/>
+  <line x1="1110" y1="140" x2="1640" y2="140" stroke="#5B6180" stroke-width="2"/>
   <text x="1110" y="148" font-family="Public Sans" font-size="27" fill="#5B6180">chain-of-thought as evidence</text>
   <text x="1110" y="206" font-family="Public Sans" font-size="22" fill="#5B6180">not persisted · not deterministic</text>
   <text x="1110" y="236" font-family="Public Sans" font-size="22" fill="#5B6180">output, not an audit trail</text>
@@ -1082,7 +1080,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Before and after, side by side. Left is what the processor rewrote, right is what survived. Land llm.system: remove_originals is TRUE and it still comes through, because it is not in the mapping table. 27 attributes down to 16. Say the version out loud - alpha, traces only, and it ships in the released contrib image now, so this is a plain image pull. The donation is done: #46069 closed in June.",
   "Nobody is proposing a fifth convention. Short survey, not a demo. Give Arconia a proper shout-out here - Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream. We are NOT demoing it, and we should say so; the point is that the fragmentation is being closed from several directions at once.",
   "Divider 06 \u2014 handoff Adriana to Kasper.",
-  "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. Durations are structural \u2014 take real ones from a Demo 1 run before the talk.",
+  "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. These durations are REAL, measured 2026-08-09 (trace d0c84fad\u2026). Provenance, if asked: this is the Python agent (demos/agent, db-ops-agent), which hand-writes its execute_tool spans \u2014 NOT the Quarkus MCP demo, whose tool spans are named tools/call delete_records and carry no arguments. That is deliberate: this slide shows the waterfall you get when the tool spans are written properly, which is exactly what the MCP path fails to give you.",
   "The two attributes that answer the question. Both opt-in, both off by default, for privacy and payload size. One flag away from not existing.",
   "The footprint exists, the footprint is empty. Second and last statement slide. Let it sit.",
   "Three things you still cannot get. Attribute the replay claim to the preprint rather than asserting it. The honest limit of the whole story.",
