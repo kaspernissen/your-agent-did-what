@@ -77,6 +77,26 @@ function overlaps(a, b){
         findings.push(`slide ${i+1} [${label}] OVERFLOW  bottom=${Math.round(t.bottom)} right=${Math.round(t.right)}  "${t.text}"`);
       }
     }
+    // Text must also stay inside any panel it sits on. Slide-bounds checks miss
+    // this entirely: a bio overflowing its card is still well inside the slide.
+    const panels = [...clone.querySelectorAll('.chamfer')].map(el => {
+      const r = el.getBoundingClientRect();
+      return {left:r.left-stageBox.left, top:r.top-stageBox.top,
+              right:r.right-stageBox.left, bottom:r.bottom-stageBox.top};
+    });
+    for (const p of panels){
+      for (const t of texts){
+        const cx = (t.left + t.right) / 2;
+        // must BEGIN inside the panel — text deliberately placed below one
+        // (the L04 attribution line) is not an escape.
+        const startsInside = cx > p.left && cx < p.right &&
+                             t.top >= p.top - PAD && t.top < p.bottom - PAD;
+        if (startsInside && t.bottom > p.bottom + PAD){
+          findings.push(`slide ${i+1} [${label}] ESCAPES PANEL  text bottom=${Math.round(t.bottom)} > panel bottom=${Math.round(p.bottom)}  "${t.text}"`);
+        }
+      }
+    }
+
     for (let a = 0; a < texts.length; a++){
       for (let b = a+1; b < texts.length; b++){
         if (overlaps(texts[a], texts[b])){

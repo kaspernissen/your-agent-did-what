@@ -186,16 +186,15 @@ deck-stage>section{
 /* Real scannable codes, generated locally with qrencode and recoloured to
    --paper on --ink, so the deck stays offline-safe. Quiet zone comes from the
    tile's own padding: a QR pressed to the edge of a dark slide does not scan. */
-/* White modules on transparent: the ink ground shows through and becomes the
-   quiet zone, so the code reads as part of the slide rather than a card stuck
-   on it. Only valid on an ink ground — on paper the modules would vanish, hence
-   the .ground-paper guard below. Note this is an INVERTED code (light on dark);
-   modern phone cameras handle it, older scanners sometimes do not. */
+/* White modules on transparent — the ink ground shows through and serves as the
+   quiet zone. This exact configuration was confirmed scanning on a phone.
+   Do NOT restyle the modules: a dotted variant with rounded finder patterns
+   looked better and stopped scanning. Solid squares stay. */
 .qr-tile{
   width:132px;height:132px;flex:none;padding:10px;
   display:block;
 }
-/* On a light ground an inverted code is invisible — fall back to ink-on-paper. */
+/* An inverted code is invisible on a light ground — fall back to ink-on-paper. */
 .ground-paper .qr-tile,.ground-paper-2 .qr-tile{
   background:var(--paper);filter:invert(1) hue-rotate(180deg);
 }
