@@ -21,7 +21,7 @@
 | # | Beat | Time | Leads | The one thing it must land |
 |---|---|---|---|---|
 | 0 | Cold open + who we are | 3 | Kasper | The incident is over; the only question left is *why* |
-| 1 | Agents aren't request/response | 4 | Adriana | The call graph is generated at runtime and the decision is not in it |
+| 1 | Agents aren't request/response | 4.5 | Adriana | An agent is a loop; the call graph is generated at runtime and the decision is not in it |
 | 2 | The competing semantics that exist | 4 | Adriana | Five conventions, one span — and we measured how far apart they are |
 | 3 | Why OpenTelemetry should be the standard | 3 | Kasper | Everyone is already normalizing *toward* `gen_ai.*` |
 | 4 | The conventions: what you get, what setup costs | 5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
@@ -29,7 +29,7 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~33.5 — within the 30–35 min the speakers are working to** | | |
+| | **Total** | **~34 — within the 30–35 min the speakers are working to** | | |
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
@@ -70,7 +70,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 1 · Agents aren't request/response (4 min) — **Adriana**
+## 1 · Agents aren't request/response (4.5 min) — **Adriana**
 
 **Message:** An agent's execution is a call graph generated at runtime by a non-deterministic process, and the artifact you most need — the decision — is not a thing your request/response instincts know how to capture.
 
@@ -86,14 +86,23 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Amber emphasis:** the final **agent-based** node on the axis
 - **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **[KC] specifically is external speaker material with no copy in this repo; Kasper must supply it or the slide gets redrawn from scratch.** (This is a [KC] problem, not a general one — [PC] slides *are* in `presentation/index.html`; see the source-tag note at the top.) Each step solved a problem and added complexity: building got easier, *understanding* got harder.
 
-### 1.3 — Four properties we've never operated against
+### 1.3 — An agent is a loop around a model that can call your tools
+- **Layout:** L07 Figures (four cards in a row, arrows between)
+- **Headline:** An agent is a **loop around a model** that can call your tools
+- **Content:** the vocabulary defined once, on the demo's own parts — **agent** (the loop; keeps calling the model until it decides it is done) · **model** (picks the next step; billed per token in and out) · **MCP server** (how an agent is handed tools it did not ship with) · **tools** (the functions it can actually run against your systems). A dashed bracket under model→MCP→tools carries "↺ the agent decides how many times round".
+- **Amber emphasis:** **"loop around a model"** in the headline
+- **Source:** [D1] — the parts are Capybara's real ones, so beat 4's "Meet Capybara, SRE" is this diagram made concrete
+- **Land it:** "Only two of these are yours: the prompt, and the list of tools you handed it. How many model calls, which tools, in what order — decided at runtime. Which means you cannot read the path off the code. You have to observe it."
+- **Why it exists:** the deck showed *spans* (1.6) before it ever showed the room the loop those spans describe, and an SRE audience running someone else's agent may never have had *agent* / *MCP server* / *token* defined out loud.
+
+### 1.4 — Four properties we've never operated against
 - **Layout:** L04 Text + diagram
 - **Headline:** Four properties we've never operated against
 - **Content:** non-determinism (re-running doesn't reproduce the bug) · the call graph is *generated at runtime*, not declared · token economics, not RPS · **opaque decisions — there is no stack trace for *why***
 - **Amber emphasis:** **"opaque decisions"**
 - **Source:** [PC] "AI workloads aren't like anything we've operated"; property 4 is the one [R-F] turns into a concrete schema gap in beat 6
 
-### 1.4 — Every familiar signal has a new equivalent
+### 1.5 — Every familiar signal has a new equivalent
 - **Layout:** L07 Figures
 - **Headline:** Every familiar signal has a new equivalent
 - **Content (paired figures):** stack trace → reasoning chain · status code → quality signal · RPS & latency → tokens, cost, blast radius · static call graph → dynamic tool invocation · replayable request → non-deterministic run
@@ -101,7 +110,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Source:** [PC] "Every familiar signal has a new equivalent" table — salvageable, re-laid-out as figure pairs rather than a table (the system has no table primitive)
 - **Land it:** "The old practice wasn't wrong. It was right for its time. We have to build the equivalents."
 
-### 1.5 — What one agent run actually looks like
+### 1.6 — What one agent run actually looks like
 - **Layout:** L05 Waterfall
 - **Headline:** One run, four kinds of span
 - **Content:** `invoke_agent` (Internal, root) → `chat <model>` (Client) → `execute_tool` (Internal) → `POST` (Client, pure plumbing to the model API)
