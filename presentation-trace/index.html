@@ -517,7 +517,6 @@
         <span style="font-size:38px;font-weight:300;line-height:1.4;color:var(--muted-ink)">Every one of them is Development — subject to breaking change.</span>
       </div>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:872px">Say it plainly rather than implying more maturity than exists.</p>
   </section>
 
   <!-- 4.4 — L06 Code -->
@@ -590,7 +589,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <marker id="ara" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#F5A800"/></marker>
       </defs>
     </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1560px">The listener list is hardcoded in <span style="font-family:var(--font-mono)">McpRecorder</span>, so you cannot register your own alongside it. Measured on <strong style="font-weight:600">1.12.2, the current release</strong> — we re-ran it to check. The tool span carries <span style="font-family:var(--font-mono)">gen_ai.tool.name</span>, <span style="font-family:var(--font-mono)">mcp.method.name</span> and a JSON-RPC id, and no content at all.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1560px">The listener list is hardcoded in <span style="font-family:var(--font-mono)">McpRecorder</span>, so you cannot register your own alongside it. Measured on <strong style="font-weight:600">1.12.2, the current release</strong>. The tool span carries <span style="font-family:var(--font-mono)">gen_ai.tool.name</span>, <span style="font-family:var(--font-mono)">mcp.method.name</span> and a JSON-RPC id, and no content at all.</p>
   </section>
 
   <!-- 05 — L02 Section divider -->
@@ -746,7 +745,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 <span class="c-attr">gen_ai.tool.call.result</span>     {"deleted": 2, "remaining": 1}</pre>
     </div>
     <p class="small" style="position:absolute;left:120px;top:620px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong> — the spec says instrumentation SHOULD NOT capture this by default, for privacy and payload size.</p>
-    <p class="small" style="position:absolute;left:120px;top:700px;width:1680px">These two are what the convention defines. <strong style="font-weight:600;color:var(--paper)">Our MCP run emits neither.</strong> The values above come from a Python agent that writes the span by hand — which is the point of the next slide.</p>
+    <p class="small" style="position:absolute;left:120px;top:700px;width:1680px">These two are what the convention defines. <strong style="font-weight:600;color:var(--paper)">Our MCP run emits neither.</strong> The values above come from a Python agent that writes the span by hand.</p>
     <p class="small" style="position:absolute;left:120px;top:880px">Two records deleted, one survived — the whole forensic answer, in two attributes you have to opt into and, on this stack, then write yourself.</p>
   </section>
 
@@ -932,35 +931,36 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   </section>
 
   <!-- 8.1 — L04 · Jaeger as a collector pipeline (ink, breaks beat 8's paper run) -->
-  <section data-label="Jaeger v2 runs on the Collector" class="ground-ink">
+  <section data-label="GenAI concerns are pipeline stages" class="ground-ink">
     <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">CNCF · "Jaeger at 10" · 2025-09-01</p>
-    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1500px;font-size:68px">Jaeger v2 is built on the OpenTelemetry Collector</h2>
-    <div style="position:absolute;left:120px;right:120px;top:420px" data-emphasis="amber"><svg viewBox="0 0 1680 300" style="width:100%;height:auto">
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">opentelemetry-collector-contrib 0.158.0</p>
+    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1500px;font-size:68px">Not backend features. <span class="amber-text" data-emphasis="amber">Pipeline stages.</span></h2>
+    <div style="position:absolute;left:120px;right:120px;top:420px"><svg viewBox="0 0 1680 300" style="width:100%;height:auto">
   <rect x="0" y="96" width="230" height="80" rx="10" fill="#202C5F"/>
   <text x="115" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#C9CEE8">OTLP in</text>
   <path d="M240 136 L300 136" stroke="#425CC7" stroke-width="3" marker-end="url(#j)"/>
 
-  <rect x="310" y="60" width="1010" height="152" rx="12" fill="none" stroke="#F5A800" stroke-width="2.5" stroke-dasharray="10 8"/>
-  <text x="330" y="42" font-family="JetBrains Mono" font-size="20" fill="#F5A800">PROPOSED — COLLECTOR PIPELINE STAGES</text>
+  <rect x="310" y="52" width="1010" height="184" rx="12" fill="none" stroke="#F5A800" stroke-width="2.5" stroke-dasharray="10 8"/>
+  <text x="330" y="34" font-family="JetBrains Mono" font-size="20" fill="#F5A800">SHIPPING TODAY — ONE COLLECTOR PIPELINE</text>
   <rect x="340" y="96" width="290" height="80" rx="10" fill="#202C5F"/>
   <text x="485" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#C9CEE8">PII sanitize</text>
+  <text x="485" y="206" text-anchor="middle" font-family="JetBrains Mono" font-size="17" fill="#8A93BC">redaction · transform</text>
   <rect x="655" y="96" width="290" height="80" rx="10" fill="#202C5F"/>
   <text x="800" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#C9CEE8">retention tier</text>
+  <text x="800" y="206" text-anchor="middle" font-family="JetBrains Mono" font-size="17" fill="#8A93BC">tailsampling · filter</text>
   <rect x="970" y="96" width="330" height="80" rx="10" fill="#202C5F"/>
   <text x="1135" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#C9CEE8">eval-score ingest</text>
+  <text x="1135" y="206" text-anchor="middle" font-family="JetBrains Mono" font-size="17" fill="#8A93BC">span events · no new pipeline</text>
 
   <path d="M1330 136 L1390 136" stroke="#425CC7" stroke-width="3" marker-end="url(#j)"/>
   <rect x="1400" y="96" width="280" height="80" rx="10" fill="#425CC7"/>
-  <text x="1540" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#FAF7F2">Jaeger UI</text>
-  <text x="1540" y="212" text-anchor="middle" font-family="Public Sans" font-size="21" fill="#8A93BC">+ an LLM investigating agent</text>
+  <text x="1540" y="143" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#FAF7F2">your backend</text>
+  <text x="1540" y="206" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#8A93BC">+ an LLM investigating agent</text>
   <defs><marker id="j" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#425CC7"/></marker></defs>
 </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">It "natively understands OTLP end to end, eliminating the need for translation layers." v1 reached EOL 2025-12-31. Its GenAI plans are <strong style="font-weight:600;color:var(--paper)">pipeline stages</strong>, not features.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Epics #8416 and #7827 are open proposals with no milestones — concrete direction, not shipped features. Neither yet commits to <span style="font-family:var(--font-mono)">gen_ai.*</span> by name.</p>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">None of this is a roadmap item. Every stage above ships in contrib today, and the <span style="font-family:var(--font-mono)">gen_ai_normalizer</span> from beat 5 is another stage in the same pipeline. These are things you <em>configure</em>, not things you wait for.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Jaeger is the tell: the UI that showed you raw tags back in beat 2 now runs on the Collector itself — v1 hit EOL 2025-12-31. <strong style="font-weight:600;color:var(--paper)">The plumbing moved before the UI did.</strong></p>
   </section>
-
-  <!-- 8.2 — L07 · the agentic-SRE tools that consume this -->
   <section data-label="Who reads your telemetry next" class="ground-paper">
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">CNCF sandbox and friends</p>
@@ -1003,8 +1003,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Node SDK. The same collector and pipeline you already run.</span>
       </div>
     </div>
-    <p style="position:absolute;left:120px;top:770px;width:1680px;font-size:32px;line-height:1.4;font-weight:300">Run goose <em>with</em> Claude Code and both emit — but as <span class="amber-text" data-emphasis="amber">sibling streams, not one nested trace</span>. Two agents in one workflow, and nothing joins them.</p>
-    <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">Captured by Adriana. We are both AAIF ambassadors — this is the foundation's problem space, and it is the same forensic gap, one layer closer to home.</p>
+    <p style="position:absolute;left:120px;top:790px;width:1680px;font-size:32px;line-height:1.4;font-weight:300">One environment variable each. The agent editing your code lands in <strong style="font-weight:600">the collector you already run</strong> — same spans, same conventions, same pipeline as everything else in this talk.</p>
   </section>
 
   <!-- 8.4 — L08 Close · third and final mascot -->
@@ -1070,17 +1069,17 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 "The abstract's argument made explicit: choosing OpenInference or OpenLLMetry was the RIGHT call when the right-hand column was empty. Every attribute on the right is one we measured coming out of a running agent today, not a roadmap item. Land: it is a different call now. Careful: do not be smug \u2014 the alternatives were correct at the time. And do NOT answer the Stable question here; this slide only hints, because the reveal is slide 22.",
 "\u25b8 KASPER CONTINUES \u00b7 Beat 4 (5 min, slides 20\u201325). What the conventions actually give you, and what setup really costs. The one mid-deck mascot moment \u2014 let the room enjoy it, then point at delete_records. The slide is deliberately just the mascot and the three tools, so the framing is yours to say: Capybara is a toy standing in for kagent or HolmesGPT, small enough that we can open it up and look at every span it emits. Careful: say that out loud, so nobody thinks we are proposing it as an architecture. If asked about the stack: Quarkus + LangChain4j over an MCP server, and the same scenario drives both demos.",
 "The conventions moved repo in June. If your bookmarks still point at the old URL, that is the move you missed \u2014 it is a redirect notice now. Land: no releases, no tags, nothing to pin. You can follow a commit or a dated snapshot, but there is no schema URL to pin against. Careful: describe the move; do not read the redirect banner aloud.",
-"Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development \u2014 subject to breaking change. This is the reveal slide 19 deliberately set up, so do not undercut it by having already given the number away.",
+"Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development \u2014 subject to breaking change. Say it plainly rather than implying more maturity than exists; that sentence used to be printed on the slide, which is not where a stage direction belongs. This is the reveal slide 19 deliberately set up, so do not undercut it by having already given the number away. If asked how current this is: verified 2026-08-09 against the model YAML in semantic-conventions-genai \u2014 registry, spans, metrics and events are all stability:development.",
 "What arrives with no work at all. Careful: these values are REAL \u2014 captured verbatim from a capybara run on quarkus-langchain4j 1.12.2, and nothing on the slide was hand-written. Say 'we wrote none of this'. If asked: this is the Quarkus MCP agent, which is why the model reads claude-sonnet-4-6 \u2014 the extension sends top_k, which claude-sonnet-5 now rejects, so the demo pins the older model. That is a model-parameter incompatibility, not a telemetry finding.",
 "Two documented flags, six correct attributes. This is exactly what the docs promise you. Careful: present it as the promise and do not hedge \u2014 the whole point is that slide 25 is the reversal.",
-"\u2026and on the MCP path they never fire. ToolSpanWrapper only wraps locally declared @Tool methods; MCP tool calls route through TracingMcpClientListener instead, and that listener list is hardcoded in McpRecorder, so you cannot register your own alongside it. Land: the framework has the correct code, it just does not run where MCP tools live. Careful: this IS measured on 1.12.2, the current release \u2014 we re-ran it specifically so we would not be asserting it about a version we were no longer running. Say the version. Frame it as 'the kind of gap you hit', not as an attack on the project.",
+"\u2026and on the MCP path they never fire. ToolSpanWrapper only wraps locally declared @Tool methods; MCP tool calls route through TracingMcpClientListener instead, and that listener list is hardcoded in McpRecorder, so you cannot register your own alongside it. Land: the framework has the correct code, it just does not run where MCP tools live. Careful: this IS measured on 1.12.2, the current release \u2014 we re-ran it specifically so we would not be asserting it about a version we were no longer running. Say the version out loud; the slide no longer narrates that we re-ran it. Frame it as 'the kind of gap you hit', not as an attack on the project.",
 "\u25b8 HANDOFF \u2192 ADRIANA \u00b7 Beat 5 (4 min, slides 26\u201329). Your tool does not speak OTel semantics \u2014 now what?",
 "Two places to fix it: downstream in the collector, or upstream in the SDK. Both land on OTel semconv as the target. Arconia gets its proper shout-out at slide 29 \u2014 here just plant that there are two layers.",
 "The measured diff: 27 span attributes down to 16 \u2014 18 removed, 7 written, 9 untouched. Land llm.system: remove_originals is TRUE and it still comes through, because it is simply not in the processor's mapping table. That is why 'partial normalization' is the honest word. Careful: say the status out loud \u2014 alpha, traces only, no auto-detection \u2014 and that it ships in contrib 0.158.0, so adopting it is an image pull rather than a custom build. The donation is DONE: issue #46069 was closed 1 June 2026, so do not invite people to contribute to a finished thread.",
 "Nobody is proposing a fifth convention. This is a short survey, not a demo. Give Arconia a proper shout-out \u2014 Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream, one property and no code change. Careful: say clearly that we are NOT demoing it. Land: the fragmentation is being closed from several directions at once.",
 "\u25b8 HANDOFF \u2192 KASPER \u00b7 Beat 6 (4 min, slides 30\u201334). The forensic beat \u2014 what did it actually do, and what can you never recover?",
 "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. Land: the destructive call took 145 microseconds, 0.001% of a 12-second trace \u2014 the thing that deleted production is the one span you can barely see. These durations are REAL, measured 2026-08-09 (trace d0c84fad\u2026). If asked for provenance: this is the Python agent (demos/agent, db-ops-agent), which hand-writes its execute_tool spans \u2014 NOT the Quarkus MCP demo, whose tool spans are named tools/call delete_records and carry no arguments. That is deliberate: this slide shows the waterfall you get when the tool spans are written properly, which is exactly what the MCP path fails to give you.",
-"The two attributes that answer the forensic question. Both are opt-in and off by default \u2014 the spec says instrumentation SHOULD NOT capture this by default, for privacy and payload size. Land: the whole forensic answer is one flag away from not existing. Careful: the slide already admits our MCP run emits neither, and that these values come from a Python agent writing the span by hand. Say it yourself rather than letting someone catch it.",
+"The two attributes that answer the forensic question. Both are opt-in and off by default \u2014 the spec says instrumentation SHOULD NOT capture this by default, for privacy and payload size. Land: the whole forensic answer is one flag away from not existing. Careful: the slide already admits our MCP run emits neither, and that these values come from a Python agent writing the span by hand. Say it yourself rather than letting someone catch it, and lead from there into the next slide \u2014 the slide no longer says 'which is the point of the next slide', that hand-off is yours.",
 "Second and last statement slide. Let it sit. With default instrumentation you can prove the span fired; you cannot prove what it executed.",
 "The honest limit of everything else in this talk. Across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is no schema slot for why \u2014 the closest thing anywhere is a reasoning-token count. Careful: attribute the replay claim to the preprint rather than asserting it yourself. Land: normalizing names does not create the missing field. This is the gap worth raising with the SIG, and it returns as the ask on the close.",
 "\u25b8 HANDOFF \u2192 ADRIANA \u00b7 Beat 7 (3.5 min, slides 35\u201339). Was it any good? Evaluations as OTel already defines them.",
@@ -1089,9 +1088,9 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 "Offline gates the deploy, online is sampled and non-blocking, inline gates the response and costs you latency on every single request. Land: our two dimensions are one of each SHAPE \u2014 remediation_safety is gate-shaped, root_cause_correctness is metric-shaped. Careful: 'one of each' is about shape, not placement. Both of ours actually run inline, which is exactly what the next slide admits.",
 "Where we cheated, said before anyone asks. Say plainly that in-process synchronous judging is not how you would do this in production \u2014 real setups evaluate offline against stored traces; we do it because it makes span parenting trivially correct and removes a container. Name the three biases \u2014 position, verbosity, self-enhancement \u2014 but do NOT quote percentage figures. Land: 'good enough' is a risk-calibrated product decision, not a number the tooling hands you.",
 "\u25b8 BOTH \u00b7 Beat 8 \u2014 where this is going, and the close (3 min, slides 40\u201344). The practical takeaway of the whole talk: five steps in the order that actually works. Land step 1 hardest \u2014 do NOT start by rewriting instrumentation, that is why teams stall. Step 3 is our own scar: we set both documented flags and got nothing back, so turning it on and verifying it fired are different jobs.",
-"The substrate argument is not ours \u2014 the oldest tracing project in the CNCF made it. v1 reached EOL 2025-12-31, and v2 is built on the Collector, so it natively understands OTLP end to end. Land: its GenAI plans are pipeline stages, not features. Careful: epics #8416 and #7827 are open proposals with no milestones, and neither yet commits to gen_ai.* by name \u2014 say 'concrete direction, not shipped features'.",
+"The substrate argument, and it is not ours \u2014 it was made for us. Land: none of this is a roadmap item. redaction and transform for PII, tailsampling and filter for retention, and evaluation scores that ride as events on the span you already export \u2014 all shipping in contrib 0.158.0 today. The gen_ai_normalizer from beat 5 is another stage in the same pipeline. These are things you configure, not things you wait for. Then the Jaeger tell: the UI that showed the room raw tags back in beat 2 now runs on the Collector itself, v1 hit EOL 2025-12-31 \u2014 the plumbing moved before the UI did. Careful: do NOT hang the slide on Jaeger's GenAI epics (#8416, #7827). They are open with no milestones and neither commits to gen_ai.* by name, so they are direction, not evidence. Mention them only if asked.",
 "Who reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads, and if your spans lack semantic context it hallucinates confidently, at scale. Land: the model is not the answer, the legible data is \u2014 the whole argument for conventions, made by the tools rather than by us.",
-"Bring it home to the laptop. AAIF shout-out \u2014 we are both ambassadors, aaif.io, and this is squarely the foundation's problem space. Practical hook: goose and Claude Code both ship OTel built in, one environment variable each, into the collector you already run. Then the finding, which is the whole talk in miniature: run goose WITH Claude Code and both emit, but as sibling streams rather than one nested trace \u2014 two agents in one workflow and nothing joins them. Credit Adriana; she captured this.",
+"Bring it home to the laptop. The point is narrow on purpose: your coding agent is an agent acting on your systems, it already ships OpenTelemetry, and it is one environment variable away from the collector you already run. goose does it via the Rust SDK, Claude Code via the Node SDK; the destination is plain OTEL_* variables in both cases. AAIF shout-out here \u2014 we are both ambassadors, aaif.io, and this is squarely the foundation's problem space. If asked what happens with more than one agent: we measured goose driving Claude Code and got two sibling streams rather than one nested trace \u2014 nothing joins them, and it is an open question at the SIG (issue #243, 'how to represent multiple agents on the same telemetry'). Adriana captured that. Do not put it on the slide; running two coding agents together is a contrived setup and it buries the simple point.",
 "Close. Four takeaways, the repo, the QR codes. The missing decision-provenance field is the concrete ask we leave the room with. Land the last line \u2014 'the only question is whether your telemetry can tell you why' \u2014 and then stop talking. Do not add a summary after it."
 ]
 </script>
