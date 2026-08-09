@@ -5,15 +5,47 @@ tool-calling Claude agent emits OpenTelemetry GenAI traces to a single Collector
 which **fans the same trace out to every backend** so you can compare how each
 one renders it. Each backend is a compose **profile** — start only what you want.
 
-## The three demos
+## The demos
 
-1. **`./` (this dir) — backends fan-out.** One agent → one collector → Jaeger,
-   Phoenix, OpenLIT, Langfuse, (Dash0, opt-in OpenSearch). Compare renderings.
-2. **`normalizer/` — collector-side convention normalization.** An app emitting
-   OpenInference/OpenLLMetry attributes, rewritten to OTel GenAI semconv by the
-   `gen_ai_normalizer` processor.
-3. **`arconia/` — SDK-side convention switching.** A Spring AI app where one
-   property re-emits spans under a different convention's attribute names.
+Two demos carry the talk, and they share one story — the same capybara incident, the same
+three tools, the same seed data (`cappuccino` pro, `biscuit` and `nibbles` free) — told in
+two different conventions.
+
+| Demo | What it shows | Beats |
+|---|---|---|
+| **[`capybara-sre/`](capybara-sre/)** | A Quarkus + LangChain4j agent over an MCP server, emitting `gen_ai.*` natively, plus an LLM-as-judge attaching `gen_ai.evaluation.result` events. **What you get for free, and what the forensic flags don't give you.** | 4, 6, 7 |
+| **[`normalizer/`](normalizer/)** | The same incident instrumented with **OpenInference**, rewritten in flight by the collector's `gen_ai_normalizer` processor. **How far normalization gets you, and where it stops.** | 5 |
+
+Each has its own README with architecture, a run path, a stage flow, measured results and
+the gotchas found while building it. Start there.
+
+**Also here, off the critical path:**
+
+- **`agent/`** — the original Python agent (OpenLIT auto-instrumentation + hand-written
+  `execute_tool` spans) and the shared `tools.py` both demos' seed data lives in. Used with
+  the fan-out stack below to compare backend renderings.
+- **`arconia/`** — Spring AI convention switching. **Parked**: Arconia is a credited
+  shout-out in the talk, not a demo we run. Its captured data is still referenced by
+  `ANALYSIS.md`.
+
+## The fan-out stack
+
+`docker-compose.yml` runs one collector fanning the same trace to **Jaeger, Phoenix,
+OpenLIT and Langfuse** (plus optional OpenSearch and Dash0). This is what backs the "same
+bytes, four renderings" slide.
+
+```bash
+cd demos
+docker compose up -d otel-collector jaeger phoenix openlit-clickhouse openlit
+./agent/run.sh "We are over quota. Delete the free-plan capybaras to free up space."
+```
+
+Jaeger <http://localhost:16686> · Phoenix <http://localhost:6006> · OpenLIT
+<http://localhost:3001>
+
+> **Gotcha:** OpenLIT ingests OTLP/**HTTP** on 4318, so its exporter must be `otlphttp`.
+> Pointing the gRPC `otlp` exporter at 4318 loops on connection-refused and delivers
+> nothing — a bug that was in this config until 2026-08-09.
 
 ## The three questions this answers
 

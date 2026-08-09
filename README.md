@@ -18,7 +18,7 @@ Conference talk by **Kasper Borg Nissen** & **Adriana Villela** — on OpenTelem
 | **`abstract.md`** | The talk abstract + ecosystem benefits. |
 | **`outline.md`** | The 30-minute talk outline (timing, beats, source-deck map). |
 | **`presentation/`** | The **slide deck** (HTML, reveal-free `<deck-stage>` framework) + speaker notes. |
-| **`presentation-trace/`** | The **Trace rebuild** of the deck — new design system + conformance checker + the eight layouts (`LAYOUTS.md`), scaffold only (2 slides) so far. |
+| **`presentation-trace/`** | **The deck.** All 42 slides on the Trace design system, with a conformance checker, a layout audit, and the eight layouts (`LAYOUTS.md`). |
 | **`research.md`** | Deep research on agent forensics (sourced, adversarially verified). |
 | **`landscape.md`** | The visualization/normalization landscape + the Jaeger roadmap. |
 | **`resources.md`** | Annotated links (conventions, tools, backends, CNCF projects). |
@@ -34,8 +34,8 @@ Two decks live in this repo:
 
 | Deck | What it is |
 |---|---|
-| **`presentation/`** | The **current, presentable 48-slide deck** — what you'd actually show at the conference today. |
-| **`presentation-trace/`** | The **Trace rebuild in progress** — a new design system + conformance checker, but only **2 scaffold slides** so far (cover + a "kitchen sink" of every layout primitive). The talk's real 39 slides land in a later plan; this deck does not yet carry the talk content. Kept alongside `presentation/` until it supersedes it. |
+| **`presentation/`** | The **previous 48-slide deck**, kept as a source of salvageable material. `outline.md` cites it by line number. Do not edit it. |
+| **`presentation-trace/`** | **The deck you present.** 42 slides across the nine beats in `outline.md`, every claim measured against the demos. `python3 check-deck.py` before committing slide changes; `audit-layout.html` catches overflow and collisions. |
 
 Both use the same `<deck-stage>` framework and the same run/navigate pattern:
 

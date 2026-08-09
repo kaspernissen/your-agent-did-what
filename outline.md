@@ -216,7 +216,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** This much arrives without you doing anything
 - **Content:** verbatim attribute block from a `chat` span — `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` / `response.model`, `gen_ai.usage.input_tokens` / `output_tokens`, `gen_ai.response.finish_reasons`. Plus the structural spans: `invoke_agent`, `chat`, `execute_tool`.
 - **Amber emphasis:** **`gen_ai.provider.name`** — the current spec key, so this stack is on the right side of 2.4
-- **Source:** [ANALYSIS] Demo 1 "Attribute inventory — `chat` span", verbatim from the collector debug exporter. **[NEEDS SOURCE]:** that block was captured from the *Python/OpenLIT* agent; the equivalent Quarkus capybara block is listed but not transcribed in [SPEC] §3.3 — re-capture from Demo 1 before the slide is built so the deck shows the capybara run, not the old one. (Also: the captured block pins `claude-sonnet-4-20250514`, while [SPEC] §7 moves the demo to `claude-sonnet-5`.)
+- **Source:** [ANALYSIS] Demo 1 "Attribute inventory — `chat` span", verbatim from the collector debug exporter. **RESOLVED 2026-08-09:** re-captured from the Quarkus capybara run on quarkus-langchain4j 1.12.2 — 983 input tokens, 115 output, `TOOL_EXECUTION`, a real response id. The slide now shows the capybara run, not the old Python/OpenLIT one.
 
 ### 4.5 — Two documented flags, six attributes in the code
 - **Layout:** L06 Code
@@ -291,7 +291,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** `invoke_agent capybara-sre` — one run, four spans, one of them destructive
 - **Content:** `invoke_agent capybara-sre` → `chat` (the model decides) → `execute_tool list_records` → `execute_tool` **`delete_records`**. The waterfall from 1.5, now carrying the incident.
 - **Amber emphasis:** the **`execute_tool delete_records`** row
-- **Source:** [D1]; span shape per [SPEC] §3.3 and [ANALYSIS] Demo 1. **[NEEDS SOURCE]:** span *durations* for the waterfall are not captured anywhere yet — take them from a real Demo 1 run rather than drawing plausible bars. **No wall-clock timestamp goes on this slide.** No source in the repo records an incident time; any "it was 02:47" in the spoken cold open is narrative framing, and putting it in a headline beside real span names would read as captured data on a slide whose whole job is to show measured telemetry.
+- **Source:** [D1]; span shape per [SPEC] §3.3 and [ANALYSIS] Demo 1. **RESOLVED 2026-08-09:** durations captured from Jaeger trace `d0c84fad` — 12.26s total, `chat` at 3.97/5.02/3.27s, `execute_tool` at **54µs and 145µs**. The tools are microseconds and the model is seconds; the destructive span is 0.001% of the trace, which is a harder version of this beat's point than the bars were. **No wall-clock timestamp goes on this slide.** No source in the repo records an incident time; any "it was 02:47" in the spoken cold open is narrative framing, and putting it in a headline beside real span names would read as captured data on a slide whose whole job is to show measured telemetry.
 
 ### 6.3 — The two attributes that answer the question
 - **Layout:** L06 Code
@@ -339,7 +339,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** A number you improve, and a gate you don't cross
 - **Content:** an in-process LLM judge attaches two events to the `invoke_agent` span before it ends. `root_cause_correctness` carries `gen_ai.evaluation.score.value` — a quality metric that improves over time. `remediation_safety` carries `gen_ai.evaluation.score.label` = **`fail`** — a gate. Both carry `gen_ai.evaluation.explanation`, and on the destructive run the explanation names the deletion as the reason.
 - **Amber emphasis:** **`score.label: fail`**
-- **Source:** [D1] judge; shape and requirement levels per [SPEC] §3.4, acceptance per §3.5. **[NEEDS SOURCE]:** the judge is new work — no captured event output exists yet, so the values on this slide are the designed contract, not a measurement. Replace with real captured output before the deck is final. Same for which visualizer renders the event legibly: [SPEC] §5 defers that choice deliberately, and [SPEC] §9 treats "no visualizer renders it well" as itself a finding.
+- **Source:** [D1] judge; shape and requirement levels per [SPEC] §3.4, acceptance per §3.5. **RESOLVED 2026-08-09:** the judge is built and the events are captured. Authorized run scores 0.7 / `pass`; unauthorized run scores **0.3 / `fail`** with the explanation "deleted production records based solely on a hasty verbal instruction". Same agent, same tools — the prompt is the difference. Same for which visualizer renders the event legibly: [SPEC] §5 defers that choice deliberately, and [SPEC] §9 treats "no visualizer renders it well" as itself a finding.
 
 ### 7.4 — A gate, or a metric you improve?
 - **Layout:** L07 Figures
