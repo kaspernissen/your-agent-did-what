@@ -882,19 +882,16 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <!-- 6.3 — L06 Code · the model's own output, and what it does and does not prove -->
   <section data-label="What the model asked for" class="ground-ink">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1560px;font-size:64px">The model&rsquo;s output remembers what it <span class="amber-text" data-emphasis="amber">asked for</span></h2>
-    <div class="code-block" style="position:absolute;left:120px;right:120px;top:270px">
-      <pre><span class="c-attr">gen_ai.output.messages</span>
-[ { <span class="c-key">"role"</span>: <span class="c-str">"assistant"</span>,
-    <span class="c-key">"parts"</span>: [
-      { <span class="c-key">"type"</span>: <span class="c-str">"reasoning"</span>, <span class="c-key">"content"</span>: <span class="c-str">"the free-plan rows are the ones over quota"</span> },
-      { <span class="c-key">"type"</span>: <span class="c-str">"tool_call"</span>,  <span class="c-key">"name"</span>: <span class="c-str">"delete_records"</span>,
-                            <span class="c-key">"arguments"</span>: { <span class="c-str">"plan"</span>: <span class="c-str">"free"</span> } } ],
-    <span class="c-key">"finish_reason"</span>: <span class="c-str">"tool_call"</span> } ]</pre>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">replaces gen_ai.prompt / gen_ai.completion</p>
+    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1560px;font-size:64px">The model&rsquo;s output remembers what it <span class="amber-text" data-emphasis="amber">asked for</span></h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:390px">
+      <pre style="font-size:30px;line-height:1.9"><span class="c-attr">gen_ai.output.messages</span>
+  parts[0]  <span class="c-key">reasoning</span>      <span class="c-str">"free-plan rows are over quota"</span>
+  parts[1]  <span class="c-str">tool_call</span>      delete_records <span class="c-str">{ "plan": "free" }</span>
+  finish_reason            tool_call</pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:762px;width:1680px">The <span style="font-family:var(--font-mono);color:var(--on-ink)">tool_call</span> part carries the name <em>and the arguments</em> — the content the <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span> span did not have. <strong style="font-weight:600;color:var(--paper)">But this is what the model asked for, not what ran.</strong></p>
-    <p class="small" style="position:absolute;left:120px;top:848px;width:1680px">Parts are typed: <span style="font-family:var(--font-mono)">text · reasoning · tool_call · tool_call_response · blob · file · uri</span>. Our run carried text and tool_call; <span style="font-family:var(--font-mono)">reasoning</span> parts appear when the model emits thinking.</p>
-    <p class="small" style="position:absolute;left:120px;top:926px;width:1680px">This attribute replaced <span style="font-family:var(--font-mono)">gen_ai.prompt</span> / <span style="font-family:var(--font-mono)">gen_ai.completion</span>, which are gone from the registry — our stack still emits the old pair.</p>
+    <p class="small" style="position:absolute;left:120px;top:754px;width:1680px">That <span style="font-family:var(--font-mono);color:var(--on-ink)">tool_call</span> part carries the name <em>and the arguments</em> — the content the <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span> span did not have. <strong style="font-weight:600;color:var(--paper)">But it is what the model asked for, not what ran.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:870px;width:1680px">A <span style="font-family:var(--font-mono)">reasoning</span> part only appears when the model emits thinking — our run carried text and tool_call.</p>
   </section>
   <section data-label="The footprint is empty" class="ground-paper">
     <div class="deck-footer"></div>

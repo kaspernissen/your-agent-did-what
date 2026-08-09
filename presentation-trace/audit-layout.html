@@ -38,8 +38,23 @@ const SLIDE_W = 1920, SLIDE_H = 1080, PAD = 4;
 
 function isText(el){
   if (!el.textContent || !el.textContent.trim()) return false;
-  // only leaf-ish nodes — a wrapper's box is not itself ink on the slide
-  return ![...el.children].some(c => c.textContent && c.textContent.trim());
+  const kids = [...el.children].filter(c => c.textContent && c.textContent.trim());
+  // Leaf: obviously ink on the slide.
+  if (!kids.length) return true;
+  // Must render text of ITS OWN, not just contain children that do. This is what
+  // separates <p>The <span>x</span> part carries…</p> (a real text block) from a
+  // layout wrapper or an <svg> full of <text> — those have no direct text nodes,
+  // and treating them as blocks made every SVG slide report itself as overlapping
+  // each of its own labels.
+  const ownText = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
+  if (!ownText) return false;
+  // A text BLOCK whose children are all inline — <p> with <span>/<em>/<strong> —
+  // is also ink, and is the shape almost every caption in this deck has. Leaf-only
+  // measured just the inline fragments, which sit on the caption's first line and
+  // therefore land safely inside whatever they were overlapping. That single rule
+  // is why the slide 23, 29 and 34 collisions all audited CLEAN.
+  // Layout wrappers (children are block-level) are still excluded.
+  return kids.every(c => getComputedStyle(c).display.startsWith('inline'));
 }
 
 function overlaps(a, b){
