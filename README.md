@@ -49,7 +49,10 @@ Serves locally and opens **two** windows: the **deck** and a **speaker-notes fol
 the deck on the projector.
 
 - Navigate: `←` `→` · Space · `Home`/`End` · number keys · `R` resets.
-- Both decks are offline-safe (engine + fonts vendored).
+- Both decks vendor their engine, but only **`presentation-trace/`** is fully offline-safe
+  (fonts vendored under `presentation-trace/fonts/` too). **`presentation/`** still fetches
+  Roboto and Martian Mono live from `fonts.googleapis.com`/`fonts.gstatic.com` — presenting
+  it offline loses the title and mono faces.
 - `presentation-trace/` also ships `check-deck.py` — run `python3 check-deck.py` from
   inside it before committing slide changes; it enforces the Trace design-system rules
   (one amber emphasis per slide, no bullets, one chamfered corner, mascot placement, no
