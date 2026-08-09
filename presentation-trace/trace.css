@@ -152,9 +152,17 @@ deck-stage>section{
   width:200px;height:200px;flex:none;border-radius:50%;
   background-color:var(--paper-2);
   background-size:cover;background-position:center top;
-  box-shadow:0 0 0 6px var(--paper), 0 0 0 12px var(--blue-mute);
   position:relative;z-index:1;
+  /* A gap ring in the ground colour, then the node ring. The gap is what makes
+     the portrait read as sitting ON the axis rather than pinned over it, and it
+     is what visually binds two photographs that have different backgrounds. */
+  box-shadow:0 0 0 8px var(--paper), 0 0 0 18px var(--blue-lift);
 }
-.ground-ink .speaker-photo{box-shadow:0 0 0 6px var(--ink), 0 0 0 12px var(--blue)}
+.ground-ink .speaker-photo{box-shadow:0 0 0 8px var(--ink), 0 0 0 18px var(--blue-lift)}
+/* Lead speaker takes the amber ring, mirroring the cover, where the first
+   speaker is the amber node and the second is blue. One emphasis, carried by
+   the same device on both slides. */
+.speaker-photo.is-lead{box-shadow:0 0 0 8px var(--paper), 0 0 0 18px var(--amber)}
+.ground-ink .speaker-photo.is-lead{box-shadow:0 0 0 8px var(--ink), 0 0 0 18px var(--amber)}
 .speaker-photo.is-kasper{background-image:url("assets/kasper.jpg")}
 .speaker-photo.is-adriana{background-image:url("assets/adriana.jpg")}
