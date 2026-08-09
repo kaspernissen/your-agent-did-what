@@ -83,7 +83,27 @@
     </div>
   </section>
 
-  <!-- 0.3 — L03 Statement -->
+  <!-- 0.3 — L04 · who this talk is for -->
+  <section data-label="Two ways you meet an agent" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Two audiences, one dependency</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">You either build one, or you run someone else's</h2>
+    <div style="position:absolute;left:120px;right:120px;top:420px;display:grid;grid-template-columns:1fr 1fr;gap:90px">
+      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)">You build it</span>
+        <span style="font-size:32px;font-weight:300;line-height:1.4">LangChain, LangGraph, Spring AI, LangChain4j. You choose the framework, so you choose what it emits.</span>
+        <span style="font-size:26px;line-height:1.45;color:var(--muted-ink);margin-top:auto">Your problem: which convention, and what it leaves out.</span>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-text)">You run someone else's</span>
+        <span style="font-size:32px;font-weight:300;line-height:1.4">kagent, HolmesGPT, k8sgpt, Copilots in your tooling. You did not choose the instrumentation.</span>
+        <span class="amber-text" data-emphasis="amber" style="font-size:26px;line-height:1.45;margin-top:auto">Your problem: it reads <em>your</em> telemetry — and it is only as good as what it reads.</span>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1650px">Most of us are both. The conventions are what make the second case survivable, which is why the first case matters even if you never build an agent.</p>
+  </section>
+
+  <!-- 0.4 — L03 Statement -->
   <section data-label="The morning after" class="ground-paper">
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The problem</p>
@@ -394,7 +414,7 @@
       <span class="tag is-navy">query</span>
       <span class="tag is-solid" data-emphasis="amber">delete_records</span>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:900px;width:1300px">Quarkus + LangChain4j, an MCP server holding the capybara customer database. One scenario, reused verbatim by both demos.</p>
+    <p class="small" style="position:absolute;left:120px;top:900px;width:1300px">A toy standing in for kagent or HolmesGPT — small enough that we can open it up and look at every span it emits. Quarkus + LangChain4j over an MCP server. One scenario, both demos.</p>
   </section>
 
   <!-- 4.2 — L04 -->
@@ -750,7 +770,30 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:900px">Epics #8416 and #7827 are open proposals with no milestones — concrete direction, not shipped features. Neither yet commits to <span style="font-family:var(--font-mono)">gen_ai.*</span> by name.</p>
   </section>
 
-  <!-- 8.2 — L08 Close · third and final mascot -->
+  <!-- 8.2 — L07 · the agentic-SRE tools that consume this -->
+  <section data-label="Who reads your telemetry next" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">CNCF sandbox and friends</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">Your next reader isn't a human</h2>
+    <div style="position:absolute;left:120px;right:120px;top:430px;display:grid;grid-template-columns:repeat(3,1fr);gap:70px">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <img src="assets/kagent.png" alt="kagent" style="height:64px;width:auto;object-fit:contain;align-self:flex-start">
+        <span style="font-size:28px;font-weight:300;line-height:1.4">Agents as first-class Kubernetes workloads — every step in the loop a span.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <img src="assets/holmesgpt.png" alt="HolmesGPT" style="height:64px;width:auto;object-fit:contain;align-self:flex-start">
+        <span style="font-size:28px;font-weight:300;line-height:1.4">An agentic SRE that reads your OpenTelemetry data and calls tools over MCP.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <img src="assets/k8sgpt.svg" alt="k8sgpt" style="height:64px;width:auto;object-fit:contain;align-self:flex-start">
+        <span style="font-size:28px;font-weight:300;line-height:1.4">Scans the cluster, explains what it finds in language a human can act on.</span>
+      </div>
+    </div>
+    <p style="position:absolute;left:120px;top:790px;width:1680px;font-size:34px;line-height:1.4;font-weight:300">If your spans lack semantic context, <span class="amber-text" data-emphasis="amber">the AI SRE hallucinates — confidently, at scale.</span></p>
+    <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">The model isn't the answer. The legible data is. That is the whole argument for conventions, made by the tools rather than by us.</p>
+  </section>
+
+  <!-- 8.3 — L08 Close · third and final mascot -->
   <section data-label="Close" class="ground-ink">
     <div class="axis" style="top:706px"></div>
     <!-- Mascot asleep on the axis, same treatment as the cover: the rule passes
@@ -790,6 +833,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 [
   "Cover. Hold here while the room settles. Names, handles, and we're both here because we ran into this the hard way.",
   "Who. Keep it short \u2014 20 seconds each, no CV. Worth saying out loud: Adriana loves capybaras. That is not a joke, and it is why there is one asleep on the last slide \u2014 and why the demo agent is called Capybara.",
+  "Two ways you meet an agent. This is the slide that tells the room which of them they are. Most people are both. Say plainly: if you only ever RUN agents, the conventions still decide whether the thing reading your telemetry is any good.",
   "The morning after. The whole talk in one sentence. The incident is OVER \u2014 they're asking you to explain the decision. Pause on 'why'.",
   "Divider 01 \u2014 handoff to Adriana.",
   "Four architectures deep. Each solved a real problem, each made understanding harder. We still reach for tools designed for the monolith.",
@@ -827,6 +871,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Three placements. Ours are one of each: safety is gate-shaped, correctness is metric-shaped. Same run, two philosophies.",
   "Where we cheated. Say plainly that in-process synchronous judging is not how you'd do this in production. Name the three biases; do NOT quote percentage figures.",
   "Jaeger v2 on the Collector. The substrate argument isn't ours \u2014 the oldest tracing project in the CNCF made it. Caveat the epics: open proposals, no milestones.",
+  "Who reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads. The model isn't the answer, the legible data is. This is the whole talk argued by the tools rather than by us.",
   "Close. Four takeaways, the links, the QR. Land the last line and stop talking."
 ]
 </script>
