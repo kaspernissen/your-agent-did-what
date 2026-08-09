@@ -1,5 +1,12 @@
 # Arconia Convention-Switching Demo
 
+> **Not on the talk's critical path.** Arconia is a **shout-out** in the talk (beat 5), not
+> a demo we run — it is how the Spring community reaches the same target the collector
+> processor reaches downstream, by [Thomas Vitale](https://github.com/ThomasVitale). This
+> directory is kept because its captured flavor-diff data is real and referenced in
+> `demos/ANALYSIS.md`, but nothing in the 30-minute talk depends on running it and it is
+> not maintained to the standard of Demos 1 and 2.
+
 Demonstrates how Arconia + Spring AI can re-emit GenAI spans under different
 observability conventions by flipping a single application property — no code change required.
 

@@ -581,7 +581,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on <span class="amber-text" data-emphasis="amber">the same target</span></h2>
     <div class="axis-list" style="position:absolute;left:120px;top:400px;width:1650px">
       <p class="axis-list-item">The collector processor — donated, accepted and merged (#46069, closed June 2026). Still alpha.</p>
-      <p class="axis-list-item">Arconia re-emits Spring AI spans under a chosen flavor, no code change.</p>
+      <p class="axis-list-item"><strong style="font-weight:600">Arconia</strong> (Thomas Vitale) does the same job for the Spring community — one property, <span style="font-family:var(--font-mono);font-size:28px">…ai.flavor</span>, and Spring AI re-emits under a different convention with no code change.</p>
       <p class="axis-list-item">Phoenix publishes a convention-translation guide. OpenLIT emits <span style="font-family:var(--font-mono);font-size:30px">gen_ai.*</span> natively.</p>
     </div>
     <p class="small" style="position:absolute;left:120px;top:880px">Different layers, one destination. The fragmentation is being actively closed.</p>
@@ -882,7 +882,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Two places to fix it. Downstream vs upstream, both targeting OTel semconv.",
   "Before and after, from the debug exporter. Say the version out loud: merged, alpha, traces-only, plain image pull on contrib 0.158.0. Mention the donation issue \u2014 raising it here is the point of doing it on this stage.",
   "What it does NOT touch. The honesty slide of the beat. Message bodies stay OpenInference; the span name never changes.",
-  "Nobody is proposing a fifth convention. Short survey, not a demo. Arconia is a mention here, not a measured result.",
+  "Nobody is proposing a fifth convention. Short survey, not a demo. Give Arconia a proper shout-out here - Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream. We are NOT demoing it, and we should say so; the point is that the fragmentation is being closed from several directions at once.",
   "Divider 06 \u2014 handoff Adriana to Kasper.",
   "The incident as a trace. Same waterfall shape as beat 1, now carrying the deletion. Durations are structural \u2014 take real ones from a Demo 1 run before the talk.",
   "The two attributes that answer the question. Both opt-in, both off by default, for privacy and payload size. One flag away from not existing.",
