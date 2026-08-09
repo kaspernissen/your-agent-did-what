@@ -13,6 +13,40 @@ import sys
 HEX_RE = re.compile(r"#[0-9a-fA-F]{3,8}\b")
 PURE_RE = re.compile(r"#(?:fff(?:fff)?|000(?:000)?)\b", re.I)
 SECTION_RE = re.compile(r"<section\b([^>]*)>(.*?)</section>", re.S | re.I)
+SVG_TAG_RE = re.compile(r"<(/?)svg\b[^>]*?(/?)>", re.S | re.I)
+
+
+def _strip_svg(markup):
+    """Drop every <svg>…</svg> subtree.
+
+    The no-raw-hex rule exists to stop colour drift in slide *chrome*. An inline
+    SVG diagram is artwork — it carries its own palette (often lifted verbatim
+    from a source deck) and is exempt. Everything outside an <svg> stays strictly
+    governed. Handles several SVGs per slide and nested <svg> elements; an
+    unclosed <svg> is deliberately left in so its hex still gets flagged.
+    """
+    kept = []
+    depth = 0
+    cursor = 0
+    for m in SVG_TAG_RE.finditer(markup):
+        closing = m.group(1) == "/"
+        self_closing = m.group(2) == "/"
+        if closing:
+            if depth:
+                depth -= 1
+                if depth == 0:
+                    cursor = m.end()
+        elif self_closing:
+            if depth == 0:
+                kept.append(markup[cursor:m.start()])
+                cursor = m.end()
+        else:
+            if depth == 0:
+                kept.append(markup[cursor:m.start()])
+                cursor = m.start()
+            depth += 1
+    kept.append(markup[cursor:])
+    return "".join(kept)
 
 
 def _sections(html):
@@ -50,9 +84,10 @@ def check_deck(html, css):
             violations.append(
                 f"{where}: uses bullets — span bars and .axis-list replace them")
 
-        for hexval in HEX_RE.findall(attrs + inner):
+        for hexval in HEX_RE.findall(attrs + _strip_svg(inner)):
             violations.append(
-                f"{where}: raw hex {hexval} in slide markup — use trace.css tokens")
+                f"{where}: raw hex {hexval} in slide markup — use trace.css tokens "
+                f"(inline <svg> artwork is exempt)")
 
         n_emph = len(re.findall(r'data-emphasis="amber"', attrs + inner))
         if n_emph > 1:

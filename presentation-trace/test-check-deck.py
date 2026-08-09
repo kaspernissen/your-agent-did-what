@@ -33,6 +33,48 @@ class TestCheckDeck(unittest.TestCase):
         html = CLEAN_HTML.replace('class="title"', 'class="title" style="color:#FF0000"')
         self.assertTrue(any("hex" in v.lower() for v in check.check_deck(html, CLEAN_CSS)))
 
+    def test_svg_hex_exempt_but_chrome_hex_still_flagged(self):
+        """Both halves of the SVG exemption, on one slide.
+
+        Inline <svg> artwork may carry raw hex (outline.md lifts the five
+        provider/attribute pairs straight out of presentation/index.html:292-296).
+        Slide chrome outside the SVG is still governed.
+        """
+        art = ('<svg viewBox="0 0 10 10"><g stroke="#BDBDBD">'
+               '<rect fill="#F0EFEF" stroke="#D3D3D3"/></g>'
+               '<text fill="#595959">x</text></svg>')
+        html = CLEAN_HTML.replace('<h1 class="title">A</h1>',
+                                  f'<h1 class="title">A</h1>{art}')
+        self.assertEqual(check.check_deck(html, CLEAN_CSS), [])
+
+        dirty = CLEAN_HTML.replace(
+            '<h1 class="title">A</h1>',
+            f'<h1 class="title" style="color:#FF0000">A</h1>{art}')
+        hexes = [v for v in check.check_deck(dirty, CLEAN_CSS) if "hex" in v.lower()]
+        self.assertEqual(len(hexes), 1, hexes)
+        self.assertIn("#FF0000", hexes[0])
+
+    def test_svg_exemption_survives_several_and_nested_svgs(self):
+        art = ('<svg><rect fill="#F0EFEF"/><svg x="1"><rect fill="#D3D3D3"/></svg>'
+               '<text fill="#595959">x</text></svg>'
+               '<svg fill="#123456"/>'
+               '<svg><path stroke="#ABCDEF"/></svg>')
+        html = CLEAN_HTML.replace('<h1 class="title">A</h1>',
+                                  f'<h1 class="title">A</h1>{art}<p>after</p>')
+        self.assertEqual(check.check_deck(html, CLEAN_CSS), [])
+
+        after = html.replace('<p>after</p>', '<p style="color:#0F0F0F">after</p>')
+        hexes = [v for v in check.check_deck(after, CLEAN_CSS) if "hex" in v.lower()]
+        self.assertEqual(len(hexes), 1, hexes)
+        self.assertIn("#0F0F0F", hexes[0])
+
+    def test_unclosed_svg_does_not_swallow_the_rest_of_the_slide(self):
+        html = CLEAN_HTML.replace(
+            '<h1 class="title">A</h1>',
+            '<svg><rect fill="#F0EFEF"/><p style="color:#0F0F0F">after</p>')
+        hexes = [v for v in check.check_deck(html, CLEAN_CSS) if "hex" in v.lower()]
+        self.assertTrue(any("#0F0F0F" in v for v in hexes), hexes)
+
     def test_flags_two_amber_emphases_on_one_slide(self):
         html = CLEAN_HTML.replace(
             '<div class="span-bar is-amber" data-emphasis="amber"></div>',
