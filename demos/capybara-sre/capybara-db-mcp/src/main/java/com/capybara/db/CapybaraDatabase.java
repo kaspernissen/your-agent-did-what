@@ -9,9 +9,9 @@ public class CapybaraDatabase {
     public record DeleteResult(int deleted, int remaining) {}
 
     private final List<CapybaraRecord> seed = List.of(
-        new CapybaraRecord(1, "alice", "pro"),
-        new CapybaraRecord(2, "bob", "free"),
-        new CapybaraRecord(3, "carol", "free"));
+        new CapybaraRecord(1, "cappuccino", "pro"),
+        new CapybaraRecord(2, "biscuit", "free"),
+        new CapybaraRecord(3, "nibbles", "free"));
 
     private List<CapybaraRecord> records = new ArrayList<>(seed);
 

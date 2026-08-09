@@ -452,12 +452,13 @@
     <div class="code-block" style="position:absolute;left:120px;right:120px;top:290px">
       <pre><span class="c-attr">gen_ai.operation.name</span>          chat
 <span class="c-str" data-emphasis="amber">gen_ai.provider.name</span>           anthropic
-<span class="c-attr">gen_ai.request.model</span>           <span class="c-key">…</span>
-<span class="c-attr">gen_ai.usage.input_tokens</span>      <span class="c-key">…</span>
-<span class="c-attr">gen_ai.usage.output_tokens</span>     <span class="c-key">…</span>
-<span class="c-attr">gen_ai.response.finish_reasons</span> <span class="c-key">…</span></pre>
+<span class="c-attr">gen_ai.request.model</span>           claude-sonnet-4-6
+<span class="c-attr">gen_ai.usage.input_tokens</span>      983
+<span class="c-attr">gen_ai.usage.output_tokens</span>     115
+<span class="c-attr">gen_ai.response.finish_reasons</span> TOOL_EXECUTION
+<span class="c-attr">gen_ai.response.id</span>             msg_011CdsAL8i3UT7…</pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1650px">Plus the structural spans: <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> · <span style="font-family:var(--font-mono);color:var(--on-ink)">chat</span> · <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span>. Values to be filled from a real capybara run before the talk — the captured block we have is from the older Python agent.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1650px">Plus the structural spans: <span style="font-family:var(--font-mono);color:var(--on-ink)">invoke_agent</span> · <span style="font-family:var(--font-mono);color:var(--on-ink)">chat</span> · <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span>. Captured verbatim from a capybara run on quarkus-langchain4j 1.12.2. Nothing was hand-written: this is what the extension emits on its own.</p>
   </section>
 
   <!-- 4.5 — L06 Code -->
@@ -514,7 +515,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <marker id="ara" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#F5A800"/></marker>
       </defs>
     </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1560px">The listener list is hardcoded in <span style="font-family:var(--font-mono)">McpRecorder</span>, so you cannot register your own alongside it. Measured on 1.11.2 — the kind of gap you hit, not a verdict on the current release.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1560px">The listener list is hardcoded in <span style="font-family:var(--font-mono)">McpRecorder</span>, so you cannot register your own alongside it. Measured on <strong style="font-weight:600">1.12.2, the current release</strong> — we re-ran it to check. The tool span carries <span style="font-family:var(--font-mono)">gen_ai.tool.name</span>, <span style="font-family:var(--font-mono)">mcp.method.name</span> and a JSON-RPC id, and no content at all.</p>
   </section>
 
   <!-- 05 — L02 Section divider -->
@@ -637,8 +638,9 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <pre><span class="c-str" data-emphasis="amber">gen_ai.tool.call.arguments</span>  {"plan": "free"}
 <span class="c-attr">gen_ai.tool.call.result</span>     {"deleted": 2, "remaining": 1}</pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:640px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong>. The spec explicitly says instrumentation SHOULD NOT capture this by default — privacy, and payload size.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px">Two records deleted. One survived. That is the whole forensic answer, and it was one flag away from not existing.</p>
+    <p class="small" style="position:absolute;left:120px;top:620px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong> — the spec says instrumentation SHOULD NOT capture this by default, for privacy and payload size.</p>
+    <p class="small" style="position:absolute;left:120px;top:700px;width:1680px">These two are what the convention defines. <strong style="font-weight:600;color:var(--paper)">Our MCP run emits neither.</strong> The values above come from a Python agent that writes the span by hand — which is the point of the next slide.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px">Two records deleted, one survived — the whole forensic answer, in two attributes you have to opt into and, on this stack, then write yourself.</p>
   </section>
 
   <!-- 6.4 — L03 Statement -->
