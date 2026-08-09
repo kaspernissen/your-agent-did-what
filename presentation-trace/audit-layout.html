@@ -61,10 +61,23 @@ function overlaps(a, b){
 
     const label = sec.getAttribute('data-label') || '(no label)';
     const stageBox = stage.getBoundingClientRect();
+    // Two inline fragments of the SAME sentence (an <em> and a highlighted
+    // <span> in one paragraph) legitimately have intersecting boxes once the
+    // text wraps. Group by nearest block-level ancestor so we only compare
+    // things that are actually separate blocks of text on the slide.
+    // Start at the element itself: a block-level node is its OWN group, so two
+    // sibling <p>s are still compared. Only inline nodes walk up to their block.
+    // (Starting at parentElement collapsed every top-level <p> into the section
+    // and silently disabled overlap detection entirely.)
+    const blockOf = (el) => {
+      let n = el;
+      while (n && n !== clone && getComputedStyle(n).display.startsWith('inline')) n = n.parentElement;
+      return n || clone;
+    };
     const texts = [...clone.querySelectorAll('*')].filter(isText).map(el => {
       const r = el.getBoundingClientRect();
       return {
-        el,
+        el, block: blockOf(el),
         text: el.textContent.trim().slice(0, 44),
         left: r.left - stageBox.left, top: r.top - stageBox.top,
         right: r.right - stageBox.left, bottom: r.bottom - stageBox.top,
@@ -99,6 +112,7 @@ function overlaps(a, b){
 
     for (let a = 0; a < texts.length; a++){
       for (let b = a+1; b < texts.length; b++){
+        if (texts[a].block === texts[b].block) continue;   // same paragraph
         if (overlaps(texts[a], texts[b])){
           findings.push(`slide ${i+1} [${label}] OVERLAP   "${texts[a].text}"  ×  "${texts[b].text}"`);
         }
