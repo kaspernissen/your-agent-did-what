@@ -260,14 +260,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Source:** [D2]; [ANALYSIS] Demo 2 observed before/after table; [SPEC] §4
 - **Say the version out loud:** the processor is merged, **alpha**, traces-only, no auto-detection — and it now ships in the released contrib image (contrib **0.158.0**, 2026-08-04), so this is a plain image pull, not a custom `ocb` build. The donation issue is **#46069**; raising it here is the point of doing it on this stage.
 
-### 5.4 — What it does not touch
-- **Layout:** L06 Code
-- **Headline:** Partial normalization is the honest word
-- **Content:** untouched — `llm.input_messages.*`, `llm.output_messages.*`, `llm.tools.*`, `input.value` / `output.value`, `llm.system`, `llm.invocation_parameters`. And the span **name** stays `messages.create`: the processor rewrites attributes, not names. So the span is a hybrid — OTel core dimensions, OpenInference message bodies.
-- **Amber emphasis:** **`llm.input_messages.*`**
-- **Source:** [ANALYSIS] Demo 2 "What it did NOT touch". It fixes the dashboards and the cost math; it does not make an OpenInference trace fully OTel-native end to end.
+> **5.3 and 5.4 were merged 2026-08-09** into one contrast slide: what the processor rewrote on the left, what survived on the right, `llm.system` in amber. They were near-identical dark code panels back to back — the same slide twice from row ten. The merge also buys back a slide. What was 5.4's content now lives in 5.3's right-hand panel.
 
-### 5.5 — Nobody is proposing a fifth convention
+### 5.4 — Nobody is proposing a fifth convention
 - **Layout:** L04 Text + diagram
 - **Headline:** Everyone is converging on **the same target**
 - **Content:** a short survey, not a demo — the point is that the fragmentation is being actively closed, from several directions at once. The collector processor is merged and **alpha**, with a donation to contrib under discussion (issue #46069). Arconia re-emits Spring AI's spans under a chosen flavor, so a Java shop can switch schema without touching code. Phoenix publishes an explicit convention-translation guide. OpenLIT's SDK emits `gen_ai.*` natively. Different layers, one destination: OTel semconv.
