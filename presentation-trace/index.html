@@ -334,16 +334,13 @@
     <p class="small" style="position:absolute;left:120px;top:800px;width:1600px">Same code. One property apart. "Conforms to OTel GenAI" is necessary but not sufficient — <strong style="font-weight:600;color:var(--paper)">which revision</strong> matters.</p>
   </section>
 
-  <!-- 2.5 — L04 -->
+  <!-- 2.5 — L04 · four renderings of one span -->
   <section data-label="Same bytes, four renderings" class="ground-paper">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">Same bytes, four renderings</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1650px">
-      <p class="axis-list-item">Jaeger is generic — it shows the plumbing, raw tags.</p>
-      <p class="axis-list-item is-amber">Phoenix is GenAI-native but <em>OpenInference</em>-native: it accepts <span style="font-family:var(--font-mono);font-size:30px">gen_ai.*</span> spans and renders them as <span class="amber-text" data-emphasis="amber">plain spans</span>.</p>
-      <p class="axis-list-item">OpenLIT and Langfuse light up — tokens, cost, model.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:880px">Jaeger's arrival was API-confirmed. Phoenix and Langfuse renderings come from documentation, not captured screenshots.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Same bytes. The viewer decides whether it's legible.</h2>
+    <div style="position:absolute;left:120px;right:120px;top:360px" data-emphasis="amber"><svg viewBox="0 0 1680 260" style="width:100%;height:auto"><rect x="0" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="22" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Jaeger</text><text x="22" y="86" font-family="JetBrains Mono" font-size="17" fill="#5B6180">llm.model_name=…</text><text x="22" y="120" font-family="JetBrains Mono" font-size="17" fill="#5B6180">gen_ai.usage.in=983</text><text x="22" y="154" font-family="JetBrains Mono" font-size="17" fill="#5B6180">mcp.method.name=…</text><text x="22" y="188" font-family="JetBrains Mono" font-size="17" fill="#5B6180">jsonrpc.request.id=5</text><text x="22" y="228" font-family="Public Sans" font-size="19" fill="#5B6180">raw tags, no meaning</text><rect x="430" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="452" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Phoenix</text><rect x="452" y="76" width="330" height="26" rx="13" fill="#A9B6EE"/><rect x="452" y="116" width="230" height="26" rx="13" fill="#A9B6EE"/><text x="452" y="196" font-family="Public Sans" font-size="19" fill="#8A5B00">plain spans —</text><text x="452" y="222" font-family="Public Sans" font-size="19" fill="#8A5B00">no tokens, no cost, no model</text><rect x="860" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="882" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenLIT</text><rect x="882" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="882" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="934.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="994" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1046.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1106" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1158.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="882" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="882" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="1290" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="1312" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text><rect x="1312" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="1312" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1364.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="1424" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1476.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1536" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1588.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="1312" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="1312" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="430" y="0" width="390" height="250" rx="12" fill="none" stroke="#F5A800" stroke-width="3"/></svg></div>
+    <p class="small" style="position:absolute;left:120px;top:730px;width:1680px">Phoenix is GenAI-native but <em>OpenInference</em>-native: it accepts <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and renders them as plain spans. That is the fragmentation tax, visible.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Honesty: Jaeger's arrival was API-confirmed. The Phoenix, OpenLIT and Langfuse renderings are from documentation, not captured screenshots — these are wireframes of what the docs describe.</p>
   </section>
 
   <!-- 03 — L02 Section divider -->
@@ -442,17 +439,31 @@
     <p style="position:absolute;left:120px;top:900px;width:700px;font-size:26px;line-height:1.4;color:var(--ink)">A toy standing in for kagent or HolmesGPT — small enough that we can open it up and look at every span it emits. Quarkus + LangChain4j over an MCP server. One scenario, both demos.</p>
   </section>
 
-  <!-- 4.2 — L04 -->
+  <!-- 4.2 — L04 · the move, drawn -->
   <section data-label="The conventions moved house" class="ground-paper">
     <div class="deck-footer"></div>
+    <img src="assets/capybara-mascot.png" alt="" class="thread-mark">
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">semconv v1.42.0 · June 2026</p>
-    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px">In June, <span style="font-family:var(--font-mono);font-size:64px">gen_ai</span> moved out</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:450px;width:1650px">
-      <p class="axis-list-item">v1.42.0 (12 June 2026) deprecated all <span style="font-family:var(--font-mono);font-size:30px">gen_ai</span> content in <span style="font-family:var(--font-mono);font-size:30px">open-telemetry/semantic-conventions</span>.</p>
-      <p class="axis-list-item is-amber">It now lives in <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono)">open-telemetry/semantic-conventions-genai</span>.</p>
-      <p class="axis-list-item">The new repo has <strong style="font-weight:600">no releases or tags yet</strong> — there is no versioned schema URL to pin against.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:880px">If your bookmarks still point at the old page, that is the move you missed.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">In June, <span style="font-family:var(--font-mono);font-size:64px">gen_ai</span> moved out</h2>
+    <div style="position:absolute;left:120px;right:120px;top:400px" data-emphasis="amber"><svg viewBox="0 0 1680 300" style="width:100%;height:auto">
+  <rect x="0" y="40" width="640" height="180" rx="14" fill="#F2ECE0"/>
+  <text x="36" y="84" font-family="JetBrains Mono" font-size="24" fill="#5B6180">open-telemetry/</text>
+  <text x="36" y="120" font-family="JetBrains Mono" font-size="26" fill="#5B6180">semantic-conventions</text>
+  <line x1="30" y1="158" x2="250" y2="158" stroke="#5B6180" stroke-width="2.5"/>
+  <text x="36" y="167" font-family="JetBrains Mono" font-size="26" fill="#5B6180">gen_ai.*</text>
+  <text x="36" y="205" font-family="Public Sans" font-size="22" fill="#5B6180">deprecated in v1.42.0 · 12 June 2026</text>
+
+  <path d="M672 130 L788 130" stroke="#425CC7" stroke-width="3.5" marker-end="url(#mv)"/>
+
+  <rect x="810" y="40" width="870" height="180" rx="14" fill="#10142E"/>
+  <text x="852" y="90" font-family="JetBrains Mono" font-size="24" fill="#8A93BC">open-telemetry/</text>
+  <text x="852" y="128" font-family="JetBrains Mono" font-size="30" fill="#F5A800">semantic-conventions-genai</text>
+  <rect x="852" y="152" width="470" height="44" rx="10" fill="none" stroke="#F5A800" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="874" y="181" font-family="JetBrains Mono" font-size="22" fill="#F5A800">no releases · no tags · nothing to pin</text>
+  <defs><marker id="mv" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#425CC7"/></marker></defs>
+</svg></div>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">If your bookmarks still point at <span style="font-family:var(--font-mono)">opentelemetry.io/docs/specs/semconv/gen-ai</span>, that is the move you missed — it is a redirect notice now.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">And the new repo has no versioned release yet, so you can follow a commit or a dated snapshot, but there is no schema URL to pin against.</p>
   </section>
 
   <!-- 4.3 — L07 Figures -->

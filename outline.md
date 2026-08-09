@@ -1,7 +1,7 @@
 # Your Agent Did What? — 30-Minute Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** 30 minutes, nine beats, **42 slides** (5.3 and 5.4 merged into one contrast slide 2026-08-09). The beat table currently sums to 33.5 — see *Open decisions*.
+**Length:** **30–35 minutes** (the speakers' working range, confirmed 2026-08-09), nine beats, **42 slides** — 5.3 and 5.4 merged into one contrast slide.
 **Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
 **Spine:** one capybara incident, told twice in two conventions, with every claim measured rather than asserted.
@@ -29,7 +29,7 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 3.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~32 — still over, see Open decisions** | | |
+| | **Total** | **~32 — within the 30–35 min the speakers are working to** | | |
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
@@ -410,7 +410,7 @@ Assets that exist in `presentation-trace/assets/` today: `capybara-mascot.png`, 
 
 **Added 2026-08-09 — AAIF / coding agents (8.3 "Watch your own coding agent"):** a shout-out to the Agentic AI Foundation (aaif.io), where both speakers are ambassadors, carried by a practical hook rather than a logo. goose v1.43.0 ships built-in OTel via the Rust SDK behind `GOOSE_TELEMETRY_ENABLED`, and Claude Code ships it via the Node SDK behind `CLAUDE_CODE_ENABLE_TELEMETRY=1` — both into the collector you already run. The finding that earns the slide: running goose *with* Claude Code over ACP produces **two sibling streams, not one nested trace** — two agents in one workflow with nothing joining them. Source: Adriana's companion repo (`your-agent-did-what-adriana`), `docs/goose-claude-code-telemetry.md`.
 
-**Restored 2026-08-09:** the kagent/HolmesGPT ecosystem slide is back (now 8.2 "Who reads your telemetry next"), together with a new framing slide at 0.3 ("Two ways you meet an agent"). Cutting the ecosystem slide had left a real hole: the instrumentation ecosystem the talk surveys is developer-facing, while the capybara demo is an SRE scenario, and nothing on the deck connected them. The bridge is that agentic-SRE tools *consume* your telemetry — "it is only as good as the data it reads" — which makes the conventions matter even to someone who never builds an agent. The capybara is now introduced explicitly as a toy standing in for kagent/HolmesGPT, small enough to open up. Deck is 42 slides; beat 3 remains the compression candidate.
+**Restored 2026-08-09:** the kagent/HolmesGPT ecosystem slide is back (now 8.2 "Who reads your telemetry next"), together with a new framing slide at 0.3 ("Two ways you meet an agent"). Cutting the ecosystem slide had left a real hole: the instrumentation ecosystem the talk surveys is developer-facing, while the capybara demo is an SRE scenario, and nothing on the deck connected them. The bridge is that agentic-SRE tools *consume* your telemetry — "it is only as good as the data it reads" — which makes the conventions matter even to someone who never builds an agent. The capybara is now introduced explicitly as a toy standing in for kagent/HolmesGPT, small enough to open up. Deck is 42 slides. Timing is comfortable at 30–35 minutes; beat 3 remains the first candidate only if a cut is ever needed.
 
 **Dropped from the previous outline** (recorded so the decision is deliberate, not accidental): the pizza-order trace and its 275-span / "164 spans named POST" statistics, the skills-break-traces slide, the W3C context-propagation slide, and the maturity-model slide. The pizza demo is superseded by the capybara scenario, which the whole deck now shares; the rest are good material that 30 minutes does not have room for. The "spans named just POST" point survives, compressed, as the amber emphasis on slide 1.5.
 
