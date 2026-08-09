@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trace deck — layout audit</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="trace.css">
+<style>
+  /* Render every slide at authored size, unscaled, so measurements are literal. */
+  body{margin:0;background:#333}
+  .stage{position:relative;width:1920px;height:1080px;overflow:visible}
+  #out{position:fixed;left:0;top:0;z-index:9999;background:#fff;color:#000;
+       font:12px monospace;white-space:pre;max-height:100vh;overflow:auto}
+</style>
+</head>
+<body>
+<pre id="out">running…</pre>
+<div id="host"></div>
+<script>
+/* Layout audit for the Trace deck.
+ *
+ * The conformance checker (check-deck.py) works on markup and cannot see
+ * geometry, so overflow and text-on-text collisions have escaped it twice.
+ * This page renders each slide at its authored 1920x1080, unscaled, and
+ * measures real bounding boxes.
+ *
+ * Reports two failure classes:
+ *   OVERFLOW — a text element extends past the slide's bounds
+ *   OVERLAP  — two text elements occupy the same pixels
+ *
+ * Run headless:  chrome --headless --dump-dom http://localhost:PORT/audit-layout.html
+ */
+const SLIDE_W = 1920, SLIDE_H = 1080, PAD = 4;
+
+function isText(el){
+  if (!el.textContent || !el.textContent.trim()) return false;
+  // only leaf-ish nodes — a wrapper's box is not itself ink on the slide
+  return ![...el.children].some(c => c.textContent && c.textContent.trim());
+}
+
+function overlaps(a, b){
+  return !(a.right - PAD <= b.left || b.right - PAD <= a.left ||
+           a.bottom - PAD <= b.top || b.bottom - PAD <= a.top);
+}
+
+(async () => {
+  const res = await fetch('index.html', {cache:'no-store'});
+  const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+  const sections = [...doc.querySelectorAll('deck-stage > section')];
+  const host = document.getElementById('host');
+  const findings = [];
+
+  sections.forEach((sec, i) => {
+    const stage = document.createElement('div');
+    stage.className = 'stage';
+    const clone = sec.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.inset = '0';
+    stage.appendChild(clone);
+    host.appendChild(stage);
+
+    const label = sec.getAttribute('data-label') || '(no label)';
+    const stageBox = stage.getBoundingClientRect();
+    const texts = [...clone.querySelectorAll('*')].filter(isText).map(el => {
+      const r = el.getBoundingClientRect();
+      return {
+        el,
+        text: el.textContent.trim().slice(0, 44),
+        left: r.left - stageBox.left, top: r.top - stageBox.top,
+        right: r.right - stageBox.left, bottom: r.bottom - stageBox.top,
+      };
+    });
+
+    for (const t of texts){
+      if (t.bottom > SLIDE_H + PAD || t.right > SLIDE_W + PAD ||
+          t.top < -PAD || t.left < -PAD){
+        findings.push(`slide ${i+1} [${label}] OVERFLOW  bottom=${Math.round(t.bottom)} right=${Math.round(t.right)}  "${t.text}"`);
+      }
+    }
+    for (let a = 0; a < texts.length; a++){
+      for (let b = a+1; b < texts.length; b++){
+        if (overlaps(texts[a], texts[b])){
+          findings.push(`slide ${i+1} [${label}] OVERLAP   "${texts[a].text}"  ×  "${texts[b].text}"`);
+        }
+      }
+    }
+    host.removeChild(stage);
+  });
+
+  document.getElementById('out').textContent =
+    (findings.length ? findings.join('\n') : 'CLEAN — no overflow or overlap') +
+    `\n\n${sections.length} slides audited, ${findings.length} finding(s).`;
+})();
+</script>
+</body>
+</html>

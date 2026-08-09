@@ -138,3 +138,22 @@ bars, nothing boxed in), and breaking one still ships.
   read it as source material, don't edit it.
 - `docs/superpowers/` (repo root) — the design spec and implementation plans behind both
   the Trace system and the talk content.
+
+### Layout audit
+
+`check-deck.py` reads markup and cannot see geometry, so text overflowing a slide or
+printing on top of other text passes it. Two such bugs reached the speaker before this
+existed. `audit-layout.html` closes that gap: it renders every slide at its authored
+1920×1080, unscaled, and measures real bounding boxes.
+
+```bash
+python3 -m http.server 8000 &
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless --disable-gpu --virtual-time-budget=12000 \
+  --dump-dom http://localhost:8000/audit-layout.html | grep -A99 '<pre id="out">'
+```
+
+It reports two classes — `OVERFLOW` (text past the slide bounds) and `OVERLAP` (two text
+elements on the same pixels) — with the slide number, its label, and the offending text.
+Verified by planting a deliberate overflow and a deliberate collision and confirming both
+are caught; a silent audit would be worse than none.
