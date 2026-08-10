@@ -37,7 +37,7 @@ class TestCheckDeck(unittest.TestCase):
         """Both halves of the SVG exemption, on one slide.
 
         Inline <svg> artwork may carry raw hex (outline.md lifts the five
-        provider/attribute pairs straight out of presentation/index.html:292-296).
+        provider/attribute pairs, originally lifted from the previous deck).
         Slide chrome outside the SVG is still governed.
         """
         art = ('<svg viewBox="0 0 10 10"><g stroke="#BDBDBD">'

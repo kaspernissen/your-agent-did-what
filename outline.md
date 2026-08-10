@@ -8,10 +8,10 @@
 
 > **Deck:** built at `presentation-trace/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears at full size three times (cover, one mid-deck breath, close) and as a persistent 96px footer presence on every non-divider slide — see `presentation-trace/LAYOUTS.md`.
 >
-> Source tags used per slide: **[PC]** = PlatformCon 2026 deck, **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
+> Source tags used per slide: **[PC]** = the previous deck, removed 2026-08-10 (see below), **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
 >
 > **The two external tags are not equally available, and the difference matters when building slides.**
-> - **[PC] is in this repo** — the existing 48-slide deck at **`presentation/index.html`** carries the material: "Opaque decisions" (`:153`), "Five conventions for the same span" (`:286`) with the five provider/attribute pairs (`:292-296`), and the "Without conventions, correlation fails" wall (`:493`), plus its speaker notes (`:735`, `:761`). **Lift from that file; do not recreate it.** `presentation/` stays untouched as a source ([SPEC] §10.3) — read it, don't edit it.
+> - **[PC] is no longer in this repo.** The previous 48-slide deck at `presentation/` was the source for the material lifted into beats 0–3 — "Opaque decisions", "Five conventions for the same span" with its five provider/attribute pairs, and the "Without conventions, correlation fails" wall. That lift is complete and the deck has since diverged well beyond it, so `presentation/` was removed on 2026-08-10; recover it from git history if you ever need the original wording. The `[PC]` tags below record where a slide came from, not a file to go and read.
 > - **[KC] is not in this repo.** "Taming Complexity", "Evolution of architectures" and the cognitive-load curve could not be located anywhere in the repository. Those slides are **external speaker material Kasper must supply**, or they get redrawn from scratch.
 
 ---
@@ -115,7 +115,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Layout:** L04 Text + diagram
 - **Headline:** Monolith → microservices → event-driven → **agent-based**
 - **Amber emphasis:** the final **agent-based** node on the axis
-- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **[KC] specifically is external speaker material with no copy in this repo; Kasper must supply it or the slide gets redrawn from scratch.** (This is a [KC] problem, not a general one — [PC] slides *are* in `presentation/index.html`; see the source-tag note at the top.) Each step solved a problem and added complexity: building got easier, *understanding* got harder.
+- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **[KC] specifically is external speaker material with no copy in this repo; Kasper must supply it or the slide gets redrawn from scratch.** (This is a [KC] problem, not a general one — [PC] slides *are* in the previous deck; see the source-tag note at the top.) Each step solved a problem and added complexity: building got easier, *understanding* got harder.
 
 ### 1.3 — An agent is a loop around a model that can call your tools
 - **Layout:** L07 Figures (four cards in a row, arrows between)
@@ -181,7 +181,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** Legitimate differences, not naming preferences
 - **Content:** each one optimizes for something — OTel GenAI **vendor-neutral** · OpenInference **eval workflows** · OpenLLMetry **dev ergonomics** · LangSmith **LangChain-native** · Langfuse **maps the others in**. Credit Salaboy. They are not going away soon.
 - **Amber emphasis:** **"legitimate differences"** in the headline
-- **Source:** [LS] §2 (Salaboy's framing, stated verbatim there) for "legitimate differences, not naming preferences". The per-tool attribution is **[PC]** `presentation/index.html:292-296`, where each of the five cards already carries its optimization label verbatim alongside its provider attribute — lift the pairs from there rather than restating them.
+- **Source:** [LS] §2 (Salaboy's framing, stated verbatim there) for "legitimate differences, not naming preferences". The per-tool attribution is **[PC]** the previous deck, where each of the five cards already carries its optimization label verbatim alongside its provider attribute — lift the pairs from there rather than restating them.
 
 ### 2.4 — Measured: the provider key alone fragments three ways
 - **Layout:** L06 Code
@@ -473,9 +473,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | Beat | What it can salvage | From |
 |---|---|---|
 | 0 | Title/cover treatment, closing style — recolored into the Trace palette, no Dash0 logo | **[PC]**; cover replaced per [SPEC] §10.3 |
-| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[PC]** "Four properties" is in `presentation/index.html:153` — lift it. **[KC]** "Evolution of architectures" and the cognitive-load curve are **not in this repo**; Kasper must supply them or they get redrawn. The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
-| 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** `presentation/index.html:286` (+ the five provider/attribute pairs at `:292-296`) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
-| 3 | "Without conventions, correlation fails" three-line wall | **[PC]** `presentation/index.html:493` (speaker notes at `:761`) + design-system assets. Everything else is new writing. |
+| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[PC]** "Four properties" is in the previous deck — lift it. **[KC]** "Evolution of architectures" and the cognitive-load curve are **not in this repo**; Kasper must supply them or they get redrawn. The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
+| 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** the previous deck (with its five provider/attribute pairs) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
+| 3 | "Without conventions, correlation fails" three-line wall | **[PC]** the previous deck (and its speaker notes) + design-system assets. Everything else is new writing. |
 | 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** Demo 1 + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
 | 5 | Normalizer before/after table; "what it did NOT touch" list | **[ANALYSIS]** Demo 2 — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
 | 6 | The waterfall primitive from 1.5; `execute_tool delete_records` attribute block; the forensic-gap trio | **[ANALYSIS]** + **[R-F]** |

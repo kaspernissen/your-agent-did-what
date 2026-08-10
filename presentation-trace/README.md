@@ -139,7 +139,7 @@ bars, nothing boxed in), and breaking one still ships.
   it does link out to Google Fonts, unlike the deck. (`start.sh` serves the whole
   directory, so it is reachable in a browser — it just is not part of the presentation.)
 - `outline.md` (repo root) — the nine-beat, 39-slide talk arc this deck will fill in.
-- `../presentation/` — the previous 48-slide deck, superseded by this one. Untouched by this rebuild;
+- `../presentation/` — the previous 48-slide deck. Removed 2026-08-10 once the lift was complete;
   read it as source material, don't edit it.
 - `docs/superpowers/` (repo root) — the design spec and implementation plans behind both
   the Trace system and the talk content.
