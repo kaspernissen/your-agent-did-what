@@ -92,6 +92,10 @@ collector is the **released contrib image, `0.158.0`** — no `ocb` build is nee
 same agent twice — once with `processors: []` and once with `processors:
 [gen_ai_normalizer]` — and diffing the attribute sets from the debug exporter.
 
+> **Superseded** by the live re-measurement of 2026-08-10 further down (31 → 18, 20 removed,
+> 7 written, 11 untouched). The counts below came from the older separate OpenInference agent;
+> the seven writes were correct then and are correct now. Kept as the original capture.
+>
 > **27 span attributes became 16**: 18 removed, 7 written, 9 untouched (resource attributes
 > excluded).
 
@@ -372,6 +376,119 @@ guard on beat 6's claim.
 pre-capybara seed names (`alice`, `bob`, `carol`) and was failing against the current
 `cappuccino` / `biscuit` / `nibbles` data. Two of its five tests were red and nobody had run
 them. Corrected.
+
+---
+
+---
+
+## Live end-to-end verification (2026-08-10)
+
+Both demos run against the live Anthropic API. Everything below was captured from
+`docker logs` on a collector with a `debug` exporter, not reasoned about.
+
+### Demo 1 — the tool-path experiment, measured
+
+Same binary, same prompt, same `CapybaraDatabase`, same incident. Only
+`CAPYBARA_TOOLS` differs.
+
+| | `CAPYBARA_TOOLS=mcp` | `CAPYBARA_TOOLS=local` |
+|---|---|---|
+| span name | `tools/call delete_records` | `langchain4j.tools.delete_records` |
+| span kind | Client | Internal |
+| span attributes | **4** | **6** |
+| `gen_ai.tool.call.arguments` | absent | **present** |
+| `gen_ai.tool.call.result` | absent | **present** |
+| `gen_ai.tool.call.id` | absent | present |
+| `gen_ai.tool.type` | absent | present |
+| spans in the trace | 20 | 15 |
+
+MCP path, verbatim:
+
+```
+Name           : tools/call delete_records
+Kind           : Client
+  gen_ai.operation.name: Str(execute_tool)
+  gen_ai.tool.name: Str(delete_records)
+  jsonrpc.request.id: Str(4)
+  mcp.method.name: Str(tools/call)
+```
+
+Local path, verbatim — and these are exactly the six attributes `ToolSpanWrapper`
+is documented to set:
+
+```
+Name           : langchain4j.tools.delete_records
+Kind           : Internal
+  gen_ai.operation.name: Str(execute_tool)
+  gen_ai.tool.name: Str(delete_records)
+  gen_ai.tool.type: Str(function)
+  gen_ai.tool.call.id: Str(toolu_01JA8FiAHHpNAB1dgNzfFuKc)
+  gen_ai.tool.call.arguments: Str({…})
+  gen_ai.tool.call.result: Str("DeleteResult[deleted=2, remaining=1]")
+```
+
+`scripts/verify-telemetry.py` returns PASS for both paths: 0 forensic occurrences
+on `mcp`, 3 on `local`.
+
+**Corrections this run forced.** The span names are *not* what earlier docs implied.
+The local path names its tool spans `langchain4j.tools.<name>`, not
+`execute_tool <name>` — a `grep "execute_tool delete_records"` finds nothing on that
+path. The MCP path also adds 6 `POST` spans the local path has none of, because MCP
+tools travel over HTTP; that is why the traces are 20 spans versus 15.
+
+**Not a framework difference:** the two runs made a different number of tool calls
+(MCP 2, local 3 — the model chose to also `query(plan=pro)` on the local run). Model
+non-determinism, exactly what beat 1 describes. It does not affect the span shape,
+which is what the experiment measures.
+
+Both runs also still emit `gen_ai.prompt` and `gen_ai.completion` — keys removed from
+the registry upstream — confirming beat 4's "which revision matters" in our own stack.
+
+### Demo 2 — the normalizer, re-measured on the refactored agent
+
+Same agent, `CAPYBARA_INSTRUMENTATION=openinference`, run twice: once with
+`processors: []` and once with `processors: [gen_ai_normalizer]`. Chat span
+(`messages.create`) attribute counts:
+
+| | earlier claim | **measured 2026-08-10** |
+|---|---|---|
+| before | 27 | **31** |
+| after | 16 | **18** |
+| removed | 18 | **20** |
+| written | 7 | **7** ✓ |
+| untouched | 9 | **11** |
+
+The seven writes were exactly right, and every rename the deck's diagram shows is
+confirmed: `llm.provider`, `llm.model_name`, `llm.token_count.prompt`,
+`llm.token_count.completion`, `openinference.span.kind`, `llm.input_messages.*`,
+`llm.output_messages.*`. The counts were stale — they came from the older separate
+agent, and this response also carried Anthropic thinking content
+(`…message_content.signature`), which widens the before-count.
+
+**The eleven survivors, measured:**
+
+```
+llm.system                       ← survives remove_originals: true
+llm.finish_reason                ← and OTel HAS gen_ai.response.finish_reasons
+llm.token_count.total            ← no equivalent written
+llm.invocation_parameters
+llm.tools.0/1/2.tool.json_schema
+input.value / input.mime_type
+output.value / output.mime_type
+span name: messages.create       ← unchanged; the processor rewrites attributes, not names
+```
+
+`llm.finish_reason` is a sharper example than `llm.system`: OTel defines
+`gen_ai.response.finish_reasons`, the source attribute is right there, and the
+processor still does not map it. Same for `llm.token_count.total`. "Partial
+normalization" is not a hedge — it is the measurement.
+
+### Bug this run found
+
+`demos/agent/run.sh` only installed dependencies when `.venv` was absent, so an
+existing venv from before `openinference` was added to `requirements.txt` failed with
+`ModuleNotFoundError: No module named 'openinference'`. It now reinstalls whenever
+`requirements.txt`'s hash changes.
 
 ---
 

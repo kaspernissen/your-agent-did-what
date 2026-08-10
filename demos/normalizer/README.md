@@ -18,9 +18,9 @@ how far that gets you — including what it does **not** fix.
 2. **You can fix it centrally, without touching the application.** One processor block in
    the collector, no code change, works for any language.
 3. **"Normalization" is partial, and the honest word matters.** Measured on a real run:
-   27 span attributes become 16. Some keys are renamed, thirteen flattened message keys
-   collapse into two structured ones — and nine attributes come through untouched,
-   including one the processor simply doesn't know about.
+   31 span attributes become 18. Some keys are renamed, the flattened message keys
+   collapse into two structured ones — and eleven come through untouched, including two
+   the processor could map and simply does not.
 
 That third point is the reason this demo exists. It is easy to claim the collector "fixes"
 convention drift; this shows the seam.
@@ -141,16 +141,22 @@ Same agent, same code, no redeploy of anything that matters.
 | `llm.input_messages.*` (9 keys) | → `gen_ai.input.messages` |
 | `llm.output_messages.*` (4 keys) | → `gen_ai.output.messages` |
 
-**4 · Then show the seam — this is the honest half.** Nine attributes survive untouched:
+**4 · Then show the seam — this is the honest half.** Eleven attributes survive untouched:
 
 ```
 llm.system                  ← survives even with remove_originals: true
-llm.tools.0/1/2.tool.json_schema
+llm.finish_reason           ← and OTel HAS gen_ai.response.finish_reasons
+llm.token_count.total       ← no equivalent written
 llm.invocation_parameters
+llm.tools.0/1/2.tool.json_schema
 input.value / input.mime_type
 output.value / output.mime_type
 span name: messages.create  ← unchanged; the processor rewrites attributes, not names
 ```
+
+`llm.finish_reason` is the sharpest of these. OTel defines
+`gen_ai.response.finish_reasons`, the source attribute is right there, and the processor
+still does not map it — so this is not a case of the target vocabulary lacking a slot.
 
 `llm.system` is the one to point at. `remove_originals: true` is set, and it still comes
 through — because it is not in the processor's mapping table. The result is a **hybrid
@@ -163,8 +169,8 @@ your cost maths. It does not make an OpenInference trace OTel-native end to end.
 
 From a real run on 2026-08-09, contrib 0.158.0, `claude-sonnet-5`:
 
-- **27 span attributes → 16** (resource attributes excluded)
-- **18 removed**, **7 written**, **9 untouched**
+- **31 span attributes → 18** on the chat span (measured 2026-08-10, live)
+- **20 removed**, **7 written**, **11 untouched**
 - Span name unchanged: `messages.create`
 - Agent behaviour identical to Demo 1: deleted 2 free-plan capybaras (`biscuit`,
   `nibbles`), 1 remaining — the same `{"deleted": 2, "remaining": 1}` the talk quotes

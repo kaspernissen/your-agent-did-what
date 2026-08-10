@@ -17,7 +17,11 @@ two different conventions.
 | **[`normalizer/`](normalizer/)** | The same incident instrumented with **OpenInference**, rewritten in flight by the collector's `gen_ai_normalizer` processor. **How far normalization gets you, and where it stops.** | 5 |
 
 Each has its own README with architecture, a run path, a stage flow, measured results and
-the gotchas found while building it. Start there.
+the gotchas found while building it.
+
+**Running them on stage: start with [`RUNBOOK.md`](RUNBOOK.md)** — pre-flight, every step
+in order, what to notice in each span and why, the failure modes with fixes, timings, and
+an explicit list of what is measured versus what is a position.
 
 **Also here:**
 
