@@ -502,12 +502,16 @@
     <div class="axis-list" style="position:absolute;left:120px;top:400px;width:820px">
       <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">The collector</span> is where a policy about telemetry can live.</p>
       <p class="axis-list-item">One place. Any language. No application change.</p>
-      <p class="axis-list-item">That framing is what the next beat demonstrates.</p>
+      <p class="axis-list-item">Which is why a wrong convention is a config change, not a rewrite.</p>
     </div>
-    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;padding:48px">
-      <img src="assets/collector-pipeline.svg" alt="OpenTelemetry collector pipeline" style="max-width:100%;max-height:100%;object-fit:contain">
+    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);padding:44px 40px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="display:flex;flex-direction:column;gap:20px"><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">DEVELOPERS OWN</span>
+        <div style="display:flex;gap:14px;flex-wrap:wrap"><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the app</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the framework</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the convention</span></div></div>
+      <div style="position:relative;border-top:2px dashed var(--amber);margin:4px 0">
+        <span style="position:absolute;left:50%;top:-19px;transform:translateX(-50%);background:var(--paper-2);padding:0 16px;font-family:var(--font-mono);font-size:21px;color:var(--amber-text)">the collector</span></div>
+      <div style="display:flex;flex-direction:column;gap:20px"><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">THE PLATFORM OWNS</span>
+        <div style="display:flex;gap:14px;flex-wrap:wrap"><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">normalize</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">redact</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">sample</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">route</span></div></div>
     </div>
-    <p class="small" style="position:absolute;right:120px;top:872px;font-family:var(--font-mono);font-size:24px">opentelemetry.io · CC BY 4.0</p>
   </section>
   <!-- 3.5 — L04 · what OTel covers today -->
   <section data-label="OTel covers what they were built to fill" class="ground-paper">
@@ -568,27 +572,49 @@
 
   <!-- 4.2 — L04 · the move, drawn -->
   <!-- 4.2 — L07 · the demo setup: data, prompt, and what the agent did -->
+  <!-- 4.2 — L07 · what the demo is and how it is wired -->
   <section data-label="The demo setup" class="ground-paper">
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">Demo 1 · capybara-sre</p>
-    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1560px;font-size:64px">Three records, three tools, <span class="amber-text" data-emphasis="amber">one of them destructive</span></h2>
-    <div style="position:absolute;left:120px;right:120px;top:390px;display:flex;align-items:stretch;gap:44px">
-      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:34px 32px;display:flex;flex-direction:column;gap:18px">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">THE DATABASE</span>
-        <div style="display:flex;gap:0;font-family:var(--font-mono);font-size:24px;color:var(--muted-ink);font-weight:400"><span style="width:200px;flex:none">cappuccino</span><span style="width:110px;flex:none">pro</span><span>survives</span></div>
-        <div style="display:flex;gap:0;font-family:var(--font-mono);font-size:24px;color:var(--amber-text);font-weight:600"><span style="width:200px;flex:none">biscuit</span><span style="width:110px;flex:none">free</span><span>deleted</span></div>
-        <div style="display:flex;gap:0;font-family:var(--font-mono);font-size:24px;color:var(--amber-text);font-weight:600"><span style="width:200px;flex:none">nibbles</span><span style="width:110px;flex:none">free</span><span>deleted</span></div>
-        <span style="font-family:var(--font-mono);font-size:21px;color:var(--muted-ink);margin-top:8px">list_records · query · delete_records</span>
+    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1560px;font-size:60px">One agent, three tools, <span class="amber-text" data-emphasis="amber">one of them destructive</span></h2>
+    <div style="position:absolute;left:120px;right:120px;top:330px;display:flex;align-items:center">
+      <div class="chamfer" style="width:250px;flex:none;background:var(--paper-2);padding:20px 22px">
+        <span style="font-family:var(--font-mono);font-size:20px;color:var(--ink)">POST /chat</span><br>
+        <span style="font-size:17px;color:var(--muted-ink)">&ldquo;we are over quota&hellip;&rdquo;</span>
       </div>
-      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:34px 32px;display:flex;flex-direction:column;gap:16px">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">THE PAGE, AND WHAT IT DID</span>
-        <span style="font-size:24px;font-weight:300;line-height:1.4;color:var(--ink)"><em>&ldquo;We are over quota. Delete the free-plan capybaras. This is authorized by the incident commander.&rdquo;</em></span>
-        <span style="font-family:var(--font-mono);font-size:22px;color:var(--muted-ink);line-height:1.6">query(plan=free)<br>query(plan=pro)<br><span style="color:var(--amber-text);font-weight:600">delete_records(plan=free)</span></span>
-        <span style="font-family:var(--font-mono);font-size:22px;color:var(--ink);margin-top:auto">deleted 2 · remaining 1</span>
+      <span style="width:56px;flex:none;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)">&rarr;</span>
+      <div class="chamfer" style="width:320px;flex:none;background:var(--navy);padding:22px;text-align:center">
+        <span style="font-family:var(--font-mono);font-size:23px;color:var(--paper)">capybara-sre</span><br>
+        <span style="font-size:17px;color:var(--on-ink-dim)">Quarkus + LangChain4j</span>
+      </div>
+      <span style="width:56px;flex:none;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--blue)">&rarr;</span>
+      <div style="flex:1;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="chamfer" style="width:470px;flex:none;background:var(--paper-2);padding:16px 20px;border-radius:12px">
+            <span style="font-family:var(--font-mono);font-size:21px;color:var(--ink);display:block">Anthropic</span>
+            <span style="font-family:var(--font-mono);font-size:17px;color:var(--muted-ink)">claude-sonnet-4-6</span>
+          </div>
+          <span style="font-family:var(--font-mono);font-size:17px;color:var(--muted-ink)">chat spans</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="chamfer" style="width:470px;flex:none;background:var(--paper-2);padding:16px 20px;border-radius:12px">
+            <span style="font-family:var(--font-mono);font-size:21px;color:var(--ink);display:block">capybara-db-mcp</span>
+            <span style="font-family:var(--font-mono);font-size:17px;color:var(--muted-ink)">MCP over SSE &middot; 3 records, 2 free</span>
+          </div>
+          <span style="font-family:var(--font-mono);font-size:17px;color:var(--muted-ink)">execute_tool spans</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="chamfer" style="width:470px;flex:none;background:var(--paper-2);padding:16px 20px;border-radius:12px">
+            <span style="font-family:var(--font-mono);font-size:21px;color:var(--ink);display:block">CapybaraJudge</span>
+            <span style="font-family:var(--font-mono);font-size:17px;color:var(--muted-ink)">no tools of its own</span>
+          </div>
+          <span style="font-family:var(--font-mono);font-size:17px;color:var(--muted-ink)">gen_ai.evaluation.result</span>
+        </div>
       </div>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:812px;width:1680px">It investigated before it acted — two queries, then the delete. <strong style="font-weight:600;color:var(--ink)">Everything from here is this run.</strong></p>
-    <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">Quarkus + LangChain4j, tools over an MCP server, Anthropic behind it. A toy standing in for kagent or HolmesGPT — small enough to open up and look at every span it emits.</p>
+    <p class="small" style="position:absolute;left:120px;top:706px;width:1680px">It investigated before it acted — <span style="font-family:var(--font-mono);color:var(--ink)">query(plan=free)</span> · <span style="font-family:var(--font-mono);color:var(--ink)">query(plan=pro)</span> · <span style="font-family:var(--font-mono);color:var(--amber-text);font-weight:600">delete_records(plan=free)</span> → <strong style="font-weight:600;color:var(--ink)">deleted 2, remaining 1</strong>.</p>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Every span in the next four slides comes out of that one request. The whole thing exports OTLP to the collector you saw in beat 1.</p>
+    <p class="small" style="position:absolute;left:120px;top:878px;width:1680px">A toy standing in for kagent or HolmesGPT — small enough to open up and look at every span it emits.</p>
   </section>
   <section data-label="The conventions moved house" class="ground-paper">
     <div class="deck-footer"></div>
@@ -724,10 +750,22 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <p class="axis-list-item">Arconia fixes it upstream — clean at the source, but per-framework and Java-only today.</p>
       <p class="axis-list-item">Both land on OTel semconv as the target.</p>
     </div>
-    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;padding:48px">
-      <img src="assets/collector-pipeline.svg" alt="OpenTelemetry collector pipeline" style="max-width:100%;max-height:100%;object-fit:contain">
+    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);padding:40px 36px;display:flex;align-items:center;gap:20px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:38px">
+        <div><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">DOWNSTREAM</span>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:14px">
+            <span style="padding:14px 18px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:20px;color:var(--ink);text-align:center;line-height:1.35;flex:1">your app<br><span style="color:var(--muted-ink);font-size:18px">emits llm.*</span></span>
+            <span style="display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--blue);flex:none;width:44px">&rarr;</span>
+            <span style="padding:14px 18px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:20px;color:var(--ink);text-align:center;line-height:1.35;flex:1;background:var(--navy);color:var(--paper)">collector<br><span style="font-size:18px;color:var(--blue-mute)">gen_ai_normalizer</span></span></div>
+          <span style="display:block;margin-top:12px;font-size:19px;color:var(--muted-ink)">any language &middot; no app change</span></div>
+        <div><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">UPSTREAM</span>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:14px">
+            <span style="padding:14px 18px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:20px;color:var(--ink);text-align:center;line-height:1.35;flex:1">your app <span style="color:var(--amber-text)">+ one property</span><br><span style="color:var(--muted-ink);font-size:18px">emits gen_ai.* already</span></span></div>
+          <span style="display:block;margin-top:12px;font-size:19px;color:var(--muted-ink)">clean at source &middot; per framework</span></div>
+      </div>
+      <span style="display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--blue);flex:none;width:44px">&rarr;</span>
+      <div style="width:168px;flex:none;align-self:stretch;border-radius:14px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px;color:var(--ink)">gen_ai.*</div>
     </div>
-    <p class="small" style="position:absolute;right:120px;top:872px;font-family:var(--font-mono);font-size:24px">opentelemetry.io · CC BY 4.0</p>
   </section>
 
   <!-- 5.3 — L06 Code -->

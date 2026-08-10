@@ -219,7 +219,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Layout:** L04 Text + diagram
 - **Headline:** Developers instrument. The platform canonicalizes.
 - **Content:** the collector is where a *policy* about telemetry can live — one place, any language, no application change. That framing is what beat 5 then demonstrates.
-- **Amber emphasis:** **"the collector"** node in the pipeline diagram (`assets/collector-pipeline.svg`)
+- **Amber emphasis:** the dashed **"the collector"** boundary between the two ownership zones
 - **Source:** [LS] §2 "The pitch". **[NEEDS SOURCE]:** "you already run a collector" is an assumption about the audience, not a sourced adoption statistic — ask the room by show of hands instead of asserting it.
 
 ---
@@ -304,7 +304,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Layout:** L04 Text + diagram
 - **Headline:** Downstream in the pipeline, or upstream in the SDK
 - **Content:** the collector fixes it downstream — you don't touch apps, works for any language, central policy. Arconia fixes it upstream — clean data at the source, but per-framework and Java-only today. Both land on OTel semconv as the target.
-- **Amber emphasis:** the **processor** node in the pipeline diagram (`assets/collector-pipeline.svg`)
+- **Amber emphasis:** the shared **`gen_ai.*`** target both routes arrive at
 - **Source:** [LS] §2 "The contrast worth drawing"
 
 ### 5.3 — Before / after, straight from the debug exporter
@@ -465,14 +465,14 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | 0 | Title/cover treatment, closing style — recolored into the Trace palette, no Dash0 logo | **[PC]**; cover replaced per [SPEC] §10.3 |
 | 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[PC]** "Four properties" is in `presentation/index.html:153` — lift it. **[KC]** "Evolution of architectures" and the cognitive-load curve are **not in this repo**; Kasper must supply them or they get redrawn. The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
 | 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** `presentation/index.html:286` (+ the five provider/attribute pairs at `:292-296`) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
-| 3 | "Without conventions, correlation fails" three-line wall; `assets/collector-pipeline.svg` | **[PC]** `presentation/index.html:493` (speaker notes at `:761`) + design-system assets. Everything else is new writing. |
+| 3 | "Without conventions, correlation fails" three-line wall | **[PC]** `presentation/index.html:493` (speaker notes at `:761`) + design-system assets. Everything else is new writing. |
 | 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** Demo 1 + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
-| 5 | Normalizer before/after table; "what it did NOT touch" list; `assets/collector-pipeline.svg` | **[ANALYSIS]** Demo 2 — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
+| 5 | Normalizer before/after table; "what it did NOT touch" list | **[ANALYSIS]** Demo 2 — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
 | 6 | The waterfall primitive from 1.5; `execute_tool delete_records` attribute block; the forensic-gap trio | **[ANALYSIS]** + **[R-F]** |
 | 7 | Nothing salvageable — this beat did not exist in the previous outline | **[R-E]** + **[SPEC]** §3.4 (all new) |
 | 8 | Jaeger quotes and roadmap; the four takeaways and closing line | **[LS]** §3 + previous outline §6.4 |
 
-Assets that exist in `presentation-trace/assets/` today: `capybara-mascot.png`, `collector-pipeline.svg`, `data-sources.svg`, `otel-logo.svg`, `signal-traces.svg`.
+Assets that exist in `presentation-trace/assets/` today: `capybara-mascot.png`, `capybara-judge.png`, `otel-icon.svg`, `otel-logo.svg`, the speaker portraits, the LinkedIn QR tiles, and the tool logos. The stock `collector-pipeline.svg` is no longer used — 3.4 and 5.2 were drawn to make their own arguments instead of sharing one generic diagram.
 
 **Added 2026-08-09 — AAIF / coding agents (8.3 "Watch your own coding agent"):** a shout-out to the Agentic AI Foundation (aaif.io), where both speakers are ambassadors, carried by a practical hook rather than a logo. goose v1.43.0 ships built-in OTel via the Rust SDK behind `GOOSE_TELEMETRY_ENABLED`, and Claude Code ships it via the Node SDK behind `CLAUDE_CODE_ENABLE_TELEMETRY=1` — both into the collector you already run. The finding that earns the slide: running goose *with* Claude Code over ACP produces **two sibling streams, not one nested trace** — two agents in one workflow with nothing joining them. Source: Adriana's companion repo (`your-agent-did-what-adriana`), `docs/goose-claude-code-telemetry.md`.
 
