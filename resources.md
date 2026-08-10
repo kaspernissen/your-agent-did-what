@@ -38,6 +38,24 @@ The "what can I actually look at this in" layer — see `landscape.md` for the a
 - [OpenSearch Agent Traces](https://docs.opensearch.org/latest/observing-your-data/agent-traces/agent-tracing/) — OTel-GenAI-semconv-native agent-trace UI (categorizes spans by `gen_ai.operation.name`). Ingests via OTel Collector → **Data Prepper** → OpenSearch (no direct OTLP). UI is RFC-stage in OSS OpenSearch ([#11345](https://github.com/opensearch-project/OpenSearch-Dashboards/issues/11345)), live on AWS.
 - [Dash0](https://www.dash0.com/) — the vendor path in the demos (OTLP exporter from the collector).
 
+## Evaluation tooling
+
+- [OpenSearch Agent Health](https://github.com/opensearch-project/agent-health) — OSS
+  (Apache-2.0) agent **evaluation and observability** framework: an LLM judge scoring agent
+  runs against a **"Golden Path" trajectory**, batch experiments, run-to-run comparison, and
+  OTel traces stored locally or in OpenSearch. The closest thing to a shipped implementation
+  of the gold-set mitigation the talk recommends for judge bias. v0.5.2, actively developed,
+  SDK marked **Experimental**. Its
+  [instrumentation guide](https://github.com/opensearch-project/agent-health/blob/main/docs/INSTRUMENT_WITH_OTEL.md)
+  asks for the GenAI conventions — and is itself a live example of revision drift: it
+  specifies **`gen_ai.system`**, which is not in the current registry (`gen_ai.provider.name`
+  replaced it), and **`gen_ai.tool.call_id`**, where the registry defines
+  `gen_ai.tool.call.id`. Checked 2026-08-10.
+- Its [Claude Code telemetry guide](https://github.com/opensearch-project/agent-health/blob/main/docs/CLAUDE_CODE_TELEMETRY.md)
+  documents the opt-in content switches for a coding agent — `OTEL_LOG_USER_PROMPTS`,
+  `OTEL_LOG_TOOL_DETAILS`, `OTEL_LOG_TOOL_CONTENT` — the same "the forensic content is a
+  flag you throw" shape as `include-tool-arguments` in Demo 1, one layer closer to home.
+
 ## CNCF agent tooling (reference)
 
 - [kagent](https://github.com/kagent-dev/kagent) — agents as first-class Kubernetes workloads; agent lifecycle as a custom resource (CNCF Sandbox).

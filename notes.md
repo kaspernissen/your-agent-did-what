@@ -2,7 +2,12 @@
 
 ## Evaluations? 
 - Semantic Conventions has a concept of evaluations, but how do we use them? How do we actually know if the output of the message was successful or not? 
-- The opensearch project: http://github.com/opensearch-project/agent-health (need to check this out.
+- ~~The opensearch project: github.com/opensearch-project/agent-health (need to check this out.~~
+  **Checked 2026-08-10.** OSS agent evaluation + observability, LLM judge against a "Golden Path"
+  trajectory — the gold-set mitigation, implemented. Not a slide; it is in `resources.md` and in the
+  speaker notes for the Stable-zero slide (its instrumentation guide still specifies the deprecated
+  `gen_ai.system`), the judge-caveats slide (gold set), and the coding-agents slide (its Claude Code
+  guide documents the opt-in content flags).
 
 
 LLM-as-judge? We need to explain the concept. How do you build trust and confidence in what your agents are doing? 
