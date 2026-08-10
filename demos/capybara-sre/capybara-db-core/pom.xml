@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.capybara</groupId>
+    <artifactId>capybara-db-core</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <!--
+      The capybara "database", shared verbatim by both tool paths.
+
+      This module exists so the talk's beat-4 comparison is airtight: the SAME
+      class backs the agent's local @Tool methods and the MCP server's @Tool
+      methods, so the only thing that differs between the two runs is how the
+      tool is registered and therefore which instrumentation sees it. If each
+      side had its own copy, "only the transport differs" would be an assertion
+      rather than a fact about the build.
+
+      Deliberately free of CDI annotations: an @ApplicationScoped bean in an
+      external jar needs a Jandex index or a beans.xml to be discovered, and
+      each app producing it explicitly avoids that whole class of problem.
+    -->
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Pinned to the version the two app modules already use, so this module
+             builds from the same local repository contents and needs no new
+             downloads. -->
+        <compiler-plugin.version>3.14.1</compiler-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

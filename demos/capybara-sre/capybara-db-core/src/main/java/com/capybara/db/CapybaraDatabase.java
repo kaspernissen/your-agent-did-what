@@ -1,10 +1,14 @@
 package com.capybara.db;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplicationScoped
+/**
+ * The capybara customer database, such as it is.
+ *
+ * Plain class on purpose — each application produces it as a CDI bean itself,
+ * so beans in this jar never need to be discovered across the jar boundary.
+ */
 public class CapybaraDatabase {
     public record DeleteResult(int deleted, int remaining) {}
 

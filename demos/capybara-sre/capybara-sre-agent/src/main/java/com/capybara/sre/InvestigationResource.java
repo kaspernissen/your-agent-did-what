@@ -13,6 +13,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,21 @@ import java.util.UUID;
 public class InvestigationResource {
 
     @Inject
-    CapybaraSreAgent agent;
+    CapybaraSreAgent mcpAgent;
+
+    @Inject
+    CapybaraSreAgentLocal localAgent;
+
+    /**
+     * Which tool path this run uses: "mcp" (default) or "local".
+     *
+     * The two agents are identical apart from tool registration, so flipping this
+     * and re-running the same incident produces two traces whose only meaningful
+     * difference is whether the execute_tool spans carry
+     * gen_ai.tool.call.arguments and gen_ai.tool.call.result.
+     */
+    @ConfigProperty(name = "capybara.tools", defaultValue = "mcp")
+    String toolPath;
 
     @Inject
     Tracer tracer;
@@ -41,12 +56,17 @@ public class InvestigationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public ChatResponse chat(ChatRequest req) {
         String runId = UUID.randomUUID().toString();
+        boolean local = "local".equalsIgnoreCase(toolPath);
         Span span = tracer.spanBuilder("invoke_agent capybara-sre").startSpan();
         span.setAttribute("gen_ai.operation.name", "invoke_agent");
         span.setAttribute("gen_ai.agent.name", "capybara-sre");
         span.setAttribute("gen_ai.conversation.id", runId);
+        // Not a GenAI convention attribute — it is how we tell the two runs apart
+        // when diffing their traces side by side.
+        span.setAttribute("capybara.tool_path", local ? "local" : "mcp");
         try (var scope = span.makeCurrent()) {
-            Result<String> r = agent.investigate(req.prompt());
+            Result<String> r = local ? localAgent.investigate(req.prompt())
+                                     : mcpAgent.investigate(req.prompt());
             String text = r.content();
             List<ToolCall> toolCalls = r.toolExecutions() == null
                     ? List.of()

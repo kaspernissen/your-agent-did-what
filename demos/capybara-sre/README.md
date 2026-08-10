@@ -39,12 +39,21 @@ that is not the point.
 ## Architecture
 
 ```
+capybara-db-core          the CapybaraDatabase class — shared, no CDI, no framework
+   ├── used by capybara-db-mcp   exposed as MCP @Tool methods
+   └── used by capybara-sre-agent exposed as local LangChain4j @Tool methods
+
 capybara-sre-agent  (Quarkus + quarkus-langchain4j 1.12.2, port 8088)
    │  POST /chat  →  {response, toolCalls[], runId}
    │
    ├── Anthropic (claude-sonnet-4-6)          ← chat spans
-   ├── MCP over SSE ──► capybara-db-mcp (Quarkus MCP server, port 8086)
+   │
+   ├── CAPYBARA_TOOLS=mcp    (default)
+   │     MCP over SSE ──► capybara-db-mcp (Quarkus MCP server, port 8086)
    │                          tools: list_records · query · delete_records
+   ├── CAPYBARA_TOOLS=local
+   │     CapybaraLocalTools — the same three operations, declared in-process
+   │
    └── CapybaraJudge (no toolbox) ────────────► gen_ai.evaluation.result events
                                                 on the invoke_agent span
    │
@@ -89,7 +98,8 @@ docker run -d --name capy-col -p 14317:4317 \
   -v /tmp/col.yaml:/etc/otelcol/config.yaml:ro \
   otel/opentelemetry-collector-contrib:0.158.0 --config=/etc/otelcol/config.yaml
 
-# 2 · build both modules
+# 2 · build the shared core first, then both apps
+(cd capybara-db-core  && ../capybara-db-mcp/mvnw -q install -DskipTests)
 (cd capybara-db-mcp   && ./mvnw -q package -DskipTests)
 (cd capybara-sre-agent && ./mvnw -q package -DskipTests)
 
@@ -178,6 +188,59 @@ That is the talk's "the footprint exists, the footprint is empty" moment, and it
 | `gen_ai.tool.name` occurrences | 3 |
 | Attributes on the `delete_records` span | 4 — operation name, tool name, `mcp.method.name`, `jsonrpc.request.id` |
 | Forensic content that *did* arrive | `gen_ai.prompt` and `gen_ai.completion` on the follow-on chat spans |
+
+### The experiment: one variable, two span shapes
+
+The finding above is easy to assert and hard to believe, so the demo now proves it. The same
+three operations are reachable two ways, and `CAPYBARA_TOOLS` picks which:
+
+```bash
+# the MCP path — TracingMcpClientListener
+CAPYBARA_TOOLS=mcp   java -jar capybara-sre-agent/target/quarkus-app/quarkus-run.jar
+
+# the local path — ToolSpanWrapper
+CAPYBARA_TOOLS=local java -jar capybara-sre-agent/target/quarkus-app/quarkus-run.jar
+```
+
+Both agents share **one prompt** (`CapybaraPrompt.SYSTEM`) and **one database class**
+(`CapybaraDatabase`, in `capybara-db-core`, depended on by both modules). The only thing that
+differs between the two runs is how the tool was registered — so the span difference cannot be
+explained by anything else.
+
+Run the same incident under each and check:
+
+```bash
+CAPYBARA_TOOLS=local ./scripts/verify-telemetry.py
+CAPYBARA_TOOLS=mcp   ./scripts/verify-telemetry.py
+```
+
+| tool path | `gen_ai.tool.call.arguments` | instrumentation that sees it |
+|---|---|---|
+| `local` | present | `ToolSpanWrapper` |
+| `mcp` | absent | `TracingMcpClientListener` |
+
+Every `invoke_agent` span is tagged `capybara.tool_path` so the two traces are easy to tell
+apart in a backend. That attribute is ours, not a convention.
+
+**This is a framework gap, not an MCP gap.** Measured on the stack the OpenTelemetry Demo pins
+for its own agentic stack — `opentelemetry-instrumentation-langchain` with
+`langchain-mcp-adapters` — the same MCP tool call *does* carry its arguments, because
+`load_mcp_tools` returns a plain `StructuredTool` and one instrumentation path covers native and
+MCP tools alike. See `demos/ANALYSIS.md`.
+
+### Verifying the telemetry
+
+`scripts/verify-telemetry.py` reads the collector's debug output and asserts the core conventions
+arrived, checks the forensic attributes against the tool path under test, and counts the
+evaluation events. It exits non-zero when a core convention is missing, or when the forensic
+content does not match the path — including the case where MCP *starts* carrying content, which
+would mean upstream fixed it and the talk needs re-measuring.
+
+```bash
+./scripts/verify-telemetry.py                    # reads docker logs capy-col
+docker logs capy-col | ./scripts/verify-telemetry.py -
+./scripts/verify-telemetry.py run.txt --path local
+```
 
 ### Why the flags don't work
 
@@ -270,8 +333,8 @@ implying otherwise.
 - **The judge is inline, not offline.** See above — a deliberate simplification, stated on
   the slide, not a claim about how evaluation should be deployed.
 - **The beat-6 waterfall is not from this demo.** Those durations come from the Python
-  agent (`../agent`), which hand-writes its `execute_tool` spans. This demo's MCP tool spans
-  carry no arguments — which is the whole point of beats 4 and 6, but it means it cannot
-  illustrate a properly-instrumented waterfall.
+  agent (`../agent`), which hand-writes its `execute_tool` spans. Since `CAPYBARA_TOOLS=local`
+  now produces fully populated tool spans here, that waterfall could be re-captured from this
+  demo instead — it has not been.
 - **The kind/OpenSearch path is parked.** `scripts/setup-kind.sh` and
   `scripts/setup-opensearch.sh` work but are not on the talk's critical path.
