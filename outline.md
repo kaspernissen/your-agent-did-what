@@ -24,12 +24,12 @@
 | 1 | Agents aren't request/response | 5.5 | Adriana | An agent is a loop; the call graph is generated at runtime and the decision is not in it |
 | 2 | The competing semantics that exist | 4 | Adriana | Five conventions, one span — and we measured how far apart they are |
 | 3 | Why OpenTelemetry should be the standard | 3 | Kasper | Everyone is already normalizing *toward* `gen_ai.*` |
-| 4 | The conventions: what you get, what setup costs | 5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
+| 4 | The conventions: what you get, what setup costs | 5.5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
 | 5 | Your tool doesn't speak OTel? Normalize at the edge | 4 | Adriana | Two places to fix it, and exactly how far each gets you |
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 4 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~35.5 — Arconia flavor slide cut, judge-concept slide added; expanding first, cut list parked below** | | |
+| | **Total** | **~36 — now just over the 30–35 target; expanding first by agreement, cut list parked below** | | |
 
 **Cut list — parked, not actioned.** The deck is deliberately in an *expand first, cut later*
 phase: material is being added while the argument is still settling, and trimming waits until
@@ -45,7 +45,12 @@ time to cut, these are the candidates in order — recorded now, while the reaso
 2. **1.2 — the architecture run-up** (monolith → microservices → event-driven → agent-based). Now
    that 1.3 defines an agent directly, the run-up is the more cuttable of the two. Saves ~45s.
 
-Cutting either brings the total back to ~34. Neither is cut today.
+Cutting either brings the total back under 35. Neither is cut today.
+
+Since that list was written the deck has gained 1.3, 1.4, 4.2, 6.4 and 7.2 — all orientation
+or setup material — and lost the Arconia flavor slide, putting it at ~36. That is over target
+and deliberate: the argument is still settling, and it is easier to cut from a complete deck
+than to discover a hole on stage. Trim before the first rehearsal, not before then.
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
@@ -219,7 +224,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 4 · The GenAI conventions: what you get, what setup costs (5 min) — **Kasper**
+## 4 · The GenAI conventions: what you get, what setup costs (5.5 min) — **Kasper**
 
 **Message:** The conventions give you a genuine vocabulary for agent runs — but they moved repository in June, nothing in them is marked Stable, and getting the forensic content turned on is not always as easy as the documentation implies.
 
@@ -238,35 +243,44 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Mascot:** yes — this is the single permitted mid-deck breath ([SPEC] §10)
 - **Source:** [SPEC] §3.1, §3.2, §6
 
-### 4.2 — The conventions moved house
+### 4.2 — Three records, three tools, one of them destructive
+- **Layout:** L07 Figures (two panels)
+- **Headline:** Three records, three tools, **one of them destructive**
+- **Content:** the demo setup, so the room knows what it is watching before we read spans off it. **The database** — `cappuccino/pro` survives, `biscuit/free` and `nibbles/free` deleted; tools `list_records · query · delete_records`. **The page, and what it did** — the incident prompt verbatim, then `query(plan=free)` → `query(plan=pro)` → `delete_records(plan=free)`, ending `deleted 2 · remaining 1`.
+- **Amber emphasis:** **"one of them destructive"** in the headline
+- **Source:** [D1] README "The scenario" + the measured tool sequence
+- **Land it:** "It investigated before it acted — two queries, then the delete. Everything from here is this run." Then the stack and the toy caveat: Quarkus + LangChain4j over an MCP server, Anthropic behind it, standing in for kagent or HolmesGPT.
+- **Why it exists:** 4.1 introduces the mascot and 4.3 onward reads attributes off a run the room has never been shown. The authorization clause in the prompt also has to be heard here, because it is what makes beat 7's judge pass this run and fail the other one.
+
+### 4.3 — The conventions moved house
 - **Layout:** L04 Text + diagram
 - **Headline:** In June, `gen_ai` moved out
 - **Content:** semconv **v1.42.0 (June 2026)** deprecated all `gen_ai` content in `open-telemetry/semantic-conventions` and relocated it to **`open-telemetry/semantic-conventions-genai`**. The old `opentelemetry.io/docs/specs/semconv/gen-ai` page is now only a redirect notice — including the one on the design mock's close slide, which we had to fix.
 - **Amber emphasis:** the repo name **`semantic-conventions-genai`**
 - **Source:** [SPEC] §2.1 fact 1 (verified 2026-08-07); corroborated by [R-E] §1. **Honesty:** [R-E] flags the exact redirect *wording* as lightly sourced — describe the move, don't quote the banner.
 
-### 4.3 — Stable: zero
+### 4.4 — Stable: zero
 - **Layout:** L07 Figures
 - **Headline:** How much of this is Stable?
 - **Content:** big figure **0**. As of July 2026 no GenAI span, event, metric or attribute is marked Stable — every one of them is Development, i.e. subject to breaking change. Say it plainly rather than implying more maturity than exists.
 - **Amber emphasis:** the figure **0**
 - **Source:** [SPEC] §2.1 fact 2 (verified 2026-08-07); [R-F] "every GenAI attribute is still Development-stage"; [R-E] §1 (only `error.type` is Stable, and it is a general attribute)
 
-### 4.4 — What a conforming run gives you for free
+### 4.5 — What a conforming run gives you for free
 - **Layout:** L06 Code
 - **Headline:** This much arrives without you doing anything
 - **Content:** verbatim attribute block from a `chat` span — `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` / `response.model`, `gen_ai.usage.input_tokens` / `output_tokens`, `gen_ai.response.finish_reasons`. Plus the structural spans: `invoke_agent`, `chat`, `execute_tool`.
 - **Amber emphasis:** **`gen_ai.provider.name`** — the current spec key, so this stack is on the right side of 2.4
 - **Source:** [ANALYSIS] Demo 1 "Attribute inventory — `chat` span", verbatim from the collector debug exporter. **RESOLVED 2026-08-09:** re-captured from the Quarkus capybara run on quarkus-langchain4j 1.12.2 — 983 input tokens, 115 output, `TOOL_EXECUTION`, a real response id. The slide now shows the capybara run, not the old Python/OpenLIT one.
 
-### 4.5 — Two documented flags, six attributes in the code
+### 4.6 — Two documented flags, six attributes in the code
 - **Layout:** L06 Code
 - **Headline:** The forensic content is a config switch
 - **Content:** `quarkus.langchain4j.tracing.include-tool-arguments=true`, `...include-tool-result=true`. `ToolSpanWrapper` sets **exactly** the six right attributes — `gen_ai.operation.name`, `gen_ai.tool.call.id`, `gen_ai.tool.name`, `gen_ai.tool.type`, `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result` — gated on those two flags.
 - **Amber emphasis:** **`include-tool-arguments`**
 - **Source:** [SPEC] §3.3, established by reading the quarkus-langchain4j 1.11.2 jars
 
-### 4.6 — …and on the MCP path they never fire
+### 4.7 — …and on the MCP path they never fire
 - **Layout:** L04 Text + diagram
 - **Headline:** Right code. Wrong path.
 - **Content:** `ToolSpanWrapper` only wraps **locally declared `@Tool` methods**. MCP tool calls route through `TracingMcpClientListener`, which sets the tool *name* and no content — and that listener list is hardcoded in `McpRecorder`, so you cannot register your own alongside. The framework has the correct code; it just does not run where our tools live.
