@@ -287,6 +287,56 @@ Required; `score.value` / `score.label` Conditionally Required; `explanation` Re
 
 ---
 
+---
+
+### The MCP forensic gap is a FRAMEWORK gap, not an MCP gap (measured 2026-08-10)
+
+The beat-4 finding — `gen_ai.tool.call.arguments` and `.result` absent from MCP tool spans — is
+real on quarkus-langchain4j 1.12.2 and **does not generalise to MCP**. Measured directly, on the
+exact versions `opentelemetry-demo` 3.0 pins for its agentic stack:
+
+```
+opentelemetry-instrumentation-langchain 0.62.1
+langchain 1.3.14 · langchain-core 1.5.3
+langchain-mcp-adapters 0.3.1 · mcp 1.29.0
+```
+
+An in-process FastMCP server exposing `delete_records(plan)`, loaded with
+`langchain_mcp_adapters.tools.load_mcp_tools`, invoked under `LangchainInstrumentor`. One span:
+
+```
+span name              execute_tool delete_records      (INTERNAL)
+gen_ai.operation.name  execute_tool
+gen_ai.provider.name   langchain
+gen_ai.tool.name       delete_records
+gen_ai.tool.type       function
+gen_ai.tool.call.arguments  {"inputs": {"plan": "free"}, …}          ← PRESENT
+gen_ai.tool.call.result     {"output": [{"type":"text","text":"{\"deleted\": 2, …"}]}  ← PRESENT
+traceloop.entity.input/output   the same content, duplicated
+```
+
+**Why the difference.** `load_mcp_tools` returns a `StructuredTool` — the same class a native
+`@tool` produces. Verified by invoking both: the two spans are attribute-for-attribute identical
+except for the result payload shape (MCP returns content blocks). One instrumentation path
+therefore covers native and MCP tools alike. quarkus-langchain4j keeps the paths separate —
+`ToolSpanWrapper` for local `@Tool` methods, `TracingMcpClientListener` for MCP — and only the
+first was taught to record content.
+
+| | tool arguments on the span |
+|---|---|
+| quarkus-langchain4j 1.12.2, MCP over SSE | **0 occurrences** |
+| LangChain 1.3.14 + langchain-mcp-adapters 0.3.1, MCP | **present** |
+
+Same protocol, same kind of tool call, opposite outcome. The talk must say "in this framework",
+not "with MCP".
+
+**Second finding:** OpenLLMetry 0.62.1 already emits `gen_ai.tool.*` on tool spans *and*
+duplicates the content into `traceloop.entity.*`. So `gen_ai_normalizer` is not what makes tool
+spans conformant on that stack — it is there for the LLM/chat spans. Do not claim the OTel Demo
+needs the processor for its tool telemetry.
+
+---
+
 ## Cross-cutting synthesis — the state of the space (measured)
 
 1. **The ecosystem really is converging on `gen_ai.*`.** OpenLIT (Python SDK), Spring AI/Arconia (Java), and the `gen_ai_normalizer` output all land on OpenTelemetry GenAI semconv attribute names. The shared vocabulary is real, not aspirational — for the core dimensions.
