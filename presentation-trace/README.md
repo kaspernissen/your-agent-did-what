@@ -2,7 +2,7 @@
 
 The **Trace** rebuild of the conference deck for *Your Agent Did What? — Forensic
 Observability for Systems That Don't Leave Obvious Footprints*, by **Kasper Borg Nissen**
-(`@phennex`) and **Adriana Villela** (`@adrianamvillela`). 30 minutes, two speakers.
+(`@phennex`) and **Adriana Villela** (`@adrianamvillela`). 45 minutes, two speakers.
 
 > **Status: built.** `index.html` holds all **40 slides** across the nine beats mapped in
 > `../outline.md`, each with a speaker note. Three slides deliberately show structure

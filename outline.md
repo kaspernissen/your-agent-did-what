@@ -1,7 +1,8 @@
-# Your Agent Did What? — 30-Minute Presentation Outline
+# Your Agent Did What? — Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** **30–35 minutes** (the speakers' working range, confirmed 2026-08-09), nine beats, **49 slides**.
+**Length:** **45 minutes** (confirmed 2026-08-10), nine beats, **50 slides**. 37.5 minutes of
+speaking, leaving room to run demos live and still land on time.
 **Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
 **Spine:** one capybara incident, told twice in two conventions, with every claim measured rather than asserted.
@@ -27,30 +28,35 @@
 | 4 | The conventions: what you get, what setup costs | 5.5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
 | 5 | Your tool doesn't speak OTel? Normalize at the edge | 4 | Adriana | Two places to fix it, and exactly how far each gets you |
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
-| 7 | Evaluation quality via the OTel evaluation semantics | 4 | Adriana | OTel already carries "was it good?" — as an event, at Development |
+| 7 | Evaluation quality via the OTel evaluation semantics | 4.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~37 — over the 30–35 target; expanding first by agreement, cut list parked below** | | |
+| | **Speaking** | **37.5** | | |
 
-**Cut list — parked, not actioned.** The deck is deliberately in an *expand first, cut later*
-phase: material is being added while the argument is still settling, and trimming waits until
-the full picture is on the table. Beat 1 grew from 4 to 5.5 min when 1.3 (the vocabulary) and
-1.4 (the telemetry path) were added, which puts the total at the top of the range. When it is
-time to cut, these are the candidates in order — recorded now, while the reasoning is fresh:
+### The 45-minute budget
+
+Speaking the deck is 37.5 minutes. The remaining 7.5 is not slack to fill with more slides —
+it is what makes the demos possible, which is the difference between telling the room the
+forensic gap exists and letting them watch it.
+
+| | | |
+|---|---|---|
+| Speaking, all nine beats | 37.5 min | |
+| **Demo A act 4** — the two tool paths, live | 3 min | in beat 4, after 4.7 |
+| **Demo B** — the convention swap, live | 2 min | in beat 5, after 5.3 |
+| Buffer | 2.5 min | over-runs, one question mid-talk |
+| **Total** | **45 min** | |
+
+Demo A act 4 is the one to protect: it is the only place the talk's headline finding becomes
+something the audience watches rather than something they are told. See
+[`demos/RUNBOOK.md`](demos/RUNBOOK.md) for the run steps and what to point at.
+
+**No cuts needed at 45 minutes.** The list below is kept only in case the slot shrinks — if
+it does, cut in this order. It is not a to-do.
 
 1. **2.4 — "Both of these claim to be OTel GenAI"** (the Arconia `flavor` slide). It is the only
-   slide where Arconia carries an argument rather than getting a mention, which is more prominence
-   than intended, and it argues drift *within* one convention while its beat is about fragmentation
-   *across* conventions. Its insight — a tool can claim conformance and still emit deprecated keys —
-   survives as a spoken line on 4.3 ("Stable: zero"). Saves ~45s.
-2. **1.2 — the architecture run-up** (monolith → microservices → event-driven → agent-based). Now
-   that 1.3 defines an agent directly, the run-up is the more cuttable of the two. Saves ~45s.
 
-Cutting either brings the total back under 35. Neither is cut today.
 
-Since that list was written the deck has gained 1.3, 1.4, 4.2, 6.4 and 7.2 — all orientation
-or setup material — and lost the Arconia flavor slide, putting it at ~36. That is over target
-and deliberate: the argument is still settling, and it is easier to cut from a complete deck
-than to discover a hole on stage. Trim before the first rehearsal, not before then.
+At 45 minutes none of this is required. The deck gained 1.3, 1.4, 4.2, 6.4, 7.2 and 7.7 as orientation, setup and evidence material, and lost the Arconia flavor slide; the result is a deck that explains itself rather than one that races.
 
 Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
@@ -376,7 +382,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 7 · Evaluation quality via the OTel evaluation semantics (4 min) — **Adriana**
+## 7 · Evaluation quality via the OTel evaluation semantics (4.5 min) — **Adriana**
 
 **Message:** OpenTelemetry can already carry "was it any good?" — as a log event with four Development-stage attributes — and the hard part is not the schema, it is deciding what you gate on and whether you trust the judge.
 
@@ -425,6 +431,16 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Source:** [SPEC] §3.4 honesty note; [R-E] §2 (bias names are canonical from Zheng et al. 2023; **do not quote the percentage digits** — [R-E] flags them as ar5iv-mirror sourced) and §5 ("good enough", Hamel Husain / Eugene Yan)
 
 ---
+
+### 7.7 — The version we cheated on, built properly
+- **Layout:** L07 Figures (a three-column comparison)
+- **Headline:** The version we cheated on, **built properly**
+- **Content:** ours versus OpenSearch Agent Health, row by row — *when it runs* (inline, in the request path / offline, in batch experiments) · *judged against* (a rubric in a prompt / a human-defined **Golden Path** trajectory) · *across runs* (one at a time / run-to-run comparison, pass rate over time) · *where it lands* (`gen_ai.evaluation.result` on the span / the same, plus its own store and UI).
+- **Amber emphasis:** **"built properly"** in the headline
+- **Source:** [github.com/opensearch-project/agent-health](https://github.com/opensearch-project/agent-health), Apache-2.0, v0.5.2, assessed 2026-08-10
+- **Land it:** "The gold set we said was the mitigation, shipped by someone else. Copy the shape, don't adopt it blind — v0.5.2, and its SDK is marked experimental." Then the second payload: its own OTel guide still specifies `gen_ai.system`, which the registry replaced with `gen_ai.provider.name`. Nobody is behind on purpose.
+- **Why it exists:** 7.6 admits the shortcuts and names the gold set as the mitigation, with nothing to point at. This is what that mitigation looks like when it is a product, and it doubles as beat 4's revision-drift point happening to a well-run project in public rather than to us.
+- **Careful:** do not oversell it — young project, experimental SDK. It is a shape to copy, not a dependency to recommend.
 
 ## 8 · Where this is going + close (3 min) — **both**
 
@@ -488,13 +504,14 @@ Assets that exist in `presentation-trace/assets/` today: `capybara-mascot.png`, 
 
 **Restored 2026-08-09:** the kagent/HolmesGPT ecosystem slide is back (now 8.2 "Who reads your telemetry next"), together with a new framing slide at 0.3 ("Two ways you meet an agent"). Cutting the ecosystem slide had left a real hole: the instrumentation ecosystem the talk surveys is developer-facing, while the capybara demo is an SRE scenario, and nothing on the deck connected them. The bridge is that agentic-SRE tools *consume* your telemetry — "it is only as good as the data it reads" — which makes the conventions matter even to someone who never builds an agent. The capybara is now introduced explicitly as a toy standing in for kagent/HolmesGPT, small enough to open up. Deck was 42 slides at that point; it is 49 now, after the orientation and setup slides added on 2026-08-10 (1.3 the vocabulary, 1.4 the telemetry path, 4.2 the demo setup, 6.4 the model output, 7.2 the judge concept) and the Arconia flavor slide was cut. See the parked cut list above.
 
-**Dropped from the previous outline** (recorded so the decision is deliberate, not accidental): the pizza-order trace and its 275-span / "164 spans named POST" statistics, the skills-break-traces slide, the W3C context-propagation slide, and the maturity-model slide. The pizza demo is superseded by the capybara scenario, which the whole deck now shares; the rest are good material that 30 minutes does not have room for. The "spans named just POST" point survives, compressed, as the amber emphasis on slide 1.5.
+**Dropped from the previous outline** (recorded so the decision is deliberate, not accidental): the pizza-order trace and its 275-span / "164 spans named POST" statistics, the skills-break-traces slide, the W3C context-propagation slide, and the maturity-model slide. The pizza demo is superseded by the capybara scenario, which the whole deck now shares; the rest are good material that 30 minutes did not have room for.
+**Reconsider at 45 minutes?** The extra 7.5 is allocated to running the demos live, so restoring four slides means giving up Demo A act 4 — the only place the headline finding is watched rather than asserted. That trade is not worth it. If the demos ever move to a recording, the W3C context-propagation slide is the first of these worth bringing back, since correlation is beat 3's whole argument and it currently rests on assertion. The "spans named just POST" point survives, compressed, as the amber emphasis on slide 1.5.
 
 ---
 
 ## Open decisions before building slides
 
-1. **Slide density — which slides get cut?** The real change from the previous outline is density, not a lost buffer. Its *header* claimed "≈26 min content + 4 min buffer/Q&A handoff", but its own beat table already summed to 30 (1.5+4+5+6+5+5.5+3) — the file contradicted itself and the buffer was never actually reserved in the arc. So nothing was taken away. What changed is **28 slides → 39 slides in the same 30 minutes: ~64 s/slide → ~46 s/slide.** Seven of the 39 are dividers that take seconds, so content slides land nearer ~54 s, but the deck is materially denser and has no slack for a demo that misbehaves. The lever is cutting slides, not asking the CFP about Q&A. Cheapest cuts, in order: beat 3 (3 min, new writing, no demo, and 3.3/3.4 make one argument between them), then beat 1 (1.2 and 1.3 can merge). Decide before the slides are built, not while rehearsing.
+1. **Slide density — which slides get cut?** *(Historical: written when the slot was 30 minutes. The slot is 45 as of 2026-08-10 and no cuts are required — see the budget above. Kept because the density reasoning is still how to think about it if the slot ever shrinks.)* The real change from the previous outline is density, not a lost buffer. Its *header* claimed "≈26 min content + 4 min buffer/Q&A handoff", but its own beat table already summed to 30 (1.5+4+5+6+5+5.5+3) — the file contradicted itself and the buffer was never actually reserved in the arc. So nothing was taken away. What changed is **28 slides → 39 slides in the same 30 minutes: ~64 s/slide → ~46 s/slide.** Seven of the 39 are dividers that take seconds, so content slides land nearer ~54 s, but the deck is materially denser and has no slack for a demo that misbehaves. The lever is cutting slides, not asking the CFP about Q&A. Cheapest cuts, in order: beat 3 (3 min, new writing, no demo, and 3.3/3.4 make one argument between them), then beat 1 (1.2 and 1.3 can merge). Decide before the slides are built, not while rehearsing.
 2. **Live vs pre-captured.** [SPEC] §9 says pre-record or pre-capture; both demos must run offline from captured data. Decide per beat whether 5.3 and 6.2/6.3 are video, screenshots, or a live terminal.
 3. **Hero visualizer.** [SPEC] §5 defers the choice until we can see which UI renders `gen_ai.evaluation.result` most legibly. Slides 2.5, 7.3 and 7.4 all depend on the answer.
 4. **The 1.12.2 outcome.** Slide 4.6's framing changes depending on which branch of [SPEC] §3.3 lands. Written above as "the kind of gap you hit"; if 1.12.2 fixes it, the slide becomes a better story (the gap *and* the fix), not a worse one.

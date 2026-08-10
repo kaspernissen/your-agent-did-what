@@ -512,20 +512,26 @@ do not depend on a live run.
 
 ## Timing
 
-| Demo | Tight | Comfortable |
-|---|---|---|
-| A — forensic gap (Acts 1–3) | 2 min | 3 min |
-| A — Act 4, the reversal | 1 min | 1.5 min |
-| B — convention swap | 1.5 min | 3 min |
-| C — four renderings | 1 min | 2 min |
-| D — the judge | 1 min | 2 min |
+The slot is **45 minutes**. Speaking the deck is 37.5, which leaves 7.5 — and that is what
+the demos are for.
 
-The deck runs ~37 minutes on its own, over the 30–35 target, so **assume you are
-showing at most one demo live** and treat the rest as slides. Demo A Act 4 is the
-one to keep: it is the only place the talk's headline finding becomes something the
-room watches rather than something it's told.
+| Demo | Tight | Comfortable | Where it sits |
+|---|---|---|---|
+| A — forensic gap (Acts 1–3) | 2 min | 3 min | beat 4, alongside 4.5–4.7 |
+| **A — Act 4, the reversal** | 1 min | 1.5 min | beat 4, after 4.7 |
+| B — convention swap | 1.5 min | 3 min | beat 5, after 5.3 |
+| C — four renderings | 1 min | 2 min | beat 2, optional |
+| D — the judge | 1 min | 2 min | beat 7, after 7.4 |
 
----
+**The plan that fits:** Demo A act 4 at 3 minutes and Demo B at 2, leaving ~2.5 minutes of
+buffer for over-runs and a question mid-talk. That is the allocation in `outline.md`.
+
+**Protect Act 4 above everything else.** It is the only place the talk's headline finding
+becomes something the room watches rather than something it is told. If you are running long,
+cut Demo C first, then Demo D — the judge's numbers are on the slides and land fine spoken.
+
+Acts 1–3 of Demo A do not need to be live at all: the spans are quoted on the slides. Run them
+live only if the terminal is already up and you are comfortable.
 
 ## What is measured and what isn't
 
