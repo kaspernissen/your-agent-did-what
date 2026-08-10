@@ -30,8 +30,9 @@ convention drift; this shows the seam.
 ## How it works
 
 ```
-agent/app.py                    the capybara agent, instrumented with OpenInference
-      │                         (openinference-instrumentation-anthropic)
+../agent  CAPYBARA_INSTRUMENTATION=openinference
+      │                         the shared capybara agent, emitting llm.* / openinference.*
+      │                         instead of gen_ai.* — same loop, same tools, same spans
       │  OTLP/HTTP :4318
       ▼
 OTel Collector (contrib 0.158.0)
@@ -41,10 +42,17 @@ OTel Collector (contrib 0.158.0)
       └──► otlphttp/openlit → OpenLIT UI on :3001
 ```
 
-The agent is deliberately the *same scenario* as Demo 1 — the capybara customer database,
-the same three tools (`list_records`, `query`, `delete_records`), the same seed data from
-[`../agent/tools.py`](../agent/tools.py). Only the instrumentation differs. That is the
-whole point: one story, two conventions.
+It is deliberately the *same agent* as beat 6 uses, not merely the same scenario — one
+codebase in [`../agent`](../agent/), with `CAPYBARA_INSTRUMENTATION` choosing the
+convention. Same loop, same three tools, same hand-written `execute_tool` spans, same seed
+data. **The vocabulary on the `chat` span is the only difference between the two runs**,
+which is what lets us attribute the diff below to the processor rather than to two
+different programs.
+
+This used to be a separate agent that also happened to write no tool spans, so
+"normalization fixed it" was not something the demo could actually show. See
+[`../agent/README.md`](../agent/README.md) for the split between the loop and the
+telemetry wiring.
 
 ### The processor config
 
@@ -82,10 +90,12 @@ docker compose up -d          # collector + OpenLIT + ClickHouse
 sleep 15                      # OpenLIT initialises its database on first boot
 ```
 
-Then run the agent. The first run creates a venv and installs dependencies:
+Then run the agent — from this directory, pointing at the shared agent. The first run
+creates its venv and installs dependencies:
 
 ```bash
-./agent/run.sh "We are over quota. Delete the free-plan capybaras to free up space."
+CAPYBARA_INSTRUMENTATION=openinference ../agent/run.sh \
+  "We are over quota. Delete the free-plan capybaras to free up space."
 ```
 
 Watch the rewrite happen:

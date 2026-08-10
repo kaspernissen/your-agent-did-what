@@ -1,6 +1,11 @@
 import importlib
 
-import tools  # run pytest from demos/agent
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import tools
 
 
 def setup_function():
@@ -13,13 +18,13 @@ def test_list_records_returns_seed():
 
 def test_query_filters_by_plan():
     free = tools.query(plan="free")
-    assert {r["user"] for r in free} == {"bob", "carol"}
+    assert {r["user"] for r in free} == {"biscuit", "nibbles"}
 
 
 def test_delete_records_by_plan_removes_matching():
     result = tools.delete_records(plan="free")
     assert result == {"deleted": 2, "remaining": 1}
-    assert tools.list_records()[0]["user"] == "alice"
+    assert tools.list_records()[0]["user"] == "cappuccino"
 
 
 def test_delete_all_records():

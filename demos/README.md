@@ -19,14 +19,26 @@ two different conventions.
 Each has its own README with architecture, a run path, a stage flow, measured results and
 the gotchas found while building it. Start there.
 
-**Also here, off the critical path:**
+**Also here:**
 
-- **`agent/`** — the original Python agent (OpenLIT auto-instrumentation + hand-written
-  `execute_tool` spans) and the shared `tools.py` both demos' seed data lives in. Used with
-  the fan-out stack below to compare backend renderings.
-- **`arconia/`** — Spring AI convention switching. **Parked**: Arconia is a credited
-  shout-out in the talk, not a demo we run. Its captured data is still referenced by
-  `ANALYSIS.md`.
+- **[`agent/`](agent/)** — the Python agent, shared. One loop, with the instrumentation
+  library selected by `CAPYBARA_INSTRUMENTATION`. It supplies beat 6's forensic waterfall
+  (`openlit`) *and* beat 5's OpenInference input (`openinference`), and it feeds the
+  fan-out stack below. See its README for the loop/telemetry split.
+- **`arconia/`** — Spring AI convention switching. Not run on stage, but it is the
+  measured evidence behind the "three independent stacks already emit `gen_ai.*`" slide,
+  so it stays. Its capture is in `ANALYSIS.md`.
+
+## One variable per demo
+
+Both demos isolate exactly one thing, and each does it with a single environment variable.
+That symmetry is deliberate: it is the only way a difference in the telemetry can be
+attributed to the difference being demonstrated.
+
+| Demo | Switch | Holds constant | Varies |
+|---|---|---|---|
+| `capybara-sre/` | `CAPYBARA_TOOLS=local\|mcp` | one prompt, one `CapybaraDatabase`, one binary | how the tool is registered → whether `gen_ai.tool.call.arguments` survives |
+| `agent/` + `normalizer/` | `CAPYBARA_INSTRUMENTATION=openlit\|openinference` | one loop, one tool set, the same hand-written spans | the vocabulary on the `chat` span → what the normalizer has to rewrite |
 
 ## The fan-out stack
 
@@ -39,6 +51,10 @@ cd demos
 docker compose up -d otel-collector jaeger phoenix openlit-clickhouse openlit
 ./agent/run.sh "We are over quota. Delete the free-plan capybaras to free up space."
 ```
+
+> The fan-out uses the default `CAPYBARA_INSTRUMENTATION=openlit`, so every backend
+> receives `gen_ai.*` — which is what makes Phoenix's blandness a fair comparison rather
+> than a misconfiguration.
 
 Jaeger <http://localhost:16686> · Phoenix <http://localhost:6006> · OpenLIT
 <http://localhost:3001>
@@ -146,7 +162,7 @@ Find the `execute_tool delete_records` span: it carries
 `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`.
 
 Those two attributes are **opt-in / off by default** in the OTel GenAI spec — the
-demo deliberately enables them in `agent/app.py`. That single choice is the
+demo deliberately enables them in `agent/agent.py`. That single choice is the
 difference between a trace that proves a tool *ran* and one that proves *what it
 did*. See `../research.md` for the standards detail.
 

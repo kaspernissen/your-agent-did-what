@@ -337,6 +337,44 @@ needs the processor for its tool telemetry.
 
 ---
 
+---
+
+### Demo structure: one variable per demo (refactored 2026-08-10)
+
+Both demos now isolate exactly one thing, each behind a single environment variable. The
+symmetry is the point — a difference in the telemetry can only be attributed to the
+difference being demonstrated if nothing else moved.
+
+| Demo | Switch | Held constant | Varies |
+|---|---|---|---|
+| `capybara-sre` | `CAPYBARA_TOOLS=local\|mcp` | one prompt (`CapybaraPrompt.SYSTEM`), one `CapybaraDatabase` (in `capybara-db-core`, depended on by both modules), one binary | how the tool is registered → whether `gen_ai.tool.call.arguments` survives |
+| `agent` + `normalizer` | `CAPYBARA_INSTRUMENTATION=openlit\|openinference` | one loop, one tool set, the same hand-written `execute_tool` spans | the vocabulary on the `chat` span → what the normalizer must rewrite |
+
+**What was wrong before.** `demos/normalizer/agent/app.py` was a stripped copy of
+`demos/agent/app.py` that reached into it with a `sys.path.insert` to borrow `tools.py`. The
+two differed in the instrumentation library *and* in which spans they wrote — the
+OpenInference copy wrote no `invoke_agent` or `execute_tool` spans at all. So the beat-5
+claim "the collector normalized it" rested on comparing two different programs, and the
+beat-6 waterfall could only ever come from one of them.
+
+The copy is deleted. `demos/agent` is now one agent with the instrumentation selected at
+run time, split by responsibility: `tools.py` (domain), `telemetry.py` (the only module that
+imports an instrumentation library), `agent.py` (the loop, which receives a tracer and
+cannot see which library produced it), `app.py` (CLI). The loop being unable to observe the
+choice is what makes the two runs comparable.
+
+`tests/test_agent.py` drives the loop against a stubbed Anthropic client and an in-memory
+exporter — no key, no collector, no network — and asserts every tool call produces an
+`execute_tool` span carrying `gen_ai.tool.call.arguments` and `.result`. That test is the
+guard on beat 6's claim.
+
+**Also found while refactoring:** `demos/agent/tests/test_tools.py` had been asserting the
+pre-capybara seed names (`alice`, `bob`, `carol`) and was failing against the current
+`cappuccino` / `biscuit` / `nibbles` data. Two of its five tests were red and nobody had run
+them. Corrected.
+
+---
+
 ## Cross-cutting synthesis — the state of the space (measured)
 
 1. **The ecosystem really is converging on `gen_ai.*`.** OpenLIT (Python SDK), Spring AI/Arconia (Java), and the `gen_ai_normalizer` output all land on OpenTelemetry GenAI semconv attribute names. The shared vocabulary is real, not aspirational — for the core dimensions.
