@@ -20,7 +20,7 @@
 
 | # | Beat | Time | Leads | The one thing it must land |
 |---|---|---|---|---|
-| 0 | Cold open + who we are | 3 | Kasper | The incident is over; the only question left is *why* |
+| 0 | Cold open + who we are | 4 | Kasper | The incident is over; the only question left is *why* |
 | 1 | Agents aren't request/response | 5.5 | Adriana | An agent is a loop; the call graph is generated at runtime and the decision is not in it |
 | 2 | The competing semantics that exist | 4 | Adriana | Five conventions, one span — and we measured how far apart they are |
 | 3 | Why OpenTelemetry should be the standard | 3 | Kasper | Everyone is already normalizing *toward* `gen_ai.*` |
@@ -29,7 +29,7 @@
 | 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
 | 7 | Evaluation quality via the OTel evaluation semantics | 4 | Adriana | OTel already carries "was it good?" — as an event, at Development |
 | 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
-| | **Total** | **~36 — now just over the 30–35 target; expanding first by agreement, cut list parked below** | | |
+| | **Total** | **~37 — over the 30–35 target; expanding first by agreement, cut list parked below** | | |
 
 **Cut list — parked, not actioned.** The deck is deliberately in an *expand first, cut later*
 phase: material is being added while the argument is still settling, and trimming waits until
@@ -56,7 +56,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 
 ---
 
-## 0 · Cold open — "your agent did what?" (3 min) — **Kasper**
+## 0 · Cold open — "your agent did what?" (4 min) — **Kasper**
 
 **Message:** An agent deleted rows in production, the incident is already over, and the only question anyone actually cares about the next morning is *why did it do that?*
 
@@ -75,14 +75,24 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Amber emphasis:** the **lead speaker's portrait ring** — mirrors the cover, where the first speaker is the amber node
 - **Source:** speakers. **Say the capybara line out loud** (it is in the speaker note, not on the slide): Adriana loves capybaras, which is why one is asleep on the last slide and why the demo agent is called Capybara.
 
-### 0.3 — Two ways you meet an agent
+### 0.3 — Agents are becoming the front door to your platform
+- **Layout:** L07 Figures (three cards)
+- **Headline:** Agents are becoming the **front door** to your platform
+- **Content:** where this is already happening, before any incident lands — **in the portal** (platform teams ship an agent beside the service catalogue; developers ask about their own systems in plain language instead of learning another dashboard) · **in the incident channel** (summarise the trace, correlate the deploy, propose the rollback, on live systems during the incident) · **in CI and the terminal** (coding agents with repository access and a shell, already running against real infrastructure).
+- **Amber emphasis:** **"front door"** in the headline
+- **Source:** new writing — the platform-engineering framing the room lives in
+- **Land it:** "None of these are demos. They hold credentials, they read production data, and increasingly they act on it. Platform teams are shipping these as products; the observability problem arrives with them whether anyone planned for it or not."
+- **Careful:** no vendors or product names here — kagent, HolmesGPT and the coding agents have their own slides in beat 8, and naming them now spends that payoff early.
+- **Why it exists:** the deck went from "who we are" straight to "your agent deleted a database", which asks the room to care about a problem before establishing that the thing causing it is already in their stack. This is the slow start that earns the incident.
+
+### 0.4 — Two ways you meet an agent
 - **Layout:** L04 Text + diagram (two chamfered cards)
 - **Headline:** You either build one, or you run someone else's
 - **Content:** *You build it* — LangChain, LangGraph, Spring AI, LangChain4j; you choose the framework, so you choose what it emits; your problem is which convention and what it leaves out. *You run someone else's* — kagent, HolmesGPT, k8sgpt, Copilots in your tooling; you did not choose the instrumentation. **Two problems, not one:** it *reads* your telemetry, so it is only as good as what it reads — and it *acts* on your systems, so you need its telemetry too.
 - **Amber emphasis:** **"you need its telemetry too"**
 - **Source:** new, 2026-08-09. This slide exists because the instrumentation ecosystem the talk surveys is developer-facing while the demo is an SRE incident; without it the room cannot tell which of them the talk is for. Pays off at 8.3.
 
-### 0.4 — The morning after
+### 0.5 — The morning after
 - **Layout:** L03 Statement
 - **Headline:** "It deleted the rows. The incident is over. Now prove **why**."
 - **Amber emphasis:** the single word **"why"**
