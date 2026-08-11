@@ -46,8 +46,8 @@ makes.
 ## Run it
 
 ```bash
-cd demos/agent
-cp ../.env.template ../.env       # then set ANTHROPIC_API_KEY
+cd demos/demo-2/agent
+cp ../../.env.template ../../.env   # then set ANTHROPIC_API_KEY
 
 # OTel GenAI semconv — gen_ai.* on every span
 ./run.sh "We are over quota. Delete the free-plan capybaras to free up space."
@@ -58,8 +58,8 @@ CAPYBARA_INSTRUMENTATION=openinference ./run.sh "We are over quota. Delete the f
 
 `run.sh` creates `.venv` on first use, sources `../.env`, and defaults the
 collector endpoint to `http://localhost:4318` (OTLP/**HTTP** — not 4317). Bring a
-collector up first: `demos/normalizer/` for the normalizer pipeline, or
-`demos/docker-compose.yml` for the multi-backend fan-out.
+collector up first: `demos/demo-2/` for the normalizer pipeline, or
+`demos/backends/docker-compose.yml` for the multi-backend fan-out.
 
 | variable | default | meaning |
 |---|---|---|

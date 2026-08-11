@@ -12,18 +12,21 @@ def setup_function():
     importlib.reload(tools)  # reset in-memory state between tests
 
 
+FREE, PRO = 3, 2   # biscuit, nibbles, pepper · cappuccino, mochi
+
+
 def test_list_records_returns_seed():
-    assert len(tools.list_records()) == 3
+    assert len(tools.list_records()) == FREE + PRO
 
 
 def test_query_filters_by_plan():
     free = tools.query(plan="free")
-    assert {r["user"] for r in free} == {"biscuit", "nibbles"}
+    assert {r["user"] for r in free} == {"biscuit", "nibbles", "pepper"}
 
 
 def test_delete_records_by_plan_removes_matching():
     result = tools.delete_records(plan="free")
-    assert result == {"deleted": 2, "remaining": 1}
+    assert result == {"deleted": FREE, "remaining": PRO}
     assert tools.list_records()[0]["user"] == "cappuccino"
 
 
@@ -35,4 +38,4 @@ def test_delete_all_records():
 def test_dispatch_routes_by_name():
     fn = tools.dispatch("list_records")
     assert callable(fn)
-    assert len(fn()) == 3
+    assert len(fn()) == FREE + PRO

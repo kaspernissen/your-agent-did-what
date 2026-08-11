@@ -86,7 +86,8 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     answer = CapybaraAgent(tracer, model="stub", name="db-ops-agent").run("delete the free plan")
 
     assert "Deleted" in answer
-    assert tools.list_records() == [{"id": 1, "user": "cappuccino", "plan": "pro"}]
+    # deleting the free plan leaves the pro capybaras, whoever they are
+    assert [r["user"] for r in tools.list_records()] == ["cappuccino", "mochi"]
 
     by_name = {s.name: s for s in finished()}
     assert "invoke_agent db-ops-agent" in by_name
@@ -103,7 +104,7 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     # The opt-in content. Its absence is the finding on Demo 1's MCP path; here we
     # write it ourselves, so it must be present.
     assert delete.attributes["gen_ai.tool.call.arguments"] == '{"plan": "free"}'
-    assert '"deleted": 2' in delete.attributes["gen_ai.tool.call.result"]
+    assert '"deleted": 3' in delete.attributes["gen_ai.tool.call.result"]
 
 
 def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):

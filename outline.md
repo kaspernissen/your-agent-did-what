@@ -48,7 +48,7 @@ forensic gap exists and letting them watch it.
 
 Demo A act 4 is the one to protect: it is the only place the talk's headline finding becomes
 something the audience watches rather than something they are told. See
-[`demos/RUNBOOK.md`](demos/RUNBOOK.md) for the run steps and what to point at.
+[`demos/README.md`](demos/README.md) for the run steps and what to point at.
 
 **No cuts needed at 45 minutes.** The list below is kept only in case the slot shrinks — if
 it does, cut in this order. It is not a to-do.
@@ -338,7 +338,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** Everyone is converging on **the same target**
 - **Content:** a short survey, not a demo — the point is that the fragmentation is being actively closed, from several directions at once. The collector processor is merged and **alpha**, with a donation to contrib under discussion (issue #46069). Arconia re-emits Spring AI's spans under a chosen flavor, so a Java shop can switch schema without touching code. Phoenix publishes an explicit convention-translation guide. OpenLIT's SDK emits `gen_ai.*` natively. Different layers, one destination: OTel semconv.
 - **Amber emphasis:** **the same target** in the headline
-- **Source:** [LS] §2 (both answers "land on OTel semconv as the target"); [RES] genainormalizerprocessor + issue #46069, Phoenix "Translating conventions", OpenLIT. **Not demo-backed** — Arconia is a mention here, not a measured result; the `demos/arconia` code was removed on 2026-08-11; its captured flavor diff survives in [ANALYSIS] Demo 3 as a dated measurement.
+- **Source:** [LS] §2 (both answers "land on OTel semconv as the target"); [RES] genainormalizerprocessor + issue #46069, Phoenix "Translating conventions", OpenLIT. **Not demo-backed** — Arconia is a mention here, not a measured result; the `demos/arconia (removed)` code was removed on 2026-08-11; its captured flavor diff survives in [ANALYSIS] Demo 3 as a dated measurement.
 
 ---
 

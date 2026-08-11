@@ -3,10 +3,15 @@
 State is module-level so a single agent run mutates it; reload the module to reset.
 """
 
+# The same roster demo 1 seeds into Postgres, so both demos talk about the same
+# capybaras. The scenarios differ — demo 1 is the rogue-service incident, this is the
+# convention swap — but the data should not.
 _SEED = [
     {"id": 1, "user": "cappuccino", "plan": "pro"},
     {"id": 2, "user": "biscuit", "plan": "free"},
     {"id": 3, "user": "nibbles", "plan": "free"},
+    {"id": 4, "user": "mochi", "plan": "pro"},
+    {"id": 5, "user": "pepper", "plan": "free"},
 ]
 
 _RECORDS = [dict(r) for r in _SEED]

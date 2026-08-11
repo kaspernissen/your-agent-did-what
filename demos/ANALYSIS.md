@@ -145,7 +145,7 @@ trace OTel-native end to end.
 
 ## Demo 3 — Arconia convention switching (Spring AI / Java)
 
-> **The code for this demo was removed on 2026-08-11** (`demos/arconia/`, recoverable from git
+> **The code for this demo was removed on 2026-08-11** (`demos/arconia (removed)/`, recoverable from git
 > history). The measurement below stands as a dated capture and still backs the "three
 > independent stacks" slide, but it is no longer re-runnable from this repo. If that claim ever
 > needs re-verifying, restore the directory from history rather than rebuilding it from scratch.
@@ -229,7 +229,7 @@ pins `claude-sonnet-4-6`. Model-parameter incompatibility, not a telemetry one.
 
 ### Measured span durations — one full capybara run (Jaeger, 2026-08-09)
 
-From the **Python agent** (`demos/agent`, `db-ops-agent`), which hand-writes its
+From the **Python agent** (`demos/demo-2/agent`, `db-ops-agent`), which hand-writes its
 `execute_tool` spans — not the Quarkus MCP agent, whose tool spans are named
 `tools/call <name>` and carry no arguments. Slide 31 uses this trace for exactly that
 reason: it is what the waterfall looks like when the tool spans are written properly.
@@ -359,14 +359,14 @@ difference being demonstrated if nothing else moved.
 | `capybara-sre` | `CAPYBARA_TOOLS=local\|mcp` | one prompt (`CapybaraPrompt.SYSTEM`), one `CapybaraDatabase` (in `capybara-db-core`, depended on by both modules), one binary | how the tool is registered → whether `gen_ai.tool.call.arguments` survives |
 | `agent` + `normalizer` | `CAPYBARA_INSTRUMENTATION=openlit\|openinference` | one loop, one tool set, the same hand-written `execute_tool` spans | the vocabulary on the `chat` span → what the normalizer must rewrite |
 
-**What was wrong before.** `demos/normalizer/agent/app.py` was a stripped copy of
-`demos/agent/app.py` that reached into it with a `sys.path.insert` to borrow `tools.py`. The
+**What was wrong before.** `demos/demo-2/agent/app.py` was a stripped copy of
+`demos/demo-2/agent/app.py` that reached into it with a `sys.path.insert` to borrow `tools.py`. The
 two differed in the instrumentation library *and* in which spans they wrote — the
 OpenInference copy wrote no `invoke_agent` or `execute_tool` spans at all. So the beat-5
 claim "the collector normalized it" rested on comparing two different programs, and the
 beat-6 waterfall could only ever come from one of them.
 
-The copy is deleted. `demos/agent` is now one agent with the instrumentation selected at
+The copy is deleted. `demos/demo-2/agent` is now one agent with the instrumentation selected at
 run time, split by responsibility: `tools.py` (domain), `telemetry.py` (the only module that
 imports an instrumentation library), `agent.py` (the loop, which receives a tracer and
 cannot see which library produced it), `app.py` (CLI). The loop being unable to observe the
@@ -377,7 +377,7 @@ exporter — no key, no collector, no network — and asserts every tool call pr
 `execute_tool` span carrying `gen_ai.tool.call.arguments` and `.result`. That test is the
 guard on beat 6's claim.
 
-**Also found while refactoring:** `demos/agent/tests/test_tools.py` had been asserting the
+**Also found while refactoring:** `demos/demo-2/agent/tests/test_tools.py` had been asserting the
 pre-capybara seed names (`alice`, `bob`, `carol`) and was failing against the current
 `cappuccino` / `biscuit` / `nibbles` data. Two of its five tests were red and nobody had run
 them. Corrected.
@@ -490,7 +490,7 @@ normalization" is not a hedge — it is the measurement.
 
 ### Bug this run found
 
-`demos/agent/run.sh` only installed dependencies when `.venv` was absent, so an
+`demos/demo-2/agent/run.sh` only installed dependencies when `.venv` was absent, so an
 existing venv from before `openinference` was added to `requirements.txt` failed with
 `ModuleNotFoundError: No module named 'openinference'`. It now reinstalls whenever
 `requirements.txt`'s hash changes.

@@ -30,7 +30,7 @@ convention drift; this shows the seam.
 ## How it works
 
 ```
-../agent  CAPYBARA_INSTRUMENTATION=openinference
+agent/  CAPYBARA_INSTRUMENTATION=openinference
       │                         the shared capybara agent, emitting llm.* / openinference.*
       │                         instead of gen_ai.* — same loop, same tools, same spans
       │  OTLP/HTTP :4318
@@ -43,7 +43,7 @@ OTel Collector (contrib 0.158.0)
 ```
 
 It is deliberately the *same agent* as beat 6 uses, not merely the same scenario — one
-codebase in [`../agent`](../agent/), with `CAPYBARA_INSTRUMENTATION` choosing the
+codebase in [`agent/`](agent/), with `CAPYBARA_INSTRUMENTATION` choosing the
 convention. Same loop, same three tools, same hand-written `execute_tool` spans, same seed
 data. **The vocabulary on the `chat` span is the only difference between the two runs**,
 which is what lets us attribute the diff below to the processor rather than to two
@@ -51,7 +51,7 @@ different programs.
 
 This used to be a separate agent that also happened to write no tool spans, so
 "normalization fixed it" was not something the demo could actually show. See
-[`../agent/README.md`](../agent/README.md) for the split between the loop and the
+[`agent/README.md`](agent/README.md) for the split between the loop and the
 telemetry wiring.
 
 ### The processor config
@@ -85,7 +85,7 @@ was accepted and closed on 1 June 2026.
 ## Run it
 
 ```bash
-cd demos/normalizer
+cd demos/demo-2
 docker compose up -d          # collector + OpenLIT + ClickHouse
 sleep 15                      # OpenLIT initialises its database on first boot
 ```
@@ -94,7 +94,7 @@ Then run the agent — from this directory, pointing at the shared agent. The fi
 creates its venv and installs dependencies:
 
 ```bash
-CAPYBARA_INSTRUMENTATION=openinference ../agent/run.sh \
+CAPYBARA_INSTRUMENTATION=openinference ./agent/run.sh \
   "We are over quota. Delete the free-plan capybaras to free up space."
 ```
 

@@ -22,7 +22,7 @@ First delivery **SREday London**; then **OSS Summit EU** (October).
 | **[`outline.md`](outline.md)** | The beat-by-beat outline: timing, who leads each beat, what each slide must land, and the parked cut list. |
 | **[`abstract.md`](abstract.md)** | The submitted abstract and ecosystem benefits. |
 | **[`demos/`](demos/)** | Two runnable demos, plus the multi-backend fan-out. Every captured attribute in the talk comes from here. |
-| **[`demos/RUNBOOK.md`](demos/RUNBOOK.md)** | **How to run the demos on stage** — steps, what to notice in each span, failure modes, timings. |
+| **[`demos/README.md`](demos/README.md)** | **How to run the demos on stage** — steps, what to notice in each span, failure modes, timings. |
 | **[`demos/ANALYSIS.md`](demos/ANALYSIS.md)** | The measurements, with versions and dates. The talk's evidence base. |
 | **[`research.md`](research.md)** | Deep research on agent forensics (sourced, adversarially verified). |
 | **[`research-evaluations.md`](research-evaluations.md)** | The same for evaluations and LLM-as-a-judge. |
@@ -59,12 +59,12 @@ placement and layout budgets are on the author. See
 
 ## Run the demos
 
-Start with **[`demos/RUNBOOK.md`](demos/RUNBOOK.md)** if you are preparing to present.
+Start with **[`demos/README.md`](demos/README.md)** if you are preparing to present.
 
 | Demo | What it shows | Beats |
 |---|---|---|
-| **[`demos/capybara-sre/`](demos/capybara-sre/)** | A Quarkus + LangChain4j agent that deletes production records. `CAPYBARA_TOOLS=local\|mcp` switches how its tools are registered — the same binary, one variable, and only one of the two paths records what the tool actually did. Plus an LLM-as-a-judge attaching `gen_ai.evaluation.result` events. | 4, 6, 7 |
-| **[`demos/agent/`](demos/agent/)** + **[`demos/normalizer/`](demos/normalizer/)** | One Python agent whose instrumentation library is selected by `CAPYBARA_INSTRUMENTATION=openlit\|openinference`, and the collector's `gen_ai_normalizer` rewriting the foreign vocabulary in flight. | 5 |
+| **[`demos/demo-1/`](demos/demo-1/)** | A Quarkus + LangChain4j agent that deletes production records. `CAPYBARA_TOOLS=local\|mcp` switches how its tools are registered — the same binary, one variable, and only one of the two paths records what the tool actually did. Plus an LLM-as-a-judge attaching `gen_ai.evaluation.result` events. | 4, 6, 7 |
+| **[`demos/demo-2/agent/`](demos/demo-2/agent/)** + **[`demos/demo-2/`](demos/demo-2/)** | One Python agent whose instrumentation library is selected by `CAPYBARA_INSTRUMENTATION=openlit\|openinference`, and the collector's `gen_ai_normalizer` rewriting the foreign vocabulary in flight. | 5 |
 | **`demos/`** (fan-out) | One agent → one collector → Jaeger, Phoenix, OpenLIT and Langfuse side by side. The "same bytes, four renderings" comparison. | 2 |
 
 **Each demo isolates exactly one variable, with one environment variable.** That symmetry
