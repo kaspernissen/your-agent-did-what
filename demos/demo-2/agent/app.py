@@ -24,16 +24,13 @@ def main(argv: list[str]) -> int:
     prompt = " ".join(argv[1:]) or DEFAULT_PROMPT
     convention = telemetry.selected()
 
-    # The incident happens before the agent is asked about it, and not by the agent.
-    incident = tools.simulate_incident()
     tracer = telemetry.configure(os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
     agent = CapybaraAgent(tracer, name=os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
 
     print(f"\ninstrumentation  {convention}")
     print(f"model            {agent.model}")
     print(f"collector        {telemetry.endpoint()}")
-    print(f"incident         kangaroo-service deleted {incident['deleted']} "
-          f"free-plan capybaras, {incident['remaining']} left")
+    print(f"records          {len(tools.list_records())} in the database")
     print(f"\n>>> {prompt}\n")
     try:
         print(agent.run(prompt))

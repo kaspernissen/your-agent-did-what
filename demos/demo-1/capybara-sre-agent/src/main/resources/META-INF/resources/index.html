@@ -250,13 +250,13 @@
       name: 'Beaver, SRE',
       tagline: 'Another team, another platform',
       image: 'beaver.png',
-      role: 'Does Capybara’s job on a different stack, asked the same question about the '
-          + 'same incident. Its tools and storage are simpler on purpose — what is worth '
-          + 'comparing is the model call, described here by the library rather than a framework.',
+      role: 'Does Capybara’s job on a different stack, reading the same database and asked '
+          + 'the same question. Same rows, same audit trail, same collector — so the only '
+          + 'thing that differs is how the platform describes what it did.',
       facts: [
         ['platform', 'Python · Anthropic SDK'],
         ['tools',    'plain functions, same process'],
-        ['data',     'in memory — no database'],
+        ['data',     'the same PostgreSQL, as capybara_app'],
         ['emits',    'llm.* / openinference.* from the library'],
         ['arrives',  'part-rewritten to gen_ai.* by the collector'],
       ],

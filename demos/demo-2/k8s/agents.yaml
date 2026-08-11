@@ -33,6 +33,10 @@ spec:
           env:
             - { name: CAPYBARA_INSTRUMENTATION, value: openinference }
             - { name: CAPYBARA_AGENT_NAME,      value: beaver-sre }
+            # The same database Capybara reads, as the same application role. Both agents
+            # then report on identical state rather than on separate fictions.
+            - { name: CAPYBARA_DB_DSN,
+                value: "postgresql://capybara_app:capybara_app@capybara-db:5432/capybara" }
             - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
                 value: http://otel-collector-opentelemetry-collector.default.svc:4318 }
             - name: ANTHROPIC_API_KEY

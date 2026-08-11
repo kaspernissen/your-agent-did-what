@@ -12,7 +12,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -q -r requirements.txt
 
-COPY telemetry.py tools.py agent.py app.py service.py ./
+COPY telemetry.py db.py tools.py agent.py app.py service.py ./
 
 # Unbuffered, or kubectl logs shows nothing until the process exits.
 ENV PYTHONUNBUFFERED=1

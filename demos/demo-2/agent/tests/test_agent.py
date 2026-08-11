@@ -66,10 +66,11 @@ def spans(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def fresh_database():
-    """Each test starts from the seed, since the database is module state."""
+    """Each test starts from the full roster, before anything has been deleted."""
+    import db
     import tools
 
-    tools._RECORDS = [dict(r) for r in tools._SEED]
+    tools.use(db.InMemoryDatabase(staged=False))
     yield
 
 

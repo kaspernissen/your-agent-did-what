@@ -37,14 +37,16 @@ TRACER = telemetry.configure(AGENT_NAME)
 
 
 def investigate(prompt: str) -> dict:
-    """Reset, stage the incident, run one investigation, and describe what happened.
+    """Run one investigation against whatever state the database is in.
 
-    A fresh agent per call: the trace id and tool calls it records are per-run state,
-    and sharing one agent across concurrent requests would interleave them.
+    Nothing is staged or reset here. Beaver reads the same database Capybara does, so the
+    incident is whatever actually happened — triggered from Capybara's console, by a
+    service authenticating as the kangaroo role. An agent that set up its own incident
+    would be reporting on itself.
+
+    A fresh agent per call: the trace id and tool calls it records are per-run state, and
+    sharing one agent across concurrent requests would interleave them.
     """
-    tools.reset()
-    incident = tools.simulate_incident()
-
     agent = CapybaraAgent(TRACER, name=AGENT_NAME)
     answer = agent.run(prompt)
 
@@ -53,7 +55,7 @@ def investigate(prompt: str) -> dict:
         "agentName": AGENT_NAME,
         "model": agent.model,
         "prompt": prompt,
-        "incident": incident,
+        "records": len(tools.list_records()),
         "answer": answer,
         "toolCalls": agent.tool_calls,
         "traceId": agent.trace_id,
