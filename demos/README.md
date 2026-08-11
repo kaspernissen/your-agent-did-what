@@ -116,8 +116,10 @@ scripts/               verify-telemetry.py
 **2 · Unleash the kangaroos.** Three rows gone. Nothing either agent did caused this.
 
 **3 · Watch the metric.** In Prometheus, `capybara_records` steps from 5 to 2, and
-`capybara_records_deleted_total` broken down by `capybara_actor_db_user` says who —
-the same distinction the audit trail makes, one signal earlier.
+`capybara_records_deleted_total` broken down by `capybara_actor_db_user` says who — the same
+distinction the audit trail makes, one signal earlier. The gauge is observable, so it reads
+the table when the SDK collects and cannot drift from reality even when something deletes
+rows without telling us. Export interval is 15s: press the button and keep talking.
 
 **4 · Ask Capybara.** It calls `list_records`, sees two rows, calls `audit_log`, and
 reports that an external role did it — explicitly not this application.
