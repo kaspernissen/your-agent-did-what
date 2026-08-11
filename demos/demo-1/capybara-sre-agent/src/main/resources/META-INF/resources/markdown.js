@@ -34,6 +34,30 @@
     return s.replace(/\u0000(\d+)\u0000/g, (_, i) => `<code>${code[i]}</code>`);
   }
 
+  /*
+   * Tables. The header row is recognised by the separator beneath it, which is what
+   * distinguishes a real table from a line of prose that happens to contain a pipe.
+   * Leading and trailing pipes are optional, since both styles turn up.
+   */
+  const isSeparator = (line) =>
+    typeof line === 'string' && /^[\s|:-]+$/.test(line) && line.includes('-') && line.includes('|');
+
+  const cellsOf = (line) =>
+    line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+
+  const alignOf = (spec) =>
+    /^:.*:$/.test(spec) ? ' class="ta-c"' : /:$/.test(spec) ? ' class="ta-r"' : '';
+
+  /* The header decides the column count, so ragged rows are padded and overflow dropped. */
+  function renderTable(head, align, rows) {
+    const cell = (tag, text, k) => `<${tag}${align[k] || ''}>${inline(text || '')}</${tag}>`;
+    const tr = (cells, tag) => `<tr>${head.map((_, k) => cell(tag, cells[k], k)).join('')}</tr>`;
+    return '<div class="tablewrap"><table>'
+      + `<thead>${tr(head, 'th')}</thead>`
+      + `<tbody>${rows.map((r) => tr(r, 'td')).join('')}</tbody>`
+      + '</table></div>';
+  }
+
   /* Block structure. One pass, one open block at a time — the model does not nest. */
   function renderMarkdown(src) {
     const out = [];
@@ -56,13 +80,34 @@
       if (open !== kind) { close(); open = kind; if (kind === 'ul' || kind === 'ol') out.push(`<${kind}>`); }
     };
 
-    for (const line of escapeHtml(src).split('\n')) {
+    const lines = escapeHtml(src).split('\n');
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
       if (/^\s*```/.test(line)) {
         if (fence) { out.push(`<pre><code>${fence.join('\n')}</code></pre>`); fence = null; }
         else { close(); fence = []; }
         continue;
       }
       if (fence) { fence.push(line); continue; }
+
+      // A table is the one construct needing lookahead: a header row is only a header
+      // because the line under it is a separator. Consume the whole block at once.
+      if (line.includes('|') && isSeparator(lines[i + 1])) {
+        close();
+        const align = cellsOf(lines[i + 1]).map(alignOf);
+        const head = cellsOf(line);
+        const rows = [];
+        let j = i + 2;
+        while (j < lines.length && lines[j].includes('|') && lines[j].trim()) {
+          rows.push(cellsOf(lines[j]));
+          j++;
+        }
+        out.push(renderTable(head, align, rows));
+        i = j - 1;
+        continue;
+      }
 
       let m;
       if (!line.trim()) {
