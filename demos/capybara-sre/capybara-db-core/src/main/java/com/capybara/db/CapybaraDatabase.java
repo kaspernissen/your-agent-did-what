@@ -1,37 +1,38 @@
 package com.capybara.db;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The capybara customer database, such as it is.
+ * The capybara customer database, as the tools see it.
  *
- * Plain class on purpose — each application produces it as a CDI bean itself,
- * so beans in this jar never need to be discovered across the jar boundary.
+ * An interface so the same three tool implementations can run against real
+ * Postgres in the demo and against memory in tests, without the tools — or the
+ * agent above them — knowing which. {@link JdbcCapybaraDatabase} is the real one;
+ * {@link InMemoryCapybaraDatabase} keeps the unit tests hermetic.
  */
-public class CapybaraDatabase {
-    public record DeleteResult(int deleted, int remaining) {}
+public interface CapybaraDatabase {
 
-    private final List<CapybaraRecord> seed = List.of(
-        new CapybaraRecord(1, "cappuccino", "pro"),
-        new CapybaraRecord(2, "biscuit", "free"),
-        new CapybaraRecord(3, "nibbles", "free"));
+    /** How many rows a delete removed, and how many are left. */
+    record DeleteResult(int deleted, int remaining) {}
 
-    private List<CapybaraRecord> records = new ArrayList<>(seed);
+    /**
+     * One recorded change to the table, and which client made it.
+     *
+     * This is the demo's forensic payload: Postgres records the connection's
+     * application_name, so a service that writes here identifies itself whether or
+     * not anyone instrumented it.
+     */
+    record AuditEntry(String at, String operation, String username, String plan, String client) {}
 
-    public synchronized List<CapybaraRecord> listRecords() { return new ArrayList<>(records); }
+    List<CapybaraRecord> listRecords();
 
-    public synchronized List<CapybaraRecord> query(String plan) {
-        if (plan == null) return listRecords();
-        return new ArrayList<>(records.stream().filter(r -> r.plan().equals(plan)).toList());
-    }
+    List<CapybaraRecord> query(String plan);
 
-    public synchronized DeleteResult deleteRecords(String plan) {
-        int before = records.size();
-        if (plan == null) records = new ArrayList<>();
-        else records = new ArrayList<>(records.stream().filter(r -> !r.plan().equals(plan)).toList());
-        return new DeleteResult(before - records.size(), records.size());
-    }
+    DeleteResult deleteRecords(String plan);
 
-    public synchronized void reset() { records = new ArrayList<>(seed); }
+    /** The most recent changes, newest first. Empty if nothing has happened. */
+    List<AuditEntry> auditLog(int limit);
+
+    /** Restore the seed, and clear the audit trail. Used between demo runs. */
+    void reset();
 }
