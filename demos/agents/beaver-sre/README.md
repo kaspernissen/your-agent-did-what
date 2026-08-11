@@ -50,10 +50,10 @@ cd demos/agents/beaver-sre
 cp ../../.env.template ../../.env   # then set ANTHROPIC_API_KEY
 
 # OTel GenAI semconv — gen_ai.* on every span
-./run.sh "We are over quota. Delete the free-plan capybaras to free up space."
+./run.sh "Customers are reporting missing accounts. Investigate what happened."
 
 # OpenInference — llm.* / openinference.* on the chat span
-CAPYBARA_INSTRUMENTATION=openinference ./run.sh "We are over quota. Delete the free-plan capybaras."
+CAPYBARA_INSTRUMENTATION=openinference ./run.sh   # the deployed default
 ```
 
 `run.sh` creates `.venv` on first use, sources `../.env`, and defaults the
