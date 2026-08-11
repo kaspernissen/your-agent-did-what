@@ -97,16 +97,14 @@
   .tabs button[aria-selected="true"]{color:var(--navy);background:var(--paper-2);
     border-bottom-color:var(--amber)}
   .lede{color:var(--muted);font-size:15px;line-height:1.6;margin:18px 0 0}
-  .variants{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
   .conv{background:var(--paper-2);border-radius:14px;padding:18px 20px;margin-top:14px}
   .conv h3{margin:0 0 4px;font-size:15px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   .conv .meta{color:var(--muted);font-size:13px;
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
   .conv a{color:var(--blue);font-weight:600}
-  .prefixes{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-  .chip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
-    background:#fff;border-radius:20px;padding:4px 11px}
-  .chip.amber{background:var(--amber);color:var(--ink);font-weight:600}
+  .tracelink{display:inline-block;background:var(--amber);color:var(--ink);
+    font-weight:700;font-size:14px;padding:10px 16px;border-radius:10px;
+    text-decoration:none;margin-top:6px}
   .spin{display:inline-block;animation:s 1s linear infinite}
   @keyframes s{to{transform:rotate(360deg)}}
   @media (prefers-reduced-motion:reduce){.spin{animation:none}}
@@ -123,29 +121,30 @@
   </header>
 
   <div class="tabs" role="tablist">
-    <button id="tab-sre"  role="tab" aria-selected="true"  aria-controls="panel-sre">The incident</button>
-    <button id="tab-conv" role="tab" aria-selected="false" aria-controls="panel-conv">Conventions</button>
+    <button id="tab-sre"  role="tab" aria-selected="true"  aria-controls="panel-sre">🐹 Capybara SRE</button>
+    <button id="tab-conv" role="tab" aria-selected="false" aria-controls="panel-conv">🦫 Beaver SRE</button>
   </div>
 
   <div id="panel-conv" class="hidden" role="tabpanel">
-    <p class="lede">The same incident, the same question, asked of a Python agent
-      instead. The only thing that differs is the instrumentation library &mdash; so any
-      difference in the telemetry is attributable to the convention and nothing else.
-      Both agents are already running; each run emits its own trace.</p>
+    <p class="lede"><img src="beaver.png" alt=""
+        style="height:74px;vertical-align:-24px;margin-right:6px">
+      Another team, another platform. <strong>Beaver SRE</strong> does
+      Capybara's job in Python &mdash; the Anthropic SDK instrumented by OpenInference
+      rather than Quarkus and LangChain4j. Same incident, same question, same collector.
+      Ask it something and then open its trace.</p>
 
-    <div class="variants">
-      <button data-variant="openinference" class="danger">Run · OpenInference</button>
-      <button data-variant="openlit" class="quiet">Run · OpenLIT</button>
-      <span id="conv-state" class="state"></span>
+    <form id="bf">
+      <input type="text" id="bq" autocomplete="off"
+             placeholder="Customers are reporting missing accounts. Investigate…">
+      <button id="bgo">Page Beaver</button>
+    </form>
+
+    <div class="presets">
+      <button data-bp="Customers are reporting missing accounts. Investigate what happened.">investigate the incident</button>
+      <button data-bp="How many capybaras are there, and what plans are they on? Do not modify anything.">safe: just look</button>
     </div>
 
-    <div id="conv-out"></div>
-
-    <p class="note">Jaeger shows what <em>arrived</em>, after
-      <code>gen_ai_normalizer</code>. The OpenInference trace is half&#8209;translated
-      there &mdash; that is the finding, not a bug. What the library actually emitted is
-      only visible in the collector's own output:
-      <code>kubectl logs -l app.kubernetes.io/name=opentelemetry-collector</code>.</p>
+    <div id="beaver-out"></div>
   </div>
 
   <div id="panel-sre" role="tabpanel">
@@ -261,58 +260,55 @@
     });
   }));
 
-  document.querySelectorAll('.variants button[data-variant]').forEach(btn =>
-    btn.addEventListener('click', () => runConvention(btn)));
+  document.querySelectorAll('.presets button[data-bp]').forEach(b =>
+    b.addEventListener('click', () => { $('bq').value = b.dataset.bp; $('bf').requestSubmit(); }));
 
-  async function runConvention(btn) {
-    const variant = btn.dataset.variant;
-    const buttons = [...document.querySelectorAll('.variants button[data-variant]')];
-    buttons.forEach(b => b.disabled = true);
-    $('conv-state').innerHTML = '<span class="spin">◌</span> running ' + esc(variant);
+  $('bf').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const prompt = $('bq').value.trim();
+    if (!prompt) return;
+    $('bgo').disabled = true;
+    $('bgo').innerHTML = '<span class="spin">◌</span> thinking';
     try {
-      const r = await fetch('/conventions/' + variant, {method: 'POST'});
+      const r = await fetch('/beaver/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({prompt})
+      });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error || (r.status + ' ' + r.statusText));
-      renderConvention(d);
-      $('conv-state').textContent = '';
+      renderBeaver(d);
     } catch (err) {
-      $('conv-state').textContent = '';
-      $('conv-out').innerHTML = '<div class="err">' + esc(err.message) + '</div>';
+      $('beaver-out').innerHTML = '<div class="err">' + esc(err.message) + '</div>';
     } finally {
-      buttons.forEach(b => b.disabled = false);
+      $('bgo').disabled = false;
+      $('bgo').textContent = 'Page Beaver';
     }
-  }
+  });
 
-  // What the audience needs from this panel is the vocabulary, so the attribute
-  // prefixes lead and the prose follows.
-  function renderConvention(d) {
+  // The payoff is one span, so the link to it leads rather than trails. uiFind pre-selects
+  // it in Jaeger. The name is the Anthropic SDK call as OpenInference names it —
+  // 'messages.create', not 'chat', which is what the GenAI conventions would call it.
+  // Verified against a live trace rather than assumed: guessing here means the link
+  // opens Jaeger and highlights nothing.
+  function renderBeaver(d) {
     const calls = d.toolCalls || [];
-    const trace = d.traceId
-      ? `<a href="${JAEGER}/trace/${esc(d.traceId)}" target="_blank" rel="noopener">open the trace in Jaeger →</a>`
-      : 'no trace id returned';
+    const link = d.traceId
+      ? `<a class="tracelink" href="${JAEGER}/trace/${esc(d.traceId)}?uiFind=messages.create"
+            target="_blank" rel="noopener">Open this trace in Jaeger →</a>`
+      : '<span class="meta">no trace id returned</span>';
 
-    $('conv-out').innerHTML = `
+    $('beaver-out').innerHTML = `
       <div class="conv">
-        <h3>${esc(d.convention)}</h3>
-        <div class="meta">service ${esc(d.agentName)} &middot; model ${esc(d.model)} &middot;
-          ${calls.length} tool call${calls.length === 1 ? '' : 's'}</div>
-        <div class="prefixes">
-          ${expected(d.convention).map(p =>
-            `<span class="chip${p.startsWith('gen_ai') ? '' : ' amber'}">${esc(p)}</span>`).join('')}
-        </div>
-        <p class="note">${trace}</p>
+        <div class="meta">service ${esc(d.agentName)} &middot; ${esc(d.convention)} &middot;
+          model ${esc(d.model)} &middot; ${calls.length} tool call${calls.length === 1 ? '' : 's'}</div>
+        <p class="note">Look at the <code>messages.create</code> span. It carries
+          <code>llm.*</code> from the library <em>and</em> <code>gen_ai.*</code> written by
+          the collector&rsquo;s <code>gen_ai_normalizer</code> &mdash; both vocabularies on
+          one span, because the rewrite is partial. Last measured: 12 and 7.</p>
+        ${link}
       </div>
       <div class="card answer">${md.renderMarkdown(d.answer || '(no answer)')}</div>`;
-  }
-
-  // Stated rather than measured: the console cannot read the span it just caused. The
-  // amber chips are what gen_ai_normalizer leaves behind — see ../ANALYSIS.md.
-  function expected(convention) {
-    return convention === 'openinference'
-      ? ['gen_ai.request.model', 'gen_ai.usage.*', 'llm.tools.*', 'llm.system',
-         'llm.invocation_parameters', 'input.value', 'output.value']
-      : ['gen_ai.request.model', 'gen_ai.usage.*', 'gen_ai.response.id',
-         'gen_ai.request.top_k', 'gen_ai.server.time_to_first_token'];
   }
 
   function render(d) {

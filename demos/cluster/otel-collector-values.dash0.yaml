@@ -38,7 +38,7 @@ config:
       metrics:
         receivers: [otlp]
         processors: [batch]
-        exporters: [debug, otlp/dash0]
+        exporters: [debug, otlphttp/prometheus, otlp/dash0]
       logs:
         receivers: [otlp]
         processors: [batch]

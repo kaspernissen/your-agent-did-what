@@ -40,6 +40,13 @@ config:
       endpoint: jaeger-collector.default.svc.cluster.local:4317
       tls: { insecure: true }
 
+    # Prometheus with --web.enable-otlp-receiver accepts OTLP directly, so metrics take
+    # the same shape of path as traces: app -> collector -> backend. No scrape config,
+    # no /metrics endpoint on the apps to expose.
+    otlphttp/prometheus:
+      endpoint: http://prometheus.default.svc:9090/api/v1/otlp
+      tls: { insecure: true }
+
   extensions:
     health_check:
       endpoint: 0.0.0.0:13133
@@ -54,7 +61,7 @@ config:
       metrics:
         receivers: [otlp]
         processors: [batch]
-        exporters: [debug]
+        exporters: [debug, otlphttp/prometheus]
       logs:
         receivers: [otlp]
         processors: [batch]

@@ -44,6 +44,9 @@ public class IncidentResource {
     @DataSource("kangaroo")
     javax.sql.DataSource kangarooDataSource;
 
+    @Inject
+    CapybaraMetrics metrics;
+
     /** Maintenance credentials. Clearing the audit trail is deliberately not a
      *  privilege the application role holds. */
     @Inject
@@ -60,6 +63,8 @@ public class IncidentResource {
         try (Connection c = kangarooDataSource.getConnection();
              PreparedStatement ps = c.prepareStatement("DELETE FROM capybaras WHERE plan = 'free'")) {
             int deleted = ps.executeUpdate();
+            // Attributed to the role, not to the client name the connection claims.
+            metrics.recordDeletion("kangaroo", deleted);
             LOG.warnf("kangaroo-service deleted %d free-plan capybaras", deleted);
             return Map.of("deleted", deleted,
                           "by", "kangaroo-service (db role: kangaroo)",

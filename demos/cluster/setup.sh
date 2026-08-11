@@ -34,6 +34,12 @@ helm repo update >/dev/null
 helm upgrade --install jaeger jaegertracing/jaeger --version 3.4.1 \
   -f jaeger-values.yaml --wait
 
+echo "--- Prometheus ---"
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts >/dev/null 2>&1 || true
+helm repo update >/dev/null
+helm upgrade --install prometheus prometheus-community/prometheus \
+  -f prometheus-values.yaml --wait
+
 echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
 # The vendor path is opt-in on the token, exactly like the local compose path. Without
 # it the collector still exports to stdout and Jaeger, so the demo works offline.
@@ -60,6 +66,7 @@ cat <<EOF
 
   collector  otel-collector-opentelemetry-collector.default.svc:4317 (gRPC) / :4318 (HTTP)
   jaeger UI  kubectl port-forward svc/jaeger-query 16686:16686  →  http://localhost:16686
+  prometheus kubectl port-forward svc/prometheus 9090:9090       →  http://localhost:9090
   spans      kubectl logs -l app.kubernetes.io/name=opentelemetry-collector -f
 
 Next:

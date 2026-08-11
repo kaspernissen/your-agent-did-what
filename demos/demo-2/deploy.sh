@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Deploy demo 2 into the shared cluster (see ../cluster/setup.sh).
 #
-# Both convention agents come up and stay up, so there is nothing to build or wait for
-# during the talk -- you trigger them from demo 1's console and jump between them.
+# Beaver SRE comes up and stays up, so there is nothing to build or wait for during the
+# talk -- you ask it questions from the console, in the same interface as Capybara.
 #
 #   ./deploy.sh
 #
-# One image, two Deployments. Both instrumentation libraries are inside the image and
-# the choice is an environment variable, because two images could drift and then a
-# difference in the spans would stop being attributable to the convention.
+# It runs OpenInference, which is the point: the library emits llm.* and the collector's
+# gen_ai_normalizer rewrites part of it, so one span arrives carrying both vocabularies
+# at once. That span is what you put on screen.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -32,27 +32,29 @@ kubectl apply -f k8s/ >/dev/null
 
 # The tag is fixed at :latest, so apply sees no change and would leave the old pods
 # running the old code. The same trap demo 1's deploy.sh has.
-kubectl rollout restart deployment/convention-openinference deployment/convention-openlit
-kubectl rollout status  deployment/convention-openinference --timeout=180s
-kubectl rollout status  deployment/convention-openlit       --timeout=180s
+kubectl rollout restart deployment/beaver-sre
+kubectl rollout status  deployment/beaver-sre --timeout=180s
+
+# Left over from when this demo was a comparison between two libraries. Removing them
+# keeps Jaeger's service dropdown to the three services the talk actually uses.
+kubectl delete deployment,service convention-openinference convention-openlit \
+  --ignore-not-found >/dev/null 2>&1 || true
+kubectl delete job capybara-convention-agent --ignore-not-found >/dev/null 2>&1 || true
 
 cat <<EOF
 
-=== Demo 2 deployed ===
+=== Beaver SRE deployed ===
 
-Both agents are up. Trigger them from demo 1's console (the Conventions tab), or
-directly:
+Ask it questions from the console's "Beaver SRE" tab, or directly:
 
-  kubectl port-forward svc/convention-openinference 8001:8000
-  curl -XPOST localhost:8001/run | jq .
+  kubectl port-forward svc/beaver-sre 8001:8000
+  curl -XPOST localhost:8001/run -d '{"prompt":"what happened?"}' | jq .
 
   the spans   kubectl logs -l app.kubernetes.io/name=opentelemetry-collector --tail=200
   jaeger      kubectl port-forward svc/jaeger-query 16686:16686
 
-In Jaeger the two are separate services -- convention-openinference and
-convention-openlit -- so you can open one trace of each and compare.
-
-One caveat worth knowing on stage: Jaeger shows what ARRIVED, after
-gen_ai_normalizer. The openinference trace is half-translated there, which is the
-finding. To see what the library actually emitted, read the collector's debug output.
+In Jaeger it is the service "beaver-sre". Open a trace and look at the chat span: it
+carries llm.* AND gen_ai.* together, because the library emitted the first and the
+collector rewrote some of it into the second. Half-translated, in one place, easy to
+point at before going back to the slides.
 EOF

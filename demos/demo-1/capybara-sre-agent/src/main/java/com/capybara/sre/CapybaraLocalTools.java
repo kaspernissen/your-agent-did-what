@@ -29,6 +29,9 @@ public class CapybaraLocalTools {
     @Inject
     CapybaraDatabase db;
 
+    @Inject
+    CapybaraMetrics metrics;
+
     @Tool("List all capybara customer records in the database.")
     public String list_records() {
         return db.listRecords().toString();
@@ -41,7 +44,12 @@ public class CapybaraLocalTools {
 
     @Tool("Delete capybara records. With no plan, deletes ALL records. Destructive.")
     public String delete_records(@P(value = "plan whose records to delete; omit to delete ALL", required = false) String plan) {
-        return db.deleteRecords(blankToNull(plan)).toString();
+        var result = db.deleteRecords(blankToNull(plan));
+        // The application connects as capybara_app, so that is the role the database saw.
+        // Counting agent deletions under the same metric as the kangaroo's is the point:
+        // one graph, and the label says which of them did it.
+        metrics.recordDeletion("capybara_app", result.deleted());
+        return result.toString();
     }
 
     @Tool("Recent changes to the capybaras table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
