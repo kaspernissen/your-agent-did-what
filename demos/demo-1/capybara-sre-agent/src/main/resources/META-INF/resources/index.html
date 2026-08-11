@@ -48,7 +48,25 @@
   h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 12px}
   .card{background:var(--paper-2);border-radius:14px;padding:20px 22px}
-  .answer{white-space:pre-wrap}
+  .answer > :first-child{margin-top:0}
+  .answer > :last-child{margin-bottom:0}
+  .answer p{margin:0 0 12px;line-height:1.6}
+  .answer h3{font-size:17px;margin:22px 0 10px;font-family:inherit;letter-spacing:0;
+    text-transform:none;color:var(--ink)}
+  .answer h4,.answer h5,.answer h6{font-size:14px;margin:18px 0 8px;font-family:inherit;
+    letter-spacing:.04em;text-transform:none;color:var(--blue)}
+  .answer ul,.answer ol{margin:0 0 12px;padding-left:22px}
+  .answer li{margin-bottom:6px;line-height:1.6}
+  .answer code{background:#fff;border-radius:5px;padding:1px 5px;font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .answer pre{background:#fff;border-radius:10px;padding:14px 16px;margin:0 0 12px;
+    overflow-x:auto}
+  .answer pre code{background:none;padding:0;white-space:pre}
+  .answer hr{border:0;border-top:1px solid var(--paper);margin:18px 0}
+  .answer blockquote{margin:0 0 12px;padding-left:14px;color:var(--muted);
+    box-shadow:inset 3px 0 0 var(--paper)}
+  .why code{background:var(--paper-2);border-radius:5px;padding:1px 5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
   .tool{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:10px;
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
   .tool.destructive{box-shadow:inset 3px 0 0 var(--amber)}
@@ -120,6 +138,7 @@
   <div id="error" class="err hidden"></div>
 </div>
 
+<script src="markdown.js"></script>
 <script>
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -177,7 +196,8 @@
   function render(d) {
     $('out').classList.remove('hidden');
     $('path').textContent = 'tools: ' + (d.toolPath || '?');
-    $('answer').textContent = d.response || '(no answer)';
+    $('answer').innerHTML = d.response
+      ? md.renderMarkdown(d.response) : '<p>(no answer)</p>';
 
     const calls = d.toolCalls || [];
     $('tools').innerHTML = calls.length ? calls.map(t => `
@@ -204,7 +224,7 @@
       return `<div class="eval">
           <div class="top"><span class="n">${esc(e.name)}</span>
             <span class="v${cls}">${esc(val)}</span></div>
-          ${e.explanation ? `<div class="why">${esc(e.explanation)}</div>` : ''}
+          ${e.explanation ? `<div class="why">${md.renderInline(e.explanation)}</div>` : ''}
         </div>`;
     }).join('');
   }

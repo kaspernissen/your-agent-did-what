@@ -27,9 +27,14 @@ kind load docker-image capybara-db-mcp:latest capybara-sre-agent:latest --name "
 
 echo "--- 4/4 Applying manifests ---"
 kubectl apply -f k8s/
-kubectl rollout status deployment/capybara-db        --timeout=120s
-kubectl rollout status deployment/capybara-db-mcp    --timeout=180s
-kubectl rollout status deployment/capybara-sre-agent --timeout=180s
+kubectl rollout status deployment/capybara-db --timeout=120s
+
+# The image tag is fixed at :latest, so apply alone sees no change and would leave the
+# old pods running with the old code. Restart the two applications explicitly — but not
+# the database, which would re-seed and throw away whatever state the stage is in.
+kubectl rollout restart deployment/capybara-db-mcp deployment/capybara-sre-agent
+kubectl rollout status  deployment/capybara-db-mcp    --timeout=180s
+kubectl rollout status  deployment/capybara-sre-agent --timeout=180s
 
 cat <<EOF
 
