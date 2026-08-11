@@ -42,10 +42,11 @@ import org.jboss.logging.Logger;
  * trace and span id -- no response id needed. The span is never made current in the
  * request thread, so that Context has to be built explicitly rather than inherited.
  *
- * NOTE FOR THE TALK: judging in-process and synchronously is NOT how you would
- * do this in production — real setups evaluate offline against stored traces.
- * We do it here because it makes parenting trivially correct and removes a
- * container, and we say so on the slide rather than implying otherwise.
+ * Judging in-process and synchronously is NOT how you would do this in production:
+ * real setups evaluate offline, against stored traces, so a slow or failing judge
+ * cannot delay the request it is grading. It is done inline here because it makes the
+ * correlation trivially correct — the span is still open — and removes a container
+ * from the setup. If you copy this, move the judge out of the request path first.
  */
 @ApplicationScoped
 public class EvaluationEmitter {

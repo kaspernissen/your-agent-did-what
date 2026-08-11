@@ -3,7 +3,7 @@
 # Applied by setup.sh as a second -f only when DASH0_AUTH_TOKEN is set. Kept separate
 # for the same reason the local compose path keeps two configs: collector YAML cannot
 # branch, so an otlp/dash0 exporter with an empty token stays in the pipeline and
-# writes export failures into the same stdout you are reading spans from on stage.
+# writes export failures into the same stdout you read spans from.
 #
 # Helm merges maps but replaces lists, so every pipeline's exporters list has to be
 # restated here in full — adding to it is not an option.

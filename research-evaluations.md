@@ -1,5 +1,7 @@
 # Research: Evaluations for Autonomous Agents
 
+> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but [`demos/ANALYSIS.md`](demos/ANALYSIS.md) is the measured record and wins wherever the two disagree.
+
 Background research for the **evaluations** thread of *Your Agent Did What?* — how you
 know whether an agent's output was any good, how that becomes telemetry, and whether an
 eval is a gate or a background quality metric. Companion to `research.md` (forensics) and

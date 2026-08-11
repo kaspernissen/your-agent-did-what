@@ -1,13 +1,13 @@
-"""The agent loop emits the spans the talk claims it emits.
+"""The agent loop emits the spans it is supposed to emit.
 
 Runs against a stubbed Anthropic client and an in-memory exporter, so it needs no
 API key, no collector and no network. What it guards is the thing beats 4 and 6
 rest on: that every tool call produces an `execute_tool` span carrying
 `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`.
 
-The loop is instrumentation-agnostic by design, so these assertions hold for every
-value of CAPYBARA_INSTRUMENTATION — that is precisely why beat 5 can attribute the
-difference between two runs to the convention alone.
+The loop is instrumentation-agnostic by design, so these assertions hold for every value
+of CAPYBARA_INSTRUMENTATION. That is what keeps two runs comparable: if the loop changed
+with the library, a difference in the telemetry could not be attributed to the vocabulary.
 """
 from __future__ import annotations
 
@@ -102,8 +102,8 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     delete = by_name["execute_tool delete_records"]
     assert delete.attributes["gen_ai.operation.name"] == "execute_tool"
     assert delete.attributes["gen_ai.tool.name"] == "delete_records"
-    # The opt-in content. Its absence is the finding on Demo 1's MCP path; here we
-    # write it ourselves, so it must be present.
+    # The opt-in content. This loop writes it explicitly, so unlike a
+    # framework-instrumented path it must always be present.
     assert delete.attributes["gen_ai.tool.call.arguments"] == '{"plan": "free"}'
     assert '"deleted": 3' in delete.attributes["gen_ai.tool.call.result"]
 

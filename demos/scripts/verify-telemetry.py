@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Assert that the telemetry we claim to emit actually arrived.
+"""Assert that the telemetry this stack is configured to emit actually arrived.
 
-Beat 8 of the talk says "turning the forensic content on and verifying it fired
-are different jobs" — this is the second job, made executable. It reads the
+Enabling the tool-call content and confirming it reached the collector are different jobs,
+and only the first is a config change. This is the second, made executable: it reads the
 collector's debug output and checks three things:
 
   1. CORE CONVENTIONS — the attributes a conforming run must produce. Missing any
@@ -100,7 +100,7 @@ def main() -> int:
     else:
         matched = not present
         verdict = ("as expected: MCP tool calls route through TracingMcpClientListener, which "
-                   "records the tool name and no content. This is the talk's finding, not a "
+                   "records the tool name and no content. Expected on this path, not a "
                    "broken setup"
                    if matched else
                    "UNEXPECTED for the MCP path — content arrived where we measured none. "

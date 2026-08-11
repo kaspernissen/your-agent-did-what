@@ -1,9 +1,7 @@
-"""A long-running HTTP front for one convention, so the demo can be triggered live.
+"""An HTTP front for the agent, so a run can be triggered without a rebuild.
 
-Why a service rather than the CLI: two of these run side by side in the cluster, one
-per instrumentation library, both up before the talk starts. Nothing to wait for and
-nothing to build between runs -- you jump between them from the console and compare
-the traces they produce.
+Why a service rather than the CLI: it stays up, so asking a question costs one request
+instead of a container start. The capybara-sre console calls this endpoint.
 
 The instrumentation library is fixed for the lifetime of the process, deliberately.
 Both libraries patch the Anthropic SDK at import time, so a process cannot honestly
@@ -13,8 +11,8 @@ One process per convention is the only way the comparison stays valid.
     POST /run     {"prompt": "..."}  ->  the answer, the tool calls, and the trace id
     GET  /healthz
 
-stdlib only. This exists to trigger a demo, and a web framework would be one more
-dependency to explain.
+stdlib only: two endpoints do not justify a web framework, and every dependency here has
+to be installed into the image.
 """
 from __future__ import annotations
 

@@ -7,10 +7,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 /**
- * The same three capybara tools, registered as <em>locally declared</em>
+ * The same capybara tools, registered as <em>locally declared</em>
  * LangChain4j {@code @Tool} methods instead of being reached over MCP.
  *
- * This class is the control arm of the talk's beat-4 experiment. The bodies
+ * This is the control arm of a controlled comparison. The bodies
  * delegate to {@link CapybaraDatabase} from capybara-db-core — byte-for-byte the
  * same class the MCP server's tools call — so a run against these tools and a
  * run against the MCP tools differ in exactly one respect: how the tool was

@@ -26,7 +26,8 @@ import os
 DSN_ENV = "CAPYBARA_DB_DSN"
 APPLICATION_NAME = "beaver-sre"
 
-# The same five capybaras demo 1 seeds, and the same three the kangaroos take.
+# The roster that infrastructure/postgres/init.sql seeds, mirrored for the in-memory
+# path so both implementations answer the same questions the same way.
 _ROSTER = [
     {"user": "cappuccino", "plan": "pro"},
     {"user": "biscuit", "plan": "free"},

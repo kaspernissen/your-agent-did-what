@@ -15,8 +15,7 @@ import telemetry
 import tools
 from agent import DEFAULT_AGENT_NAME, CapybaraAgent
 
-# The same question demo 1's console puts to Capybara SRE, word for word. Two demos,
-# one scenario, so the only thing that differs on screen is the vocabulary.
+# The same question the console sends, so a CLI run and a console run are comparable.
 DEFAULT_PROMPT = "Customers are reporting missing accounts. Investigate what happened."
 
 

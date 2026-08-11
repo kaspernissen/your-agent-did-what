@@ -38,7 +38,7 @@ cat <<'DONE'
 
     ./01_start-demo.sh        open the port-forwards, wait until they answer
 
-  Then, on stage:
+  Then, to walk the scenario:
 
     1. Reset the database, and show the five capybaras
     2. Unleash the kangaroos — three rows gone, and not by the agent

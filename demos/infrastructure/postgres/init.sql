@@ -90,6 +90,6 @@ INSERT INTO capybaras (username, plan) VALUES
     ('mochi',      'pro'),
     ('pepper',     'free');
 
--- The seed inserts are audit noise for the demo; start the trail clean so the
--- first thing in it is whatever happens during the talk.
+-- The seed's own INSERTs are noise in the trail. Clearing it means the first entry is
+-- always a real change to the data, not the setup that created it.
 TRUNCATE audit_log;

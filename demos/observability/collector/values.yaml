@@ -1,10 +1,10 @@
 # The shared collector, used by both demos.
 #
-# gen_ai_normalizer is enabled here even though demo 1 does not need it, and that
-# is the point rather than an oversight: the processor only rewrites the source
-# conventions it is told about, so demo 1's gen_ai.* spans pass through untouched
-# while demo 2's llm.* / openinference.* spans get rewritten. One collector, and the
-# difference between the two demos is visible in the same pipeline.
+# gen_ai_normalizer is enabled for every pipeline, including the traffic that does not
+# need it. That is safe by design: the processor only rewrites the source conventions
+# listed under `sources`, so spans already in gen_ai.* pass through untouched while
+# OpenInference spans are rewritten. One collector serves both without per-service
+# routing.
 mode: deployment
 replicaCount: 1
 image:

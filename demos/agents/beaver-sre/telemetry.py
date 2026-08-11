@@ -5,11 +5,10 @@ asks for a tracer and writes `gen_ai.*` spans by hand; whether the *model* call 
 described in OTel GenAI vocabulary or OpenInference vocabulary is decided here and
 nowhere else.
 
-That separation is the point of the demo. Beat 5 of the talk needs two runs whose
-only difference is the vocabulary on the chat span, so that the collector's
-`gen_ai_normalizer` has exactly one variable to act on. If the two runs also
-differed in which spans they produced — as they did when this was two separate
-agents — "normalization fixed it" would be unprovable.
+That separation is what makes two runs comparable: the same loop, the same spans, the
+same tool calls, and only the vocabulary differing. Anything else — a second agent, a
+different tool path — and a change in the telemetry could no longer be attributed to the
+convention.
 
     CAPYBARA_INSTRUMENTATION=openlit        (default)  chat spans in gen_ai.*
     CAPYBARA_INSTRUMENTATION=openinference             chat spans in llm.* / openinference.*
