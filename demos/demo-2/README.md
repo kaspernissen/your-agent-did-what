@@ -1,5 +1,38 @@
 # Demo 2 — Capybara in the wrong convention
 
+**Same story as demo 1, deliberately.** The same five capybaras, the same rogue
+`kangaroo-service` deleting every free-plan record, the same audit trail, and the same
+question put to the agent word for word:
+
+> Customers are reporting missing accounts. Investigate what happened.
+
+Only one thing differs between the two demos — the instrumentation library. If the
+scenarios differed too, nothing on screen could be attributed to the convention.
+
+## Run it in the cluster
+
+```bash
+../cluster/setup.sh              # once, shared with demo 1
+./deploy.sh openinference        # llm.* / openinference.*, rewritten by the collector
+./deploy.sh openlit             # already gen_ai.*, so the normalizer has nothing to do
+./deploy.sh none                # no library — only the hand-written spans
+```
+
+One agent run per invocation, as a Job, logs tailed to completion. Then read what
+arrived:
+
+```bash
+kubectl logs -l app.kubernetes.io/name=opentelemetry-collector --tail=200
+```
+
+**What to point at:** with `openinference` the span arrives *half-translated*. Model,
+provider, usage and messages become `gen_ai.*`; `llm.tools.*`, `llm.system`,
+`llm.invocation_parameters`, `llm.finish_reason` and the `input.value` / `output.value`
+pair do not. Measured counts are in [`../ANALYSIS.md`](../ANALYSIS.md). Both runs reach
+the same diagnosis, which is the control: the vocabulary changes, the conclusion does
+not.
+
+
 **The same capybara incident as Demo 1, told in the wrong vocabulary, and fixed in flight
 by the OpenTelemetry Collector.**
 

@@ -44,8 +44,16 @@ kubectl rollout status deployment/capybara-db --timeout=180s
 # The image tag is fixed at :latest, so apply alone sees no change and would leave the
 # old pods running with the old code. Restart the two applications explicitly — but not
 # the database, which would re-seed and throw away whatever state the stage is in.
-kubectl rollout restart deployment/capybara-db-mcp deployment/capybara-sre-agent
-kubectl rollout status  deployment/capybara-db-mcp    --timeout=180s
+#
+# MCP server first, and fully ready before the agent. Restarting both at once kills the
+# agent's SSE connection mid-flight, and quarkus-langchain4j reconnects by blocking the
+# Vert.x event loop (QuarkusHttpMcpTransport.startSseChannel), so Vert.x dumps a
+# blocked-thread stack every two seconds until the server is back. Ordering it this way
+# is also what the README already says to do locally: the agent resolves its tool list
+# at startup, so an agent that starts first can come up with no tools at all.
+kubectl rollout restart deployment/capybara-db-mcp
+kubectl rollout status  deployment/capybara-db-mcp --timeout=180s
+kubectl rollout restart deployment/capybara-sre-agent
 kubectl rollout status  deployment/capybara-sre-agent --timeout=180s
 
 cat <<EOF

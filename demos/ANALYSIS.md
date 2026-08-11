@@ -596,3 +596,33 @@ guardrail in the prompt held, and the gate noticed.
 ### Pointers
 - Standards detail behind the opt-in forensic attributes: `../research.md`.
 - The broader landscape + Jaeger roadmap: `../landscape.md`.
+
+---
+
+### Demo 2 in the cluster — the normalizer is partial (measured 2026-08-11)
+
+Same image, same prompt, same collector, one variable. Run with
+`demo-2/deploy.sh openinference` and `demo-2/deploy.sh openlit`.
+
+**openinference** — the library emits `llm.*` / `openinference.*`, and
+`gen_ai_normalizer` rewrites some of it. What actually arrives at the exporter:
+
+```
+rewritten to gen_ai.*   model, provider, usage.input_tokens, usage.output_tokens,
+                        input.messages, output.messages
+left untouched (16)     llm.tools.* (8), llm.system, llm.invocation_parameters,
+                        llm.token_count.total, llm.finish_reason,
+                        input.value, output.value, input.mime_type, output.mime_type
+```
+
+So a span arrives **half-translated**: `gen_ai.request.model` next to
+`llm.invocation_parameters`, and the tool definitions never convert at all. Anything
+querying by convention gets some of the picture and silently misses the rest. This is
+the honest version of "the collector fixes it for you" — say "some of it", never "it".
+
+**openlit** — already `gen_ai.*`, so the normalizer has nothing to do. Zero `llm.*`
+survive because none were emitted, and the span carries a noticeably richer set
+(`gen_ai.request.top_k`, `gen_ai.response.id`, `gen_ai.server.time_to_first_token`).
+
+Both runs reach the same diagnosis and name the kangaroo role, which is the control:
+the conclusion does not change, only the vocabulary describing how it was reached.
