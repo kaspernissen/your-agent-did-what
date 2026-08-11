@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Create the shared kind cluster both demos deploy into: a collector and Jaeger.
 #
-# Run once. Then demo-1/deploy.sh and demo-2/deploy.sh add their own workloads to
-# the same cluster and send to the same collector.
+# Run once. Then ../infrastructure/deploy.sh and ../agents/deploy.sh add their workloads to
+# the same cluster, sending to the same collector. ../00_run.sh does all three in order.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -32,13 +32,13 @@ helm repo add jaegertracing https://jaegertracing.github.io/helm-charts >/dev/nu
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts >/dev/null 2>&1 || true
 helm repo update >/dev/null
 helm upgrade --install jaeger jaegertracing/jaeger --version 3.4.1 \
-  -f jaeger-values.yaml --wait
+  -f ../observability/jaeger/values.yaml --wait
 
 echo "--- Prometheus ---"
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts >/dev/null 2>&1 || true
 helm repo update >/dev/null
 helm upgrade --install prometheus prometheus-community/prometheus \
-  -f prometheus-values.yaml --wait
+  -f ../observability/prometheus/values.yaml --wait
 
 echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
 # The vendor path is opt-in on the token, exactly like the local compose path. Without
@@ -51,14 +51,14 @@ if [ -n "${DASH0_AUTH_TOKEN:-}" ]; then
     --from-literal=endpoint="${DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME:-ingress.eu-west-1.aws.dash0.com}" \
     --from-literal=port="${DASH0_ENDPOINT_OTLP_GRPC_PORT:-4317}" \
     --dry-run=client -o yaml | kubectl apply -f -
-  DASH0_VALUES=(-f otel-collector-values.dash0.yaml)
+  DASH0_VALUES=(-f ../observability/collector/values.dash0.yaml)
   echo "Dash0 token found — also exporting to ${DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME:-ingress.eu-west-1.aws.dash0.com}"
 else
   echo "No DASH0_AUTH_TOKEN — stdout and Jaeger only. Set it in demos/.env for the vendor path."
 fi
 
 helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-  -f otel-collector-values.yaml "${DASH0_VALUES[@]}" --wait
+  -f ../observability/collector/values.yaml "${DASH0_VALUES[@]}" --wait
 
 cat <<EOF
 
@@ -70,8 +70,9 @@ cat <<EOF
   spans      kubectl logs -l app.kubernetes.io/name=opentelemetry-collector -f
 
 Next:
-  ../demo-1/deploy.sh     the capybara incident
-  ../demo-2/deploy.sh     the convention swap
+  ../infrastructure/deploy.sh   the database
+  ../agents/deploy.sh           both agents
 
-Tear down:  ./teardown.sh
+Or ../00_run.sh to do all of it, then ../01_start-demo.sh for the port-forwards.
+Tear down:  ../02_cleanup.sh
 EOF

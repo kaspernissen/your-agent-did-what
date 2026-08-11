@@ -63,8 +63,8 @@ Start with **[`demos/README.md`](demos/README.md)** if you are preparing to pres
 
 | Demo | What it shows | Beats |
 |---|---|---|
-| **[`demos/demo-1/`](demos/demo-1/)** | A Quarkus + LangChain4j agent that deletes production records. `CAPYBARA_TOOLS=local\|mcp` switches how its tools are registered — the same binary, one variable, and only one of the two paths records what the tool actually did. Plus an LLM-as-a-judge attaching `gen_ai.evaluation.result` events. | 4, 6, 7 |
-| **[`demos/demo-2/agent/`](demos/demo-2/agent/)** + **[`demos/demo-2/`](demos/demo-2/)** | One Python agent whose instrumentation library is selected by `CAPYBARA_INSTRUMENTATION=openlit\|openinference`, and the collector's `gen_ai_normalizer` rewriting the foreign vocabulary in flight. | 5 |
+| **[`demos/`](demos/)** | A Quarkus + LangChain4j agent that deletes production records. `CAPYBARA_TOOLS=local\|mcp` switches how its tools are registered — the same binary, one variable, and only one of the two paths records what the tool actually did. Plus an LLM-as-a-judge attaching `gen_ai.evaluation.result` events. | 4, 6, 7 |
+| **[`demos/agents/beaver-sre/`](demos/agents/beaver-sre/)** + **[`demos/`](demos/)** | One Python agent whose instrumentation library is selected by `CAPYBARA_INSTRUMENTATION=openlit\|openinference`, and the collector's `gen_ai_normalizer` rewriting the foreign vocabulary in flight. | 5 |
 | **`demos/`** (fan-out) | One agent → one collector → Jaeger, Phoenix, OpenLIT and Langfuse side by side. The "same bytes, four renderings" comparison. | 2 |
 
 **Each demo isolates exactly one variable, with one environment variable.** That symmetry

@@ -16,7 +16,7 @@ Once you have GenAI traces flowing, "observability" splits along two axes. Where
 - **OTel-semconv-native** (OpenLIT, OpenSearch Agent Traces, Dash0; Langfuse maps it): light up on `gen_ai.*`.
 - **OpenInference-native** (Arize Phoenix): lights up on OpenInference attributes. Feed it OTel `gen_ai.*` and it *accepts and stores* the spans but renders them as **plain spans** — no LLM views. Source: Phoenix "Translating Conventions" docs.
 
-**The teachable moment:** instrument one app once with OTel GenAI semconv, fan it out, and the differences you see are about the *viewer*, not the data. Phoenix looking bland on a `gen_ai.*` trace is not a bug — it's the fragmentation tax, visible on stage. (The `demos/backends` harness does exactly this.)
+**The teachable moment:** instrument one app once with OTel GenAI semconv, fan it out, and the differences you see are about the *viewer*, not the data. Phoenix looking bland on a `gen_ai.*` trace is not a bug — it's the fragmentation tax, visible on stage. (The `demos/observability` harness does exactly this.)
 
 ### Backend cheat-sheet (verified 2026-06-07)
 
