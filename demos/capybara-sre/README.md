@@ -134,6 +134,59 @@ but it is not needed for the talk and is slower to iterate on.
 
 ---
 
+## The console (ask it questions live)
+
+The agent serves a small web console at **<http://localhost:8088/>** — no second service, no
+build step, just static files out of `META-INF/resources`. It is the nicer way to drive the
+demo on stage than curl.
+
+It shows three things per run:
+
+- **what it said** — the agent's summary
+- **what it actually did** — every tool call with its *arguments and result*. This is the
+  demo's whole point made visible: the application knows exactly what it did, and on the MCP
+  path the `execute_tool` span carries none of it. The panel says which is the case for the
+  tool path you are running.
+- **what the judge thought** — both evaluation dimensions with the judge's own explanation.
+  These are also `gen_ai.evaluation.result` events on the `invoke_agent` span; the panel just
+  saves opening a trace viewer mid-talk.
+
+Three preset buttons cover the scripted prompts (safe look, authorized delete, unauthorized
+delete), and the badge top-right shows `tools: mcp` or `tools: local` so the audience can see
+which path produced what they are looking at.
+
+`POST /chat` gained `evaluations` and `toolPath` to make this possible. The span events remain
+the authoritative output — the response fields are a convenience for the UI, not a second
+source of truth.
+
+---
+
+## The collector, and the vendor path
+
+```bash
+./scripts/collector.sh          # follow the output; Ctrl-C to stop
+./scripts/collector.sh -d       # detached, then: docker logs capy-col
+```
+
+It picks its config automatically:
+
+| | config | exporters |
+|---|---|---|
+| `DASH0_AUTH_TOKEN` unset | `otel-collector-config.yaml` | `debug` (stdout) |
+| `DASH0_AUTH_TOKEN` set | `otel-collector-config.dash0.yaml` | `debug` + `otlp/dash0` |
+
+Two files rather than one with a conditional, because collector YAML cannot branch: an
+`otlp/dash0` exporter with an empty token stays in the pipeline and logs export failures into
+the same stdout you are reading on stage.
+
+Set `DASH0_AUTH_TOKEN` (and optionally `DASH0_DATASET`,
+`DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME`, `DASH0_ENDPOINT_OTLP_GRPC_PORT`) in `demos/.env` — the
+same variables the fan-out stack uses, so one `.env` serves both. Both configs are validated
+against `otelcol validate` in CI-less fashion: run
+`docker run --rm -v "$PWD/otel-collector-config.yaml:/c.yaml" otel/opentelemetry-collector-contrib:0.158.0 validate --config=/c.yaml`.
+
+---
+
 ## Demo flow (for the stage)
 
 **1 · Run the safe investigation.** *"How many free-plan capybaras are there? Do not modify

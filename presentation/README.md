@@ -12,7 +12,7 @@ Observability for Systems That Don't Leave Obvious Footprints*, by **Kasper Borg
 > rather than plausible numbers.
 
 ```
-presentation-trace/
+presentation/
   index.html          # the deck — <section> slides + speaker-notes JSON (2 slides so far)
   trace.css           # the Trace design tokens + layout primitives
   LAYOUTS.md          # the eight layouts L01–L08 that outline.md names on every slide
@@ -29,7 +29,7 @@ presentation-trace/
 ## Run it
 
 ```bash
-cd presentation-trace
+cd presentation
 ./start.sh
 ```
 
@@ -138,9 +138,10 @@ bars, nothing boxed in), and breaking one still ships.
   again. It is a reference *document*, not part of the deck: the deck never loads it, and
   it does link out to Google Fonts, unlike the deck. (`start.sh` serves the whole
   directory, so it is reachable in a browser — it just is not part of the presentation.)
-- `outline.md` (repo root) — the nine-beat, 39-slide talk arc this deck will fill in.
-- `../presentation/` — the previous 48-slide deck. Removed 2026-08-10 once the lift was complete;
-  read it as source material, don't edit it.
+- `outline.md` (repo root) — the nine-beat talk arc, one entry per slide.
+- The previous 48-slide deck that seeded beats 0–3 lived at this path before this one took
+  the name; it was removed 2026-08-10 once the lift was complete. Recover it from git
+  history if the original wording is ever wanted.
 - `docs/superpowers/` (repo root) — the design spec and implementation plans behind both
   the Trace system and the talk content.
 

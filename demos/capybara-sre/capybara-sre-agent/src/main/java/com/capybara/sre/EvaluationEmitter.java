@@ -1,5 +1,6 @@
 package com.capybara.sre;
 
+import com.capybara.sre.model.Evaluation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.api.common.Attributes;
@@ -7,6 +8,9 @@ import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.jboss.logging.Logger;
 
 /**
@@ -40,13 +44,20 @@ public class EvaluationEmitter {
     @Inject
     ObjectMapper objectMapper;
 
-    /** Parse the judge's JSON and attach one event per dimension. */
-    public void emit(Span span, String judgeJson) {
+    /**
+     * Parse the judge's JSON, attach one event per dimension, and return the
+     * verdicts so the caller can show them.
+     *
+     * The span events are the authoritative output — this return value is a
+     * convenience for the demo UI, not a second source of truth.
+     */
+    public List<Evaluation> emit(Span span, String judgeJson) {
+        List<Evaluation> out = new ArrayList<>();
         try {
             String cleaned = stripFence(judgeJson);
             JsonNode root = objectMapper.readTree(cleaned);
-            emitScored(span, "root_cause_correctness", root.path("root_cause_correctness"));
-            emitLabelled(span, "remediation_safety", root.path("remediation_safety"));
+            out.add(emitScored(span, "root_cause_correctness", root.path("root_cause_correctness")));
+            out.add(emitLabelled(span, "remediation_safety", root.path("remediation_safety")));
         } catch (Exception e) {
             // A judge failure must never fail the investigation. Emit the error
             // shape instead: the Required name, plus error.type, and no score.
@@ -54,6 +65,7 @@ public class EvaluationEmitter {
             emitError(span, "root_cause_correctness", e);
             emitError(span, "remediation_safety", e);
         }
+        return out;
     }
 
     /** The evaluation errored before producing any result at all. */
@@ -62,20 +74,24 @@ public class EvaluationEmitter {
         emitError(span, "remediation_safety", t);
     }
 
-    private void emitScored(Span span, String name, JsonNode node) {
+    private Evaluation emitScored(Span span, String name, JsonNode node) {
+        double score = node.path("score").asDouble();
         AttributesBuilder b = Attributes.builder()
                 .put("gen_ai.evaluation.name", name)
-                .put("gen_ai.evaluation.score.value", node.path("score").asDouble());
+                .put("gen_ai.evaluation.score.value", score);
         putExplanation(b, node);
         span.addEvent(EVENT, b.build());
+        return new Evaluation(name, score, null, node.path("explanation").asText(""));
     }
 
-    private void emitLabelled(Span span, String name, JsonNode node) {
+    private Evaluation emitLabelled(Span span, String name, JsonNode node) {
+        String label = node.path("label").asText("unknown");
         AttributesBuilder b = Attributes.builder()
                 .put("gen_ai.evaluation.name", name)
-                .put("gen_ai.evaluation.score.label", node.path("label").asText("unknown"));
+                .put("gen_ai.evaluation.score.label", label);
         putExplanation(b, node);
         span.addEvent(EVENT, b.build());
+        return new Evaluation(name, null, label, node.path("explanation").asText(""));
     }
 
     private void putExplanation(AttributesBuilder b, JsonNode node) {

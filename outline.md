@@ -7,12 +7,12 @@ speaking, leaving room to run demos live and still land on time.
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
 **Spine:** one capybara incident, told twice in two conventions, with every claim measured rather than asserted.
 
-> **Deck:** built at `presentation-trace/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears at full size three times (cover, one mid-deck breath, close) and as a persistent 96px footer presence on every non-divider slide — see `presentation-trace/LAYOUTS.md`.
+> **Deck:** built at `presentation/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears at full size three times (cover, one mid-deck breath, close) and as a persistent 96px footer presence on every non-divider slide — see `presentation/LAYOUTS.md`.
 >
 > Source tags used per slide: **[PC]** = the previous deck, removed 2026-08-10 (see below), **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
 >
 > **The two external tags are not equally available, and the difference matters when building slides.**
-> - **[PC] is no longer in this repo.** The previous 48-slide deck at `presentation/` was the source for the material lifted into beats 0–3 — "Opaque decisions", "Five conventions for the same span" with its five provider/attribute pairs, and the "Without conventions, correlation fails" wall. That lift is complete and the deck has since diverged well beyond it, so `presentation/` was removed on 2026-08-10; recover it from git history if you ever need the original wording. The `[PC]` tags below record where a slide came from, not a file to go and read.
+> - **[PC] is no longer in this repo.** A previous 48-slide deck was the source for the material lifted into beats 0–3 — "Opaque decisions", "Five conventions for the same span" with its five provider/attribute pairs, and the "Without conventions, correlation fails" wall. That lift is complete and this deck has diverged well beyond it, so the old deck was removed on 2026-08-10 and `presentation/` now holds the current one. Recover the original wording from git history if it is ever wanted. The `[PC]` tags below record where a slide came from, not a file to go and read.
 > - **[KC] is not in this repo.** "Taming Complexity", "Evolution of architectures" and the cognitive-load curve could not be located anywhere in the repository. Those slides are **external speaker material Kasper must supply**, or they get redrawn from scratch.
 
 ---
@@ -338,7 +338,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** Everyone is converging on **the same target**
 - **Content:** a short survey, not a demo — the point is that the fragmentation is being actively closed, from several directions at once. The collector processor is merged and **alpha**, with a donation to contrib under discussion (issue #46069). Arconia re-emits Spring AI's spans under a chosen flavor, so a Java shop can switch schema without touching code. Phoenix publishes an explicit convention-translation guide. OpenLIT's SDK emits `gen_ai.*` natively. Different layers, one destination: OTel semconv.
 - **Amber emphasis:** **the same target** in the headline
-- **Source:** [LS] §2 (both answers "land on OTel semconv as the target"); [RES] genainormalizerprocessor + issue #46069, Phoenix "Translating conventions", OpenLIT. **Not demo-backed** — Arconia is a mention here, not a measured result; `demos/arconia` and its captured flavor diff in [ANALYSIS] Demo 3 are not on the critical path for this talk.
+- **Source:** [LS] §2 (both answers "land on OTel semconv as the target"); [RES] genainormalizerprocessor + issue #46069, Phoenix "Translating conventions", OpenLIT. **Not demo-backed** — Arconia is a mention here, not a measured result; the `demos/arconia` code was removed on 2026-08-11; its captured flavor diff survives in [ANALYSIS] Demo 3 as a dated measurement.
 
 ---
 
@@ -498,7 +498,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | 7 | Nothing salvageable — this beat did not exist in the previous outline | **[R-E]** + **[SPEC]** §3.4 (all new) |
 | 8 | Jaeger quotes and roadmap; the four takeaways and closing line | **[LS]** §3 + previous outline §6.4 |
 
-Assets that exist in `presentation-trace/assets/` today: `capybara-mascot.png`, `capybara-judge.png`, `otel-icon.svg`, `otel-logo.svg`, the speaker portraits, the LinkedIn QR tiles, and the tool logos. The stock `collector-pipeline.svg` is no longer used — 3.4 and 5.2 were drawn to make their own arguments instead of sharing one generic diagram.
+Assets that exist in `presentation/assets/` today: `capybara-mascot.png`, `capybara-judge.png`, `otel-icon.svg`, `otel-logo.svg`, the speaker portraits, the LinkedIn QR tiles, and the tool logos. The stock `collector-pipeline.svg` is no longer used — 3.4 and 5.2 were drawn to make their own arguments instead of sharing one generic diagram.
 
 **Added 2026-08-09 — AAIF / coding agents (8.3 "Watch your own coding agent"):** a shout-out to the Agentic AI Foundation (aaif.io), where both speakers are ambassadors, carried by a practical hook rather than a logo. goose v1.43.0 ships built-in OTel via the Rust SDK behind `GOOSE_TELEMETRY_ENABLED`, and Claude Code ships it via the Node SDK behind `CLAUDE_CODE_ENABLE_TELEMETRY=1` — both into the collector you already run. The finding that earns the slide: running goose *with* Claude Code over ACP produces **two sibling streams, not one nested trace** — two agents in one workflow with nothing joining them. Source: Adriana's companion repo (`your-agent-did-what-adriana`), `docs/goose-claude-code-telemetry.md`.
 

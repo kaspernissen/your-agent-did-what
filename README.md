@@ -18,7 +18,7 @@ First delivery **SREday London**; then **OSS Summit EU** (October).
 
 | Path | What it is |
 |---|---|
-| **[`presentation-trace/`](presentation-trace/)** | **The deck.** 49 slides across the nine beats, on the Trace design system, with a conformance checker and a layout audit. |
+| **[`presentation/`](presentation/)** | **The deck.** 50 slides across the nine beats, on the Trace design system, with a conformance checker and a layout audit. |
 | **[`outline.md`](outline.md)** | The beat-by-beat outline: timing, who leads each beat, what each slide must land, and the parked cut list. |
 | **[`abstract.md`](abstract.md)** | The submitted abstract and ecosystem benefits. |
 | **[`demos/`](demos/)** | Two runnable demos, plus the multi-backend fan-out. Every captured attribute in the talk comes from here. |
@@ -35,7 +35,7 @@ First delivery **SREday London**; then **OSS Summit EU** (October).
 ## Run the deck
 
 ```bash
-cd presentation-trace
+cd presentation
 ./start.sh
 ```
 
@@ -43,7 +43,7 @@ Serves locally and opens **two** windows: the deck and a speaker-notes follower 
 note · next note · clock · timer). Put the deck on the projector, notes on your laptop.
 
 - Navigate: `←` `→` · Space · `Home`/`End` · number keys · `R` resets.
-- Fully offline-safe — fonts are vendored under `presentation-trace/fonts/`.
+- Fully offline-safe — fonts are vendored under `presentation/fonts/`.
 - **Before committing slide changes:** `python3 check-deck.py` (exits non-zero on
   violation) and open `audit-layout.html`, which measures real geometry and reports
   overflow, text-on-text collisions, text sitting on a panel, and text under the footer.
@@ -52,8 +52,8 @@ The checker covers only the mechanically checkable rules — a `data-label` per 
 list elements, no raw hex outside inline `<svg>`, at most one amber emphasis and one mascot
 per slide, notes count matching slide count, no pure white or black. The type ramp, mascot
 placement and layout budgets are on the author. See
-[`presentation-trace/README.md`](presentation-trace/README.md) and
-[`presentation-trace/LAYOUTS.md`](presentation-trace/LAYOUTS.md).
+[`presentation/README.md`](presentation/README.md) and
+[`presentation/LAYOUTS.md`](presentation/LAYOUTS.md).
 
 ---
 
@@ -66,7 +66,6 @@ Start with **[`demos/RUNBOOK.md`](demos/RUNBOOK.md)** if you are preparing to pr
 | **[`demos/capybara-sre/`](demos/capybara-sre/)** | A Quarkus + LangChain4j agent that deletes production records. `CAPYBARA_TOOLS=local\|mcp` switches how its tools are registered — the same binary, one variable, and only one of the two paths records what the tool actually did. Plus an LLM-as-a-judge attaching `gen_ai.evaluation.result` events. | 4, 6, 7 |
 | **[`demos/agent/`](demos/agent/)** + **[`demos/normalizer/`](demos/normalizer/)** | One Python agent whose instrumentation library is selected by `CAPYBARA_INSTRUMENTATION=openlit\|openinference`, and the collector's `gen_ai_normalizer` rewriting the foreign vocabulary in flight. | 5 |
 | **`demos/`** (fan-out) | One agent → one collector → Jaeger, Phoenix, OpenLIT and Langfuse side by side. The "same bytes, four renderings" comparison. | 2 |
-| **`demos/arconia/`** | A Spring AI app re-emitting spans under a different convention from one property. Not run on stage; it is the measured evidence behind the three-stacks slide. | 3 |
 
 **Each demo isolates exactly one variable, with one environment variable.** That symmetry
 is the point: if two runs differ in more than one respect, "the collector fixed it" is a

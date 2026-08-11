@@ -1,0 +1,31 @@
+# Collector for the capybara-sre demo — with the vendor path alongside stdout.
+#
+# Same debug exporter as the default config, plus Dash0. Kept as a separate file
+# rather than one config with a conditional, because collector YAML cannot branch:
+# an otlp/dash0 exporter with an empty token stays in the pipeline and logs export
+# failures into the same stdout you are reading on stage.
+#
+# Needs DASH0_AUTH_TOKEN (and optionally DASH0_DATASET,
+# DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME, DASH0_ENDPOINT_OTLP_GRPC_PORT) in demos/.env —
+# the same variables the fan-out stack uses, so one .env serves both.
+receivers:
+  otlp:
+    protocols:
+      grpc: { endpoint: 0.0.0.0:4317 }
+
+exporters:
+  debug:
+    verbosity: detailed
+
+  otlp/dash0:
+    endpoint: ${env:DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME}:${env:DASH0_ENDPOINT_OTLP_GRPC_PORT}
+    headers:
+      Authorization: Bearer ${env:DASH0_AUTH_TOKEN}
+      Dash0-Dataset: ${env:DASH0_DATASET}
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [debug, otlp/dash0]

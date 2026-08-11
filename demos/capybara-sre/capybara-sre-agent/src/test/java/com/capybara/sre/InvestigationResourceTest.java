@@ -56,6 +56,10 @@ class InvestigationResourceTest {
                 .body("toolCalls", hasSize(1))
                 .body("toolCalls[0].name", is("list_records"))
                 .body("toolCalls[0].result", is("42 records found"))
-                .body("toolCalls[0].args.plan", org.hamcrest.Matchers.equalTo("free"));
+                .body("toolCalls[0].args.plan", org.hamcrest.Matchers.equalTo("free"))
+                // the UI needs to know which tool path produced this run
+                .body("toolPath", is("mcp"))
+                // the judge is mocked out here, so evaluations is present but empty
+                .body("evaluations", notNullValue());
     }
 }

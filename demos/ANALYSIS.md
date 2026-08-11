@@ -145,6 +145,11 @@ trace OTel-native end to end.
 
 ## Demo 3 — Arconia convention switching (Spring AI / Java)
 
+> **The code for this demo was removed on 2026-08-11** (`demos/arconia/`, recoverable from git
+> history). The measurement below stands as a dated capture and still backs the "three
+> independent stacks" slide, but it is no longer re-runnable from this repo. If that claim ever
+> needs re-verifying, restore the directory from history rather than rebuilding it from scratch.
+
 Minimal Spring AI app (Spring Boot 4.0.5, Spring AI 2.0.0-M5, Arconia 0.27.1, Java 21), Anthropic via `spring-ai-starter-model-anthropic`. We flipped `arconia.observations.conventions.opentelemetry.ai.flavor` across `opentelemetry`, `openlit`, `openllmetry`.
 
 ### Result: the flavor flip WORKS — one property changes the attribute names

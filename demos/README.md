@@ -29,9 +29,9 @@ an explicit list of what is measured versus what is a position.
   library selected by `CAPYBARA_INSTRUMENTATION`. It supplies beat 6's forensic waterfall
   (`openlit`) *and* beat 5's OpenInference input (`openinference`), and it feeds the
   fan-out stack below. See its README for the loop/telemetry split.
-- **`arconia/`** — Spring AI convention switching. Not run on stage, but it is the
-  measured evidence behind the "three independent stacks already emit `gen_ai.*`" slide,
-  so it stays. Its capture is in `ANALYSIS.md`.
+- **Arconia** — the Spring AI convention-switching demo was removed on 2026-08-11. Its
+  measurement still backs the "three independent stacks already emit `gen_ai.*`" slide and
+  lives in `ANALYSIS.md`; the code is in git history if it ever needs re-running.
 
 ## One variable per demo
 

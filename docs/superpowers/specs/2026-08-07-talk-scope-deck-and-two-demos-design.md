@@ -1,5 +1,9 @@
 # Talk Scope — Deck + Two Capybara Demos
 
+> **Path note (2026-08-11):** this document says `presentation-trace/`. That directory was
+> renamed to `presentation/` once the old deck was removed and it became the only one.
+> The text below is left as written — it is a record of the design at the time.
+
 **Date:** 2026-08-07
 **Talk:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
 **Presenters:** Kasper Borg Nissen & Adriana Villela

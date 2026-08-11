@@ -1,0 +1,20 @@
+# Collector for the capybara-sre demo — stage default.
+#
+# debug/stdout only, deliberately: on stage you read this output, so nothing else
+# belongs in it. For the vendor path use otel-collector-config.dash0.yaml, or just
+# run scripts/collector.sh, which picks based on whether DASH0_AUTH_TOKEN is set.
+receivers:
+  otlp:
+    protocols:
+      grpc: { endpoint: 0.0.0.0:4317 }
+
+exporters:
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [debug]

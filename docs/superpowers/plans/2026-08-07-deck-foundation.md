@@ -1,5 +1,9 @@
 # Deck Foundation Implementation Plan
 
+> **Path note (2026-08-11):** this document says `presentation-trace/`. That directory was
+> renamed to `presentation/` once the old deck was removed and it became the only one.
+> The text below is left as written — it is a record of the design at the time.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Stand up `presentation-trace/` — a new, self-contained deck built on the "Trace" design system, with a machine-checkable conformance harness and a restructured nine-beat outline that the content plan will draw its slides from.

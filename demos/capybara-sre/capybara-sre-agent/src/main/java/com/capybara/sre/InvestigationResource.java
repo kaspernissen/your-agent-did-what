@@ -2,6 +2,7 @@ package com.capybara.sre;
 
 import com.capybara.sre.model.ChatRequest;
 import com.capybara.sre.model.ChatResponse;
+import com.capybara.sre.model.Evaluation;
 import com.capybara.sre.model.ToolCall;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.service.Result;
@@ -89,15 +90,16 @@ public class InvestigationResource {
             // Judge the completed run and attach gen_ai.evaluation.result events to
             // this span BEFORE it ends, which is what the spec's parenting guidance
             // asks for. A judge failure must never fail the investigation.
+            List<Evaluation> verdicts = List.of();
             try {
                 String verdict = judge.judge(req.prompt(),
                         objectMapper.writeValueAsString(toolCalls), text);
-                evaluations.emit(span, verdict);
+                verdicts = evaluations.emit(span, verdict);
             } catch (Exception e) {
                 evaluations.emitFailure(span, e);
             }
 
-            return new ChatResponse(text, toolCalls, runId);
+            return new ChatResponse(text, toolCalls, verdicts, local ? "local" : "mcp", runId);
         } finally {
             span.end();
         }

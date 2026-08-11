@@ -3,7 +3,7 @@
 
 Enforces the design-system rules that are mechanically checkable, so drift is
 caught by a command rather than by eye. Run with no arguments from
-presentation-trace/; exits non-zero if the deck violates a rule.
+presentation/; exits non-zero if the deck violates a rule.
 """
 import json
 import re
