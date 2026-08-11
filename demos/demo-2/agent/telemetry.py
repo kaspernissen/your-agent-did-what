@@ -101,6 +101,93 @@ def _provider(agent_name: str):
     return provider
 
 
+class OpenInferenceVocabulary:
+    """Describe the agent loop the way an OpenInference-instrumented framework would.
+
+    This is the point of the demo, and hand-writing gen_ai.* here defeated it: if our own
+    spans already arrive in OTel vocabulary, the collector has nothing to prove. A
+    framework that does not speak OTel GenAI emits *this* — openinference.span.kind,
+    tool.name, tool_call.function.arguments — and gen_ai_normalizer is what turns it into
+    OTel semantics on the other side.
+
+    Keys are the upstream constants, taken from Arize-ai/openinference's Go semantic
+    conventions, because the processor matches on exact strings: a near-miss produces a
+    span it silently ignores.
+
+    Span names stay framework-flavoured (the agent's name, the tool's name) rather than
+    "invoke_agent x". That is what these libraries actually do, and it makes a point the
+    talk already wants to make: the operation name is an attribute, not the span name.
+    """
+
+    name = OPENINFERENCE
+
+    def agent_span_name(self, agent: str) -> str:
+        return agent
+
+    def tool_span_name(self, tool: str) -> str:
+        return tool
+
+    def annotate_agent(self, span, agent_name: str, conversation_id: str | None = None) -> None:
+        span.set_attribute("openinference.span.kind", "AGENT")
+        span.set_attribute("agent.name", agent_name)
+        if conversation_id:
+            span.set_attribute("session.id", conversation_id)
+
+    def annotate_tool_call(self, span, tool_name: str, call_id: str, arguments: str) -> None:
+        span.set_attribute("openinference.span.kind", "TOOL")
+        span.set_attribute("tool.name", tool_name)
+        span.set_attribute("tool_call.id", call_id)
+        span.set_attribute("tool_call.function.arguments", arguments)
+        span.set_attribute("input.value", arguments)
+
+    def annotate_tool_result(self, span, result: str) -> None:
+        span.set_attribute("output.value", result)
+
+
+class GenAIVocabulary:
+    """Describe the loop in OTel GenAI vocabulary directly.
+
+    For the runs where nothing else will: with no instrumentation at all, or with a
+    library that already emits gen_ai.*. Writing OpenInference keys there would produce a
+    trace in a vocabulary nobody in the pipeline is translating.
+    """
+
+    name = "otel"
+
+    def agent_span_name(self, agent: str) -> str:
+        return f"invoke_agent {agent}"
+
+    def tool_span_name(self, tool: str) -> str:
+        return f"execute_tool {tool}"
+
+    def annotate_agent(self, span, agent_name: str, conversation_id: str | None = None) -> None:
+        span.set_attribute("gen_ai.operation.name", "invoke_agent")
+        span.set_attribute("gen_ai.agent.name", agent_name)
+        if conversation_id:
+            span.set_attribute("gen_ai.conversation.id", conversation_id)
+
+    def annotate_tool_call(self, span, tool_name: str, call_id: str, arguments: str) -> None:
+        span.set_attribute("gen_ai.operation.name", "execute_tool")
+        span.set_attribute("gen_ai.tool.name", tool_name)
+        span.set_attribute("gen_ai.tool.call.id", call_id)
+        span.set_attribute("gen_ai.tool.type", "function")
+        # Opt-in forensic content, deliberately enabled. This is the switch.
+        span.set_attribute("gen_ai.tool.call.arguments", arguments)
+
+    def annotate_tool_result(self, span, result: str) -> None:
+        span.set_attribute("gen_ai.tool.call.result", result)
+
+
+def vocabulary():
+    """The vocabulary the hand-written spans should use, given the library in play.
+
+    It follows the library on purpose. Under OpenInference the whole trace arrives in
+    OpenInference vocabulary and the collector normalizes all of it; otherwise there is
+    nothing downstream translating, so gen_ai.* is what to write.
+    """
+    return OpenInferenceVocabulary() if selected() == OPENINFERENCE else GenAIVocabulary()
+
+
 def shutdown() -> None:
     """Flush pending spans. Batch processors drop them otherwise on a short CLI run."""
     provider = trace.get_tracer_provider()

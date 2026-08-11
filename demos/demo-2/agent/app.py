@@ -25,7 +25,7 @@ def main(argv: list[str]) -> int:
     convention = telemetry.selected()
 
     tracer = telemetry.configure(os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
-    agent = CapybaraAgent(tracer, name=os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
+    agent = CapybaraAgent(tracer, name=os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME), vocabulary=telemetry.vocabulary())
 
     print(f"\ninstrumentation  {convention}")
     print(f"model            {agent.model}")

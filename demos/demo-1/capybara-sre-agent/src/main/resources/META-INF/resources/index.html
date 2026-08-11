@@ -257,8 +257,8 @@
         ['platform', 'Python · Anthropic SDK'],
         ['tools',    'plain functions, same process'],
         ['data',     'the same PostgreSQL, as capybara_app'],
-        ['emits',    'llm.* / openinference.* from the library'],
-        ['arrives',  'part-rewritten to gen_ai.* by the collector'],
+        ['emits',    'openinference.* / llm.* — no OTel at all'],
+        ['arrives',  'gen_ai.* via the collector’s gen_ai_normalizer'],
       ],
       stage: false,
       placeholder: 'Customers are reporting missing accounts. Investigate…',
@@ -277,8 +277,14 @@
         traceId: d.traceId,
         traceFind: 'messages.create',     // what OpenInference names the model call
         meta: [d.convention, 'service ' + d.agentName, d.model],
-        toolNote: 'These spans are hand-written, so they carry their arguments and results. '
-          + 'The model call beside them is the library’s, in the library’s vocabulary.',
+        toolNote: 'This platform emits no OTel vocabulary at all — the tool span left as '
+          + '<code>openinference.span.kind=TOOL</code> with <code>tool.name</code>, '
+          + '<code>tool_call.id</code>, its arguments and its result. The collector turned '
+          + 'that into <code>gen_ai.operation.name=execute_tool</code>, '
+          + '<code>gen_ai.tool.name</code>, <code>gen_ai.tool.call.id</code> and '
+          + '<code>gen_ai.tool.call.arguments</code> — but <em>not</em> '
+          + '<code>gen_ai.tool.call.result</code>. The result travels in '
+          + '<code>output.value</code>, and the mapping table has no entry for it.',
       }),
     },
   };

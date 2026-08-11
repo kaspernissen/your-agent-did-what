@@ -117,3 +117,54 @@ def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):
 
     assert answer == "Nothing to do."
     assert [s.name for s in finished()] == ["invoke_agent db-ops-agent"]
+
+
+def test_openinference_vocabulary_emits_the_source_convention(spans, monkeypatch):
+    """Under OpenInference the loop must emit OpenInference keys, not gen_ai.* ones.
+
+    This is what makes the collector's normalization demonstrable rather than assumed: if
+    these spans already arrived in OTel vocabulary, gen_ai_normalizer would have nothing
+    to do and the demo would prove nothing.
+
+    The exact strings matter — the processor matches on them, so a near-miss is a span it
+    silently ignores.
+    """
+    import telemetry
+    from agent import CapybaraAgent
+
+    tracer, finished = spans
+    _stub_anthropic(monkeypatch, [
+        [_Block(type="tool_use", name="list_records", id="t9", input={})],
+        [_Block(type="text", text="Two left.")],
+    ])
+
+    CapybaraAgent(tracer, model="stub", name="beaver-sre",
+                  vocabulary=telemetry.OpenInferenceVocabulary()).run("what happened?")
+
+    by_name = {s.name: s for s in finished()}
+    # Span names stay framework-flavoured; the operation is an attribute, not the name.
+    assert "beaver-sre" in by_name
+    assert "list_records" in by_name
+
+    agent_span = by_name["beaver-sre"]
+    assert agent_span.attributes["openinference.span.kind"] == "AGENT"
+    assert agent_span.attributes["agent.name"] == "beaver-sre"
+    assert not any(k.startswith("gen_ai.") for k in agent_span.attributes)
+
+    tool_span = by_name["list_records"]
+    assert tool_span.attributes["openinference.span.kind"] == "TOOL"
+    assert tool_span.attributes["tool.name"] == "list_records"
+    assert tool_span.attributes["tool_call.id"] == "t9"
+    assert "tool_call.function.arguments" in tool_span.attributes
+    assert "output.value" in tool_span.attributes
+    assert not any(k.startswith("gen_ai.") for k in tool_span.attributes)
+
+
+def test_vocabulary_follows_the_selected_library(monkeypatch):
+    import telemetry
+
+    monkeypatch.setenv("CAPYBARA_INSTRUMENTATION", "openinference")
+    assert isinstance(telemetry.vocabulary(), telemetry.OpenInferenceVocabulary)
+    for other in ("openlit", "none"):
+        monkeypatch.setenv("CAPYBARA_INSTRUMENTATION", other)
+        assert isinstance(telemetry.vocabulary(), telemetry.GenAIVocabulary), other

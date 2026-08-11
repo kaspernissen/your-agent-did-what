@@ -27,10 +27,16 @@ config:
       send_batch_size: 1024
     gen_ai_normalizer:
       sources:
+        # remove_originals: false on purpose. With it true the processor deletes each
+        # attribute it managed to map, so the span that arrives shows only the leftovers
+        # it could NOT translate -- which reads like the library emitted an odd subset.
+        # Keeping the originals means one span carries both vocabularies side by side:
+        # what the library said, and what the collector made of it. That comparison is
+        # the demo.
         - name: openinference
-          remove_originals: true
+          remove_originals: false
         - name: openllmetry
-          remove_originals: true
+          remove_originals: false
 
   exporters:
     # kubectl logs the collector to read spans, exactly like the local demo's stdout.

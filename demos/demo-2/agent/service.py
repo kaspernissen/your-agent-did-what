@@ -47,7 +47,7 @@ def investigate(prompt: str) -> dict:
     A fresh agent per call: the trace id and tool calls it records are per-run state, and
     sharing one agent across concurrent requests would interleave them.
     """
-    agent = CapybaraAgent(TRACER, name=AGENT_NAME)
+    agent = CapybaraAgent(TRACER, name=AGENT_NAME, vocabulary=telemetry.vocabulary())
     answer = agent.run(prompt)
 
     return {

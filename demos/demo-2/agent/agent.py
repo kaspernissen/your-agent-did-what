@@ -5,11 +5,18 @@ happened in OpenTelemetry GenAI spans. It does not choose an instrumentation
 library (see `telemetry.py`) and it does not know what the tools do (see
 `tools.py`).
 
-The `execute_tool` spans here are hand-written on purpose. The GenAI conventions
-define `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` as opt-in — the
-spec says instrumentation SHOULD NOT capture them by default, for privacy and
-payload size — so nothing emits them unless somebody decides to. Deciding to is
-the difference between a trace that proves a tool ran and one that proves what it
+The agent and tool spans are hand-written, because nothing auto-instruments a loop
+somebody wrote by hand. But this module does not choose their *vocabulary*: it asks a
+Vocabulary object from `telemetry.py` to name them. Under OpenInference that means the
+whole trace leaves here in OpenInference vocabulary and the collector's
+gen_ai_normalizer is what produces OTel semantics — which is the thing the demo is
+supposed to show. Writing gen_ai.* here by hand would prove nothing about the
+collector.
+
+Either way the tool call's arguments and result are recorded. The conventions define
+them as opt-in — the spec says instrumentation SHOULD NOT capture them by default, for
+privacy and payload size — so nothing emits them unless somebody decides to. Deciding
+to is the difference between a trace that proves a tool ran and one that proves what it
 did, which is the argument of beats 4 and 6.
 """
 from __future__ import annotations
@@ -20,6 +27,7 @@ import os
 import anthropic
 from opentelemetry.trace import SpanKind, Tracer
 
+import telemetry
 import tools
 
 DEFAULT_MODEL = "claude-sonnet-5"
@@ -30,8 +38,12 @@ MAX_TURNS = 6
 class CapybaraAgent:
     """A tool-calling Claude agent over the capybara customer database."""
 
-    def __init__(self, tracer: Tracer, *, model: str | None = None, name: str | None = None):
+    def __init__(self, tracer: Tracer, *, model: str | None = None, name: str | None = None,
+                 vocabulary=None):
         self._tracer = tracer
+        # Defaults to OTel vocabulary so a caller that does not care -- a test, mostly --
+        # gets gen_ai.* rather than silently emitting a vocabulary nobody translates.
+        self._vocab = vocabulary or telemetry.GenAIVocabulary()
         self._model = model or os.environ.get("DEMO_MODEL", DEFAULT_MODEL)
         self._name = name or DEFAULT_AGENT_NAME
         self._client = anthropic.Anthropic()
@@ -64,10 +76,9 @@ class CapybaraAgent:
         messages = [{"role": "user", "content": prompt}]
         self._tool_calls = []
         with self._tracer.start_as_current_span(
-            f"invoke_agent {self._name}", kind=SpanKind.INTERNAL
+            self._vocab.agent_span_name(self._name), kind=SpanKind.INTERNAL
         ) as span:
-            span.set_attribute("gen_ai.operation.name", "invoke_agent")
-            span.set_attribute("gen_ai.agent.name", self._name)
+            self._vocab.annotate_agent(span, self._name)
             self._trace_id = format(span.get_span_context().trace_id, "032x")
             for _ in range(max_turns):
                 response = self._client.messages.create(
@@ -90,16 +101,11 @@ class CapybaraAgent:
         name = block.name
         arguments = dict(block.input or {})
         with self._tracer.start_as_current_span(
-            f"execute_tool {name}", kind=SpanKind.INTERNAL
+            self._vocab.tool_span_name(name), kind=SpanKind.INTERNAL
         ) as span:
-            span.set_attribute("gen_ai.operation.name", "execute_tool")
-            span.set_attribute("gen_ai.tool.name", name)
-            span.set_attribute("gen_ai.tool.call.id", block.id)
-            span.set_attribute("gen_ai.tool.type", "function")
-            # Opt-in forensic content, deliberately enabled. This is the switch.
-            span.set_attribute("gen_ai.tool.call.arguments", json.dumps(arguments))
+            self._vocab.annotate_tool_call(span, name, block.id, json.dumps(arguments))
             result = tools.dispatch(name)(**arguments)
-            span.set_attribute("gen_ai.tool.call.result", json.dumps(result))
+            self._vocab.annotate_tool_result(span, json.dumps(result))
             self._tool_calls.append({"name": name, "args": arguments, "result": result})
         return {
             "type": "tool_result",

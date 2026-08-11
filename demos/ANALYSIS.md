@@ -669,3 +669,40 @@ Candidate fixes, untried at time of writing:
 
 If (1) fixes it, the slide gets sharper still: the transport you pick decides whether you
 can correlate an agent's tool call with its effect.
+
+---
+
+### The normalizer, end to end — and the one thing it cannot carry (2026-08-11, in-cluster)
+
+Earlier this demo hand-wrote its agent and tool spans in `gen_ai.*`, which quietly
+defeated the point: if our own spans already arrive in OTel vocabulary, the collector has
+nothing to prove. Beaver now emits the **source** vocabulary for the whole loop — the
+keys an OpenInference-instrumented framework would emit — and `gen_ai_normalizer` is what
+produces OTel semantics on the other side. `remove_originals: false`, so one span shows
+both.
+
+Keys taken from the upstream constants in `Arize-ai/openinference` rather than guessed;
+the processor matches exact strings, so a near-miss is a span it silently ignores.
+
+| span | source | after the collector |
+|---|---|---|
+| `beaver-sre` | `openinference.span.kind=AGENT`, `agent.name` | `gen_ai.operation.name=invoke_agent`, `gen_ai.agent.name` |
+| `list_records` | `openinference.span.kind=TOOL`, `tool.name`, `tool_call.id`, `tool_call.function.arguments`, `output.value` | `gen_ai.operation.name=execute_tool`, `gen_ai.tool.name`, `gen_ai.tool.call.id`, `gen_ai.tool.call.arguments` |
+| `messages.create` | 39–48 `llm.*` / `input.*` / `output.*` | 7 `gen_ai.*` incl. `input.messages`, `output.messages`, usage, model, provider |
+
+**`gen_ai.tool.call.result` is never produced.** The tool span's result travels in
+`output.value`, and `internal/openinference/mappings.go` has no entry for it — arguments
+convert, results do not. Verified against the processor source at contrib v0.158.0.
+
+That is the same hole beat 4 finds by a different route, and the pair is the argument:
+
+- **Demo 1, MCP path:** the framework never records the arguments or the result at all.
+- **Demo 2, normalized path:** the structure and the arguments survive translation; the
+  result does not.
+
+Two roads to the same missing half. "Put a normalizer in the collector" is a real answer
+to vocabulary drift and not an answer to forensic content.
+
+Also worth noting for the stage: the operation name is an attribute, not the span name.
+These spans are called `beaver-sre`, `list_records`, `messages.create` — grep for
+`execute_tool` in Jaeger's operation list and you will not find them.
