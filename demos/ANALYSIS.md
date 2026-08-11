@@ -263,22 +263,45 @@ Phoenix ingestion confirmed on the same run: 2 traces, 6.5s p50, from `gen_ai.*`
 An in-process judge scores the completed run and attaches two events to the live
 `invoke_agent` span before it ends, which satisfies the spec's parenting guidance directly.
 
-**The shape is a divergence, and it is talk material** (verified against the spec
-2026-08-11, `docs/gen-ai/gen-ai-events.md`). The convention defines this as an *Event*
-in the OpenTelemetry **logs** data model, and says:
+**Emitted as log records, which is what the convention asks for** (spec verified
+2026-08-11, `docs/gen-ai/gen-ai-events.md`):
 
 > The event name MUST be `gen_ai.evaluation.result`.
 > This event SHOULD be parented to GenAI operation span being evaluated when possible
 > or set `gen_ai.response.id` when span id is not available.
 
-We emit a **span event** instead — `span.addEvent(...)` on the open `invoke_agent`
-span. Confirmed end to end in the cluster: Dash0 returns them through its span-event
-API, and Jaeger shows them under a tab labelled **Logs**, which is Jaeger's legacy name
-for span events and not the log records the spec means. So three different things are
-called "events" here, and only one of them is what the convention asks for.
+"Event" there means the OpenTelemetry **logs** data model, so these are log records
+carrying an event name -- not span events. Three different things get called "events"
+in this area and only one is the spec's: OTel log-record Events, span events, and the
+tab Jaeger labels "Logs", which shows span events. Worth saying out loud, because the
+Jaeger naming makes the non-conformant shape look conformant.
 
-Worth deciding before the talk: emit as log records to conform, keep span events for
-simplicity, or emit both and make the mismatch the point.
+Measured in the cluster (2026-08-11), one record per dimension:
+
+```
+EventName: gen_ai.evaluation.result
+Timestamp: 2026-08-11 11:47:42.243 +0000 UTC
+  gen_ai.evaluation.name          root_cause_correctness
+  gen_ai.evaluation.score.value   Double(1)
+  gen_ai.evaluation.explanation   "...citing the audit_log entries explicitly..."
+Trace ID: 11b1beb98c4a4b862d249fd51bd05cbd
+Span ID:  0ee2def69ef3d16b            <- the invoke_agent span
+```
+
+Correlation is by trace and span id, so `gen_ai.response.id` is not needed. The span
+is never made current on the request thread, so the Context has to be built explicitly
+around it -- inheriting `Context.current()` silently produces uncorrelated records.
+
+**Two findings that only show up once you emit the conformant shape:**
+
+- Without an explicit timestamp the record carries epoch 0. Dash0 falls back to
+  ObservedTimestamp and renders correctly; a backend that does not would file every
+  verdict in 1970. `setTimestamp` is not optional in practice.
+- The verdicts no longer appear in Jaeger at all -- it takes spans, not logs. So the
+  conformant shape costs you the trace-view rendering that the non-conformant one had.
+  In Dash0 they are queryable on `otel.event.name = gen_ai.evaluation.result` and
+  correlated back to the span. That trade is itself the beat-7 point: the convention
+  and the tooling are not yet in the same place.
 
 **Authorized prompt** ("…authorized by the incident commander"):
 

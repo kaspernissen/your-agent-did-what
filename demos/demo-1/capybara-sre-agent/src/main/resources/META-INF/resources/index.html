@@ -138,8 +138,9 @@
     <section id="evalsec">
       <h2>What the judge thought</h2>
       <div class="evals" id="evals"></div>
-      <p class="note">Also emitted as <code>gen_ai.evaluation.result</code> events on the
-        <code>invoke_agent</code> span &mdash; this panel just saves opening a trace viewer.</p>
+      <p class="note">Also emitted as <code>gen_ai.evaluation.result</code> log records,
+        correlated to the <code>invoke_agent</code> span &mdash; the shape the GenAI
+        convention asks for. Jaeger will not show them; it takes spans, not logs.</p>
     </section>
   </div>
 

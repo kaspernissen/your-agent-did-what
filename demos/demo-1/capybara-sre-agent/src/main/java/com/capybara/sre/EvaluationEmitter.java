@@ -3,9 +3,13 @@ package com.capybara.sre;
 import com.capybara.sre.model.Evaluation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.opentelemetry.api.common.Attributes;
-import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.logs.LogRecordBuilder;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Context;
+
+import java.time.Instant;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -14,10 +18,16 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 /**
- * Emits {@code gen_ai.evaluation.result} events onto the GenAI operation span.
+ * Emits {@code gen_ai.evaluation.result} events for the judge's verdicts.
+ *
+ * These are Events in the OpenTelemetry <em>logs</em> data model -- log records
+ * carrying an event name -- which is what the convention asks for. It is worth being
+ * precise about this, because three different things get called "events" here and only
+ * one of them is the spec's: OTel log-record Events, span events, and the tab Jaeger
+ * labels "Logs" that actually shows span events. This class emits the first.
  *
  * Attribute shape per open-telemetry/semantic-conventions-genai,
- * docs/gen-ai/gen-ai-events.md (verified 2026-08-07):
+ * docs/gen-ai/gen-ai-events.md (verified 2026-08-11):
  *
  *   gen_ai.evaluation.name         Required
  *   gen_ai.evaluation.score.value  Conditionally Required (double)
@@ -27,8 +37,10 @@ import org.jboss.logging.Logger;
  *   error.type                     Conditionally Required — when the evaluation itself failed
  *
  * The spec says the event SHOULD be parented to the GenAI operation span being
- * evaluated. We add it directly to the live invoke_agent span before it ends,
- * which satisfies that without needing gen_ai.response.id for correlation.
+ * evaluated, or else carry gen_ai.response.id when the span id is not available. We
+ * have the span, so each record is emitted in a Context carrying it and correlates by
+ * trace and span id -- no response id needed. The span is never made current in the
+ * request thread, so that Context has to be built explicitly rather than inherited.
  *
  * NOTE FOR THE TALK: judging in-process and synchronously is NOT how you would
  * do this in production — real setups evaluate offline against stored traces.
@@ -40,6 +52,32 @@ public class EvaluationEmitter {
 
     private static final Logger LOG = Logger.getLogger(EvaluationEmitter.class);
     private static final String EVENT = "gen_ai.evaluation.result";
+
+    private static final AttributeKey<String> NAME = AttributeKey.stringKey("gen_ai.evaluation.name");
+    private static final AttributeKey<Double> SCORE = AttributeKey.doubleKey("gen_ai.evaluation.score.value");
+    private static final AttributeKey<String> LABEL = AttributeKey.stringKey("gen_ai.evaluation.score.label");
+    private static final AttributeKey<String> WHY = AttributeKey.stringKey("gen_ai.evaluation.explanation");
+    private static final AttributeKey<String> ERROR = AttributeKey.stringKey("error.type");
+
+    private final io.opentelemetry.api.logs.Logger events =
+            GlobalOpenTelemetry.get().getLogsBridge().get("com.capybara.sre.evaluation");
+
+    /**
+     * One log record, named and correlated to the span under evaluation.
+     *
+     * Every emitter below goes through here, so the event name and the correlation
+     * cannot be got right in one place and wrong in another.
+     */
+    private LogRecordBuilder event(Span span, String name) {
+        return events.logRecordBuilder()
+                .setEventName(EVENT)
+                // Without an explicit timestamp the record carries epoch 0. Some backends
+                // fall back to ObservedTimestamp and it looks fine; others file the verdict
+                // in 1970, where nobody will find it.
+                .setTimestamp(Instant.now())
+                .setContext(Context.current().with(span))
+                .setAttribute(NAME, name);
+    }
 
     @Inject
     ObjectMapper objectMapper;
@@ -76,36 +114,29 @@ public class EvaluationEmitter {
 
     private Evaluation emitScored(Span span, String name, JsonNode node) {
         double score = node.path("score").asDouble();
-        AttributesBuilder b = Attributes.builder()
-                .put("gen_ai.evaluation.name", name)
-                .put("gen_ai.evaluation.score.value", score);
+        LogRecordBuilder b = event(span, name).setAttribute(SCORE, score);
         putExplanation(b, node);
-        span.addEvent(EVENT, b.build());
+        b.emit();
         return new Evaluation(name, score, null, node.path("explanation").asText(""));
     }
 
     private Evaluation emitLabelled(Span span, String name, JsonNode node) {
         String label = node.path("label").asText("unknown");
-        AttributesBuilder b = Attributes.builder()
-                .put("gen_ai.evaluation.name", name)
-                .put("gen_ai.evaluation.score.label", label);
+        LogRecordBuilder b = event(span, name).setAttribute(LABEL, label);
         putExplanation(b, node);
-        span.addEvent(EVENT, b.build());
+        b.emit();
         return new Evaluation(name, null, label, node.path("explanation").asText(""));
     }
 
-    private void putExplanation(AttributesBuilder b, JsonNode node) {
+    private void putExplanation(LogRecordBuilder b, JsonNode node) {
         String explanation = node.path("explanation").asText("");
         if (!explanation.isBlank()) {
-            b.put("gen_ai.evaluation.explanation", explanation);
+            b.setAttribute(WHY, explanation);
         }
     }
 
     private void emitError(Span span, String name, Throwable t) {
-        span.addEvent(EVENT, Attributes.builder()
-                .put("gen_ai.evaluation.name", name)
-                .put("error.type", t.getClass().getName())
-                .build());
+        event(span, name).setAttribute(ERROR, t.getClass().getName()).emit();
     }
 
     /** Models like wrapping JSON in ```json fences; the spec does not. */

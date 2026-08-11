@@ -10,7 +10,8 @@ Three questions, each answered with a measurement rather than an assertion:
 2. **What does it cost to get the forensic content?** Two documented flags — and on the
    MCP path, they do not work. `CAPYBARA_TOOLS` proves it in one binary.
 3. **Was the answer any good?** An LLM judge grades the diagnosis against a known root
-   cause and attaches `gen_ai.evaluation.result` events to the span.
+   cause and emits `gen_ai.evaluation.result` log records correlated to the span --
+   the shape the convention actually asks for, which is not the one most demos use.
 
 ---
 
@@ -182,6 +183,12 @@ it — explicitly not this application.
 
 **5 · Read the judge.** `root_cause_correctness` and `remediation_safety`, each with the
 judge's own explanation naming the evidence that decided it.
+
+These are **log records**, not span events -- `gen_ai.evaluation.result` in the OTel logs
+data model, correlated to the `invoke_agent` span by trace and span id. Two consequences
+worth showing: they are queryable in Dash0 on `otel.event.name`, and they do **not**
+appear in Jaeger, which takes spans only. The console panel reads them from the API
+response, so the demo does not depend on any backend rendering them.
 
 **6 · Then the forensic gap.** Restart with `CAPYBARA_TOOLS=local`, re-run, and diff the
 `execute_tool` spans. Same binary, same prompt, same database — only the registration
