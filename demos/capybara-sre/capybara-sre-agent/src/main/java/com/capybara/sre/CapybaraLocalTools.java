@@ -44,6 +44,11 @@ public class CapybaraLocalTools {
         return db.deleteRecords(blankToNull(plan)).toString();
     }
 
+    @Tool("Recent changes to the capybaras table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
+    public String audit_log(@P(value = "how many entries to return; 20 is usually enough", required = false) Integer limit) {
+        return db.auditLog(limit == null ? 20 : limit).toString();
+    }
+
     /** The model sometimes sends "" rather than omitting the argument; both mean "all". */
     private static String blankToNull(String s) {
         return (s == null || s.isBlank()) ? null : s;

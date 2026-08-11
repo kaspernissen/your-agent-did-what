@@ -41,6 +41,6 @@ public class InMemoryCapybaraDatabase implements CapybaraDatabase {
     @Override
     public synchronized List<AuditEntry> auditLog(int limit) { return List.of(); }
 
-    @Override
-    public synchronized void reset() { records = new ArrayList<>(seed); }
+    /** Not part of the interface — tests use it to start from the seed. */
+    public synchronized void restoreSeed() { records = new ArrayList<>(seed); }
 }

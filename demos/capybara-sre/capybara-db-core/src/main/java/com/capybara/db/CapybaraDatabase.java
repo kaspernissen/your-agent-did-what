@@ -32,7 +32,4 @@ public interface CapybaraDatabase {
 
     /** The most recent changes, newest first. Empty if nothing has happened. */
     List<AuditEntry> auditLog(int limit);
-
-    /** Restore the seed, and clear the audit trail. Used between demo runs. */
-    void reset();
 }

@@ -24,4 +24,9 @@ public class CapybaraDbTools {
     public String deleteRecords(@ToolArg(description = "plan whose records to delete; omit to delete ALL") String plan) {
         return db.deleteRecords(plan).toString();
     }
+
+    @Tool(name = "audit_log", description = "Recent changes to the capybaras table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
+    public String auditLog(@ToolArg(description = "how many entries to return; 20 is usually enough") Integer limit) {
+        return db.auditLog(limit == null ? 20 : limit).toString();
+    }
 }
