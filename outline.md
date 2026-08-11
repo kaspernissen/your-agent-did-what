@@ -1,7 +1,7 @@
 # Your Agent Did What? — Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** **45 minutes** (confirmed 2026-08-10), nine beats, **50 slides**. 37.5 minutes of
+**Length:** **45 minutes** (confirmed 2026-08-10), nine beats, **38 spoken slides** plus a 14-slide appendix. 37.5 minutes of
 speaking, leaving room to run demos live and still land on time.
 **Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
@@ -50,8 +50,14 @@ Demo A act 4 is the one to protect: it is the only place the talk's headline fin
 something the audience watches rather than something they are told. See
 [`demos/README.md`](demos/README.md) for the run steps and what to point at.
 
-**No cuts needed at 45 minutes.** The list below is kept only in case the slot shrinks — if
-it does, cut in this order. It is not a to-do.
+**Cut 2026-08-11.** Fourteen slides moved to an appendix at the back of the deck: 52 spoken
+slides had grown past the 37.5-minute budget, and the live demo now needs nearer 8 minutes
+than the 5 it was given. They are still in the deck, behind an appendix divider, so a
+question from the floor can be answered with a slide rather than a description — and each
+one's speaker note says why it left and what covers it now. What they carried survives as a
+sentence in the note of the slide that took over that ground, not as more text on it.
+
+The list below was the pre-agreed order. It is now history rather than a to-do.
 
 1. **2.4 — "Both of these claim to be OTel GenAI"** (the Arconia `flavor` slide). It is the only
 

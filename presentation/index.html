@@ -19,7 +19,7 @@
     <!-- Sleeping ON the axis. top:634 set by eye on the projector — the rule passes
          behind its lower belly. z-index:1 keeps the .axis (later in the DOM) from
          painting straight through its body. -->
-    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:634px;width:322px;z-index:1;transform:rotate(13deg)">
+    <img src="img/mascots/capybara-sitting.png" alt="" class="mascot" style="right:150px;bottom:70px;width:240px;z-index:1">
     <div style="position:absolute;left:120px;top:262px;width:1250px">
       <!-- CONFERENCE NAME — change this one line per event. This talk is given at
            several conferences; nothing else on the deck is event-specific. -->
@@ -106,24 +106,6 @@
     <p class="small" style="position:absolute;left:120px;top:806px;width:1680px">None of these are demos. <strong style="font-weight:600;color:var(--ink)">They hold credentials, they read production data, and increasingly they act on it.</strong></p>
     <p class="small" style="position:absolute;left:120px;top:884px;width:1680px">Platform teams are shipping these as products. The observability problem arrives with them, whether anyone planned for it or not.</p>
   </section>
-  <section data-label="Two ways you meet an agent" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Two audiences, one dependency</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">You either build one, or you run someone else's</h2>
-    <div style="position:absolute;left:120px;right:120px;top:420px;display:grid;grid-template-columns:1fr 1fr;gap:90px">
-      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
-        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)">You build it</span>
-        <span style="font-size:32px;font-weight:300;line-height:1.4">LangChain, LangGraph, Spring AI, LangChain4j. You choose the framework, so you choose what it emits.</span>
-        <span style="font-size:26px;line-height:1.45;color:var(--muted-ink);margin-top:auto">Your problem: which convention, and what it leaves out.</span>
-      </div>
-      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
-        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-text)">You run someone else's</span>
-        <span style="font-size:32px;font-weight:300;line-height:1.4">kagent, HolmesGPT, k8sgpt, Copilots in your tooling. You did not choose the instrumentation.</span>
-        <span style="font-size:26px;line-height:1.45;margin-top:auto">Two problems, not one. It <em>reads</em> your telemetry, so it is only as good as what it reads — and it <em>acts</em> on your systems, so <span class="amber-text" data-emphasis="amber">you need its telemetry too</span>.</span>
-      </div>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1650px">Most of us are both. The conventions are what make the second case survivable, which is why the first case matters even if you never build an agent.</p>
-  </section>
 
   <!-- 0.4 — L03 Statement -->
   <section data-label="The morning after" class="ground-paper">
@@ -150,29 +132,6 @@
         <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">What one agent run actually looks like</span>
       </div>
     </div>
-  </section>
-
-  <!-- 1.2 — L04 Text + diagram -->
-  <section data-label="We keep changing what we have to understand" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">We keep changing what we have to understand</h2>
-    <div style="position:absolute;left:120px;right:120px;top:470px">
-      <div class="axis" style="left:0;right:0;top:0"></div>
-      <div style="position:relative;display:flex;justify-content:space-between">
-        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
-        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
-        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
-        <div class="axis-node is-amber is-halo" style="position:relative;left:0;top:0;margin:-13px 0 0" data-emphasis="amber"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:44px">
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px">Monolith</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Microservices</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Event-driven</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:right">Agent-based</span>
-      </div>
-    </div>
-    <p class="body" style="position:absolute;left:120px;top:760px;width:1450px">Each step solved a real problem and added complexity somewhere else. Building got steadily easier. <strong style="font-weight:600">Understanding got harder every single time.</strong></p>
-    <p class="small" style="position:absolute;left:120px;top:900px">We are four architectures deep and still reaching for tools designed for the first one.</p>
   </section>
 
   <!-- 1.3 — L04 Text + diagram -->
@@ -288,72 +247,6 @@
     <p class="small" style="position:absolute;left:120px;top:900px">The first three are uncomfortable. The fourth is the one this talk is about.</p>
   </section>
 
-  <!-- 1.4 — L07 Figures · one aligned column -->
-  <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The practice isn't wrong. It's incomplete.</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
-    <div style="position:absolute;left:120px;right:120px;top:390px;display:flex;flex-direction:column;gap:26px">
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">stack trace</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:40px;font-weight:600">reasoning chain</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">status code</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">quality signal</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">RPS &amp; latency</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">tokens, cost, blast radius</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">static call graph</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">dynamic tool invocation</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">replayable request</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">non-deterministic run</span>
-      </div>
-    </div>
-    <div class="axis" style="left:120px;right:120px;top:850px"></div>
-    <p class="small" style="position:absolute;left:120px;top:900px">The old practice was right for its time. We have to build the equivalents.</p>
-  </section>
-
-  <!-- 1.5 — L05 Waterfall -->
-  <section data-label="One run, four kinds of span" class="ground-ink">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">One run, four kinds of span</h2>
-    <div class="waterfall" style="position:absolute;left:120px;right:120px;top:340px">
-      <div class="wf-row">
-        <span class="wf-label">invoke_agent</span>
-        <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
-        <span class="wf-dur">12.26 s</span>
-      </div>
-      <div class="wf-row">
-        <span class="wf-label">chat claude-sonnet-5</span>
-        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:0;--w:32.4%"></div></div>
-        <span class="wf-dur">3.97 s</span>
-      </div>
-      <div class="wf-row is-amber">
-        <span class="wf-label">└ POST</span>
-        <div class="wf-track"><div class="wf-bar is-amber" style="--x:0.4%;--w:31.9%" data-emphasis="amber"></div></div>
-        <span class="wf-dur">3.91 s</span>
-      </div>
-      <div class="wf-row">
-        <span class="wf-label">execute_tool</span>
-        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:32.5%;--w:0.4%"></div></div>
-        <span class="wf-dur">54 µs</span>
-      </div>
-    </div>
-    <div style="position:absolute;left:452px;right:120px;top:790px;height:1px;background:var(--navy)"></div>
-    <p class="small" style="position:absolute;left:452px;top:820px">Measured on a real run. The <span style="font-family:var(--font-mono)">POST</span> comes free from your HTTP instrumentation and carries no GenAI meaning — yet it is 2.35 of the 2.51 seconds the model call took.</p>
-  </section>
-
 
   <!-- 02 — L02 Section divider -->
   <section data-label="Divider — 02" class="ground-ink">
@@ -397,59 +290,6 @@
       <text x="1512.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">model</text>
     </svg></div>
     <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call, described five different ways. OTel GenAI is what the others are converging on — amber is what beaver-sre actually emits, and what we normalize.</p>
-  </section>
-
-  <!-- 2.3 — L07 Figures · project marks -->
-  <section data-label="Legitimate differences" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Why they diverged</p>
-    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px"><span class="amber-text" data-emphasis="amber">Legitimate differences</span>, not naming preferences</h2>
-    <div style="position:absolute;left:120px;right:120px;top:438px;display:grid;grid-template-columns:repeat(5,1fr);gap:26px">
-      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
-        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box"><img src="assets/otel-icon.svg" alt="OTel GenAI" style="width:100%;height:100%;object-fit:contain"></span>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">OTel GenAI</span>
-          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">vendor-neutral</span>
-        </div>
-      </div>
-      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
-        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/phoenix.jpg" alt="OpenInference" style="width:100%;height:100%;object-fit:cover"></span>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">OpenInference</span>
-          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">eval workflows</span>
-        </div>
-      </div>
-      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
-        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/traceloop.jpg" alt="OpenLLMetry" style="width:100%;height:100%;object-fit:cover"></span>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">OpenLLMetry</span>
-          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">dev ergonomics</span>
-        </div>
-      </div>
-      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
-        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/langchain.png" alt="LangSmith" style="width:100%;height:100%;object-fit:cover"></span>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">LangSmith</span>
-          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">LangChain-native</span>
-        </div>
-      </div>
-      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
-        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/langfuse.png" alt="Langfuse" style="width:100%;height:100%;object-fit:cover"></span>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">Langfuse</span>
-          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">maps the others in</span>
-        </div>
-      </div>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:830px">Each optimizes for something real. They are not going away soon.</p>
-  </section>
-
-  <section data-label="Same bytes, four renderings" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Same bytes. The viewer decides whether it's legible.</h2>
-    <div style="position:absolute;left:120px;right:120px;top:360px" data-emphasis="amber"><svg viewBox="0 0 1680 260" style="width:100%;height:auto"><rect x="0" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="22" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Jaeger</text><text x="22" y="86" font-family="JetBrains Mono" font-size="17" fill="#5B6180">llm.model_name=…</text><text x="22" y="120" font-family="JetBrains Mono" font-size="17" fill="#5B6180">gen_ai.usage.in=983</text><text x="22" y="154" font-family="JetBrains Mono" font-size="17" fill="#5B6180">mcp.method.name=…</text><text x="22" y="188" font-family="JetBrains Mono" font-size="17" fill="#5B6180">jsonrpc.request.id=5</text><text x="22" y="228" font-family="Public Sans" font-size="19" fill="#5B6180">raw tags, no meaning</text><rect x="430" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="452" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Phoenix</text><rect x="452" y="76" width="330" height="26" rx="13" fill="#A9B6EE"/><rect x="452" y="116" width="230" height="26" rx="13" fill="#A9B6EE"/><text x="452" y="196" font-family="Public Sans" font-size="19" fill="#8A5B00">plain spans —</text><text x="452" y="222" font-family="Public Sans" font-size="19" fill="#8A5B00">no tokens, no cost, no model</text><rect x="860" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="882" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenLIT</text><rect x="882" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="882" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="934.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="994" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1046.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1106" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1158.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="882" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="882" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="1290" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="1312" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text><rect x="1312" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="1312" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1364.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="1424" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1476.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1536" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1588.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="1312" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="1312" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="430" y="0" width="390" height="250" rx="12" fill="none" stroke="#F5A800" stroke-width="3"/></svg></div>
-    <p class="small" style="position:absolute;left:120px;top:730px;width:1680px">Phoenix is GenAI-native but <em>OpenInference</em>-native: it accepts <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and renders them as plain spans. That is the fragmentation tax, visible.</p>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Honesty: Jaeger and Phoenix ingestion are both confirmed on a live run — Phoenix took the <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and reported 2 traces at 6.5s p50. How each UI <em>renders</em> them is drawn from documentation; these panes are wireframes, not screenshots.</p>
   </section>
 
   <!-- 03 — L02 Section divider -->
@@ -521,63 +361,11 @@
     <p class="small" style="position:absolute;left:120px;top:826px;width:1680px">Same six spans either way — a GenAI-only convention simply cannot join them.</p>
     <p class="small" style="position:absolute;left:120px;top:888px;width:1680px">Without conventions, correlation fails. Without correlation, AI guesses. That this is the <em>decisive</em> advantage is our position, not a measurement &mdash; and a shared vocabulary makes the correlation <em>possible</em>; whether the context survives every hop is a separate problem we hit in beat 6.</p>
   </section>
-  <section data-label="Developers instrument, platform canonicalizes" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Developers instrument. The platform canonicalizes.</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:400px;width:820px">
-      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">The collector</span> is where a policy about telemetry can live.</p>
-      <p class="axis-list-item">One place. Any language. No application change.</p>
-      <p class="axis-list-item">Which is why a wrong convention is a config change, not a rewrite.</p>
-    </div>
-    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);padding:44px 40px;display:flex;flex-direction:column;justify-content:space-between">
-      <div style="display:flex;flex-direction:column;gap:20px"><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">DEVELOPERS OWN</span>
-        <div style="display:flex;gap:14px;flex-wrap:wrap"><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the app</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the framework</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the convention</span></div></div>
-      <div style="position:relative;border-top:2px dashed var(--amber);margin:4px 0">
-        <span style="position:absolute;left:50%;top:-19px;transform:translateX(-50%);background:var(--paper-2);padding:0 16px;font-family:var(--font-mono);font-size:21px;color:var(--amber-text)">the collector</span></div>
-      <div style="display:flex;flex-direction:column;gap:20px"><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">THE PLATFORM OWNS</span>
-        <div style="display:flex;gap:14px;flex-wrap:wrap"><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">normalize</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">redact</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">sample</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">route</span></div></div>
-    </div>
-  </section>
-  <!-- 3.5 — L04 · what OTel covers today -->
-  <section data-label="OTel covers what they were built to fill" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Why the calculus changed</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1560px;font-size:68px">They filled a real gap. OTel has since filled it too.</h2>
-    <div style="position:absolute;left:120px;right:120px;top:400px;display:flex;flex-direction:column;gap:22px">
-      <div style="display:flex;align-items:baseline;gap:34px">
-        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">the model call itself</span>
-        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">chat span · gen_ai.operation.name</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:34px">
-        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">token accounting and cost</span>
-        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.usage.input_tokens / output_tokens</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:34px">
-        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">which tool ran</span>
-        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">execute_tool · gen_ai.tool.name</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:34px">
-        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">the prompt and the completion</span>
-        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.input.messages / output.messages — opt-in</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:34px">
-        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">&quot;was it any good?&quot;</span>
-        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
-        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono);font-size:25px">gen_ai.evaluation.result</span>
-      </div>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Every attribute on the right is one we measured coming out of a running agent today — not a roadmap item. Choosing OpenInference or OpenLLMetry was a reasonable call when that column was empty.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">It is a different call now — with a caveat about how settled any of this is that we come back to shortly.</p>
-  </section>
 
   <!-- 4.1 — L02 Section divider · the single mid-deck mascot -->
   <section data-label="Meet Capybara, SRE" class="ground-ink">
     <div class="diagonal-split" style="background:var(--amber)"></div>
-    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:120px;top:520px;width:420px;z-index:1;transform:rotate(13deg)">
+    <img src="img/mascots/capybara-investigating.png" alt="" class="mascot" style="right:150px;bottom:60px;width:270px;z-index:1">
     <div style="position:absolute;left:120px;top:280px;width:900px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)">04</div>
       <h2 style="font-family:var(--font-display);font-size:76px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:30px 0 0">Meet Capybara, SRE</h2>
@@ -638,7 +426,6 @@
     </svg></div>
 
     <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Then we ask each of them the same question: <span style="font-family:var(--font-mono);color:var(--ink)">&ldquo;Customers are reporting missing accounts. Investigate.&rdquo;</span></p>
-    <p class="small" style="position:absolute;left:120px;top:878px;width:1680px">One incident, one database, one collector &mdash; so anything that differs in the telemetry belongs to the platform, not to the story. The row count is a gauge, so the deletion lands in Prometheus as a step from <strong style="font-weight:600;color:var(--ink)">five to two</strong> before anyone asks a question.</p>
   </section>
   <section data-label="The conventions moved house" class="ground-paper">
     <div class="deck-footer"></div>
@@ -755,6 +542,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   <!-- 05 — L02 Section divider -->
   <section data-label="Divider — 05" class="ground-ink">
+    <img src="img/mascots/beaver-tablet.png" alt="" class="mascot" style="right:120px;bottom:60px;width:200px;z-index:1">
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">05</div>
@@ -901,40 +689,12 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
       <defs><marker id="n-ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#425CC7"/></marker></defs>
     </svg></div>
-
-    <p class="small" style="position:absolute;left:120px;top:760px;width:1680px">Beaver emits no OTel vocabulary at all &mdash; agent, tool and model spans all leave in OpenInference keys, and the collector rewrites the lot. AGENT becomes <span style="font-family:var(--font-mono)">invoke_agent</span>, TOOL becomes <span style="font-family:var(--font-mono)">execute_tool</span>. It genuinely works.</p>
     <p class="small" style="position:absolute;left:120px;top:860px;width:1680px">Except the tool&rsquo;s result travels in <span style="font-family:var(--font-mono)">output.value</span>, and <span style="font-family:var(--font-mono)">mappings.go</span> has no entry for it. <strong style="font-weight:600;color:var(--ink)">The same missing half beat 4 found by a different road.</strong> A normalizer answers vocabulary drift; it does not answer forensic content.</p>
-  </section>
-
-  <section data-label="Nobody is proposing a fifth convention" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on the same target</h2>
-    <div style="position:absolute;left:120px;right:120px;top:340px" data-emphasis="amber"><svg viewBox="0 0 1680 360" style="width:100%;height:auto">
-      <text x="210.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">collector processor</text>
-      <text x="210.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">gen_ai_normalizer</text>
-      <circle cx="210.0" cy="108" r="10" fill="#425CC7"/>
-      <path d="M210.0 118 C210.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
-      <text x="630.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">Arconia</text>
-      <text x="630.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">…ai.flavor</text>
-      <circle cx="630.0" cy="108" r="10" fill="#425CC7"/>
-      <path d="M630.0 118 C630.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
-      <text x="1050.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">Phoenix</text>
-      <text x="1050.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">translation guide</text>
-      <circle cx="1050.0" cy="108" r="10" fill="#425CC7"/>
-      <path d="M1050.0 118 C1050.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
-      <text x="1470.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">OpenLIT</text>
-      <text x="1470.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">native gen_ai.*</text>
-      <circle cx="1470.0" cy="108" r="10" fill="#425CC7"/>
-      <path d="M1470.0 118 C1470.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
-      <circle cx="840" cy="268" r="20" fill="#F5A800"/>
-      <text x="840" y="330" text-anchor="middle" font-family="JetBrains Mono" font-size="40" fill="#8A5B00">gen_ai.*</text>
-    </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px"><strong style="font-weight:600;color:var(--ink)">Arconia</strong> (Thomas Vitale) is how the Spring community gets there — one property and Spring AI re-emits under a different convention, no code change.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Different layers, one destination. Back in beat 2 one call fanned out to five names; the fragmentation is being closed from every one of those directions.</p>
   </section>
 
   <!-- 06 — L02 Section divider -->
   <section data-label="Divider — 06" class="ground-ink">
+    <img src="img/mascots/capybara-investigating.png" alt="" class="mascot" style="right:120px;bottom:60px;width:175px;z-index:1">
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">06</div>
@@ -1016,7 +776,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     </svg></div>
 
     <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Server-side MCP tracing is <strong style="font-weight:600;color:var(--ink)">off by default</strong> &mdash; turning it on is what put the far side of the call in the trace at all. The tool <em>body</em> still runs with no context, so the query it made is its own root trace.</p>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Root-caused to one method, filed as <span style="font-family:var(--font-mono)">quarkus-mcp-server#789</span>, open since May. Maintainer&rsquo;s answer: &ldquo;No ETA.&rdquo; <strong style="font-weight:600;color:var(--ink)">Not something a hand-written span can honestly fix &mdash; the work has no parent to attach to.</strong></p>
   </section>
 
   <!-- 6.3 — L06 Code -->
@@ -1032,28 +791,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:640px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong> — the spec says instrumentation SHOULD NOT capture this, for privacy and payload size. Here the arguments are trivial and the <em>result</em> is the entire case: a role that is not this application.</p>
     <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Which is the awkward part. The half you would least want to log by default is the half that identifies the culprit.</p>
     <p class="small" style="position:absolute;left:120px;top:880px;width:1680px"><strong style="font-weight:600;color:var(--paper)">Our MCP run emits neither.</strong> Same binary with local tools and both are there.</p>
-  </section>
-
-  <!-- 6.4 — L03 Statement -->
-  <!-- 6.3 — L06 Code · the model's own output, and what it does and does not prove -->
-  <section data-label="What the model asked for" class="ground-ink">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">replaces gen_ai.prompt / gen_ai.completion</p>
-    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1560px;font-size:64px">The model&rsquo;s output remembers what it <span class="amber-text" data-emphasis="amber">asked for</span></h2>
-    <div class="code-block" style="position:absolute;left:120px;right:120px;top:390px">
-      <pre style="font-size:30px;line-height:1.9"><span class="c-attr">gen_ai.output.messages</span>
-  parts[0]  <span class="c-key">reasoning</span>      <span class="c-str">"two rows left — check who removed the rest"</span>
-  parts[1]  <span class="c-str">tool_call</span>      audit_log <span class="c-str">{ "limit": 20 }</span>
-  finish_reason            tool_call</pre>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:754px;width:1680px">That <span style="font-family:var(--font-mono);color:var(--on-ink)">tool_call</span> part carries the name <em>and the arguments</em> — the content the <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span> span did not have. <strong style="font-weight:600;color:var(--paper)">But it is what the model asked for, not what ran — and it never carries the result.</strong></p>
-    <p class="small" style="position:absolute;left:120px;top:870px;width:1680px">A <span style="font-family:var(--font-mono)">reasoning</span> part only appears when the model emits thinking — our run carried text and tool_call.</p>
-  </section>
-  <section data-label="The footprint is empty" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The limit of default instrumentation</p>
-    <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">The footprint exists. The footprint is <span class="amber-text" data-emphasis="amber">empty</span>.</h2>
-    <p class="small" style="position:absolute;left:120px;top:860px">With default instrumentation you can prove the span fired. You cannot prove what it executed.</p>
   </section>
 
   <!-- 6.5 — L04 · the schema, with a hole in it -->
@@ -1082,12 +819,12 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <text x="1110" y="206" font-family="Public Sans" font-size="22" fill="#5B6180">not persisted · not deterministic</text>
   <text x="1110" y="236" font-family="Public Sans" font-size="22" fill="#5B6180">output, not an audit trail</text>
 </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">OTel can carry the model&rsquo;s <em>narrated</em> reasoning — a <span style="font-family:var(--font-mono)">reasoning</span> part inside <span style="font-family:var(--font-mono)">gen_ai.output.messages</span>. What no convention has is a field for <strong style="font-weight:600;color:var(--ink)">why the agent chose an action</strong> — and narration is output, not a record of the decision.</p>
     <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG — and the honest limit of everything else in this talk.</p>
   </section>
 
   <!-- 07 — L02 Section divider -->
   <section data-label="Divider — 07" class="ground-ink">
+    <img src="img/mascots/capybara-dashboard.png" alt="" class="mascot" style="right:120px;bottom:60px;width:165px;z-index:1">
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <div style="position:absolute;left:120px;top:300px;width:820px">
       <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">07</div>
@@ -1163,47 +900,9 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:840px;width:1680px">Measured, repeatedly, on the investigation: it finds the role in the audit trail and takes no destructive action. Two things this cost us &mdash; without an explicit timestamp the record lands at <strong style="font-weight:600;color:var(--paper)">epoch 0</strong>, and because these are logs they do <strong style="font-weight:600;color:var(--paper)">not appear in Jaeger at all</strong>. Conformance bought us a shape no trace viewer renders.</p>
   </section>
 
-  <!-- 7.4 — L07 · request-path placement diagram -->
-  <section data-label="Three placements, three jobs" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">Three placements, three different jobs</h2>
-    <div style="position:absolute;left:120px;right:120px;top:290px" data-emphasis="amber"><svg viewBox="0 0 1680 430" style="width:100%;height:auto">
-      <text x="0" y="26" font-family="JetBrains Mono" font-size="21" fill="#5B6180">THE REQUEST PATH</text>
-      <line x1="0" y1="120" x2="1680" y2="120" stroke="#A9B6EE" stroke-width="3"/>
-      <circle cx="60" cy="120" r="11" fill="#425CC7"/>
-      <text x="60" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">request</text>
-      <circle cx="1620" cy="120" r="11" fill="#425CC7"/>
-      <text x="1620" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">response</text>
-      <rect x="700" y="98" width="280" height="44" rx="22" fill="#202C5F"/>
-      <text x="840" y="128" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#FAF7F2">agent run</text>
-
-      <!-- offline: before the path exists -->
-      <rect x="0" y="250" width="470" height="150" rx="8" fill="#F2ECE0"/>
-      <text x="30" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">offline</text>
-      <text x="30" y="330" font-family="Public Sans" font-size="22" fill="#5B6180">pre-deploy, curated datasets</text>
-      <text x="30" y="362" font-family="Public Sans" font-size="22" fill="#10142E">gates the deploy</text>
-      <path d="M235 250 L235 190 L120 190 L120 134" fill="none" stroke="#A9B6EE" stroke-width="2" stroke-dasharray="6 7"/>
-
-      <!-- online: alongside, non-blocking -->
-      <rect x="605" y="250" width="470" height="150" rx="8" fill="#F2ECE0"/>
-      <text x="635" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">online</text>
-      <text x="635" y="330" font-family="Public Sans" font-size="22" fill="#5B6180">live traffic, sampled</text>
-      <text x="635" y="362" font-family="Public Sans" font-size="22" fill="#10142E">non-blocking</text>
-      <path d="M840 250 L840 150" fill="none" stroke="#A9B6EE" stroke-width="2" stroke-dasharray="6 7"/>
-
-      <!-- inline: in the path itself -->
-      <rect x="1210" y="250" width="470" height="150" rx="8" fill="#F5A800"/>
-      <text x="1240" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">inline</text>
-      <text x="1240" y="330" font-family="Public Sans" font-size="22" fill="#10142E">synchronous, in the path</text>
-      <text x="1240" y="362" font-family="Public Sans" font-size="22" font-weight="600" fill="#10142E">gates the response</text>
-      <path d="M1445 250 L1445 190 L1560 190 L1560 134" fill="none" stroke="#F5A800" stroke-width="3"/>
-      <circle cx="1560" cy="120" r="14" fill="#F5A800"/>
-    </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">Inline adds latency to <em>every</em> request. Online adds production cost, so sample. Our two dimensions are one of each: <span style="font-family:var(--font-mono)">remediation_safety</span> is gate-shaped, <span style="font-family:var(--font-mono)">root_cause_correctness</span> is metric-shaped.</p>
-  </section>
-
   <!-- 7.5 — L04 -->
   <section data-label="Where we cheated" class="ground-paper">
+    <img src="img/mascots/capybara-slumped-on-desk.png" alt="" class="mascot" style="right:70px;bottom:56px;width:250px;z-index:1">
     <div class="deck-footer"></div>
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">This is <span class="amber-text" data-emphasis="amber">not a reference architecture</span></h2>
     <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1680px">
@@ -1214,43 +913,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <p class="axis-list-item">The mitigation is a human-labelled gold set, and Cohen's κ rather than raw agreement.</p>
     </div>
     <p class="small" style="position:absolute;left:120px;top:900px">"Good enough" is a risk-calibrated product decision, not a number the tooling hands you.</p>
-  </section>
-
-  <!-- 8.0 — L04 · the realistic path (ink) -->
-  <!-- 7.7 — L07 · the production shape of the thing we just admitted cheating on -->
-  <section data-label="Somebody built it properly" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">OpenSearch Agent Health · Apache-2.0</p>
-    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1600px;font-size:60px">The version we cheated on, <span class="amber-text" data-emphasis="amber">built properly</span></h2>
-    <div style="position:absolute;left:120px;right:120px;top:352px">
-      <div style="display:flex;gap:0;padding-bottom:6px">
-        <span style="width:300px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--muted-ink)"></span>
-        <span style="width:560px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--muted-ink)">OUR DEMO</span>
-        <span style="flex:1;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">AGENT HEALTH</span>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
-        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">when it runs</span>
-        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)">inline, in the request path</span>
-        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">offline, in batch experiments</span>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
-        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">judged against</span>
-        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)">a rubric in a prompt</span>
-        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">a human-defined <em>Golden Path</em> trajectory</span>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
-        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">across runs</span>
-        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)">one run at a time</span>
-        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">run-to-run comparison, pass rate over time</span>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
-        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">where it lands</span>
-        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)"><span style="font-family:var(--font-mono);font-size:22px">gen_ai.evaluation.result</span> on the span</span>
-        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">the same, plus its own store and UI</span>
-      </div>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:754px;width:1680px">The gold set we said was the mitigation, shipped by someone else. <strong style="font-weight:600;color:var(--ink)">Copy the shape, don&rsquo;t adopt it blind</strong> — v0.5.2, and its SDK is marked experimental.</p>
-    <p class="small" style="position:absolute;left:120px;top:850px;width:1680px">And it is the revision problem in the wild: its own OTel guide still specifies <span style="font-family:var(--font-mono)">gen_ai.system</span>, which the registry replaced with <span style="font-family:var(--font-mono)">gen_ai.provider.name</span>. Nobody is behind on purpose.</p>
   </section>
   <section data-label="A realistic path" class="ground-ink">
     <div class="deck-footer"></div>
@@ -1327,30 +989,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">None of this is a roadmap item. Every stage above ships in contrib today, and the <span style="font-family:var(--font-mono)">gen_ai_normalizer</span> from beat 5 is another stage in the same pipeline. These are things you <em>configure</em>, not things you wait for.</p>
     <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Jaeger is the tell: the UI that showed you raw tags back in beat 2 now runs on the Collector itself — v1 hit EOL 2025-12-31. <strong style="font-weight:600;color:var(--paper)">The plumbing moved before the UI did.</strong></p>
   </section>
-  <section data-label="Who reads your telemetry next" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">CNCF sandbox and friends</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">Your next reader isn't a human</h2>
-    <div style="position:absolute;left:120px;right:120px;top:430px;display:grid;grid-template-columns:repeat(3,1fr);gap:70px">
-      <div style="display:flex;flex-direction:column;gap:18px">
-        <img src="assets/kagent.png" alt="kagent" style="height:56px;width:auto;object-fit:contain;align-self:flex-start">
-        <span style="font-family:var(--font-display);font-size:34px;font-weight:500">kagent</span>
-        <span style="font-size:28px;font-weight:300;line-height:1.4">Agents as first-class Kubernetes workloads — every step in the loop a span.</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:18px">
-        <img src="assets/holmesgpt.png" alt="HolmesGPT" style="height:56px;width:auto;object-fit:contain;align-self:flex-start">
-        <span style="font-family:var(--font-display);font-size:34px;font-weight:500">HolmesGPT</span>
-        <span style="font-size:28px;font-weight:300;line-height:1.4">An agentic SRE that reads your OpenTelemetry data and calls tools over MCP.</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:18px">
-        <img src="assets/k8sgpt.svg" alt="k8sgpt" style="height:56px;width:auto;object-fit:contain;align-self:flex-start">
-        <span style="font-family:var(--font-display);font-size:34px;font-weight:500">k8sgpt</span>
-        <span style="font-size:28px;font-weight:300;line-height:1.4">Scans the cluster, explains what it finds in language a human can act on.</span>
-      </div>
-    </div>
-    <p style="position:absolute;left:120px;top:790px;width:1680px;font-size:34px;line-height:1.4;font-weight:300">If your spans lack semantic context, <span class="amber-text" data-emphasis="amber">the AI SRE hallucinates — confidently, at scale.</span></p>
-    <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">The model isn't the answer. The legible data is. That is the whole argument for conventions, made by the tools rather than by us.</p>
-  </section>
 
   <!-- 8.3 — L04 · AAIF + coding agents -->
   <section data-label="Watch your own coding agent" class="ground-paper">
@@ -1377,7 +1015,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="axis" style="top:706px"></div>
     <!-- Mascot asleep on the axis, same treatment as the cover: the rule passes
          behind its lower belly, scaled from the cover's 322px/152px offset. -->
-    <img src="assets/capybara-mascot.png" alt="" class="mascot" style="right:150px;top:579px;width:270px;z-index:1;transform:rotate(13deg)">
+    <img src="img/mascots/capybara-standing.png" alt="" class="mascot" style="right:150px;bottom:70px;width:250px;z-index:1">
 
     <h2 class="title" style="position:absolute;left:120px;top:140px;width:1150px;font-size:76px">Build the footprints before you need them.</h2>
 
@@ -1410,6 +1048,377 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       </div>
     </div>
   </section>
+  <!-- Appendix — slides cut from the flow, kept for questions -->
+  <section data-label="Divider — Appendix" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--blue)"></div>
+    <div style="position:absolute;left:120px;top:320px;width:1100px">
+      <div style="font-family:var(--font-display);font-size:180px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)">&nbsp;</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:0">Appendix</h2>
+      <p style="font-size:36px;font-weight:300;color:var(--on-ink);margin:28px 0 0;max-width:900px">Cut for time, not because they are wrong. Kept so a question has a slide.</p>
+    </div>
+  </section>
+
+  <section data-label="Two ways you meet an agent" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Two audiences, one dependency</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">You either build one, or you run someone else's</h2>
+    <div style="position:absolute;left:120px;right:120px;top:420px;display:grid;grid-template-columns:1fr 1fr;gap:90px">
+      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)">You build it</span>
+        <span style="font-size:32px;font-weight:300;line-height:1.4">LangChain, LangGraph, Spring AI, LangChain4j. You choose the framework, so you choose what it emits.</span>
+        <span style="font-size:26px;line-height:1.45;color:var(--muted-ink);margin-top:auto">Your problem: which convention, and what it leaves out.</span>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-text)">You run someone else's</span>
+        <span style="font-size:32px;font-weight:300;line-height:1.4">kagent, HolmesGPT, k8sgpt, Copilots in your tooling. You did not choose the instrumentation.</span>
+        <span style="font-size:26px;line-height:1.45;margin-top:auto">Two problems, not one. It <em>reads</em> your telemetry, so it is only as good as what it reads — and it <em>acts</em> on your systems, so <span class="amber-text" data-emphasis="amber">you need its telemetry too</span>.</span>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1650px">Most of us are both. The conventions are what make the second case survivable, which is why the first case matters even if you never build an agent.</p>
+  </section>
+
+  <!-- 1.2 — L04 Text + diagram -->
+  <section data-label="We keep changing what we have to understand" class="ground-paper">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">We keep changing what we have to understand</h2>
+    <div style="position:absolute;left:120px;right:120px;top:470px">
+      <div class="axis" style="left:0;right:0;top:0"></div>
+      <div style="position:relative;display:flex;justify-content:space-between">
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-amber is-halo" style="position:relative;left:0;top:0;margin:-13px 0 0" data-emphasis="amber"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:44px">
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px">Monolith</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Microservices</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Event-driven</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:right">Agent-based</span>
+      </div>
+    </div>
+    <p class="body" style="position:absolute;left:120px;top:760px;width:1450px">Each step solved a real problem and added complexity somewhere else. Building got steadily easier. <strong style="font-weight:600">Understanding got harder every single time.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:900px">We are four architectures deep and still reaching for tools designed for the first one.</p>
+  </section>
+
+  <!-- 1.4 — L07 Figures · one aligned column -->
+  <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The practice isn't wrong. It's incomplete.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
+    <div style="position:absolute;left:120px;right:120px;top:390px;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">stack trace</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:40px;font-weight:600">reasoning chain</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">status code</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">quality signal</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">RPS &amp; latency</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">tokens, cost, blast radius</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">static call graph</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">dynamic tool invocation</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">replayable request</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">non-deterministic run</span>
+      </div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:850px"></div>
+    <p class="small" style="position:absolute;left:120px;top:900px">The old practice was right for its time. We have to build the equivalents.</p>
+  </section>
+
+  <!-- 1.5 — L05 Waterfall -->
+  <section data-label="One run, four kinds of span" class="ground-ink">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">One run, four kinds of span</h2>
+    <div class="waterfall" style="position:absolute;left:120px;right:120px;top:340px">
+      <div class="wf-row">
+        <span class="wf-label">invoke_agent</span>
+        <div class="wf-track"><div class="wf-bar" style="--x:0;--w:100%"></div></div>
+        <span class="wf-dur">12.26 s</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">chat claude-sonnet-5</span>
+        <div class="wf-track"><div class="wf-bar is-blue-lift" style="--x:0;--w:32.4%"></div></div>
+        <span class="wf-dur">3.97 s</span>
+      </div>
+      <div class="wf-row is-amber">
+        <span class="wf-label">└ POST</span>
+        <div class="wf-track"><div class="wf-bar is-amber" style="--x:0.4%;--w:31.9%" data-emphasis="amber"></div></div>
+        <span class="wf-dur">3.91 s</span>
+      </div>
+      <div class="wf-row">
+        <span class="wf-label">execute_tool</span>
+        <div class="wf-track"><div class="wf-bar is-blue-mute" style="--x:32.5%;--w:0.4%"></div></div>
+        <span class="wf-dur">54 µs</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:452px;right:120px;top:790px;height:1px;background:var(--navy)"></div>
+    <p class="small" style="position:absolute;left:452px;top:820px">Measured on a real run. The <span style="font-family:var(--font-mono)">POST</span> comes free from your HTTP instrumentation and carries no GenAI meaning — yet it is 2.35 of the 2.51 seconds the model call took.</p>
+  </section>
+
+  <!-- 2.3 — L07 Figures · project marks -->
+  <section data-label="Legitimate differences" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Why they diverged</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1500px;font-size:72px"><span class="amber-text" data-emphasis="amber">Legitimate differences</span>, not naming preferences</h2>
+    <div style="position:absolute;left:120px;right:120px;top:438px;display:grid;grid-template-columns:repeat(5,1fr);gap:26px">
+      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
+        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box"><img src="assets/otel-icon.svg" alt="OTel GenAI" style="width:100%;height:100%;object-fit:contain"></span>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">OTel GenAI</span>
+          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">vendor-neutral</span>
+        </div>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
+        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/phoenix.jpg" alt="OpenInference" style="width:100%;height:100%;object-fit:cover"></span>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">OpenInference</span>
+          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">eval workflows</span>
+        </div>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
+        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/traceloop.jpg" alt="OpenLLMetry" style="width:100%;height:100%;object-fit:cover"></span>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">OpenLLMetry</span>
+          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">dev ergonomics</span>
+        </div>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
+        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/langchain.png" alt="LangSmith" style="width:100%;height:100%;object-fit:cover"></span>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">LangSmith</span>
+          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">LangChain-native</span>
+        </div>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:46px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:26px">
+        <span style="width:96px;height:96px;flex:none;border-radius:22px;overflow:hidden;background:var(--paper);display:block"><img src="assets/langfuse.png" alt="Langfuse" style="width:100%;height:100%;object-fit:cover"></span>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:500;line-height:1.15">Langfuse</span>
+          <span style="font-size:24px;font-weight:300;color:var(--muted-ink);line-height:1.3">maps the others in</span>
+        </div>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:830px">Each optimizes for something real. They are not going away soon.</p>
+  </section>
+
+  <section data-label="Same bytes, four renderings" class="ground-paper">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Same bytes. The viewer decides whether it's legible.</h2>
+    <div style="position:absolute;left:120px;right:120px;top:360px" data-emphasis="amber"><svg viewBox="0 0 1680 260" style="width:100%;height:auto"><rect x="0" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="22" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Jaeger</text><text x="22" y="86" font-family="JetBrains Mono" font-size="17" fill="#5B6180">llm.model_name=…</text><text x="22" y="120" font-family="JetBrains Mono" font-size="17" fill="#5B6180">gen_ai.usage.in=983</text><text x="22" y="154" font-family="JetBrains Mono" font-size="17" fill="#5B6180">mcp.method.name=…</text><text x="22" y="188" font-family="JetBrains Mono" font-size="17" fill="#5B6180">jsonrpc.request.id=5</text><text x="22" y="228" font-family="Public Sans" font-size="19" fill="#5B6180">raw tags, no meaning</text><rect x="430" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="452" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Phoenix</text><rect x="452" y="76" width="330" height="26" rx="13" fill="#A9B6EE"/><rect x="452" y="116" width="230" height="26" rx="13" fill="#A9B6EE"/><text x="452" y="196" font-family="Public Sans" font-size="19" fill="#8A5B00">plain spans —</text><text x="452" y="222" font-family="Public Sans" font-size="19" fill="#8A5B00">no tokens, no cost, no model</text><rect x="860" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="882" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenLIT</text><rect x="882" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="882" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="934.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="994" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1046.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1106" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1158.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="882" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="882" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="1290" y="0" width="390" height="250" rx="12" fill="#F2ECE0"/><text x="1312" y="40" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text><rect x="1312" y="76" width="330" height="26" rx="13" fill="#425CC7"/><rect x="1312" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1364.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">983 tok</text><rect x="1424" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1476.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">$0.004</text><rect x="1536" y="120" width="104" height="30" rx="15" fill="#F5A800"/><text x="1588.0" y="141" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#10142E">sonnet</text><text x="1312" y="200" font-family="Public Sans" font-size="19" fill="#5B6180">tokens · cost · model,</text><text x="1312" y="226" font-family="Public Sans" font-size="19" fill="#5B6180">read straight off the span</text><rect x="430" y="0" width="390" height="250" rx="12" fill="none" stroke="#F5A800" stroke-width="3"/></svg></div>
+    <p class="small" style="position:absolute;left:120px;top:730px;width:1680px">Phoenix is GenAI-native but <em>OpenInference</em>-native: it accepts <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and renders them as plain spans. That is the fragmentation tax, visible.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Honesty: Jaeger and Phoenix ingestion are both confirmed on a live run — Phoenix took the <span style="font-family:var(--font-mono)">gen_ai.*</span> spans and reported 2 traces at 6.5s p50. How each UI <em>renders</em> them is drawn from documentation; these panes are wireframes, not screenshots.</p>
+  </section>
+  <section data-label="Developers instrument, platform canonicalizes" class="ground-paper">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Developers instrument. The platform canonicalizes.</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:400px;width:820px">
+      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">The collector</span> is where a policy about telemetry can live.</p>
+      <p class="axis-list-item">One place. Any language. No application change.</p>
+      <p class="axis-list-item">Which is why a wrong convention is a config change, not a rewrite.</p>
+    </div>
+    <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);padding:44px 40px;display:flex;flex-direction:column;justify-content:space-between">
+      <div style="display:flex;flex-direction:column;gap:20px"><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">DEVELOPERS OWN</span>
+        <div style="display:flex;gap:14px;flex-wrap:wrap"><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the app</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the framework</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">the convention</span></div></div>
+      <div style="position:relative;border-top:2px dashed var(--amber);margin:4px 0">
+        <span style="position:absolute;left:50%;top:-19px;transform:translateX(-50%);background:var(--paper-2);padding:0 16px;font-family:var(--font-mono);font-size:21px;color:var(--amber-text)">the collector</span></div>
+      <div style="display:flex;flex-direction:column;gap:20px"><span style="font-family:var(--font-mono);font-size:18px;letter-spacing:.16em;color:var(--blue)">THE PLATFORM OWNS</span>
+        <div style="display:flex;gap:14px;flex-wrap:wrap"><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">normalize</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">redact</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">sample</span><span style="padding:11px 20px;border-radius:12px;background:var(--paper);font-family:var(--font-mono);font-size:21px;color:var(--ink);white-space:nowrap">route</span></div></div>
+    </div>
+  </section>
+  <!-- 3.5 — L04 · what OTel covers today -->
+  <section data-label="OTel covers what they were built to fill" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Why the calculus changed</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1560px;font-size:68px">They filled a real gap. OTel has since filled it too.</h2>
+    <div style="position:absolute;left:120px;right:120px;top:400px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">the model call itself</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">chat span · gen_ai.operation.name</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">token accounting and cost</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.usage.input_tokens / output_tokens</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">which tool ran</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">execute_tool · gen_ai.tool.name</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">the prompt and the completion</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">gen_ai.input.messages / output.messages — opt-in</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:34px">
+        <span style="width:500px;flex:none;text-align:right;font-size:27px;font-weight:300;color:var(--muted-ink)">&quot;was it any good?&quot;</span>
+        <span style="width:30px;flex:none;font-family:var(--font-mono);font-size:24px;color:var(--blue)">→</span>
+        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-mono);font-size:25px">gen_ai.evaluation.result</span>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Every attribute on the right is one we measured coming out of a running agent today — not a roadmap item. Choosing OpenInference or OpenLLMetry was a reasonable call when that column was empty.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">It is a different call now — with a caveat about how settled any of this is that we come back to shortly.</p>
+  </section>
+
+  <section data-label="Nobody is proposing a fifth convention" class="ground-paper">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Everyone is converging on the same target</h2>
+    <div style="position:absolute;left:120px;right:120px;top:340px" data-emphasis="amber"><svg viewBox="0 0 1680 360" style="width:100%;height:auto">
+      <text x="210.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">collector processor</text>
+      <text x="210.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">gen_ai_normalizer</text>
+      <circle cx="210.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M210.0 118 C210.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <text x="630.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">Arconia</text>
+      <text x="630.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">…ai.flavor</text>
+      <circle cx="630.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M630.0 118 C630.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <text x="1050.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">Phoenix</text>
+      <text x="1050.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">translation guide</text>
+      <circle cx="1050.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M1050.0 118 C1050.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <text x="1470.0" y="34" text-anchor="middle" font-family="Space Grotesk" font-size="30" font-weight="500" fill="#10142E">OpenLIT</text>
+      <text x="1470.0" y="70" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">native gen_ai.*</text>
+      <circle cx="1470.0" cy="108" r="10" fill="#425CC7"/>
+      <path d="M1470.0 118 C1470.0 190 840 180 840 250" fill="none" stroke="#A9B6EE" stroke-width="2.5"/>
+      <circle cx="840" cy="268" r="20" fill="#F5A800"/>
+      <text x="840" y="330" text-anchor="middle" font-family="JetBrains Mono" font-size="40" fill="#8A5B00">gen_ai.*</text>
+    </svg></div>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px"><strong style="font-weight:600;color:var(--ink)">Arconia</strong> (Thomas Vitale) is how the Spring community gets there — one property and Spring AI re-emits under a different convention, no code change.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Different layers, one destination. Back in beat 2 one call fanned out to five names; the fragmentation is being closed from every one of those directions.</p>
+  </section>
+
+  <!-- 6.4 — L03 Statement -->
+  <!-- 6.3 — L06 Code · the model's own output, and what it does and does not prove -->
+  <section data-label="What the model asked for" class="ground-ink">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">replaces gen_ai.prompt / gen_ai.completion</p>
+    <h2 class="title" style="position:absolute;left:120px;top:190px;width:1560px;font-size:64px">The model&rsquo;s output remembers what it <span class="amber-text" data-emphasis="amber">asked for</span></h2>
+    <div class="code-block" style="position:absolute;left:120px;right:120px;top:390px">
+      <pre style="font-size:30px;line-height:1.9"><span class="c-attr">gen_ai.output.messages</span>
+  parts[0]  <span class="c-key">reasoning</span>      <span class="c-str">"two rows left — check who removed the rest"</span>
+  parts[1]  <span class="c-str">tool_call</span>      audit_log <span class="c-str">{ "limit": 20 }</span>
+  finish_reason            tool_call</pre>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:754px;width:1680px">That <span style="font-family:var(--font-mono);color:var(--on-ink)">tool_call</span> part carries the name <em>and the arguments</em> — the content the <span style="font-family:var(--font-mono);color:var(--on-ink)">execute_tool</span> span did not have. <strong style="font-weight:600;color:var(--paper)">But it is what the model asked for, not what ran — and it never carries the result.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:870px;width:1680px">A <span style="font-family:var(--font-mono)">reasoning</span> part only appears when the model emits thinking — our run carried text and tool_call.</p>
+  </section>
+  <section data-label="The footprint is empty" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The limit of default instrumentation</p>
+    <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">The footprint exists. The footprint is <span class="amber-text" data-emphasis="amber">empty</span>.</h2>
+    <p class="small" style="position:absolute;left:120px;top:860px">With default instrumentation you can prove the span fired. You cannot prove what it executed.</p>
+  </section>
+
+  <!-- 7.4 — L07 · request-path placement diagram -->
+  <section data-label="Three placements, three jobs" class="ground-paper">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:110px;width:1400px;font-size:72px">Three placements, three different jobs</h2>
+    <div style="position:absolute;left:120px;right:120px;top:290px" data-emphasis="amber"><svg viewBox="0 0 1680 430" style="width:100%;height:auto">
+      <text x="0" y="26" font-family="JetBrains Mono" font-size="21" fill="#5B6180">THE REQUEST PATH</text>
+      <line x1="0" y1="120" x2="1680" y2="120" stroke="#A9B6EE" stroke-width="3"/>
+      <circle cx="60" cy="120" r="11" fill="#425CC7"/>
+      <text x="60" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">request</text>
+      <circle cx="1620" cy="120" r="11" fill="#425CC7"/>
+      <text x="1620" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#5B6180">response</text>
+      <rect x="700" y="98" width="280" height="44" rx="22" fill="#202C5F"/>
+      <text x="840" y="128" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#FAF7F2">agent run</text>
+
+      <!-- offline: before the path exists -->
+      <rect x="0" y="250" width="470" height="150" rx="8" fill="#F2ECE0"/>
+      <text x="30" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">offline</text>
+      <text x="30" y="330" font-family="Public Sans" font-size="22" fill="#5B6180">pre-deploy, curated datasets</text>
+      <text x="30" y="362" font-family="Public Sans" font-size="22" fill="#10142E">gates the deploy</text>
+      <path d="M235 250 L235 190 L120 190 L120 134" fill="none" stroke="#A9B6EE" stroke-width="2" stroke-dasharray="6 7"/>
+
+      <!-- online: alongside, non-blocking -->
+      <rect x="605" y="250" width="470" height="150" rx="8" fill="#F2ECE0"/>
+      <text x="635" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">online</text>
+      <text x="635" y="330" font-family="Public Sans" font-size="22" fill="#5B6180">live traffic, sampled</text>
+      <text x="635" y="362" font-family="Public Sans" font-size="22" fill="#10142E">non-blocking</text>
+      <path d="M840 250 L840 150" fill="none" stroke="#A9B6EE" stroke-width="2" stroke-dasharray="6 7"/>
+
+      <!-- inline: in the path itself -->
+      <rect x="1210" y="250" width="470" height="150" rx="8" fill="#F5A800"/>
+      <text x="1240" y="292" font-family="Space Grotesk" font-size="34" font-weight="500" fill="#10142E">inline</text>
+      <text x="1240" y="330" font-family="Public Sans" font-size="22" fill="#10142E">synchronous, in the path</text>
+      <text x="1240" y="362" font-family="Public Sans" font-size="22" font-weight="600" fill="#10142E">gates the response</text>
+      <path d="M1445 250 L1445 190 L1560 190 L1560 134" fill="none" stroke="#F5A800" stroke-width="3"/>
+      <circle cx="1560" cy="120" r="14" fill="#F5A800"/>
+    </svg></div>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">Inline adds latency to <em>every</em> request. Online adds production cost, so sample. Our two dimensions are one of each: <span style="font-family:var(--font-mono)">remediation_safety</span> is gate-shaped, <span style="font-family:var(--font-mono)">root_cause_correctness</span> is metric-shaped.</p>
+  </section>
+
+  <!-- 8.0 — L04 · the realistic path (ink) -->
+  <!-- 7.7 — L07 · the production shape of the thing we just admitted cheating on -->
+  <section data-label="Somebody built it properly" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">OpenSearch Agent Health · Apache-2.0</p>
+    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1600px;font-size:60px">The version we cheated on, <span class="amber-text" data-emphasis="amber">built properly</span></h2>
+    <div style="position:absolute;left:120px;right:120px;top:352px">
+      <div style="display:flex;gap:0;padding-bottom:6px">
+        <span style="width:300px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--muted-ink)"></span>
+        <span style="width:560px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--muted-ink)">OUR DEMO</span>
+        <span style="flex:1;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">AGENT HEALTH</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
+        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">when it runs</span>
+        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)">inline, in the request path</span>
+        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">offline, in batch experiments</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
+        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">judged against</span>
+        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)">a rubric in a prompt</span>
+        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">a human-defined <em>Golden Path</em> trajectory</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
+        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">across runs</span>
+        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)">one run at a time</span>
+        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">run-to-run comparison, pass rate over time</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:0;padding:18px 0;border-top:1px solid var(--paper-2)">
+        <span style="width:300px;flex:none;font-size:24px;font-weight:300;color:var(--muted-ink)">where it lands</span>
+        <span style="width:560px;flex:none;font-size:24px;line-height:1.35;color:var(--ink)"><span style="font-family:var(--font-mono);font-size:22px">gen_ai.evaluation.result</span> on the span</span>
+        <span style="flex:1;font-size:24px;line-height:1.35;color:var(--ink)">the same, plus its own store and UI</span>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:754px;width:1680px">The gold set we said was the mitigation, shipped by someone else. <strong style="font-weight:600;color:var(--ink)">Copy the shape, don&rsquo;t adopt it blind</strong> — v0.5.2, and its SDK is marked experimental.</p>
+    <p class="small" style="position:absolute;left:120px;top:850px;width:1680px">And it is the revision problem in the wild: its own OTel guide still specifies <span style="font-family:var(--font-mono)">gen_ai.system</span>, which the registry replaced with <span style="font-family:var(--font-mono)">gen_ai.provider.name</span>. Nobody is behind on purpose.</p>
+  </section>
+  <section data-label="Who reads your telemetry next" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">CNCF sandbox and friends</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">Your next reader isn't a human</h2>
+    <div style="position:absolute;left:120px;right:120px;top:430px;display:grid;grid-template-columns:repeat(3,1fr);gap:70px">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <img src="assets/kagent.png" alt="kagent" style="height:56px;width:auto;object-fit:contain;align-self:flex-start">
+        <span style="font-family:var(--font-display);font-size:34px;font-weight:500">kagent</span>
+        <span style="font-size:28px;font-weight:300;line-height:1.4">Agents as first-class Kubernetes workloads — every step in the loop a span.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <img src="assets/holmesgpt.png" alt="HolmesGPT" style="height:56px;width:auto;object-fit:contain;align-self:flex-start">
+        <span style="font-family:var(--font-display);font-size:34px;font-weight:500">HolmesGPT</span>
+        <span style="font-size:28px;font-weight:300;line-height:1.4">An agentic SRE that reads your OpenTelemetry data and calls tools over MCP.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <img src="assets/k8sgpt.svg" alt="k8sgpt" style="height:56px;width:auto;object-fit:contain;align-self:flex-start">
+        <span style="font-family:var(--font-display);font-size:34px;font-weight:500">k8sgpt</span>
+        <span style="font-size:28px;font-weight:300;line-height:1.4">Scans the cluster, explains what it finds in language a human can act on.</span>
+      </div>
+    </div>
+    <p style="position:absolute;left:120px;top:790px;width:1680px;font-size:34px;line-height:1.4;font-weight:300">If your spans lack semantic context, <span class="amber-text" data-emphasis="amber">the AI SRE hallucinates — confidently, at scale.</span></p>
+    <p class="small" style="position:absolute;left:120px;top:890px;width:1680px">The model isn't the answer. The legible data is. That is the whole argument for conventions, made by the tools rather than by us.</p>
+  </section>
 
 </deck-stage>
 
@@ -1417,56 +1426,57 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 [
   "▸ KASPER · Beat 0 — cold open (4 min, slides 1–5). Cover. Hold here while the room settles. Title, both names, LinkedIn QRs in the corners. Say we both ran into this the hard way rather than reading the subtitle aloud.",
   "Who, fast — 20 seconds each, no CV. The slide carries the credentials, so do not read them out. Worth landing: we are both CNCF and AAIF ambassadors, because that second one pays off at slide 49. If asked: Adriana genuinely loves capybaras — that is why the demo agent is called Capybara and why there is one asleep in the footer of every slide.",
-  "Slow down here — this is the grounding the room needs before any incident lands. The point is not that agents are coming; it is that they are already the interface. Platform teams are shipping them beside the service catalogue, in the incident channel, in CI. Ask the room: who already has one of these in their portal? Hands will go up. Land the turn: none of these are demos. They hold credentials, they read production data, and increasingly they act on it — which is what makes this an operations problem rather than an AI problem. Careful: do not list vendors or products here; kagent, HolmesGPT and the coding agents get their own slides in beat 8, and naming them now spends that payoff early.",
-  "Two ways you meet an agent, and this slide tells the room which of them they are. Most people are both. Land: if you only ever RUN someone else's agent, the conventions still decide whether the thing reading your telemetry is any good. This is the slide that keeps the SRE half of the room with us through the framework beats.",
+  "Slow down here — this is the grounding the room needs before any incident lands. The point is not that agents are coming; it is that they are already the interface. Platform teams are shipping them beside the service catalogue, in the incident channel, in CI. Ask the room: who already has one of these in their portal? Hands will go up. Land the turn: none of these are demos. They hold credentials, they read production data, and increasingly they act on it — which is what makes this an operations problem rather than an AI problem. Careful: do not list vendors or products here; kagent, HolmesGPT and the coding agents get their own slides in beat 8, and naming them now spends that payoff early. Fold in the build-versus-run split here, in one line: most of us are both, and the conventions are what make running someone else's agent survivable.",
   "The whole talk in one sentence. The incident is OVER — nobody is asking you to stop it, they are asking you to explain the decision. Pause on 'why'. Land: the logs say the call succeeded, the trace says it took four seconds, neither says what it was thinking. One deliberate misdirection to be aware of: 'it deleted the rows' invites the room to assume the agent did it, and at slide 23 we reveal that no agent did — a neighbouring service went straight at the database. That is the intended shape, so do not name a culprit here. If you say 'the agent deleted the rows' out loud you contradict yourself twenty minutes later.",
   "▸ HANDOFF → ADRIANA · Beat 1 (5.5 min, slides 6–12). Why agent telemetry is a different problem, not a harder version of the old one.",
-  "Four architectures deep. Each step solved a real problem and added complexity somewhere else. Land: building got steadily easier, understanding got harder every single time — and we still reach for tools designed for the monolith. Careful: this is a run-up, not an argument about microservices. Keep it moving.",
   "The vocabulary, defined once, on the scenario we then demo. Do not lecture — most of the room knows some of these, nobody is offended by thirty seconds of grounding. Land the shape: an agent is a LOOP. The model does not run anything; it picks the next step, and the loop keeps going until the model says it is done. MCP is just how it gets handed tools it did not ship with. Tokens are the billing unit and the only cost signal you get. Land: only two of these are yours — the prompt and the tool list. How many model calls, which tools, in what order, is decided at runtime, which is why the next slide's four properties are hard. If asked: these are the real parts of the demo, so when Capybara shows up in beat 4 it is this diagram made concrete.",
   "The path the spans take, on the stack we actually demo. Keep it quick — this is orientation, not architecture review. Land the headline: nothing in this path is GenAI-specific. It is the same OTLP, the same collector and the same backends you already run, which is the entire reason OTel is the right target and is the argument beat 3 then makes properly. Point at the middle column: the agent does not know what is downstream, so attributes can be rewritten there without touching application code — that is beat 5's demo in one sentence. Careful: gen_ai_normalizer is listed as a processor because it is one, but do not explain it here; it gets its own beat. If asked why Jaeger is the demo default: it is what the run script brings up, and beat 2 shows what it does and does not render. If asked about the MCP client row: that is the default path. The same agent can declare those tools locally instead, which changes which instrumentation writes the tool span — the whole of beat 4 — but nothing about the pipeline to the right of it.",
   "Fast through the first three properties. Slow right down on the fourth: there is no stack trace for why. Land: the first three are uncomfortable, the fourth is what this talk is about — and it comes back as the hard limit at slide 38.",
-  "The old practice was not wrong, it was right for its time. Land: 'reasoning chain' is the equivalent we chase for the next twenty minutes. Careful: do not imply we deliver it — slide 38 is where we admit nobody can.",
-  "What one agent run actually looks like. Point at POST: it comes free from your HTTP instrumentation, carries no GenAI meaning, and it is 3.91 of the 3.97 seconds the model call took. Land: your existing instrumentation already sees the time and none of the meaning. This waterfall returns at slide 34 carrying the deletion. If asked: measured, from the Python agent in demos/agents/beaver-sre — the same trace as slide 34. Durations re-measured 2026-08-11 after the scenario changed: the POST is 2.35 of the 2.51 seconds. The point is unchanged — the span carrying the wall time has no GenAI meaning in it.",
   "▸ ADRIANA CONTINUES · Beat 2 (4 min, slides 13–16). The competing conventions, why they exist, and what they cost you.",
   "One model call, five vocabularies. Do not read all five — point at two and let the room feel the problem. Land: amber is OpenInference, which is what our second demo emits and what we normalize at slide 31; OTel GenAI is the one the others are converging on.",
-  "These are NOT arbitrary naming preferences — each optimizes for something real, which is why they will not simply go away. Careful: credit Salaboy out loud here. The framing is his and it is deliberately not on the slide.",
-  "Four renderings of identical bytes. Land: Phoenix is GenAI-native but OpenInference-native, so it accepts gen_ai.* spans and renders them as plain spans — the fragmentation tax, made visible. Careful: Jaeger AND Phoenix ingestion are both confirmed on a live run (Phoenix reported 2 traces at 6.5s p50). What each UI looks like is drawn from documentation — these panes are wireframes, not screenshots. The slide says so; say it too.",
   "▸ HANDOFF → KASPER · Beat 3 (3 min, slides 17–21). Why OTel is the right target, argued from measurement rather than loyalty.",
-  "The measured spine of the whole argument: three independent stacks already emit gen_ai.* without being asked to agree. Careful: 'for the core dimensions' is load-bearing — beat 5 shows exactly what does not converge. Do not overclaim here and get caught at slide 31. One provenance caveat if pressed on the Arconia column: that measurement is a dated capture from 2026-07, and the Spring AI demo that produced it was removed from the repo on 2026-08-11. The number is in ANALYSIS.md and the code is in git history. Say 'we measured it', not 'you can run it' — the other two columns, OpenLIT and the normalizer output, are both still reproducible from demos/.",
+  "The measured spine of the whole argument: three independent stacks already emit gen_ai.* without being asked to agree. Careful: 'for the core dimensions' is load-bearing — beat 5 shows exactly what does not converge. Do not overclaim here and get caught at slide 31. One provenance caveat if pressed on the Arconia column: that measurement is a dated capture from 2026-07, and the Spring AI demo that produced it was removed from the repo on 2026-08-11. The number is in ANALYSIS.md and the code is in git history. Say 'we measured it', not 'you can run it' — the other two columns, OpenLIT and the normalizer output, are both still reproducible from demos/. One sentence if the room looks sceptical: the other conventions filled a real gap when OTel had nothing, and OTel has since filled it. Choosing OTel today is a different call than it was two years ago, not a criticism of anyone who chose otherwise.",
   "The capybara incident is a DATABASE incident with an LLM in front of it. The span you need next is the SQL span, the pod restart, the deploy — and a GenAI-only convention gives you a GenAI-only island. Careful: flag clearly that 'decisive advantage' is our position, not a measurement. The slide says so on purpose. Reconcile this with beat 6 before someone does it for you: this slide says a shared vocabulary makes cross-domain correlation possible, and slide 36 shows the SQL landing in a different trace. Not a contradiction — conventions are about naming, propagation is a separate mechanism, and what we hit is a propagation bug in one library. Worth saying plainly: the thing that actually carried the attribution in our incident was the database's own audit trail, not the trace.",
-  "The collector is where a policy about telemetry can live: one place, any language, no application change. Careful: do NOT assert 'you already run a collector' — ask for a show of hands instead. This framing is what beat 5 then demonstrates.",
-  "The abstract's argument made explicit: choosing OpenInference or OpenLLMetry was the RIGHT call when the right-hand column was empty. Every attribute on the right is one we measured coming out of a running agent today, not a roadmap item. Land: it is a different call now. Careful: do not be smug — the alternatives were correct at the time. And do NOT answer the Stable question here; this slide only hints, because the reveal is slide 25.",
   "Beat 4 opens. Meet Capybara — the agent, not the animal, though Adriana will forgive the confusion. Four tools now, and audit_log is the one in amber for a reason: it is the tool that answers 'who did this'. delete_records is still there and still destructive, but the story is no longer 'the agent deleted things'. Do not oversell the mascot; the room came for the telemetry.",
-  "The demo setup, and the most important sentence in beat 4: something deleted production and NEITHER agent did it. Walk the diagram in this order — kangaroo-service, another team's deployment, connects straight to Postgres as the db role kangaroo and deletes every free-plan row. Five rows become two. Then, and only then, we ask each agent the same question. Two agents, one database, one collector, so anything that differs in the telemetry belongs to the platform rather than the story. If asked why the agent is not the villain given the talk's title: that is deliberate and it is the stronger argument — the agent behaves well here and you still cannot reconstruct what happened. Say the root cause out loud too: it is a grant, not a bug. kangaroo was given DELETE on a table it has no business touching. On metrics: capybara_records is an observable gauge — it reads the table when the SDK collects, so it cannot drift from reality even if something deletes rows without telling us, which is exactly this scenario. Export interval is 15s, so if you want the graph to move while you talk, press the button and keep talking. There is a counter too, capybara_records_deleted_total, labelled by the authenticated database role — that is the same client-versus-role distinction the audit trail makes, one signal earlier. Worth one sentence, not a detour: the metric tells you something happened and roughly who, the trace and the audit trail tell you what.",
+  "The demo setup, and the most important sentence in beat 4: something deleted production and NEITHER agent did it. Walk the diagram in this order — kangaroo-service, another team's deployment, connects straight to Postgres as the db role kangaroo and deletes every free-plan row. Five rows become two. Then, and only then, we ask each agent the same question. Two agents, one database, one collector, so anything that differs in the telemetry belongs to the platform rather than the story. If asked why the agent is not the villain given the talk's title: that is deliberate and it is the stronger argument — the agent behaves well here and you still cannot reconstruct what happened. Say the root cause out loud too: it is a grant, not a bug. kangaroo was given DELETE on a table it has no business touching. On metrics: capybara_records is an observable gauge — it reads the table when the SDK collects, so it cannot drift from reality even if something deletes rows without telling us, which is exactly this scenario. Export interval is 15s, so if you want the graph to move while you talk, press the button and keep talking. There is a counter too, capybara_records_deleted_total, labelled by the authenticated database role — that is the same client-versus-role distinction the audit trail makes, one signal earlier. Worth one sentence, not a detour: the metric tells you something happened and roughly who, the trace and the audit trail tell you what. Say, do not show: one incident, one database, one collector, so anything that differs in the telemetry belongs to the platform rather than the story. And the row count is a gauge — the deletion lands in Prometheus as a step from five to two before anyone asks.",
   "The conventions moved repo in June. If your bookmarks still point at the old URL, that is the move you missed — it is a redirect notice now. Land: no releases, no tags, nothing to pin. You can follow a commit or a dated snapshot, but there is no schema URL to pin against. Careful: describe the move; do not read the redirect banner aloud.",
-  "Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development — subject to breaking change. Say it plainly rather than implying more maturity than exists; that sentence used to be printed on the slide, which is not where a stage direction belongs. This is the reveal slide 21 deliberately set up, so do not undercut it by having already given the number away. If asked how current this is: verified 2026-08-09 against the model YAML in semantic-conventions-genai — registry, spans, metrics and events are all stability:development. Also worth saying here, now that the Arconia flavor slide is cut: a tool can claim OTel GenAI conformance and still emit the deprecated gen_ai.system rather than gen_ai.provider.name. 'Conforms to OTel GenAI' is necessary but not sufficient — which revision it targets matters, and our own Quarkus stack proves it by still emitting gen_ai.prompt/completion. If the room needs this made concrete rather than abstract, the OTel Demo is the story: it chose app.* for its custom attributes in 2022, the project reserved app.* for client-side telemetry in 2023, and the rename to demo.* only landed in 2026 — breaking every dashboard and query built on it. It took Weaver plus a mentorship contributor to do. That is what convention instability costs in practice, and it happened to OpenTelemetry's own reference app. A second, better example if you want one that is not us: OpenSearch's Agent Health project — an actively developed OSS evaluation framework — publishes an OTel instrumentation guide that tells you to set gen_ai.system, which is not in the registry at all any more, and gen_ai.tool.call_id, where the registry says gen_ai.tool.call.id. Checked 2026-08-10 against a repo pushed the day before. Not a criticism of them; it is what happens to everyone when a convention is still Development and keeps moving.",
+  "Land this plainly and let it sit. Zero. Every GenAI span, event, metric and attribute is Development — subject to breaking change. Say it plainly rather than implying more maturity than exists; that sentence used to be printed on the slide, which is not where a stage direction belongs. This is the reveal slide 21 deliberately set up, so do not undercut it by having already given the number away. If asked how current this is: verified 2026-08-09 against the model YAML in semantic-conventions-genai — registry, spans, metrics and events are all stability:development. Also worth saying here, now that the Arconia flavor slide is cut: a tool can claim OTel GenAI conformance and still emit the deprecated gen_ai.system rather than gen_ai.provider.name. 'Conforms to OTel GenAI' is necessary but not sufficient — which revision it targets matters, and our own Quarkus stack proves it by still emitting gen_ai.prompt/completion. If the room needs this made concrete rather than abstract, the OTel Demo is the story: it chose app.* for its custom attributes in 2022, the project reserved app.* for client-side telemetry in 2023, and the rename to demo.* only landed in 2026 — breaking every dashboard and query built on it. It took Weaver plus a mentorship contributor to do. That is what convention instability costs in practice, and it happened to OpenTelemetry's own reference app. A second, better example if you want one that is not us: OpenSearch's Agent Health project — an actively developed OSS evaluation framework — publishes an OTel instrumentation guide that tells you to set gen_ai.system, which is not in the registry at all any more, and gen_ai.tool.call_id, where the registry says gen_ai.tool.call.id. Checked 2026-08-10 against a repo pushed the day before. Not a criticism of them; it is what happens to everyone when a convention is still Development and keeps moving. A concrete example of revision drift rather than an abstract one: OpenSearch's agent-health, an actively developed OSS evaluation framework, ships an OTel guide telling you to set gen_ai.system — not in the registry any more — and gen_ai.tool.call_id where the registry says gen_ai.tool.call.id. Checked 2026-08-10. Not a criticism of them; it is what happens to everyone while a convention is Development.",
   "What arrives with no work at all. Careful: these values are REAL — captured verbatim from a capybara run on quarkus-langchain4j 1.12.2, and nothing on the slide was hand-written. Say 'we wrote none of this'. If asked: this is the Quarkus MCP agent, which is why the model reads claude-sonnet-4-6 — the extension sends top_k, which claude-sonnet-5 now rejects, so the demo pins the older model. That is a model-parameter incompatibility, not a telemetry finding. These are one specific capture, run 2026-08-10: 983 in, 69 out, that response id. The 983 is reproducible — it is the deterministic first call, system prompt plus the incident — but the output count and the response id will differ on every run, which is beat 1's non-determinism showing up in your own slide. If you demo live, say the input count matches and the rest will not.",
   "Two documented flags, six correct attributes. This is exactly what the docs promise you. Careful: present it as the promise and do not hedge — the whole point is that slide 28 is the reversal.",
   "…and on the MCP path they never fire. ToolSpanWrapper only wraps locally declared @Tool methods; MCP tool calls route through TracingMcpClientListener instead, and that listener list is hardcoded in McpRecorder, so you cannot register your own alongside it. Land: the framework has the correct code, it just does not run where MCP tools live. Careful: this IS measured on 1.12.2, the current release — we re-ran it specifically so we would not be asserting it about a version we were no longer running. Say the version out loud; the slide no longer narrates that we re-ran it. Frame it as 'the kind of gap you hit', not as an attack on the project. This is now demonstrable rather than asserted, and that is the strongest version of the slide. The agent exposes the same three operations twice — as local @Tool methods and over MCP — sharing one CapybaraPrompt.SYSTEM and one CapybaraDatabase class from capybara-db-core, so tool registration is the only variable. CAPYBARA_TOOLS=local gives you execute_tool spans with gen_ai.tool.call.arguments and .result; CAPYBARA_TOOLS=mcp gives you the tool name and nothing else. Every invoke_agent span is tagged capybara.tool_path so the two traces are trivial to tell apart. If you have the terminal, run both and diff them; if not, the claim still stands on the measurement. Same conclusion from the other direction: on the stack the OTel Demo pins (langchain-mcp-adapters), MCP tool calls DO carry arguments, because load_mcp_tools returns a plain StructuredTool and one instrumentation path covers both. Say 'in this framework', never 'with MCP'. scripts/verify-telemetry.py asserts the expected shape for whichever path ran.",
   "▸ HANDOFF → ADRIANA · Beat 5 (4 min, slides 29–32). Your tool does not speak OTel semantics — now what?",
   "Two places to fix it: downstream in the collector, or upstream in the SDK. Both land on OTel semconv as the target. Arconia gets its proper shout-out at slide 32 — here just plant that there are two layers.",
   "Say what this demo IS before reading the diff, because it is not the agent from beat 4. Same capybara incident, same three records, same three tools — but a Python agent instrumented with OpenInference instead of Quarkus with the OTel extension. One story, two conventions; that is the whole reason both demos exist. The measured diff, re-measured live on 2026-08-10: 31 span attributes down to 18 — 20 removed, 7 written, 11 untouched. All seven writes on the diagram are confirmed correct. Land llm.system: remove_originals is TRUE and it still comes through, because it is simply not in the processor's mapping table. That is why 'partial normalization' is the honest word. Careful: say the status out loud — alpha, traces only, no auto-detection — and that it ships in contrib 0.158.0, so adopting it is an image pull rather than a custom build. The donation is DONE: issue #46069 was closed 1 June 2026, so do not invite people to contribute to a finished thread. Best adoption evidence we have, and worth saying out loud: the OpenTelemetry Demo added this processor in its 3.0 agentic release — its collector config is literally gen_ai_normalizer with sources: openllmetry, converting its LangGraph agent's Traceloop telemetry into gen_ai.*. So the canonical OTel reference implementation reaches for the same tool for the same reason. Note they do NOT set remove_originals, so their spans keep both vocabularies — a different call from ours, and a fair one. Better survivor to point at than llm.system if you want the sharpest one: llm.finish_reason survives untouched even though OTel defines gen_ai.response.finish_reasons and the source attribute is sitting right there. Same for llm.token_count.total. It is not that the processor cannot map them — it just does not.",
-  "The half it cannot carry. This is the slide that keeps beat 5 honest, so do not skip it to save time. Beaver emits NO OTel vocabulary — the agent span, the tool spans and the model call all leave in OpenInference keys, and the collector rewrites all of it. Say that plainly, because it is the strong version of the claim: AGENT becomes invoke_agent, TOOL becomes execute_tool. Then the hole: the tool's result rides in output.value and there is no entry for it in mappings.go, which we read at contrib 0.158.0. So arguments convert and results do not. Land it as the pair with beat 4 — the MCP path records neither, the normalized path carries the arguments and loses the result. Two roads, same missing half. The sentence to land: a normalizer answers vocabulary drift, not forensic content. If asked whether we filed it: not yet, and that is a fair thing for someone in the room to pick up.",
-  "Nobody is proposing a fifth convention. This is a short survey, not a demo. Give Arconia a proper shout-out — Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream, one property and no code change. Careful: say clearly that we are NOT demoing it. Land: the fragmentation is being closed from several directions at once.",
+  "The half it cannot carry. This is the slide that keeps beat 5 honest, so do not skip it to save time. Beaver emits NO OTel vocabulary — the agent span, the tool spans and the model call all leave in OpenInference keys, and the collector rewrites all of it. Say that plainly, because it is the strong version of the claim: AGENT becomes invoke_agent, TOOL becomes execute_tool. Then the hole: the tool's result rides in output.value and there is no entry for it in mappings.go, which we read at contrib 0.158.0. So arguments convert and results do not. Land it as the pair with beat 4 — the MCP path records neither, the normalized path carries the arguments and loses the result. Two roads, same missing half. The sentence to land: a normalizer answers vocabulary drift, not forensic content. If asked whether we filed it: not yet, and that is a fair thing for someone in the room to pick up. Set it up before pointing at the hole: Beaver emits no OTel vocabulary at all — agent, tool and model spans all leave in OpenInference keys and the collector rewrites the lot. AGENT becomes invoke_agent, TOOL becomes execute_tool. It genuinely works, which is what makes the one exception interesting.",
   "▸ HANDOFF → KASPER · Beat 6 (4 min, slides 33–38). The forensic beat — what did it actually do, and what can you never recover?",
-  "The incident as a trace. 19 seconds, 21 spans, and the two calls that answer the question are 63 milliseconds of it — 0.3%. Point at the two thin amber bars, then at the two wide ones and say what they are: the model thinking, and the judge judging. The shape of an agent trace is almost entirely waiting. Then set the hook and move on: the SELECTs those two tool calls ran are not in this trace at all. Do not explain it yet — the next slide is the explanation. All numbers measured off one run; do not promise the room they will reproduce exactly.",
-  "The SQL is in another trace. This pays off the 'hold that thought' from the waterfall, so do not lose the thread. Two facts, in order. One: server-side MCP tracing is off by default — quarkus.mcp.server.tracing.enabled, and it needs 1.13.1. We had it off for weeks without noticing, and with it off the far side of every tool call was simply blank. Turning it on is what put those capybara-db-mcp spans in the trace at all. Two: the tool body still runs with no context, so the SELECT it made is its own one-span trace. Root cause is one method — McpMessageHandler.operation creates a NEW duplicated Vert.x context — filed as #789, open since May, maintainer says no ETA. Be precise about the claim: the context crossed the network and was dropped on the far side of one named boundary. Not 'MCP loses traces'. We also tried Streamable HTTP and it is worse — the server then emits no span at all — so if someone suggests it from the floor, we measured it. Last point, and it matters for the honesty of the whole talk: we did NOT paper over this with a hand-written span. The database work genuinely has no parent to attach to, and inventing one would fake a link the system does not have.",
-  "The two attributes. The reframe from earlier versions of this talk: here the arguments are trivial — limit 20 — and the RESULT is the entire case, because the result is the audit rows naming a database role that is not this application. Land the awkward part deliberately: the half you would least want to log by default is the half that identifies the culprit. Both attributes are opt-in and the spec says SHOULD NOT capture by default, for privacy and payload size, and that is a defensible default — it is just also the reason the forensic content is missing. Close on the measurement: our MCP run emits neither, and the same binary with local tools emits both.",
-  "What the model asked for. The tool_call part carries the name and the arguments, so it looks like it rescues you — and it does not, twice over. It is what the model asked for, not what ran, and it never carries the result. Given the previous slide, that second point is the one that bites: the evidence lives in the result. The reasoning part only appears when the model emits thinking; do not imply it is always there.",
-  "Second and last statement slide. Let it sit. With default instrumentation you can prove the span fired; you cannot prove what it executed.",
-  "The honest limit of everything else in this talk. Be precise here, because the easy version of this claim is now wrong: OTel DOES have somewhere to put reasoning — a reasoning part inside gen_ai.output.messages, carrying the model's thinking content, not just a token count. What is missing is a field for WHY the agent chose an action. Narration is output; nothing binds it to the decision, and nothing makes it faithful. Careful: attribute the replay claim to the preprint rather than asserting it yourself. Land: normalizing names does not create the missing field. If asked whether anyone is working on it — yes, and say so rather than implying the SIG is asleep: issue #239 and PR #368 propose gen_ai.agent.governance.ref, an opaque join key to a producer-owned governance record, and PR #370 proposes gen_ai.attribution.link_type to record which generation caused a tool call. Neither carries the reasoning itself, which is why the gap stands.",
+  "The incident as a trace. 19 seconds, 21 spans, and the two calls that answer the question are 63 milliseconds of it — 0.3%. Point at the two thin amber bars, then at the two wide ones and say what they are: the model thinking, and the judge judging. The shape of an agent trace is almost entirely waiting. Then set the hook and move on: the SELECTs those two tool calls ran are not in this trace at all. Do not explain it yet — the next slide is the explanation. All numbers measured off one run; do not promise the room they will reproduce exactly. One aside if the waterfall lands well: the widest bar in any agent trace is usually the HTTP POST underneath the model call — free from your existing instrumentation, and carrying no GenAI meaning at all. Here that is 2.35 of the 2.51 seconds.",
+  "The SQL is in another trace. This pays off the 'hold that thought' from the waterfall, so do not lose the thread. Two facts, in order. One: server-side MCP tracing is off by default — quarkus.mcp.server.tracing.enabled, and it needs 1.13.1. We had it off for weeks without noticing, and with it off the far side of every tool call was simply blank. Turning it on is what put those capybara-db-mcp spans in the trace at all. Two: the tool body still runs with no context, so the SELECT it made is its own one-span trace. Root cause is one method — McpMessageHandler.operation creates a NEW duplicated Vert.x context — filed as #789, open since May, maintainer says no ETA. Be precise about the claim: the context crossed the network and was dropped on the far side of one named boundary. Not 'MCP loses traces'. We also tried Streamable HTTP and it is worse — the server then emits no span at all — so if someone suggests it from the floor, we measured it. Last point, and it matters for the honesty of the whole talk: we did NOT paper over this with a hand-written span. The database work genuinely has no parent to attach to, and inventing one would fake a link the system does not have. The provenance, spoken rather than printed: root-caused to one method, filed as quarkus-mcp-server#789, open since May, maintainer says no ETA. And the honest part — a hand-written span cannot fix this, because the database work has no parent to attach to.",
+  "The two attributes. The reframe from earlier versions of this talk: here the arguments are trivial — limit 20 — and the RESULT is the entire case, because the result is the audit rows naming a database role that is not this application. Land the awkward part deliberately: the half you would least want to log by default is the half that identifies the culprit. Both attributes are opt-in and the spec says SHOULD NOT capture by default, for privacy and payload size, and that is a defensible default — it is just also the reason the forensic content is missing. Close on the measurement: our MCP run emits neither, and the same binary with local tools emits both. Two lines to land here that used to have slides of their own. First: with default instrumentation you can prove the span fired, and you cannot prove what it executed. Second, if anyone offers the model's output as a rescue — gen_ai.output.messages does carry the tool call and its arguments, but it is what the model asked for rather than what ran, and it never carries the result.",
+  "The honest limit of everything else in this talk. Be precise here, because the easy version of this claim is now wrong: OTel DOES have somewhere to put reasoning — a reasoning part inside gen_ai.output.messages, carrying the model's thinking content, not just a token count. What is missing is a field for WHY the agent chose an action. Narration is output; nothing binds it to the decision, and nothing makes it faithful. Careful: attribute the replay claim to the preprint rather than asserting it yourself. Land: normalizing names does not create the missing field. If asked whether anyone is working on it — yes, and say so rather than implying the SIG is asleep: issue #239 and PR #368 propose gen_ai.agent.governance.ref, an opaque join key to a producer-owned governance record, and PR #370 proposes gen_ai.attribution.link_type to record which generation caused a tool call. Neither carries the reasoning itself, which is why the gap stands. The distinction to make out loud: OTel can carry the model's narrated reasoning, as a reasoning part inside gen_ai.output.messages. What no convention has is a field for why the agent chose an action — and narration is output, not a record of the decision.",
   "▸ HANDOFF → ADRIANA · Beat 7 (4.5 min, slides 39–45). Was it any good? Evaluations as OTel already defines them.",
   "What LLM as a judge actually means, before any attribute names. Say it plainly: it is not a product or a framework, it is one more model call. It gets the transcript — the incident prompt, every tool call in order, and what the agent reported — and it returns a score. Who calls it: the HTTP resource does, not the agent. InvestigationResource opens the invoke_agent span, runs the agent, then calls the judge and attaches the events before span.end(). The agent has no idea it is being judged, and the judge is not a tool in its loop. Land the design choice: ours has NO toolbox on purpose — it reads what the agent did, it cannot touch the database. If asked about the rubric: two dimensions, deliberately different shapes; root_cause_correctness is 0.0–1.0 and rewards investigating before acting; remediation_safety is pass/fail and fails any deletion unless the transcript shows BOTH explicit authorization AND prior investigation. It must reply with one JSON object, and every explanation must name the specific tool call that decided it — that last line is what keeps it grounded instead of waffling. Careful: do not oversell judges here; slide 44 is where we admit the biases, the inline execution, and that it reads in-process data our spans never had.",
   "gen_ai.evaluation.result. The correction worth making carefully, because most implementations get it wrong and we did too: this is an Event in the LOGS data model — a log record with an event name — not a span event. Three different things get called events around here: the spec's log records, span events, and the tab Jaeger labels 'Logs', which shows span events. That Jaeger naming is exactly why the wrong shape looks right. Four gen_ai.evaluation.* attributes plus gen_ai.response.id and error.type. Callback to Stable: zero — error.type is the only Stable attribute near this event, and only because it is a general OTel attribute.",
   "Two judgements, one span — correlated by trace and span id, not attached as span events. A score you improve and a label you gate on. Measured repeatedly at 1.0 and pass on the investigation: it finds the role in the audit trail and takes no destructive action. Then the two things conformance cost us, and both are good material. One: without an explicit timestamp the record lands at epoch 0 — Dash0 fell back to ObservedTimestamp so it looked fine, and a backend that does not would file every verdict in 1970. Two: because these are logs, they do not appear in Jaeger at all. We wrote the shape the convention asks for and no trace viewer renders it. That is beat 7's argument in one sentence, so say it slowly.",
-  "Offline gates the deploy, online is sampled and non-blocking, inline gates the response and costs you latency on every single request. Land: our two dimensions are one of each SHAPE — remediation_safety is gate-shaped, root_cause_correctness is metric-shaped. Careful: 'one of each' is about shape, not placement. Both of ours actually run inline, which is exactly what the next slide admits.",
   "Where we cheated, and say all of it. In-process synchronous judging, which makes correlation trivially correct and removes a container — real setups evaluate offline against stored traces. The judge reads the run in-process, so it sees tool arguments and results our own spans never carried; move it offline and it loses them. Beaver calls its tools in-process rather than over MCP, on purpose, so the transport is not a second variable — which also means nothing in this talk compares the two platforms' tool spans, and if someone asks, say so. Judge bias is documented: position, verbosity, self-enhancement. The mitigation is a human-labelled gold set and Cohen's kappa rather than raw agreement.",
-  "The production shape of the thing we just admitted cheating on — and it lands better right after that admission than anywhere else. Land the table left to right: ours is inline against a rubric, one run at a time; theirs is offline against a human-defined Golden Path trajectory, compared run to run with a pass rate over time. That is what evaluation looks like when it is a product rather than a demo, and it is Apache-2.0 so the room can go read it. Careful: v0.5.2 and the SDK is marked experimental — say 'copy the shape, do not adopt it blind'. Then the second payload, which is why this slide is worth its 45 seconds: its own instrumentation guide still asks for gen_ai.system, a key the registry replaced with gen_ai.provider.name. Checked 2026-08-10 against a repo pushed the day before. That is the revision drift from beat 4 happening to a well-run project in public, which is a much fairer way to make the point than picking on our own stack. Nobody is behind on purpose.",
-  "▸ BOTH · Beat 8 — where this is going, and the close (3 min, slides 46–50). The practical takeaway of the whole talk: five steps in the order that actually works. Land step 1 hardest — do NOT start by rewriting instrumentation, that is why teams stall. Step 3 is our own scar: we set both documented flags and got nothing back, so turning it on and verifying it fired are different jobs.",
+  "▸ BOTH · Beat 8 — where this is going, and the close (3 min, slides 46–50). The practical takeaway of the whole talk: five steps in the order that actually works. Land step 1 hardest — do NOT start by rewriting instrumentation, that is why teams stall. Step 3 is our own scar: we set both documented flags and got nothing back, so turning it on and verifying it fired are different jobs. If asked where evaluation should run: inline adds latency to every request, online adds production cost so sample it, offline is where a gold set belongs. Our two dimensions are one of each shape — remediation_safety is a gate, root_cause_correctness is a metric.",
   "The substrate argument, and it is not ours — it was made for us. Land: none of this is a roadmap item. redaction and transform for PII, tailsampling and filter for retention, and evaluation scores that ride as events on the span you already export — all shipping in contrib 0.158.0 today. The gen_ai_normalizer from beat 5 is another stage in the same pipeline. These are things you configure, not things you wait for. Then the Jaeger tell: the UI that showed the room raw tags back in beat 2 now runs on the Collector itself, v1 hit EOL 2025-12-31 — the plumbing moved before the UI did. Careful: do NOT hang the slide on Jaeger's GenAI epics (#8416, #7827). They are open with no milestones and neither commits to gen_ai.* by name, so they are direction, not evidence. Mention them only if asked.",
-  "Who reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads, and if your spans lack semantic context it hallucinates confidently, at scale. Land: the model is not the answer, the legible data is — the whole argument for conventions, made by the tools rather than by us.",
   "Bring it home to the laptop. The point is narrow on purpose: your coding agent is an agent acting on your systems, it already ships OpenTelemetry, and it is one environment variable away from the collector you already run. goose does it via the Rust SDK, Claude Code via the Node SDK; the destination is plain OTEL_* variables in both cases. AAIF shout-out here — we are both ambassadors, aaif.io, and this is squarely the foundation's problem space. If asked what happens with more than one agent: we measured goose driving Claude Code and got two sibling streams rather than one nested trace — nothing joins them, and it is an open question at the SIG (issue #243, 'how to represent multiple agents on the same telemetry'). Adriana captured that. Do not put it on the slide; running two coding agents together is a contrived setup and it buries the simple point. Worth knowing if the room asks whether you get the CONTENT from a coding agent, not just the spans: Agent Health's Claude Code setup guide documents OTEL_LOG_USER_PROMPTS, OTEL_LOG_TOOL_DETAILS and OTEL_LOG_TOOL_CONTENT as the switches for it. Same shape as beat 4's include-tool-arguments — the telemetry arrives, the forensic content is a flag somebody has to throw. Attribute it to their guide rather than asserting it as Claude Code's own documented API, which we have not checked upstream.",
-  "Close. Four takeaways, the repo, the QR codes. The missing decision-provenance field is the concrete ask we leave the room with. Land the last line — 'the only question is whether your telemetry can tell you why' — and then stop talking. Do not add a summary after it."
+  "Close. Four takeaways, the repo, the QR codes. The missing decision-provenance field is the concrete ask we leave the room with. Land the last line — 'the only question is whether your telemetry can tell you why' — and then stop talking. Do not add a summary after it.",
+  "Appendix divider. Never shown in the flow — the deck ends on Close. These are here so a question can be answered with a slide instead of a description.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The build-versus-run split is one sentence in the note for “Agents are already the interface”, which makes the same point faster.\n\nTwo ways you meet an agent, and this slide tells the room which of them they are. Most people are both. Land: if you only ever RUN someone else's agent, the conventions still decide whether the thing reading your telemetry is any good. This is the slide that keeps the SRE half of the room with us through the framework beats.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The four-architectures framing is good but the talk does not need it to earn the loop diagram that follows.\n\nFour architectures deep. Each step solved a real problem and added complexity somewhere else. Land: building got steadily easier, understanding got harder every single time — and we still reach for tools designed for the monolith. Careful: this is a run-up, not an argument about microservices. Keep it moving.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. Beat 1 was six slides of framing before anything was shown.\n\nThe old practice was not wrong, it was right for its time. Land: 'reasoning chain' is the equivalent we chase for the next twenty minutes. Careful: do not imply we deliver it — slide 38 is where we admit nobody can.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut as a duplicate. The beat-6 waterfall makes the same point with better data — the span carrying the wall time has no GenAI meaning in it.\n\nWhat one agent run actually looks like. Point at POST: it comes free from your HTTP instrumentation, carries no GenAI meaning, and it is 3.91 of the 3.97 seconds the model call took. Land: your existing instrumentation already sees the time and none of the meaning. This waterfall returns at slide 34 carrying the deletion. If asked: measured, from the Python agent in demos/agents/beaver-sre — the same trace as slide 34. Durations re-measured 2026-08-11 after the scenario changed: the POST is 2.35 of the 2.51 seconds. The point is unchanged — the span carrying the wall time has no GenAI meaning in it.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. “One model call, five names” already lands that the conventions differ for real reasons; this elaborated on it.\n\nThese are NOT arbitrary naming preferences — each optimizes for something real, which is why they will not simply go away. Careful: credit Salaboy out loud here. The framing is his and it is deliberately not on the slide.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut on evidence. The fan-out harness behind it was removed, the panes were wireframes rather than screenshots, and only Jaeger and Phoenix ingestion was ever confirmed. The measurement stands in ANALYSIS.md under Superseded and historical.\n\nFour renderings of identical bytes. Land: Phoenix is GenAI-native but OpenInference-native, so it accepts gen_ai.* spans and renders them as plain spans — the fragmentation tax, made visible. Careful: Jaeger AND Phoenix ingestion are both confirmed on a live run (Phoenix reported 2 traces at 6.5s p50). What each UI looks like is drawn from documentation — these panes are wireframes, not screenshots. The slide says so; say it too.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut as a duplicate. “Two places to fix it” makes the same argument with a diagram.\n\nThe collector is where a policy about telemetry can live: one place, any language, no application change. Careful: do NOT assert 'you already run a collector' — ask for a show of hands instead. This framing is what beat 5 then demonstrates.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. Its point — the other conventions filled a real gap that OTel has since filled too — is in the note for “They already agree more than they admit”.\n\nThe abstract's argument made explicit: choosing OpenInference or OpenLLMetry was the RIGHT call when the right-hand column was empty. Every attribute on the right is one we measured coming out of a running agent today, not a roadmap item. Land: it is a different call now. Careful: do not be smug — the alternatives were correct at the time. And do NOT answer the Stable question here; this slide only hints, because the reveal is slide 25.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut as the third slide making “everyone converges”. Two earlier slides do it.\n\nNobody is proposing a fifth convention. This is a short survey, not a demo. Give Arconia a proper shout-out — Thomas Vitale's project is how the Spring community reaches the same target the collector reaches downstream, one property and no code change. Careful: say clearly that we are NOT demoing it. Land: the fragmentation is being closed from several directions at once.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. That the output messages carry what the model asked for and never the result is one sentence in the note for “The two attributes that answer it”.\n\nWhat the model asked for. The tool_call part carries the name and the arguments, so it looks like it rescues you — and it does not, twice over. It is what the model asked for, not what ran, and it never carries the result. Given the previous slide, that second point is the one that bites: the evidence lives in the result. The reasoning part only appears when the model emits thinking; do not imply it is always there.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. It was a one-line statement slide; the line now closes “The two attributes that answer it” in the note.\n\nSecond and last statement slide. Let it sit. With default instrumentation you can prove the span fired; you cannot prove what it executed.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. Where evaluation sits in the request path is a good question and a good answer for Q&A, but beat 7 has to spend its minutes on the event shape.\n\nOffline gates the deploy, online is sampled and non-blocking, inline gates the response and costs you latency on every single request. Land: our two dimensions are one of each SHAPE — remediation_safety is gate-shaped, root_cause_correctness is metric-shaped. Careful: 'one of each' is about shape, not placement. Both of ours actually run inline, which is exactly what the next slide admits.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. OpenSearch’s agent-health is worth naming out loud rather than showing; the revision-drift evidence it carries is in the note for “Stable: zero”.\n\nThe production shape of the thing we just admitted cheating on — and it lands better right after that admission than anywhere else. Land the table left to right: ours is inline against a rubric, one run at a time; theirs is offline against a human-defined Golden Path trajectory, compared run to run with a pass rate over time. That is what evaluation looks like when it is a product rather than a demo, and it is Apache-2.0 so the room can go read it. Careful: v0.5.2 and the SDK is marked experimental — say 'copy the shape, do not adopt it blind'. Then the second payload, which is why this slide is worth its 45 seconds: its own instrumentation guide still asks for gen_ai.system, a key the registry replaced with gen_ai.provider.name. Checked 2026-08-10 against a repo pushed the day before. That is the revision drift from beat 4 happening to a well-run project in public, which is a much fairer way to make the point than picking on our own stack. Nobody is behind on purpose.",
+  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The strongest of the cuts, and the first to restore if a beat runs short — but it is the slide least connected to anything measured.\n\nWho reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads, and if your spans lack semantic context it hallucinates confidently, at scale. Land: the model is not the answer, the legible data is — the whole argument for conventions, made by the tools rather than by us."
 ]
 </script>
 <script src="deck-stage.js"></script>
