@@ -214,7 +214,8 @@
           + 'default — it will refuse or escalate rather than modify production data.',
       facts: [
         ['platform', 'Java · Quarkus + LangChain4j'],
-        ['tools',    'MCP server → PostgreSQL'],
+        ['tools',    'over MCP, to a separate service'],
+        ['data',     'PostgreSQL, with an audit trail'],
         ['emits',    'gen_ai.* from the framework'],
         ['judged',   'LLM-as-judge → gen_ai.evaluation.result'],
       ],
@@ -250,10 +251,12 @@
       tagline: 'Another team, another platform',
       image: 'beaver.png',
       role: 'Does Capybara’s job on a different stack, asked the same question about the '
-          + 'same incident. One collector, so any difference in the telemetry is the platform’s.',
+          + 'same incident. Its tools and storage are simpler on purpose — what is worth '
+          + 'comparing is the model call, described here by the library rather than a framework.',
       facts: [
         ['platform', 'Python · Anthropic SDK'],
-        ['tools',    'in-process → in-memory records'],
+        ['tools',    'plain functions, same process'],
+        ['data',     'in memory — no database'],
         ['emits',    'llm.* / openinference.* from the library'],
         ['arrives',  'part-rewritten to gen_ai.* by the collector'],
       ],
