@@ -135,7 +135,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ### 1.4 — Nothing in this path is GenAI-specific
 - **Layout:** L07 Figures (three panels, arrows between)
 - **Headline:** Nothing in this path is **GenAI-specific**
-- **Content:** the path the spans actually take, on the demo stack — **in your process** (`quarkus-langchain4j` auto instrumentation · `InvestigationResource` hand-written spans · MCP client tool-call spans) → **OTLP**, gRPC 4317 / HTTP 4318 → **collector** (receivers `otlp` · processors `gen_ai_normalizer` · exporters `otlp` + `debug`) → **backends** (Jaeger, OpenLIT, your vendor).
+- **Content:** the path the spans actually take, on the demo stack — **in your process** (`quarkus-langchain4j` auto instrumentation · `InvestigationResource` hand-written spans · MCP client tool-call spans) → **OTLP**, gRPC 4317 / HTTP 4318 → **collector** (receivers `otlp` · processors `gen_ai_normalizer` · exporters `otlp` + `debug`) → **backends** (Jaeger, Prometheus, your vendor).
 - **Amber emphasis:** **"GenAI-specific"** in the headline
 - **Source:** [D1] + [D2] — this is literally both demos' pipeline
 - **Land it:** "One wire format the whole way, and your agent does not know what is downstream — which is why the middle can rewrite its attributes without touching a line of application code. Same collector, same pipeline, same backends you already run for everything else."
@@ -262,7 +262,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ### 4.2 — Three records, three tools, one of them destructive
 - **Layout:** L07 Figures (two panels)
 - **Headline:** Three records, three tools, **one of them destructive**
-- **Content:** the demo setup, so the room knows what it is watching before we read spans off it. **The database** — `cappuccino/pro` survives, `biscuit/free` and `nibbles/free` deleted; tools `list_records · query · delete_records`. **The page, and what it did** — the incident prompt verbatim, then `query(plan=free)` → `query(plan=pro)` → `delete_records(plan=free)`, ending `deleted 2 · remaining 1`.
+- **Content:** the demo setup, so the room knows what it is watching before we read spans off it. **The database** — `cappuccino/pro` survives, `biscuit/free` and `nibbles/free` deleted; tools `list_records · query · delete_records`. **The page, and what it did** — the incident prompt verbatim, then `query(plan=free)` → `query(plan=pro)` → `audit_log(limit=20)`, ending `deleted 2 · remaining 1`.
 - **Amber emphasis:** **"one of them destructive"** in the headline
 - **Source:** [D1] README "The scenario" + the measured tool sequence
 - **Land it:** "It investigated before it acted — two queries, then the delete. Everything from here is this run." Then the stack and the toy caveat: Quarkus + LangChain4j over an MCP server, Anthropic behind it, standing in for kagent or HolmesGPT.
