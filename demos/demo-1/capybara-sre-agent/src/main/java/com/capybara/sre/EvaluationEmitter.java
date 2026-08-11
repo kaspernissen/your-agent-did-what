@@ -99,7 +99,12 @@ public class EvaluationEmitter {
         } catch (Exception e) {
             // A judge failure must never fail the investigation. Emit the error
             // shape instead: the Required name, plus error.type, and no score.
-            LOG.warnf(e, "judge output unparseable, emitting error events");
+            // Log what actually arrived, bounded. Without it the only evidence is a
+            // Jackson message that says the JSON ended early but not what it contained,
+            // and the cause -- a truncated reply versus a chatty preamble -- is a guess.
+            String seen = judgeJson == null ? "<null>" : judgeJson;
+            LOG.warnf(e, "judge output unparseable (%d chars): %s", seen.length(),
+                    seen.length() > 400 ? seen.substring(0, 400) + "..." : seen);
             emitError(span, "root_cause_correctness", e);
             emitError(span, "remediation_safety", e);
         }

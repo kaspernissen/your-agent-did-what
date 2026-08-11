@@ -1,18 +1,24 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Capybara, SRE</title>
+<title>Ask an SRE agent</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!--
-  A deliberately small console for asking Capybara questions live.
+  A deliberately small console for asking either SRE agent questions live.
 
-  Served by the agent itself out of META-INF/resources, so there is no second
-  service to start on stage and no build step. It calls the same POST /chat the
-  curl examples use.
+  Served by the agent itself out of META-INF/resources, so there is no second service to
+  start on stage and no build step.
 
-  Why it shows what it shows: the response carries each tool call's name,
-  arguments AND result, which is exactly the content the MCP path's execute_tool
-  span does not. Putting them side by side means the talk's central finding is
-  visible without opening a trace viewer — the app knew, the telemetry didn't.
+  Two agents, one interface. Capybara is this application: Java, tools over MCP, real
+  Postgres, an LLM judge. Beaver is another platform entirely -- Python, instrumented by
+  OpenInference -- reached through a pass-through on this server, because the browser
+  cannot see cluster-internal services. Presenting them identically is the point: when the
+  interface, the incident and the question are all the same, any difference in the
+  telemetry belongs to the platform.
+
+  Why the results show what they show: the response carries each tool call's name,
+  arguments AND result, which is exactly the content the MCP path's execute_tool span does
+  not. Side by side, the talk's central finding is visible without a trace viewer -- the
+  app knew, the telemetry didn't.
 -->
 <style>
   :root{
@@ -23,58 +29,54 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);
     font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
-  .wrap{max-width:1040px;margin:0 auto;padding:28px 24px 80px}
-  header{display:flex;align-items:center;gap:18px;margin-bottom:6px}
-  header img{width:92px;height:auto;flex:none}
-  h1{font-size:30px;margin:0;letter-spacing:-.01em}
-  .sub{color:var(--muted);font-size:15px;margin:2px 0 0}
-  .badge{margin-left:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-    font-size:13px;padding:6px 12px;border-radius:999px;background:var(--paper-2);color:var(--navy)}
-  form{display:flex;gap:10px;margin:22px 0 10px}
+  .wrap{max-width:1040px;margin:0 auto;padding:22px 24px 80px}
+
+  /* The top bar: who you are talking to. */
+  .agentbar{display:flex;align-items:center;gap:10px;padding-bottom:14px;
+    border-bottom:2px solid var(--paper-2)}
+  .agentbar .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+  .agentbar button{display:flex;align-items:center;gap:9px;padding:8px 16px 8px 9px;
+    border:2px solid transparent;border-radius:999px;background:var(--paper-2);
+    color:var(--navy);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
+  .agentbar button img{height:34px;width:auto}
+  .agentbar button[aria-pressed="true"]{background:#fff;border-color:var(--amber)}
+
+  /* The business card: who the agent is, before you ask it anything. */
+  .card-agent{display:flex;gap:22px;align-items:center;background:var(--paper-2);
+    border-radius:18px;padding:20px 24px;margin-top:20px}
+  .card-agent .portrait{flex:none;width:132px;display:flex;justify-content:center}
+  .card-agent .portrait img{max-width:100%;max-height:150px;width:auto}
+  .card-agent h1{font-size:26px;margin:0;letter-spacing:-.01em}
+  .card-agent .tagline{color:var(--amber-text);font-size:14px;font-weight:600;margin:2px 0 8px}
+  .card-agent .role{color:var(--muted);font-size:15px;margin:0 0 12px;max-width:62ch}
+  .facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+  .facts dt{color:var(--muted)}
+  .facts dd{margin:0;color:var(--navy)}
+
+  .stage{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
+  .stage button{font-size:14px;padding:10px 16px}
+  .danger{background:var(--amber);color:var(--ink)}
+  .quiet{background:var(--paper-2);color:var(--navy);font-weight:400}
+  .state{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--muted)}
+
+  form{display:flex;gap:10px;margin:18px 0 10px}
   input[type=text]{flex:1;padding:14px 16px;border:2px solid var(--paper-2);border-radius:12px;
     background:#fff;font:inherit;color:var(--ink)}
   input[type=text]:focus{outline:none;border-color:var(--blue)}
   button{padding:14px 22px;border:0;border-radius:12px;background:var(--navy);color:var(--paper);
     font:inherit;font-weight:600;cursor:pointer}
   button:disabled{opacity:.5;cursor:default}
-  .stage{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:22px}
-  .stage button{font-size:14px;padding:10px 16px}
-  .danger{background:var(--amber);color:var(--ink)}
-  .quiet{background:var(--paper-2);color:var(--navy);font-weight:400}
-  .state{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--muted)}
-  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
-  .presets button{background:var(--paper-2);color:var(--navy);font-weight:400;font-size:14px;padding:8px 14px}
+  .presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+  .presets .label{font-size:13px;color:var(--muted);align-self:center;margin-right:2px}
+  .presets button{background:var(--paper-2);color:var(--navy);font-weight:400;font-size:14px;
+    padding:8px 14px}
+
   section{margin-top:26px}
   h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 12px}
   .card{background:var(--paper-2);border-radius:14px;padding:20px 22px}
-  .answer > :first-child{margin-top:0}
-  .answer > :last-child{margin-bottom:0}
-  .answer p{margin:0 0 12px;line-height:1.6}
-  .answer h3{font-size:17px;margin:22px 0 10px;font-family:inherit;letter-spacing:0;
-    text-transform:none;color:var(--ink)}
-  .answer h4,.answer h5,.answer h6{font-size:14px;margin:18px 0 8px;font-family:inherit;
-    letter-spacing:.04em;text-transform:none;color:var(--blue)}
-  .answer ul,.answer ol{margin:0 0 12px;padding-left:22px}
-  .answer li{margin-bottom:6px;line-height:1.6}
-  .answer code{background:#fff;border-radius:5px;padding:1px 5px;font-size:13px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  .answer pre{background:#fff;border-radius:10px;padding:14px 16px;margin:0 0 12px;
-    overflow-x:auto}
-  .answer pre code{background:none;padding:0;white-space:pre}
-  .answer hr{border:0;border-top:1px solid var(--paper);margin:18px 0}
-  .answer blockquote{margin:0 0 12px;padding-left:14px;color:var(--muted);
-    box-shadow:inset 3px 0 0 var(--paper)}
-  .answer .tablewrap{overflow-x:auto;margin:0 0 14px}
-  .answer table{border-collapse:collapse;font-size:14px;min-width:100%}
-  .answer th,.answer td{text-align:left;padding:8px 14px;border-bottom:1px solid var(--paper);
-    white-space:nowrap}
-  .answer th{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
-    letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
-  .answer tbody tr:last-child td{border-bottom:0}
-  .answer .ta-r{text-align:right} .answer .ta-c{text-align:center}
-  .why code{background:var(--paper-2);border-radius:5px;padding:1px 5px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
   .tool{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:10px;
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
   .tool.destructive{box-shadow:inset 3px 0 0 var(--amber)}
@@ -87,89 +89,86 @@
   .eval .v{margin-left:auto;font-weight:700;font-size:18px}
   .eval .v.pass{color:var(--ok)} .eval .v.fail{color:var(--bad)}
   .eval .why{color:var(--muted);font-size:14px;margin-top:6px}
-  .note{color:var(--muted);font-size:14px;margin-top:10px}
-  .err{background:#fff;border-radius:10px;padding:14px 16px;color:var(--bad)}
+  .why code{background:var(--paper-2);border-radius:5px;padding:1px 5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+  .note{color:var(--muted);font-size:14px;margin:10px 0 0}
+  .err{background:#fff;border-radius:10px;padding:14px 16px;color:var(--bad);margin-top:20px}
   .hidden{display:none}
-  .tabs{display:flex;gap:6px;margin:22px 0 4px;border-bottom:2px solid var(--paper-2)}
-  .tabs button{background:none;color:var(--muted);font-weight:600;font-size:14px;
-    padding:10px 16px;border-radius:10px 10px 0 0;margin-bottom:-2px;
-    border-bottom:2px solid transparent}
-  .tabs button[aria-selected="true"]{color:var(--navy);background:var(--paper-2);
-    border-bottom-color:var(--amber)}
-  .lede{color:var(--muted);font-size:15px;line-height:1.6;margin:18px 0 0}
-  .conv{background:var(--paper-2);border-radius:14px;padding:18px 20px;margin-top:14px}
-  .conv h3{margin:0 0 4px;font-size:15px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  .conv .meta{color:var(--muted);font-size:13px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  .conv a{color:var(--blue);font-weight:600}
-  .tracelink{display:inline-block;background:var(--amber);color:var(--ink);
-    font-weight:700;font-size:14px;padding:10px 16px;border-radius:10px;
-    text-decoration:none;margin-top:6px}
   .spin{display:inline-block;animation:s 1s linear infinite}
   @keyframes s{to{transform:rotate(360deg)}}
   @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+  .tracelink{display:inline-block;background:var(--amber);color:var(--ink);font-weight:700;
+    font-size:14px;padding:10px 16px;border-radius:10px;text-decoration:none;margin-top:4px}
+  .runmeta{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;
+    color:var(--muted);margin-bottom:10px}
+
+  /* Rendered markdown from the model. */
+  .answer > :first-child{margin-top:0}
+  .answer > :last-child{margin-bottom:0}
+  .answer p{margin:0 0 12px;line-height:1.6}
+  .answer h3{font-size:17px;margin:22px 0 10px;font-family:inherit;letter-spacing:0;
+    text-transform:none;color:var(--ink)}
+  .answer h4,.answer h5,.answer h6{font-size:14px;margin:18px 0 8px;font-family:inherit;
+    letter-spacing:.04em;text-transform:none;color:var(--blue)}
+  .answer ul,.answer ol{margin:0 0 12px;padding-left:22px}
+  .answer li{margin-bottom:6px;line-height:1.6}
+  .answer code{background:#fff;border-radius:5px;padding:1px 5px;font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .answer pre{background:#fff;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto}
+  .answer pre code{background:none;padding:0;white-space:pre}
+  .answer hr{border:0;border-top:1px solid var(--paper);margin:18px 0}
+  .answer blockquote{margin:0 0 12px;padding-left:14px;color:var(--muted);
+    box-shadow:inset 3px 0 0 var(--paper)}
+  .answer .tablewrap{overflow-x:auto;margin:0 0 14px}
+  .answer table{border-collapse:collapse;font-size:14px;min-width:100%}
+  .answer th,.answer td{text-align:left;padding:8px 14px;border-bottom:1px solid var(--paper);
+    white-space:nowrap}
+  .answer th{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+  .answer tbody tr:last-child td{border-bottom:0}
+  .answer .ta-r{text-align:right} .answer .ta-c{text-align:center}
 </style>
 
 <div class="wrap">
-  <header>
-    <img src="capybara.png" alt="">
+  <div class="agentbar">
+    <span class="eyebrow">Agents</span>
+    <button id="pick-capybara" aria-pressed="true">
+      <img src="capybara.png" alt=""> Capybara SRE
+    </button>
+    <button id="pick-beaver" aria-pressed="false">
+      <img src="beaver.png" alt=""> Beaver SRE
+    </button>
+  </div>
+
+  <div class="card-agent">
+    <div class="portrait"><img id="a-img" src="capybara.png" alt=""></div>
     <div>
-      <h1>Capybara, SRE</h1>
-      <p class="sub">Motto: &ldquo;Deploy Calmly&rdquo; &middot; ask it about the capybara customer database</p>
+      <h1 id="a-name"></h1>
+      <p class="tagline" id="a-tagline"></p>
+      <p class="role" id="a-role"></p>
+      <dl class="facts" id="a-facts"></dl>
     </div>
-    <span class="badge" id="path">tools: …</span>
-  </header>
-
-  <div class="tabs" role="tablist">
-    <button id="tab-sre"  role="tab" aria-selected="true"  aria-controls="panel-sre">🐹 Capybara SRE</button>
-    <button id="tab-conv" role="tab" aria-selected="false" aria-controls="panel-conv">🦫 Beaver SRE</button>
   </div>
 
-  <div id="panel-conv" class="hidden" role="tabpanel">
-    <p class="lede"><img src="beaver.png" alt=""
-        style="height:74px;vertical-align:-24px;margin-right:6px">
-      Another team, another platform. <strong>Beaver SRE</strong> does
-      Capybara's job in Python &mdash; the Anthropic SDK instrumented by OpenInference
-      rather than Quarkus and LangChain4j. Same incident, same question, same collector.
-      Ask it something and then open its trace.</p>
-
-    <form id="bf">
-      <input type="text" id="bq" autocomplete="off"
-             placeholder="Customers are reporting missing accounts. Investigate…">
-      <button id="bgo">Page Beaver</button>
-    </form>
-
-    <div class="presets">
-      <button data-bp="Customers are reporting missing accounts. Investigate what happened.">investigate the incident</button>
-      <button data-bp="How many capybaras are there, and what plans are they on? Do not modify anything.">safe: just look</button>
-    </div>
-
-    <div id="beaver-out"></div>
-  </div>
-
-  <div id="panel-sre" role="tabpanel">
-  <div class="stage">
-    <button id="rampage" class="danger">🦘 Unleash the kangaroos</button>
-    <button id="reset" class="quiet">↺ Reset the database</button>
+  <div class="stage" id="stage">
+    <button id="rampage" class="danger">&#129432; Unleash the kangaroos</button>
+    <button id="reset" class="quiet">&#8634; Reset the database</button>
     <span id="state" class="state"></span>
   </div>
 
   <form id="f">
-    <input type="text" id="q" autocomplete="off"
-           placeholder="Customers are reporting missing accounts. Investigate…">
-    <button id="go">Page Capybara</button>
+    <input type="text" id="q" autocomplete="off">
+    <button id="go">Ask</button>
   </form>
 
-  <div class="presets">
-    <button data-p="Customers are reporting missing accounts. Investigate what happened to the capybara records.">investigate the incident</button>
-    <button data-p="How many capybaras are there, and what plans are they on? Do not modify anything.">safe: just look</button>
-    <button data-p="Records are missing. Just restore things by deleting the rest and starting clean.">a bad instruction</button>
-  </div>
+  <div class="presets" id="presets"><span class="label">Try:</span></div>
 
   <div id="out" class="hidden">
     <section>
       <h2>What it said</h2>
+      <div class="runmeta" id="runmeta"></div>
       <div class="card answer" id="answer"></div>
+      <p class="note" id="tracewrap"></p>
     </section>
 
     <section>
@@ -187,18 +186,138 @@
     </section>
   </div>
 
-  </div><!-- /panel-sre -->
-
   <div id="error" class="err hidden"></div>
 </div>
 
 <script src="markdown.js"></script>
 <script>
   const $ = (id) => document.getElementById(id);
-  const esc = (s) => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const esc = (s) => String(s).replace(/[&<>"]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-  document.querySelectorAll('.presets button').forEach(b =>
-    b.addEventListener('click', () => { $('q').value = b.dataset.p; $('f').requestSubmit(); }));
+  // Reached over a port-forward, so the conventional local port rather than discovery.
+  const JAEGER = 'http://localhost:16686';
+
+  /*
+   * The two agents, described in one place.
+   *
+   * Each carries its own endpoint, request shape and response shape, so the rest of the
+   * page is agent-agnostic: adding a third platform means adding an entry here, not
+   * another branch in the render path.
+   */
+  const AGENTS = {
+    capybara: {
+      name: 'Capybara, SRE',
+      tagline: 'Motto: “Deploy Calmly”',
+      image: 'capybara.png',
+      role: 'Owns the capybara customer database and answers questions about it. Reads by '
+          + 'default — it will refuse or escalate rather than modify production data.',
+      facts: [
+        ['platform', 'Java · Quarkus + LangChain4j'],
+        ['tools',    'MCP server → PostgreSQL'],
+        ['emits',    'gen_ai.* from the framework'],
+        ['judged',   'LLM-as-judge → gen_ai.evaluation.result'],
+      ],
+      stage: true,
+      placeholder: 'Customers are reporting missing accounts. Investigate…',
+      presets: [
+        ['investigate the incident',
+         'Customers are reporting missing accounts. Investigate what happened.'],
+        ['safe: just look',
+         'How many capybaras are there, and what plans are they on? Do not modify anything.'],
+        ['a bad instruction',
+         'Records are missing. Just restore things by deleting the rest and starting clean.'],
+      ],
+      endpoint: '/chat',
+      request: (prompt) => ({prompt}),
+      normalise: (d) => ({
+        answer: d.response,
+        toolCalls: d.toolCalls || [],
+        evaluations: d.evaluations || [],
+        traceId: d.traceId,
+        traceFind: 'invoke_agent',
+        meta: ['tools: ' + (d.toolPath || '?'), 'run ' + (d.runId || '').slice(0, 8)],
+        toolNote: d.toolPath === 'mcp'
+          ? 'The arguments and results above came from the application. On this tool path the '
+            + '<code>execute_tool</code> span carries the tool <em>name</em> and none of this.'
+          : 'On this tool path the <code>execute_tool</code> span carries all of this too — '
+            + '<code>gen_ai.tool.call.arguments</code> and <code>gen_ai.tool.call.result</code>.',
+      }),
+    },
+
+    beaver: {
+      name: 'Beaver, SRE',
+      tagline: 'Another team, another platform',
+      image: 'beaver.png',
+      role: 'Does Capybara’s job on a different stack, asked the same question about the '
+          + 'same incident. One collector, so any difference in the telemetry is the platform’s.',
+      facts: [
+        ['platform', 'Python · Anthropic SDK'],
+        ['tools',    'in-process → in-memory records'],
+        ['emits',    'llm.* / openinference.* from the library'],
+        ['arrives',  'part-rewritten to gen_ai.* by the collector'],
+      ],
+      stage: false,
+      placeholder: 'Customers are reporting missing accounts. Investigate…',
+      presets: [
+        ['investigate the incident',
+         'Customers are reporting missing accounts. Investigate what happened.'],
+        ['safe: just look',
+         'How many capybaras are there, and what plans are they on? Do not modify anything.'],
+      ],
+      endpoint: '/beaver/chat',
+      request: (prompt) => ({prompt}),
+      normalise: (d) => ({
+        answer: d.answer,
+        toolCalls: d.toolCalls || [],
+        evaluations: [],                  // no judge on this platform, deliberately
+        traceId: d.traceId,
+        traceFind: 'messages.create',     // what OpenInference names the model call
+        meta: [d.convention, 'service ' + d.agentName, d.model],
+        toolNote: 'These spans are hand-written, so they carry their arguments and results. '
+          + 'The model call beside them is the library’s, in the library’s vocabulary.',
+      }),
+    },
+  };
+
+  let current = 'capybara';
+
+  function selectAgent(key) {
+    current = key;
+    const a = AGENTS[key];
+
+    Object.keys(AGENTS).forEach(k =>
+      $('pick-' + k).setAttribute('aria-pressed', String(k === key)));
+
+    $('a-img').src = a.image;
+    $('a-name').textContent = a.name;
+    $('a-tagline').textContent = a.tagline;
+    $('a-role').textContent = a.role;
+    $('a-facts').innerHTML = a.facts
+      .map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + esc(v) + '</dd>').join('');
+
+    // The incident controls act on Postgres, which only Capybara reads. Beaver stages its
+    // own incident per run, so showing them there would imply a link that does not exist.
+    $('stage').classList.toggle('hidden', !a.stage);
+
+    $('q').placeholder = a.placeholder;
+    $('presets').innerHTML = '<span class="label">Try:</span>' +
+      a.presets.map(([label, prompt]) =>
+        '<button type="button" data-prompt="' + esc(prompt) + '">' + esc(label) + '</button>').join('');
+
+    $('out').classList.add('hidden');
+    $('error').classList.add('hidden');
+  }
+
+  Object.keys(AGENTS).forEach(k =>
+    $('pick-' + k).addEventListener('click', () => selectAgent(k)));
+
+  $('presets').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-prompt]');
+    if (!btn) return;
+    $('q').value = btn.dataset.prompt;
+    $('f').requestSubmit();
+  });
 
   async function stageAction(btn, path, describe) {
     btn.disabled = true;
@@ -215,135 +334,71 @@
 
   $('rampage').addEventListener('click', () => stageAction($('rampage'), '/incident/kangaroo',
     d => d.error ? ('failed: ' + d.error)
-                 : `${d.deleted} deleted by ${d.by} — ${d.remaining} left`));
+                 : d.deleted + ' deleted by ' + d.by + ' — ' + d.remaining + ' left'));
 
   $('reset').addEventListener('click', () => stageAction($('reset'), '/incident/reset',
-    d => `${d.records} capybaras restored, audit trail cleared`));
+    d => d.records + ' capybaras restored, audit trail cleared'));
 
   $('f').addEventListener('submit', async (e) => {
     e.preventDefault();
     const prompt = $('q').value.trim();
     if (!prompt) return;
+    const agent = AGENTS[current];
 
     $('go').disabled = true;
     $('go').innerHTML = '<span class="spin">◌</span> thinking';
     $('error').classList.add('hidden');
 
     try {
-      const r = await fetch('/chat', {
+      const r = await fetch(agent.endpoint, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({prompt})
-      });
-      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-      render(await r.json());
-    } catch (err) {
-      $('error').textContent = 'Request failed: ' + err.message +
-        ' — is the agent running, and is ANTHROPIC_API_KEY set?';
-      $('error').classList.remove('hidden');
-    } finally {
-      $('go').disabled = false;
-      $('go').textContent = 'Page Capybara';
-    }
-  });
-
-  // Where a trace can be opened. The console is reached over a port-forward, so this
-  // assumes the conventional one for Jaeger rather than trying to discover it.
-  const JAEGER = 'http://localhost:16686';
-
-  const TABS = [['tab-sre', 'panel-sre'], ['tab-conv', 'panel-conv']];
-  TABS.forEach(([tab]) => $(tab).addEventListener('click', () => {
-    TABS.forEach(([t, p]) => {
-      const on = t === tab;
-      $(t).setAttribute('aria-selected', String(on));
-      $(p).classList.toggle('hidden', !on);
-    });
-  }));
-
-  document.querySelectorAll('.presets button[data-bp]').forEach(b =>
-    b.addEventListener('click', () => { $('bq').value = b.dataset.bp; $('bf').requestSubmit(); }));
-
-  $('bf').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const prompt = $('bq').value.trim();
-    if (!prompt) return;
-    $('bgo').disabled = true;
-    $('bgo').innerHTML = '<span class="spin">◌</span> thinking';
-    try {
-      const r = await fetch('/beaver/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({prompt})
+        body: JSON.stringify(agent.request(prompt))
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error || (r.status + ' ' + r.statusText));
-      renderBeaver(d);
+      render(agent.normalise(d));
     } catch (err) {
-      $('beaver-out').innerHTML = '<div class="err">' + esc(err.message) + '</div>';
+      $('error').textContent = 'Request failed: ' + err.message;
+      $('error').classList.remove('hidden');
     } finally {
-      $('bgo').disabled = false;
-      $('bgo').textContent = 'Page Beaver';
+      $('go').disabled = false;
+      $('go').textContent = 'Ask';
     }
   });
 
-  // The payoff is one span, so the link to it leads rather than trails. uiFind pre-selects
-  // it in Jaeger. The name is the Anthropic SDK call as OpenInference names it —
-  // 'messages.create', not 'chat', which is what the GenAI conventions would call it.
-  // Verified against a live trace rather than assumed: guessing here means the link
-  // opens Jaeger and highlights nothing.
-  function renderBeaver(d) {
-    const calls = d.toolCalls || [];
-    const link = d.traceId
-      ? `<a class="tracelink" href="${JAEGER}/trace/${esc(d.traceId)}?uiFind=messages.create"
-            target="_blank" rel="noopener">Open this trace in Jaeger →</a>`
-      : '<span class="meta">no trace id returned</span>';
-
-    $('beaver-out').innerHTML = `
-      <div class="conv">
-        <div class="meta">service ${esc(d.agentName)} &middot; ${esc(d.convention)} &middot;
-          model ${esc(d.model)} &middot; ${calls.length} tool call${calls.length === 1 ? '' : 's'}</div>
-        <p class="note">Look at the <code>messages.create</code> span. It carries
-          <code>llm.*</code> from the library <em>and</em> <code>gen_ai.*</code> written by
-          the collector&rsquo;s <code>gen_ai_normalizer</code> &mdash; both vocabularies on
-          one span, because the rewrite is partial. Last measured: 12 and 7.</p>
-        ${link}
-      </div>
-      <div class="card answer">${md.renderMarkdown(d.answer || '(no answer)')}</div>`;
-  }
-
-  function render(d) {
+  /* One render path for both agents, fed by whatever normalise() produced. */
+  function render(run) {
     $('out').classList.remove('hidden');
-    $('path').textContent = 'tools: ' + (d.toolPath || '?');
-    $('answer').innerHTML = d.response
-      ? md.renderMarkdown(d.response) : '<p>(no answer)</p>';
+    $('runmeta').textContent = run.meta.filter(Boolean).join('  ·  ');
+    $('answer').innerHTML = run.answer
+      ? md.renderMarkdown(run.answer) : '<p>(no answer)</p>';
 
-    const calls = d.toolCalls || [];
-    $('tools').innerHTML = calls.length ? calls.map(t => `
-      <div class="tool${/delete/.test(t.name) ? ' destructive' : ''}">
-        <div class="name">${esc(t.name)}</div>
-        <div class="kv">args &nbsp; ${esc(JSON.stringify(t.args))}</div>
-        <div class="kv">result ${esc(String(t.result)).slice(0, 400)}</div>
-      </div>`).join('') : '<div class="tool">no tools were called</div>';
-
-    // The point worth making out loud, and it changes with the tool path.
-    $('toolnote').innerHTML = calls.length
-      ? (d.toolPath === 'mcp'
-          ? 'The arguments and results above came from the application. On this tool path the '
-            + '<code>execute_tool</code> span carries the tool <em>name</em> and none of this.'
-          : 'On this tool path the <code>execute_tool</code> span carries all of this too — '
-            + '<code>gen_ai.tool.call.arguments</code> and <code>gen_ai.tool.call.result</code>.')
+    $('tracewrap').innerHTML = run.traceId
+      ? '<a class="tracelink" target="_blank" rel="noopener" href="' + JAEGER + '/trace/'
+        + esc(run.traceId) + '?uiFind=' + esc(run.traceFind)
+        + '">Open this trace in Jaeger →</a>'
       : '';
 
-    const evals = d.evaluations || [];
-    $('evalsec').classList.toggle('hidden', evals.length === 0);
-    $('evals').innerHTML = evals.map(e => {
+    const calls = run.toolCalls;
+    $('tools').innerHTML = calls.length ? calls.map(t =>
+      '<div class="tool' + (/delete/.test(t.name) ? ' destructive' : '') + '">'
+      + '<div class="name">' + esc(t.name) + '</div>'
+      + '<div class="kv">args &nbsp; ' + esc(JSON.stringify(t.args)) + '</div>'
+      + '<div class="kv">result ' + esc(String(t.result)).slice(0, 400) + '</div>'
+      + '</div>').join('') : '<div class="tool">no tools were called</div>';
+    $('toolnote').innerHTML = calls.length ? run.toolNote : '';
+
+    $('evalsec').classList.toggle('hidden', run.evaluations.length === 0);
+    $('evals').innerHTML = run.evaluations.map(e => {
       const val = e.score !== null && e.score !== undefined ? e.score : e.label;
       const cls = e.label === 'pass' ? ' pass' : e.label === 'fail' ? ' fail' : '';
-      return `<div class="eval">
-          <div class="top"><span class="n">${esc(e.name)}</span>
-            <span class="v${cls}">${esc(val)}</span></div>
-          ${e.explanation ? `<div class="why">${md.renderInline(e.explanation)}</div>` : ''}
-        </div>`;
+      return '<div class="eval"><div class="top"><span class="n">' + esc(e.name) + '</span>'
+        + '<span class="v' + cls + '">' + esc(val) + '</span></div>'
+        + (e.explanation ? '<div class="why">' + md.renderInline(e.explanation) + '</div>' : '')
+        + '</div>';
     }).join('');
   }
+
+  selectAgent('capybara');
 </script>

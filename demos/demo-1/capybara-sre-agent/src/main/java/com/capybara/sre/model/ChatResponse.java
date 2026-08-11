@@ -14,4 +14,5 @@ public record ChatResponse(String response,
                            List<ToolCall> toolCalls,
                            List<Evaluation> evaluations,
                            String toolPath,
-                           String runId) {}
+                           String runId,
+                           String traceId) {}

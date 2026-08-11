@@ -99,7 +99,8 @@ public class InvestigationResource {
                 evaluations.emitFailure(span, e);
             }
 
-            return new ChatResponse(text, toolCalls, verdicts, local ? "local" : "mcp", runId);
+            return new ChatResponse(text, toolCalls, verdicts, local ? "local" : "mcp", runId,
+                    span.getSpanContext().getTraceId());
         } finally {
             span.end();
         }
