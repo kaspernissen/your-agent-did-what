@@ -54,7 +54,7 @@ The "what can I actually look at this in" layer — see `landscape.md` for the a
 - Its [Claude Code telemetry guide](https://github.com/opensearch-project/agent-health/blob/main/docs/CLAUDE_CODE_TELEMETRY.md)
   documents the opt-in content switches for a coding agent — `OTEL_LOG_USER_PROMPTS`,
   `OTEL_LOG_TOOL_DETAILS`, `OTEL_LOG_TOOL_CONTENT` — the same "the forensic content is a
-  flag you throw" shape as `include-tool-arguments` in Demo 1, one layer closer to home.
+  flag you throw" shape as `include-tool-arguments` in `capybara-sre`, one layer closer to home.
 
 ## CNCF agent tooling (reference)
 

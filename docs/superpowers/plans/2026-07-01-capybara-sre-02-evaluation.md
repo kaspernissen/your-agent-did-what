@@ -1,5 +1,11 @@
 # Capybara SRE — Plan 2: Evaluation (agent-health) Implementation Plan
 
+> **Historical.** A spec or plan from an earlier stage of this project, kept as a record of
+> what was decided and why. It describes structures that no longer exist — the demo-1 /
+> demo-2 split, the multi-backend fan-out, the Arconia and Spring AI demos, the over-quota
+> scenario. For how the repo works today see [`AGENTS.md`](../../../AGENTS.md) and
+> [`demos/README.md`](../../../demos/README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Evaluate the Capybara SRE agent with `opensearch-project/agent-health`: run it locally (docker-compose), front Anthropic with a **LiteLLM proxy** for the judge, connect the agent via the **`rest`** connector, define a **Golden Path**, and demonstrate a **PASS** on the safe investigation and a **FAIL** on the destructive `delete_records` run — with standard `gen_ai.evaluation.result` events produced.

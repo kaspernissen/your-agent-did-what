@@ -1,5 +1,11 @@
 # Capybara SRE — Evaluations Demo (design)
 
+> **Historical.** A spec or plan from an earlier stage of this project, kept as a record of
+> what was decided and why. It describes structures that no longer exist — the demo-1 /
+> demo-2 split, the multi-backend fan-out, the Arconia and Spring AI demos, the over-quota
+> scenario. For how the repo works today see [`AGENTS.md`](../../../AGENTS.md) and
+> [`demos/README.md`](../../../demos/README.md).
+
 **Status:** design approved 2026-07-01 · pending spec review
 **Author:** Kasper Borg Nissen (with Claude)
 **Talk:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*

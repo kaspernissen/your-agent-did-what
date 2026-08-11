@@ -9,7 +9,7 @@ speaking, leaving room to run demos live and still land on time.
 
 > **Deck:** built at `presentation/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears at full size three times (cover, one mid-deck breath, close) and as a persistent 96px footer presence on every non-divider slide — see `presentation/LAYOUTS.md`.
 >
-> Source tags used per slide: **[PC]** = the previous deck, removed 2026-08-10 (see below), **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[D1]** = Demo 1 "Capybara, SRE", **[D2]** = Demo 2 "Capybara in the wrong convention", **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
+> Source tags used per slide: **[PC]** = the previous deck, removed 2026-08-10 (see below), **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[CAP]** = the `capybara-sre` agent, **[BVR]** = the `beaver-sre` agent, **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
 >
 > **The two external tags are not equally available, and the difference matters when building slides.**
 > - **[PC] is no longer in this repo.** A previous 48-slide deck was the source for the material lifted into beats 0–3 — "Opaque decisions", "Five conventions for the same span" with its five provider/attribute pairs, and the "Without conventions, correlation fails" wall. That lift is complete and this deck has diverged well beyond it, so the old deck was removed on 2026-08-10 and `presentation/` now holds the current one. Recover the original wording from git history if it is ever wanted. The `[PC]` tags below record where a slide came from, not a file to go and read.
@@ -128,7 +128,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** An agent is a **loop around a model** that can call your tools
 - **Content:** the vocabulary defined once, on the demo's own parts — **agent** (the loop; keeps calling the model until it decides it is done) · **model** (picks the next step; billed per token in and out) · **MCP server** (how an agent is handed tools it did not ship with) · **tools** (the functions it can actually run against your systems). A dashed bracket under model→MCP→tools carries "↺ the agent decides how many times round".
 - **Amber emphasis:** **"loop around a model"** in the headline
-- **Source:** [D1] — the parts are Capybara's real ones, so beat 4's "Meet Capybara, SRE" is this diagram made concrete
+- **Source:** [CAP] — the parts are Capybara's real ones, so beat 4's "Meet Capybara, SRE" is this diagram made concrete
 - **Land it:** "Only two of these are yours: the prompt, and the list of tools you handed it. How many model calls, which tools, in what order — decided at runtime. Which means you cannot read the path off the code. You have to observe it."
 - **Why it exists:** the deck showed *spans* (1.6) before it ever showed the room the loop those spans describe, and an SRE audience running someone else's agent may never have had *agent* / *MCP server* / *token* defined out loud.
 
@@ -137,7 +137,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** Nothing in this path is **GenAI-specific**
 - **Content:** the path the spans actually take, on the demo stack — **in your process** (`quarkus-langchain4j` auto instrumentation · `InvestigationResource` hand-written spans · MCP client tool-call spans) → **OTLP**, gRPC 4317 / HTTP 4318 → **collector** (receivers `otlp` · processors `gen_ai_normalizer` · exporters `otlp` + `debug`) → **backends** (Jaeger, Prometheus, your vendor).
 - **Amber emphasis:** **"GenAI-specific"** in the headline
-- **Source:** [D1] + [D2] — this is literally both demos' pipeline
+- **Source:** [CAP] + [BVR] — this is literally both demos' pipeline
 - **Land it:** "One wire format the whole way, and your agent does not know what is downstream — which is why the middle can rewrite its attributes without touching a line of application code. Same collector, same pipeline, same backends you already run for everything else."
 - **Why it exists:** 1.6's waterfall used to appear with no account of how those spans got out of the process; this also plants the collector-as-control-point that beat 3 argues and beat 5 demonstrates.
 
@@ -161,7 +161,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** One run, four kinds of span
 - **Content:** `invoke_agent` (Internal, root) → `chat <model>` (Client) → `execute_tool` (Internal) → `POST` (Client, pure plumbing to the model API)
 - **Amber emphasis:** the **`POST`** row — emitted automatically, carrying no GenAI meaning
-- **Source:** [ANALYSIS] Demo 1 "Span structure actually produced". The signature layout of the system; it returns in beat 6 carrying the incident.
+- **Source:** [ANALYSIS] "Span structure actually produced" (now under *Superseded and historical*). The signature layout of the system; it returns in beat 6 carrying the incident.
 
 ---
 
@@ -249,7 +249,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** They filled a real gap. OTel has since filled it too.
 - **Content:** six things you needed an alternative convention for, each against the `gen_ai.*` that now provides it — the model call, token accounting, which tool ran, prompt/completion content, structured messages, and "was it any good?". Every right-hand item is measured from a running agent, not a roadmap.
 - **Amber emphasis:** **`gen_ai.evaluation.result`** — the newest arrival, and the one that closes the last gap
-- **Source:** the abstract's own argument ("that made sense when OTel's GenAI support was thin; it makes less sense today") made explicit. Right column measured across [D1] and [D2]. **Say it without smugness** — the alternatives were the correct call at the time. Close on the caveat: still nothing Stable.
+- **Source:** the abstract's own argument ("that made sense when OTel's GenAI support was thin; it makes less sense today") made explicit. Right column measured across [CAP] and [BVR]. **Say it without smugness** — the alternatives were the correct call at the time. Close on the caveat: still nothing Stable.
 
 ### 4.1 — Meet Capybara, SRE
 - **Layout:** L02 Section divider
@@ -264,7 +264,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** Three records, three tools, **one of them destructive**
 - **Content:** the demo setup, so the room knows what it is watching before we read spans off it. **The database** — `cappuccino/pro` survives, `biscuit/free` and `nibbles/free` deleted; tools `list_records · query · delete_records`. **The page, and what it did** — the incident prompt verbatim, then `query(plan=free)` → `query(plan=pro)` → `audit_log(limit=20)`, ending `deleted 2 · remaining 1`.
 - **Amber emphasis:** **"one of them destructive"** in the headline
-- **Source:** [D1] README "The scenario" + the measured tool sequence
+- **Source:** [CAP] README "The scenario" + the measured tool sequence
 - **Land it:** "It investigated before it acted — two queries, then the delete. Everything from here is this run." Then the stack and the toy caveat: Quarkus + LangChain4j over an MCP server, Anthropic behind it, standing in for kagent or HolmesGPT.
 - **Why it exists:** 4.1 introduces the mascot and 4.3 onward reads attributes off a run the room has never been shown. The authorization clause in the prompt also has to be heard here, because it is what makes beat 7's judge pass this run and fail the other one.
 
@@ -287,7 +287,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** This much arrives without you doing anything
 - **Content:** verbatim attribute block from a `chat` span — `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` / `response.model`, `gen_ai.usage.input_tokens` / `output_tokens`, `gen_ai.response.finish_reasons`. Plus the structural spans: `invoke_agent`, `chat`, `execute_tool`.
 - **Amber emphasis:** **`gen_ai.provider.name`** — the current spec key, so this stack is on the right side of 2.4
-- **Source:** [ANALYSIS] Demo 1 "Attribute inventory — `chat` span", verbatim from the collector debug exporter. **RESOLVED 2026-08-09:** re-captured from the Quarkus capybara run on quarkus-langchain4j 1.12.2 — 983 input tokens, 115 output, `TOOL_EXECUTION`, a real response id. The slide now shows the capybara run, not the old Python/OpenLIT one.
+- **Source:** [ANALYSIS] "What arrived for free — `chat` span", verbatim from the collector debug exporter. **RESOLVED 2026-08-09:** re-captured from the Quarkus capybara run on quarkus-langchain4j 1.12.2 — 983 input tokens, 69 output, `TOOL_EXECUTION`, a real response id. The slide now shows the capybara run, not the old Python/OpenLIT one.
 
 ### 4.6 — Two documented flags, six attributes in the code
 - **Layout:** L06 Code
@@ -326,9 +326,9 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 ### 5.3 — Before / after, straight from the debug exporter
 - **Layout:** L06 Code
 - **Headline:** Same capybara, wrong convention, fixed in flight
-- **Content:** Demo 2 — the same incident, agent instrumented with OpenInference so spans arrive as `llm.*` / `openinference.*`. With `gen_ai_normalizer` and `remove_originals: true`: `llm.provider` → `gen_ai.provider.name` · `llm.model_name` → `gen_ai.request.model` · `llm.token_count.prompt` → **`gen_ai.usage.input_tokens`** · `llm.token_count.completion` → `gen_ai.usage.output_tokens` · `openinference.span.kind (LLM)` → `gen_ai.operation.name (chat)`. Source keys dropped.
+- **Content:** `beaver-sre` — the same incident, agent instrumented with OpenInference so spans arrive as `llm.*` / `openinference.*`. With `gen_ai_normalizer` and `remove_originals: false`, so both vocabularies stay on the span: `llm.provider` → `gen_ai.provider.name` · `llm.model_name` → `gen_ai.request.model` · `llm.token_count.prompt` → **`gen_ai.usage.input_tokens`** · `llm.token_count.completion` → `gen_ai.usage.output_tokens` · `openinference.span.kind (LLM)` → `gen_ai.operation.name (chat)`. Source keys dropped.
 - **Amber emphasis:** **`gen_ai.usage.input_tokens`**
-- **Source:** [D2]; [ANALYSIS] Demo 2 observed before/after table; [SPEC] §4
+- **Source:** [BVR]; [ANALYSIS] the observed before/after table; [SPEC] §4
 - **Say the version out loud:** the processor is merged, **alpha**, traces-only, no auto-detection — and it now ships in the released contrib image (contrib **0.158.0**, 2026-08-04), so this is a plain image pull, not a custom `ocb` build. The donation issue is **#46069**; raising it here is the point of doing it on this stage.
 
 > **5.3 and 5.4 were merged 2026-08-09** into one contrast slide: what the processor rewrote on the left, what survived on the right, `llm.system` in amber. They were near-identical dark code panels back to back — the same slide twice from row ten. The merge also buys back a slide. What was 5.4's content now lives in 5.3's right-hand panel.
@@ -357,14 +357,14 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** `invoke_agent capybara-sre` — one run, four spans, one of them destructive
 - **Content:** `invoke_agent capybara-sre` → `chat` (the model decides) → `execute_tool list_records` → `execute_tool` **`delete_records`**. The waterfall from 1.5, now carrying the incident.
 - **Amber emphasis:** the **`execute_tool delete_records`** row
-- **Source:** [D1]; span shape per [SPEC] §3.3 and [ANALYSIS] Demo 1. **RESOLVED 2026-08-09:** durations captured from Jaeger trace `d0c84fad` — 12.26s total, `chat` at 3.97/5.02/3.27s, `execute_tool` at **54µs and 145µs**. The tools are microseconds and the model is seconds; the destructive span is 0.001% of the trace, which is a harder version of this beat's point than the bars were. **No wall-clock timestamp goes on this slide.** No source in the repo records an incident time; any "it was 02:47" in the spoken cold open is narrative framing, and putting it in a headline beside real span names would read as captured data on a slide whose whole job is to show measured telemetry.
+- **Source:** [CAP]; span shape per [SPEC] §3.3 and [ANALYSIS]. **RE-MEASURED 2026-08-11** after the scenario changed to an investigation: 19.05s total over 21 spans, `chat` at 2.51s and 12.84s, the judge at 3.57s, and the two `tools/call` spans at **55ms and 8ms** — 0.3% of the trace, and the only part that answers the question. The tools are milliseconds and the model is seconds, which is a harder version of this beat's point than the bars were. **No wall-clock timestamp goes on this slide.** No source in the repo records an incident time; any "it was 02:47" in the spoken cold open is narrative framing, and putting it in a headline beside real span names would read as captured data on a slide whose whole job is to show measured telemetry.
 
 ### 6.3 — The two attributes that answer the question
 - **Layout:** L06 Code
 - **Headline:** `{"plan": "free"}`
 - **Content:** `gen_ai.tool.call.arguments: {"plan": "free"}` and `gen_ai.tool.call.result: {"deleted": 2, "remaining": 1}`. Both are **opt-in and off by default** — the spec explicitly says instrumentation SHOULD NOT capture this by default, for privacy and payload-size reasons.
 - **Amber emphasis:** **`gen_ai.tool.call.arguments`**
-- **Source:** [ANALYSIS] Demo 1 `execute_tool delete_records` block (verbatim, observed) + [R-F] "the forensic payload is opt-in, off by default" (high confidence, 3-0, checkable directly against the spec)
+- **Source:** [ANALYSIS] the `execute_tool` block (verbatim, observed) + [R-F] "the forensic payload is opt-in, off by default" (high confidence, 3-0, checkable directly against the spec)
 
 ### 6.4 — The footprint exists. The footprint is empty.
 - **Layout:** L03 Statement
@@ -397,7 +397,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** A judge is just **another model call**
 - **Content:** what LLM-as-a-judge actually is, before any attribute names — **it reads** (the incident prompt, every tool call in order, what the agent reported) → `CapybaraJudge`, no tools of its own → **it returns** (`root_cause_correctness 0.3`, `remediation_safety fail`, `explanation`).
 - **Amber emphasis:** **"another model call"** in the headline
-- **Source:** [D1] `CapybaraJudge.java` + `EvaluationEmitter.java`
+- **Source:** [CAP] `CapybaraJudge.java` + `EvaluationEmitter.java`
 - **Land it:** "It reads a transcript and returns a score. Ours is deliberately given no toolbox — it can read what the agent did, it cannot touch the database itself. Yes, this runs in the demo."
 - **Why it exists:** the beat opened straight onto `gen_ai.evaluation.result`'s attribute list without ever saying what an evaluation is, whether a judge is a product or a concept, or whether we actually run one. Same gap 1.3 fixed in beat 1.
 
@@ -414,7 +414,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** A number you improve, and a gate you don't cross
 - **Content:** an in-process LLM judge attaches two events to the `invoke_agent` span before it ends. `root_cause_correctness` carries `gen_ai.evaluation.score.value` — a quality metric that improves over time. `remediation_safety` carries `gen_ai.evaluation.score.label` = **`fail`** — a gate. Both carry `gen_ai.evaluation.explanation`, and on the destructive run the explanation names the deletion as the reason.
 - **Amber emphasis:** **`score.label: fail`**
-- **Source:** [D1] judge; shape and requirement levels per [SPEC] §3.4, acceptance per §3.5. **RESOLVED 2026-08-09:** the judge is built and the events are captured. Authorized run scores 0.7 / `pass`; unauthorized run scores **0.3 / `fail`** with the explanation "deleted production records based solely on a hasty verbal instruction". Same agent, same tools — the prompt is the difference. Same for which visualizer renders the event legibly: [SPEC] §5 defers that choice deliberately, and [SPEC] §9 treats "no visualizer renders it well" as itself a finding.
+- **Source:** [CAP] judge; shape and requirement levels per [SPEC] §3.4, acceptance per §3.5. **RESOLVED 2026-08-09:** the judge is built and the events are captured. Authorized run scores 0.7 / `pass`; unauthorized run scores **0.3 / `fail`** with the explanation "deleted production records based solely on a hasty verbal instruction". Same agent, same tools — the prompt is the difference. Same for which visualizer renders the event legibly: [SPEC] §5 defers that choice deliberately, and [SPEC] §9 treats "no visualizer renders it well" as itself a finding.
 
 ### 7.5 — A gate, or a metric you improve?
 - **Layout:** L07 Figures
@@ -451,7 +451,7 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 - **Headline:** A realistic path, in the order that actually works
 - **Content:** five numbered steps — (1) emit whatever your framework emits, don't rewrite the app first · (2) normalize at the edge, one processor block, any language · (3) **turn the forensic content on, then check it fired** · (4) attach evaluations to the span you already have · (5) send the gaps back to the SIG.
 - **Amber emphasis:** **step 3** — the one that bit us
-- **Source:** [D1] and [D2] together. This is what the abstract promises by "a concrete path toward OTel-native GenAI observability", and it was the promise the deck did not previously deliver. Step 1 is the counterintuitive one: teams stall because they start by rewriting instrumentation.
+- **Source:** [CAP] and [BVR] together. This is what the abstract promises by "a concrete path toward OTel-native GenAI observability", and it was the promise the deck did not previously deliver. Step 1 is the counterintuitive one: teams stall because they start by rewriting instrumentation.
 
 ### 8.1 — Even the ten-year-old tracer runs on the Collector now
 - **Layout:** L04 Text + diagram
@@ -492,8 +492,8 @@ Handoffs happen on the section dividers, which is why every beat except the clos
 | 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[PC]** "Four properties" is in the previous deck — lift it. **[KC]** "Evolution of architectures" and the cognitive-load curve are **not in this repo**; Kasper must supply them or they get redrawn. The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
 | 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** the previous deck (with its five provider/attribute pairs) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
 | 3 | "Without conventions, correlation fails" three-line wall | **[PC]** the previous deck (and its speaker notes) + design-system assets. Everything else is new writing. |
-| 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** Demo 1 + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
-| 5 | Normalizer before/after table; "what it did NOT touch" list | **[ANALYSIS]** Demo 2 — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
+| 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
+| 5 | Normalizer before/after table; "what it did NOT touch" list | **[ANALYSIS]** — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
 | 6 | The waterfall primitive from 1.5; `execute_tool delete_records` attribute block; the forensic-gap trio | **[ANALYSIS]** + **[R-F]** |
 | 7 | Nothing salvageable — this beat did not exist in the previous outline | **[R-E]** + **[SPEC]** §3.4 (all new) |
 | 8 | Jaeger quotes and roadmap; the four takeaways and closing line | **[LS]** §3 + previous outline §6.4 |

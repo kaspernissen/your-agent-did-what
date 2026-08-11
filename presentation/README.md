@@ -5,11 +5,10 @@ Observability for Systems That Don't Leave Obvious Footprints*, by **Kasper Borg
 (`@phennex`) and **Adriana Villela** (`@adrianamvillela`). 45 minutes, two speakers.
 
 > **Status: built.** `index.html` holds all **40 slides** across the nine beats mapped in
-> `../outline.md`, each with a speaker note. Three slides deliberately show structure
-> without data — the beat-6 waterfall's durations, the "what you get for free" attribute
-> values, and the evaluation event's values — because Demo 1 and its judge do not exist
-> yet. Those carry `[NEEDS SOURCE]` markers in `../outline.md`; fill them from a real run
-> rather than plausible numbers.
+> `../outline.md`, each with a speaker note. Every number on a slide now comes from a real
+> run and is recorded in `../demos/ANALYSIS.md`; the two remaining `[NEEDS SOURCE]` markers
+> in `../outline.md` are arguments we are making rather than measurements, and the slides
+> flag them as our position.
 
 ```
 presentation/

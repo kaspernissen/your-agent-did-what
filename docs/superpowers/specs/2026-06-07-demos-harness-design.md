@@ -1,5 +1,11 @@
 # Demos Harness — Design Spec
 
+> **Historical.** A spec or plan from an earlier stage of this project, kept as a record of
+> what was decided and why. It describes structures that no longer exist — the demo-1 /
+> demo-2 split, the multi-backend fan-out, the Arconia and Spring AI demos, the over-quota
+> scenario. For how the repo works today see [`AGENTS.md`](../../../AGENTS.md) and
+> [`demos/README.md`](../../../demos/README.md).
+
 **Date:** 2026-06-07
 **Topic:** A docker-compose "test harness" for the *Your Agent Did What?* talk that showcases the GenAI-observability **backend/visualization** landscape — one instrumented tool-calling agent fanned out to multiple OSS viewers + a vendor.
 **Location:** `/Users/kaspernissen/kaspernissen/your-agent-did-what/demos`

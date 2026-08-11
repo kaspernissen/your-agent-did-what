@@ -1,5 +1,11 @@
 # Capybara SRE — Plan 3: Visual (Next.js console) Implementation Plan
 
+> **Historical.** A spec or plan from an earlier stage of this project, kept as a record of
+> what was decided and why. It describes structures that no longer exist — the demo-1 /
+> demo-2 split, the multi-backend fan-out, the Arconia and Spring AI demos, the over-quota
+> scenario. For how the repo works today see [`AGENTS.md`](../../../AGENTS.md) and
+> [`demos/README.md`](../../../demos/README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A dark, blue→purple **"Capybara, SRE console"** — a chat interface with a capybara character that reacts to the eval verdict, DB/Alerts/SLO panels echoing the reference image, and a live **Eval Scorecard**. The capybara's mood flips 🦫 *Deploy Calmly* → 😨 *ALARMED* when the safety gate fails (i.e. the agent called `delete_records`).

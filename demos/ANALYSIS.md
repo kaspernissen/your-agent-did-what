@@ -122,7 +122,7 @@ needs the processor for its tool telemetry.
 
 ---
 
-### Demo 1 — the tool-path experiment, measured
+### The tool-path experiment, measured (2026-08-10)
 
 > The live tool-path experiment. Still the source for beat 4's 4-versus-6 numbers.
 
@@ -279,8 +279,8 @@ convert, results do not. Verified against the processor source at contrib v0.158
 
 That is the same hole beat 4 finds by a different route, and the pair is the argument:
 
-- **Demo 1, MCP path:** the framework never records the arguments or the result at all.
-- **Demo 2, normalized path:** the structure and the arguments survive translation; the
+- **The MCP path:** the framework never records the arguments or the result at all.
+- **The normalized path:** the structure and the arguments survive translation; the
   result does not.
 
 Two roads to the same missing half. "Put a normalizer in the collector" is a real answer
@@ -290,7 +290,7 @@ Also worth noting for the stage: the operation name is an attribute, not the spa
 These spans are called `beaver-sre`, `list_records`, `messages.create` — grep for
 `execute_tool` in Jaeger's operation list and you will not find them.
 
-### Demo 2 in the cluster — the normalizer is partial (measured 2026-08-11)
+### The normalizer in the cluster — partial (measured 2026-08-11)
 
 Same image, same prompt, same collector, one variable. Run with
 `agents/deploy.sh openinference` and `agents/deploy.sh openlit`.
@@ -505,7 +505,7 @@ Phoenix ingestion confirmed on the same run: 2 traces, 6.5s p50, from `gen_ai.*`
 
 Kept on purpose. A measurement that was replaced is more useful with its replacement noted than deleted — and one of these records a demo that no longer exists.
 
-### Demo 1 — one app, OTel GenAI semconv, fanned out
+### One app, fanned out to four backends (originally "Demo 1")
 
 > **Captured 2026-06-07. The fan-out harness was removed on 2026-08-11.** One agent to four backends, behind docker-compose profiles. The measurements stand as a dated capture and still back slide 16, but the harness is no longer runnable — recover it from git history if you need it.
 
@@ -583,7 +583,7 @@ gen_ai.tool.call.result: {"deleted": 2, "remaining": 1}   # OPT-IN / off by defa
 
 ---
 
-### Demo 2 — `gen_ai_normalizer` at the collector (OpenInference → OTel)
+### First capture of `gen_ai_normalizer` at the collector (originally "Demo 2")
 
 > **Superseded** by the two 2026-08-11 in-cluster measurements above. Kept because it is the first capture of the processor working at all, and because the attribute-level before/after is more detailed than the later runs.
 
@@ -646,7 +646,7 @@ trace OTel-native end to end.
 
 ---
 
-### Demo 3 — Arconia convention switching (Spring AI / Java)
+### Arconia convention switching, Spring AI / Java (originally "Demo 3")
 
 > **The code for this demo was removed on 2026-08-11** (`demos/arconia (removed)/`, recoverable from git
 > history). The measurement below stands as a dated capture and still backs the "three
@@ -681,14 +681,14 @@ POST /api/chat                  (Server)
 
 ---
 
-### Demo 1b — Capybara SRE on quarkus-langchain4j 1.12.2 (measured 2026-08-09)
+### Capybara SRE on quarkus-langchain4j 1.12.2 (originally "Demo 1b") (measured 2026-08-09)
 
 > Section header only; its measurements were promoted into *Current findings* above.
 
 The Quarkus agent over an MCP server, `claude-sonnet-4-6`, both forensic flags set to
 `true` in `application.properties`.
 
-### Demo structure: one variable per demo (refactored 2026-08-10)
+### One variable per comparison (refactored 2026-08-10)
 
 > **Superseded** by the 2026-08-11 restructure — there is one demo now, with two agents in it, and both read the same database. The reasoning about isolating one variable still holds and is why beat 5 is arguable at all.
 
@@ -735,7 +735,7 @@ them. Corrected.
 Both demos run against the live Anthropic API. Everything below was captured from
 `docker logs` on a collector with a `debug` exporter, not reasoned about.
 
-### Demo 2 — the normalizer, re-measured on the refactored agent
+### The normalizer, re-measured on the refactored agent
 
 > **Superseded** — this measured only the model call, because at the time the agent and tool spans were hand-written in `gen_ai.*` and so had nothing to normalise. That flaw is what the end-to-end measurement above fixes.
 

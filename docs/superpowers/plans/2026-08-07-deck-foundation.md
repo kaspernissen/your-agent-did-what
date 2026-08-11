@@ -1,5 +1,11 @@
 # Deck Foundation Implementation Plan
 
+> **Historical.** A spec or plan from an earlier stage of this project, kept as a record of
+> what was decided and why. It describes structures that no longer exist — the demo-1 /
+> demo-2 split, the multi-backend fan-out, the Arconia and Spring AI demos, the over-quota
+> scenario. For how the repo works today see [`AGENTS.md`](../../../AGENTS.md) and
+> [`demos/README.md`](../../../demos/README.md).
+
 > **Path note (2026-08-11):** this document says `presentation-trace/`. That directory was
 > renamed to `presentation/` once the old deck was removed and it became the only one.
 > The text below is left as written — it is a record of the design at the time.

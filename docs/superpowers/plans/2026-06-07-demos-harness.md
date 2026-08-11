@@ -1,5 +1,11 @@
 # Demos Harness Implementation Plan
 
+> **Historical.** A spec or plan from an earlier stage of this project, kept as a record of
+> what was decided and why. It describes structures that no longer exist — the demo-1 /
+> demo-2 split, the multi-backend fan-out, the Arconia and Spring AI demos, the over-quota
+> scenario. For how the repo works today see [`AGENTS.md`](../../../AGENTS.md) and
+> [`demos/README.md`](../../../demos/README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build a docker-compose "test harness" under `demos/` where one OTel-instrumented tool-calling Claude agent fans out the same GenAI trace to Jaeger, Arize Phoenix, OpenLIT, Langfuse, and (optionally) Dash0, so the talk can compare how each backend renders it.
