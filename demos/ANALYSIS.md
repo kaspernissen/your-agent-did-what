@@ -659,16 +659,46 @@ spans exist; they are simply detached from the thing that caused them.
 call's arguments and results *and* the causal link to the work it performed. On the local
 path you have both. Two different failures from one boundary.
 
-Candidate fixes, untried at time of writing:
+**Two attempts, one of which worked. What is left is upstream.**
 
-1. **Streamable HTTP instead of SSE.** The reply travels on the same HTTP request, so the
-   tool would plausibly execute inside the request context. SSE is also deprecated in the
-   MCP spec, so this modernises the demo either way.
-2. **Align the Quarkus platform versions** — the MCP server is on 3.31.2 and the agent on
-   3.33.2 — and check whether a newer `quarkus-mcp-server` propagates context.
+*Attempt 1 — Streamable HTTP instead of SSE (2026-08-11): worse.* The obvious candidate,
+since the reply travels on the same HTTP request rather than a channel opened earlier. The
+server already speaks it — `POST /mcp` answers 200 with an `Mcp-Session-Id`, no server
+change — and quarkus-langchain4j 1.12.2 supports `transport-type=streamable-http`. With
+both switched: still 0 SQL spans in the agent's trace, and `capybara-db-mcp` now
+contributes **no span at all**, because nothing emits a server span for `POST /mcp`.
+Reverted. The transport is not the variable.
 
-If (1) fixes it, the slide gets sharper still: the transport you pick decides whether you
-can correlate an agent's tool call with its effect.
+*Attempt 2 — server-side MCP tracing: fixed the visible half.* `quarkus.mcp.server.tracing.enabled`
+defaults to **false**, and we had never set it. That is why the far side of every tool call
+was a blank: the client showed `tools/call list_records` and nothing explained what the
+server did with it. The option needs quarkus-mcp-server 1.13.1 (we were on 1.10.6; the
+platform was also two minors behind the agent, now aligned at 3.33.2).
+
+With it on, the server's spans land **inside the agent's trace**, correctly parented:
+
+```
+[capybara-sre   ] tools/call list_records          children=2
+[capybara-sre   ]   POST                           children=1
+[capybara-db-mcp]     POST /mcp/messages/:id       children=1
+[capybara-db-mcp]       tools/call list_records    children=0   <- the tool body
+```
+
+21 spans, up from 15. `tools/list` appears too, so even the startup handshake is explained.
+
+**What remains is one hop, and it is not ours.** The tool body still runs with no context,
+so `SELECT capybara.capybaras` is still its own single-span root trace. That is
+[quarkiverse/quarkus-mcp-server#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789),
+open since 2026-05-15: `McpMessageHandler.operation(...)` executes on a *new* duplicated
+Vert.x context, which carries none of the request's OTel context. The maintainer's reply is
+"No ETA for this." It is not fixable from configuration or from the client, and the
+extension already reads `traceparent` out of the JSON-RPC `_meta` envelope
+(`McpMetaTextMapGetter`), so the plumbing exists — it just does not reach the tool.
+
+**The line for the stage:** the context crossed the network and was dropped on the far side
+of one specific boundary — with an issue number, a root cause in one method, and no ETA.
+Not "MCP loses traces", not "pick a different transport", and not something a custom span
+would honestly paper over: the database work genuinely has no parent to attach to.
 
 ---
 

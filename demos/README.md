@@ -143,9 +143,13 @@ All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
 - **The MCP path loses the tool call's content.** 4 span attributes versus 6 on the local
   path; `gen_ai.tool.call.arguments` and `.result` absent. It is a *framework* gap, not an
   MCP gap — say "in this framework", never "with MCP".
-- **The MCP path also loses the trace.** `POST /mcp/messages/:id` is correctly parented but
-  has no children in 10 of 10 traces; each SQL query becomes its own root. On the local
-  path the SQL spans sit inside the agent's trace.
+- **The MCP path loses the trace at one specific hop.** With
+  `quarkus.mcp.server.tracing.enabled=true` (off by default, and it needs
+  quarkus-mcp-server 1.13.1) the server's `tools/call` spans sit correctly inside the
+  agent's trace. The tool *body* still does not: each SQL query is its own root, because
+  the extension runs the tool on a new duplicated Vert.x context —
+  [#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789), open, "No ETA".
+  Streamable HTTP was tried and is worse, so the transport is not the variable.
 - **The normalizer is partial, and asymmetric.** It converts the whole structure —
   AGENT→`invoke_agent`, TOOL→`execute_tool`, LLM→`chat` — and the tool call's *arguments*,
   but there is no mapping for the *result*. Two roads to the same missing half.
