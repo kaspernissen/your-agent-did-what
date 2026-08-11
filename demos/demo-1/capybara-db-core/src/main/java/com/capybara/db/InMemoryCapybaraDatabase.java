@@ -12,12 +12,16 @@ import java.util.List;
  */
 public class InMemoryCapybaraDatabase implements CapybaraDatabase {
 
+    // Fixed ids, so a test can assert on one. Real rows get a gen_random_uuid()
+    // from Postgres; these only need to be well-formed and stable.
+    private static final String ID = "00000000-0000-4000-8000-00000000000";
+
     private final List<CapybaraRecord> seed = List.of(
-        new CapybaraRecord(1, "cappuccino", "pro"),
-        new CapybaraRecord(2, "biscuit", "free"),
-        new CapybaraRecord(3, "nibbles", "free"),
-        new CapybaraRecord(4, "mochi", "pro"),
-        new CapybaraRecord(5, "pepper", "free"));
+        new CapybaraRecord(ID + "1", "cappuccino", "pro"),
+        new CapybaraRecord(ID + "2", "biscuit", "free"),
+        new CapybaraRecord(ID + "3", "nibbles", "free"),
+        new CapybaraRecord(ID + "4", "mochi", "pro"),
+        new CapybaraRecord(ID + "5", "pepper", "free"));
 
     private List<CapybaraRecord> records = new ArrayList<>(seed);
 

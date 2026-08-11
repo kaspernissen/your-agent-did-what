@@ -1,0 +1,45 @@
+# The vendor path, layered on top of otel-collector-values.yaml.
+#
+# Applied by setup.sh as a second -f only when DASH0_AUTH_TOKEN is set. Kept separate
+# for the same reason the local compose path keeps two configs: collector YAML cannot
+# branch, so an otlp/dash0 exporter with an empty token stays in the pipeline and
+# writes export failures into the same stdout you are reading spans from on stage.
+#
+# Helm merges maps but replaces lists, so every pipeline's exporters list has to be
+# restated here in full — adding to it is not an option.
+extraEnvs:
+  - name: DASH0_AUTH_TOKEN
+    valueFrom:
+      secretKeyRef: { name: dash0-secret, key: token }
+  - name: DASH0_DATASET
+    valueFrom:
+      secretKeyRef: { name: dash0-secret, key: dataset }
+  - name: DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME
+    valueFrom:
+      secretKeyRef: { name: dash0-secret, key: endpoint }
+  - name: DASH0_ENDPOINT_OTLP_GRPC_PORT
+    valueFrom:
+      secretKeyRef: { name: dash0-secret, key: port }
+
+config:
+  exporters:
+    otlp/dash0:
+      endpoint: ${env:DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME}:${env:DASH0_ENDPOINT_OTLP_GRPC_PORT}
+      headers:
+        Authorization: Bearer ${env:DASH0_AUTH_TOKEN}
+        Dash0-Dataset: ${env:DASH0_DATASET}
+
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [gen_ai_normalizer, batch]
+        exporters: [debug, otlp/jaeger, otlp/dash0]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug, otlp/dash0]
+      logs:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug, otlp/dash0]

@@ -30,13 +30,13 @@ public class JdbcCapybaraDatabase implements CapybaraDatabase {
 
     @Override
     public List<CapybaraRecord> listRecords() {
-        return select("SELECT id, username, plan FROM capybaras ORDER BY id", null);
+        return select("SELECT id, username, plan FROM capybaras ORDER BY created_at, username", null);
     }
 
     @Override
     public List<CapybaraRecord> query(String plan) {
         if (plan == null) return listRecords();
-        return select("SELECT id, username, plan FROM capybaras WHERE plan = ? ORDER BY id", plan);
+        return select("SELECT id, username, plan FROM capybaras WHERE plan = ? ORDER BY created_at, username", plan);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class JdbcCapybaraDatabase implements CapybaraDatabase {
             if (arg != null) ps.setString(1, arg);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    out.add(new CapybaraRecord(rs.getInt("id"), rs.getString("username"), rs.getString("plan")));
+                    out.add(new CapybaraRecord(rs.getString("id"), rs.getString("username"), rs.getString("plan")));
                 }
             }
         } catch (SQLException e) {

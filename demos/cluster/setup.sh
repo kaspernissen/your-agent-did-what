@@ -35,8 +35,24 @@ helm upgrade --install jaeger jaegertracing/jaeger --version 3.4.1 \
   -f jaeger-values.yaml --wait
 
 echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
+# The vendor path is opt-in on the token, exactly like the local compose path. Without
+# it the collector still exports to stdout and Jaeger, so the demo works offline.
+DASH0_VALUES=()
+if [ -n "${DASH0_AUTH_TOKEN:-}" ]; then
+  kubectl create secret generic dash0-secret \
+    --from-literal=token="$DASH0_AUTH_TOKEN" \
+    --from-literal=dataset="${DASH0_DATASET:-default}" \
+    --from-literal=endpoint="${DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME:-ingress.eu-west-1.aws.dash0.com}" \
+    --from-literal=port="${DASH0_ENDPOINT_OTLP_GRPC_PORT:-4317}" \
+    --dry-run=client -o yaml | kubectl apply -f -
+  DASH0_VALUES=(-f otel-collector-values.dash0.yaml)
+  echo "Dash0 token found — also exporting to ${DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME:-ingress.eu-west-1.aws.dash0.com}"
+else
+  echo "No DASH0_AUTH_TOKEN — stdout and Jaeger only. Set it in demos/.env for the vendor path."
+fi
+
 helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-  -f otel-collector-values.yaml --wait
+  -f otel-collector-values.yaml "${DASH0_VALUES[@]}" --wait
 
 cat <<EOF
 

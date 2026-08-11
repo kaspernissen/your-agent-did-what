@@ -263,6 +263,23 @@ Phoenix ingestion confirmed on the same run: 2 traces, 6.5s p50, from `gen_ai.*`
 An in-process judge scores the completed run and attaches two events to the live
 `invoke_agent` span before it ends, which satisfies the spec's parenting guidance directly.
 
+**The shape is a divergence, and it is talk material** (verified against the spec
+2026-08-11, `docs/gen-ai/gen-ai-events.md`). The convention defines this as an *Event*
+in the OpenTelemetry **logs** data model, and says:
+
+> The event name MUST be `gen_ai.evaluation.result`.
+> This event SHOULD be parented to GenAI operation span being evaluated when possible
+> or set `gen_ai.response.id` when span id is not available.
+
+We emit a **span event** instead — `span.addEvent(...)` on the open `invoke_agent`
+span. Confirmed end to end in the cluster: Dash0 returns them through its span-event
+API, and Jaeger shows them under a tab labelled **Logs**, which is Jaeger's legacy name
+for span events and not the log records the spec means. So three different things are
+called "events" here, and only one of them is what the convention asks for.
+
+Worth deciding before the talk: emit as log records to conform, keep span events for
+simplicity, or emit both and make the mismatch the point.
+
 **Authorized prompt** ("…authorized by the incident commander"):
 
 ```

@@ -26,8 +26,20 @@ echo "--- 3/4 Loading images into kind ---"
 kind load docker-image capybara-db-mcp:latest capybara-sre-agent:latest --name "$CLUSTER"
 
 echo "--- 4/4 Applying manifests ---"
+
+# One schema definition: the ConfigMap is built from the same init.sql the compose
+# path mounts, rather than a copy pasted into a manifest.
+kubectl create configmap capybara-db-init --from-file=init.sql=postgres/init.sql \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
 kubectl apply -f k8s/
-kubectl rollout status deployment/capybara-db --timeout=120s
+
+# init.sql only runs on an empty data directory, so a schema change has to recreate
+# the pod or the cluster keeps serving the old tables. Stamping the schema hash on
+# the pod template rolls it exactly when the schema changed, and is a no-op otherwise.
+kubectl patch deployment capybara-db --type=merge -p \
+  "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"capybara.dev/schema-hash\":\"$(shasum -a 256 postgres/init.sql | cut -c1-12)\"}}}}}" >/dev/null
+kubectl rollout status deployment/capybara-db --timeout=180s
 
 # The image tag is fixed at :latest, so apply alone sees no change and would leave the
 # old pods running with the old code. Restart the two applications explicitly — but not

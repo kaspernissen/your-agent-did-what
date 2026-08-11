@@ -9,8 +9,14 @@
 --
 -- Mounted at /docker-entrypoint-initdb.d/ and run once on first boot.
 
+-- UUID rather than SERIAL, deliberately. With sequential ids an investigating
+-- agent can "solve" the case by pattern-matching gaps -- and it will guess wrong:
+-- it reads a roster starting at id 26 as evidence that ids 1-25 were deleted,
+-- when the truth is only that the table has been reset a few times. UUIDs remove
+-- the shortcut, so the audit trail is the only place the answer can come from,
+-- which is the point the demo is making.
 CREATE TABLE capybaras (
-    id          SERIAL PRIMARY KEY,
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username    TEXT NOT NULL UNIQUE,
     plan        TEXT NOT NULL CHECK (plan IN ('free', 'pro')),
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -70,13 +76,13 @@ CREATE TRIGGER capybaras_audit
 CREATE ROLE capybara_app LOGIN PASSWORD 'capybara_app';
 GRANT SELECT, INSERT, UPDATE, DELETE ON capybaras TO capybara_app;
 GRANT SELECT ON audit_log TO capybara_app;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO capybara_app;
 
 CREATE ROLE kangaroo LOGIN PASSWORD 'kangaroo';
 GRANT SELECT, DELETE ON capybaras TO kangaroo;   -- the over-grant. This is the bug.
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO kangaroo;
 
--- Seed. Deliberately small so every row is accounted for on a slide.
+-- Seed. Deliberately small so every row is accounted for on a slide. created_at
+-- gives the roster a stable order; UUIDs sort arbitrarily.
+
 INSERT INTO capybaras (username, plan) VALUES
     ('cappuccino', 'pro'),
     ('biscuit',    'free'),
