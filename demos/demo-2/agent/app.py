@@ -8,6 +8,7 @@ Kept deliberately thin. Everything worth reading is in `agent.py` (the loop),
 """
 from __future__ import annotations
 
+import os
 import sys
 
 import telemetry
@@ -25,8 +26,8 @@ def main(argv: list[str]) -> int:
 
     # The incident happens before the agent is asked about it, and not by the agent.
     incident = tools.simulate_incident()
-    tracer = telemetry.configure(DEFAULT_AGENT_NAME)
-    agent = CapybaraAgent(tracer, name=DEFAULT_AGENT_NAME)
+    tracer = telemetry.configure(os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
+    agent = CapybaraAgent(tracer, name=os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
 
     print(f"\ninstrumentation  {convention}")
     print(f"model            {agent.model}")

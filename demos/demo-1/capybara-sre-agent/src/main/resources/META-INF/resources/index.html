@@ -90,6 +90,23 @@
   .note{color:var(--muted);font-size:14px;margin-top:10px}
   .err{background:#fff;border-radius:10px;padding:14px 16px;color:var(--bad)}
   .hidden{display:none}
+  .tabs{display:flex;gap:6px;margin:22px 0 4px;border-bottom:2px solid var(--paper-2)}
+  .tabs button{background:none;color:var(--muted);font-weight:600;font-size:14px;
+    padding:10px 16px;border-radius:10px 10px 0 0;margin-bottom:-2px;
+    border-bottom:2px solid transparent}
+  .tabs button[aria-selected="true"]{color:var(--navy);background:var(--paper-2);
+    border-bottom-color:var(--amber)}
+  .lede{color:var(--muted);font-size:15px;line-height:1.6;margin:18px 0 0}
+  .variants{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+  .conv{background:var(--paper-2);border-radius:14px;padding:18px 20px;margin-top:14px}
+  .conv h3{margin:0 0 4px;font-size:15px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .conv .meta{color:var(--muted);font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .conv a{color:var(--blue);font-weight:600}
+  .prefixes{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    background:#fff;border-radius:20px;padding:4px 11px}
+  .chip.amber{background:var(--amber);color:var(--ink);font-weight:600}
   .spin{display:inline-block;animation:s 1s linear infinite}
   @keyframes s{to{transform:rotate(360deg)}}
   @media (prefers-reduced-motion:reduce){.spin{animation:none}}
@@ -105,6 +122,33 @@
     <span class="badge" id="path">tools: …</span>
   </header>
 
+  <div class="tabs" role="tablist">
+    <button id="tab-sre"  role="tab" aria-selected="true"  aria-controls="panel-sre">The incident</button>
+    <button id="tab-conv" role="tab" aria-selected="false" aria-controls="panel-conv">Conventions</button>
+  </div>
+
+  <div id="panel-conv" class="hidden" role="tabpanel">
+    <p class="lede">The same incident, the same question, asked of a Python agent
+      instead. The only thing that differs is the instrumentation library &mdash; so any
+      difference in the telemetry is attributable to the convention and nothing else.
+      Both agents are already running; each run emits its own trace.</p>
+
+    <div class="variants">
+      <button data-variant="openinference" class="danger">Run · OpenInference</button>
+      <button data-variant="openlit" class="quiet">Run · OpenLIT</button>
+      <span id="conv-state" class="state"></span>
+    </div>
+
+    <div id="conv-out"></div>
+
+    <p class="note">Jaeger shows what <em>arrived</em>, after
+      <code>gen_ai_normalizer</code>. The OpenInference trace is half&#8209;translated
+      there &mdash; that is the finding, not a bug. What the library actually emitted is
+      only visible in the collector's own output:
+      <code>kubectl logs -l app.kubernetes.io/name=opentelemetry-collector</code>.</p>
+  </div>
+
+  <div id="panel-sre" role="tabpanel">
   <div class="stage">
     <button id="rampage" class="danger">🦘 Unleash the kangaroos</button>
     <button id="reset" class="quiet">↺ Reset the database</button>
@@ -143,6 +187,8 @@
         convention asks for. Jaeger will not show them; it takes spans, not logs.</p>
     </section>
   </div>
+
+  </div><!-- /panel-sre -->
 
   <div id="error" class="err hidden"></div>
 </div>
@@ -201,6 +247,73 @@
       $('go').textContent = 'Page Capybara';
     }
   });
+
+  // Where a trace can be opened. The console is reached over a port-forward, so this
+  // assumes the conventional one for Jaeger rather than trying to discover it.
+  const JAEGER = 'http://localhost:16686';
+
+  const TABS = [['tab-sre', 'panel-sre'], ['tab-conv', 'panel-conv']];
+  TABS.forEach(([tab]) => $(tab).addEventListener('click', () => {
+    TABS.forEach(([t, p]) => {
+      const on = t === tab;
+      $(t).setAttribute('aria-selected', String(on));
+      $(p).classList.toggle('hidden', !on);
+    });
+  }));
+
+  document.querySelectorAll('.variants button[data-variant]').forEach(btn =>
+    btn.addEventListener('click', () => runConvention(btn)));
+
+  async function runConvention(btn) {
+    const variant = btn.dataset.variant;
+    const buttons = [...document.querySelectorAll('.variants button[data-variant]')];
+    buttons.forEach(b => b.disabled = true);
+    $('conv-state').innerHTML = '<span class="spin">◌</span> running ' + esc(variant);
+    try {
+      const r = await fetch('/conventions/' + variant, {method: 'POST'});
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || (r.status + ' ' + r.statusText));
+      renderConvention(d);
+      $('conv-state').textContent = '';
+    } catch (err) {
+      $('conv-state').textContent = '';
+      $('conv-out').innerHTML = '<div class="err">' + esc(err.message) + '</div>';
+    } finally {
+      buttons.forEach(b => b.disabled = false);
+    }
+  }
+
+  // What the audience needs from this panel is the vocabulary, so the attribute
+  // prefixes lead and the prose follows.
+  function renderConvention(d) {
+    const calls = d.toolCalls || [];
+    const trace = d.traceId
+      ? `<a href="${JAEGER}/trace/${esc(d.traceId)}" target="_blank" rel="noopener">open the trace in Jaeger →</a>`
+      : 'no trace id returned';
+
+    $('conv-out').innerHTML = `
+      <div class="conv">
+        <h3>${esc(d.convention)}</h3>
+        <div class="meta">service ${esc(d.agentName)} &middot; model ${esc(d.model)} &middot;
+          ${calls.length} tool call${calls.length === 1 ? '' : 's'}</div>
+        <div class="prefixes">
+          ${expected(d.convention).map(p =>
+            `<span class="chip${p.startsWith('gen_ai') ? '' : ' amber'}">${esc(p)}</span>`).join('')}
+        </div>
+        <p class="note">${trace}</p>
+      </div>
+      <div class="card answer">${md.renderMarkdown(d.answer || '(no answer)')}</div>`;
+  }
+
+  // Stated rather than measured: the console cannot read the span it just caused. The
+  // amber chips are what gen_ai_normalizer leaves behind — see ../ANALYSIS.md.
+  function expected(convention) {
+    return convention === 'openinference'
+      ? ['gen_ai.request.model', 'gen_ai.usage.*', 'llm.tools.*', 'llm.system',
+         'llm.invocation_parameters', 'input.value', 'output.value']
+      : ['gen_ai.request.model', 'gen_ai.usage.*', 'gen_ai.response.id',
+         'gen_ai.request.top_k', 'gen_ai.server.time_to_first_token'];
+  }
 
   function render(d) {
     $('out').classList.remove('hidden');

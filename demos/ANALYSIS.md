@@ -626,3 +626,46 @@ survive because none were emitted, and the span carries a noticeably richer set
 
 Both runs reach the same diagnosis and name the kangaroo role, which is the control:
 the conclusion does not change, only the vocabulary describing how it was reached.
+
+---
+
+### MCP over SSE loses the trace context (measured 2026-08-11, in-cluster)
+
+The same run, the same binary, the same database — only the tool path differs.
+
+| | `CAPYBARA_TOOLS=local` | `CAPYBARA_TOOLS=mcp` |
+|---|---|---|
+| spans in the `invoke_agent` trace | 24 | 18 |
+| SQL spans in that trace | **2** | **0** |
+| where the SQL spans are | inline, under the tool span | **their own single-span traces** |
+
+```
+88ca8e78...  18 spans  sql=0  invoke_agent=True     <- the investigation
+a29f6b98...   1 span   sql=1  SELECT capybara.capybaras
+e3d811cf...   1 span   sql=1  SELECT capybara.audit_log
+```
+
+**Where it breaks, precisely.** The context does arrive: `POST /mcp/messages/:id` is
+correctly parented inside the agent's trace, so `traceparent` crossed the network. That
+span then has **zero children in every trace measured** (10 of 10). The MCP server
+dispatches the JSON-RPC message asynchronously — the reply goes back over the SSE
+channel, not the POST — and the tool executes outside the request's OTel context, so its
+JDBC span starts a new root.
+
+So this is not a missing-instrumentation problem. The datasource is instrumented and the
+spans exist; they are simply detached from the thing that caused them.
+
+**This compounds beat 4 rather than duplicating it.** On the MCP path you lose the tool
+call's arguments and results *and* the causal link to the work it performed. On the local
+path you have both. Two different failures from one boundary.
+
+Candidate fixes, untried at time of writing:
+
+1. **Streamable HTTP instead of SSE.** The reply travels on the same HTTP request, so the
+   tool would plausibly execute inside the request context. SSE is also deprecated in the
+   MCP spec, so this modernises the demo either way.
+2. **Align the Quarkus platform versions** — the MCP server is on 3.31.2 and the agent on
+   3.33.2 — and check whether a newer `quarkus-mcp-server` propagates context.
+
+If (1) fixes it, the slide gets sharper still: the transport you pick decides whether you
+can correlate an agent's tool call with its effect.

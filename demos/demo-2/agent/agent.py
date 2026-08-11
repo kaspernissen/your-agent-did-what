@@ -35,6 +35,11 @@ class CapybaraAgent:
         self._model = model or os.environ.get("DEMO_MODEL", DEFAULT_MODEL)
         self._name = name or DEFAULT_AGENT_NAME
         self._client = anthropic.Anthropic()
+        # What the run just executed, for callers that want to show it. One agent per
+        # run, so this needs no locking — the HTTP service builds a fresh one per
+        # request rather than sharing one across concurrent calls.
+        self._trace_id: str | None = None
+        self._tool_calls: list[dict] = []
 
     @property
     def model(self) -> str:
@@ -44,14 +49,26 @@ class CapybaraAgent:
     def name(self) -> str:
         return self._name
 
+    @property
+    def trace_id(self) -> str | None:
+        """The trace this run belongs to, hex, for deep-linking into a trace viewer."""
+        return self._trace_id
+
+    @property
+    def tool_calls(self) -> list[dict]:
+        """Every tool call of the run, with its arguments and result."""
+        return list(self._tool_calls)
+
     def run(self, prompt: str, max_turns: int = MAX_TURNS) -> str:
         """Run one incident to completion and return the agent's final text."""
         messages = [{"role": "user", "content": prompt}]
+        self._tool_calls = []
         with self._tracer.start_as_current_span(
             f"invoke_agent {self._name}", kind=SpanKind.INTERNAL
         ) as span:
             span.set_attribute("gen_ai.operation.name", "invoke_agent")
             span.set_attribute("gen_ai.agent.name", self._name)
+            self._trace_id = format(span.get_span_context().trace_id, "032x")
             for _ in range(max_turns):
                 response = self._client.messages.create(
                     model=self._model,
@@ -83,6 +100,7 @@ class CapybaraAgent:
             span.set_attribute("gen_ai.tool.call.arguments", json.dumps(arguments))
             result = tools.dispatch(name)(**arguments)
             span.set_attribute("gen_ai.tool.call.result", json.dumps(result))
+            self._tool_calls.append({"name": name, "args": arguments, "result": result})
         return {
             "type": "tool_result",
             "tool_use_id": block.id,

@@ -1,0 +1,92 @@
+# The two convention agents, both running before the talk starts.
+#
+# One Deployment per instrumentation library, because both libraries patch the
+# Anthropic SDK at import time -- a single process cannot honestly switch between them,
+# whichever installed first would keep instrumenting. Same image for both; only
+# CAPYBARA_INSTRUMENTATION differs, so any difference in the spans is attributable to
+# the convention and nothing else.
+#
+# The service names are distinct on purpose. Both variants reporting as one service
+# would make them indistinguishable in Jaeger, which is exactly the comparison the
+# demo exists to show.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convention-openinference
+  labels: { app: convention-openinference, demo: conventions }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: convention-openinference }
+  template:
+    metadata:
+      labels: { app: convention-openinference, demo: conventions }
+    spec:
+      containers:
+        - name: agent
+          image: capybara-convention-agent:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8000 }]
+          env:
+            - { name: CAPYBARA_INSTRUMENTATION, value: openinference }
+            - { name: CAPYBARA_AGENT_NAME,      value: convention-openinference }
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
+                value: http://otel-collector-opentelemetry-collector.default.svc:4318 }
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef: { name: anthropic-secret, key: api-key }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 3
+          resources:
+            requests: { memory: 256Mi }
+            limits:   { memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: convention-openinference
+spec:
+  selector: { app: convention-openinference }
+  ports: [{ port: 8000, targetPort: 8000 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convention-openlit
+  labels: { app: convention-openlit, demo: conventions }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: convention-openlit }
+  template:
+    metadata:
+      labels: { app: convention-openlit, demo: conventions }
+    spec:
+      containers:
+        - name: agent
+          image: capybara-convention-agent:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8000 }]
+          env:
+            - { name: CAPYBARA_INSTRUMENTATION, value: openlit }
+            - { name: CAPYBARA_AGENT_NAME,      value: convention-openlit }
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
+                value: http://otel-collector-opentelemetry-collector.default.svc:4318 }
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef: { name: anthropic-secret, key: api-key }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 3
+          resources:
+            requests: { memory: 256Mi }
+            limits:   { memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: convention-openlit
+spec:
+  selector: { app: convention-openlit }
+  ports: [{ port: 8000, targetPort: 8000 }]

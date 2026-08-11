@@ -1,0 +1,110 @@
+"""A long-running HTTP front for one convention, so the demo can be triggered live.
+
+Why a service rather than the CLI: two of these run side by side in the cluster, one
+per instrumentation library, both up before the talk starts. Nothing to wait for and
+nothing to build between runs -- you jump between them from the console and compare
+the traces they produce.
+
+The instrumentation library is fixed for the lifetime of the process, deliberately.
+Both libraries patch the Anthropic SDK at import time, so a process cannot honestly
+switch between them at runtime -- whichever installed first would keep instrumenting.
+One process per convention is the only way the comparison stays valid.
+
+    POST /run     {"prompt": "..."}  ->  the answer, the tool calls, and the trace id
+    GET  /healthz
+
+stdlib only. This exists to trigger a demo, and a web framework would be one more
+dependency to explain.
+"""
+from __future__ import annotations
+
+import json
+import os
+import traceback
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+import telemetry
+import tools
+from agent import CapybaraAgent
+
+DEFAULT_PROMPT = "Customers are reporting missing accounts. Investigate what happened."
+PORT = int(os.environ.get("PORT", "8000"))
+
+# Installed once, at import. See the module docstring for why this cannot be per-request.
+AGENT_NAME = os.environ.get("CAPYBARA_AGENT_NAME", "db-ops-agent")
+CONVENTION = telemetry.selected()
+TRACER = telemetry.configure(AGENT_NAME)
+
+
+def investigate(prompt: str) -> dict:
+    """Reset, stage the incident, run one investigation, and describe what happened.
+
+    A fresh agent per call: the trace id and tool calls it records are per-run state,
+    and sharing one agent across concurrent requests would interleave them.
+    """
+    tools.reset()
+    incident = tools.simulate_incident()
+
+    agent = CapybaraAgent(TRACER, name=AGENT_NAME)
+    answer = agent.run(prompt)
+
+    return {
+        "convention": CONVENTION,
+        "agentName": AGENT_NAME,
+        "model": agent.model,
+        "prompt": prompt,
+        "incident": incident,
+        "answer": answer,
+        "toolCalls": agent.tool_calls,
+        "traceId": agent.trace_id,
+    }
+
+
+class Handler(BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
+    def do_GET(self):
+        if self.path.rstrip("/") in ("/healthz", ""):
+            self._json(200, {"status": "ok", "convention": CONVENTION, "agent": AGENT_NAME})
+        else:
+            self._json(404, {"error": "not found"})
+
+    def do_POST(self):
+        if self.path.rstrip("/") != "/run":
+            self._json(404, {"error": "not found"})
+            return
+        try:
+            body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+            payload = json.loads(body) if body else {}
+            prompt = (payload.get("prompt") or "").strip() or DEFAULT_PROMPT
+            self._json(200, investigate(prompt))
+        except Exception as exc:                       # noqa: BLE001 - report, never crash
+            traceback.print_exc()
+            self._json(500, {"error": f"{type(exc).__name__}: {exc}"})
+
+    def _json(self, status: int, payload: dict) -> None:
+        body = json.dumps(payload).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        # The console is served from another origin, so the browser needs this to be
+        # allowed to read the response at all.
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, fmt, *args):
+        """One line per request on stdout, so kubectl logs stays readable."""
+        print(f"{self.address_string()} {fmt % args}", flush=True)
+
+
+def main() -> None:
+    print(f"convention   {CONVENTION}", flush=True)
+    print(f"agent        {AGENT_NAME}", flush=True)
+    print(f"collector    {telemetry.endpoint()}", flush=True)
+    print(f"listening    0.0.0.0:{PORT}", flush=True)
+    ThreadingHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
+
+
+if __name__ == "__main__":
+    main()

@@ -174,8 +174,14 @@ remain the authoritative output; the response fields are a convenience for the U
 this — the deletion never went through the MCP server.
 
 **3 · Look at the telemetry first.** In the collector output or Jaeger you can see the
-kangaroo's `DELETE capybara.capybaras` span. This is the correlation argument: the GenAI
-spans and the SQL spans are in one trace domain, so the deletion is visible at all.
+kangaroo's `DELETE capybara.capybaras` span.
+
+> **Correlation depends on the tool path, and this is a finding rather than a bug to
+> hide.** On `CAPYBARA_TOOLS=local` the SQL spans sit inside the agent's trace (24 spans,
+> 2 of them SQL). On `mcp` they do not: `POST /mcp/messages/:id` is correctly parented but
+> has no children, and each query becomes its own single-span trace. The MCP server
+> dispatches the call asynchronously and the tool runs outside the request's context.
+> Measured in-cluster — see [`../ANALYSIS.md`](../ANALYSIS.md).
 
 **4 · Page Capybara.** *"Customers are reporting missing accounts. Investigate."* It calls
 `list_records`, sees two rows, calls `audit_log`, and reports that an external role did

@@ -12,9 +12,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -q -r requirements.txt
 
-COPY telemetry.py tools.py agent.py app.py ./
+COPY telemetry.py tools.py agent.py app.py service.py ./
 
 # Unbuffered, or kubectl logs shows nothing until the process exits.
 ENV PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["python", "app.py"]
+EXPOSE 8000
+
+# The service by default: two of these run side by side in the cluster and the console
+# triggers them. Override the command with app.py for the one-shot CLI.
+ENTRYPOINT ["python", "service.py"]

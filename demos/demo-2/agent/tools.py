@@ -32,6 +32,14 @@ _RECORDS = [dict(r) for r in _SEED]
 _AUDIT: list[dict] = []
 
 
+def reset():
+    """Back to the seed, trail cleared. The service handles many runs in one process."""
+    global _RECORDS
+    _RECORDS = [dict(r) for r in _SEED]
+    _AUDIT.clear()
+    return {"records": len(_RECORDS)}
+
+
 def simulate_incident():
     """The kangaroos go rogue: delete every free-plan capybara, and leave a trail.
 
