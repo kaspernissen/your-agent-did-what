@@ -1,0 +1,247 @@
+/* ── Trace — design tokens ─────────────────────────────────────────── */
+:root{
+  --ink:#10142E; --navy:#202C5F; --paper:#FAF7F2; --paper-2:#F2ECE0;
+  --amber:#F5A800; --amber-lift:#FFC842; --amber-text:#8A5B00;
+  --blue:#425CC7; --blue-lift:#6E85E0; --blue-mute:#A9B6EE;
+  --muted-ink:#5B6180; --on-ink:#C9CEE8; --on-ink-dim:#8A93BC;
+  --font-display:"Space Grotesk",system-ui,sans-serif;
+  --font-body:"Public Sans",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --chamfer:40px; --chamfer-sm:24px;
+  --pad-x:120px;
+}
+
+*{box-sizing:border-box}
+
+deck-stage>section{
+  font-family:var(--font-body); background:var(--paper); color:var(--ink);
+  padding:110px var(--pad-x); overflow:hidden; position:relative;
+}
+.ground-ink{background:var(--ink); color:var(--paper)}
+.ground-paper{background:var(--paper); color:var(--ink)}
+.ground-paper-2{background:var(--paper-2); color:var(--ink)}
+
+/* ── Type ramp (authored at 1920×1080) ─────────────────────────────── */
+.kicker{font-family:var(--font-mono);font-size:26px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--blue);margin:0 0 40px}
+.ground-ink .kicker{color:var(--blue-mute)}
+.title{font-family:var(--font-display);font-weight:500;font-size:96px;
+  line-height:1.02;letter-spacing:-.03em;margin:0}
+.subtitle{font-family:var(--font-display);font-weight:400;font-size:52px;
+  line-height:1.25;letter-spacing:-.015em;margin:0}
+.body{font-size:34px;line-height:1.45;font-weight:300;margin:0;text-wrap:pretty}
+.small{font-size:28px;line-height:1.4;color:var(--muted-ink);margin:0}
+.ground-ink .small{color:var(--on-ink-dim)}
+.amber-text{color:var(--amber-text)}
+.ground-ink .amber-text{color:var(--amber-lift)}
+
+/* ── Geometry ──────────────────────────────────────────────────────── */
+/* Rounded surfaces, by the speaker's decision. The Trace system specifies a 45°
+   chamfer — one corner cut, "never four corners rounded" — lifted from the OTel
+   mark's angled joints. This replaces that signature geometry on the big
+   surfaces. Small marks (.tag) keep their chamfer, so the angled cut survives
+   where it reads as a detail rather than a container.
+   To revert: restore the two clip-path polygons below. */
+.chamfer{border-radius:22px}
+.chamfer-sm{border-radius:14px}
+.diagonal-split{position:absolute;inset:0;clip-path:polygon(0 0,58% 0,42% 100%,0 100%)}
+
+/* ── The signal axis ───────────────────────────────────────────────── */
+.axis{position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue) 10%,var(--blue) 60%,var(--amber) 86%,transparent)}
+.axis-node{position:absolute;width:26px;height:26px;border-radius:50%;
+  background:var(--blue);margin:-13px 0 0 -13px}
+.axis-node.is-amber{background:var(--amber)}
+.axis-node.is-hollow{background:transparent;border:3px solid var(--blue)}
+.axis-node.is-halo{box-shadow:0 0 0 9px rgba(66,92,199,.18)}
+
+/* ── Span bar — the list primitive; replaces bullets ───────────────── */
+.span-bar{height:40px;border-radius:20px;background:var(--blue);width:var(--w,100%)}
+.span-bar.is-amber{background:var(--amber)}
+.span-bar.is-blue-lift{background:var(--blue-lift)}
+.span-bar.is-blue-mute{background:var(--blue-mute)}
+
+/* ── Axis list — the other bullet replacement ──────────────────────── */
+.axis-list{position:relative;padding-left:52px;display:flex;
+  flex-direction:column;gap:44px}
+.axis-list::before{content:"";position:absolute;left:13px;top:14px;bottom:14px;
+  width:2px;background:linear-gradient(180deg,transparent,var(--blue-mute) 12%,var(--blue-mute) 88%,transparent)}
+/* margin:0 is load-bearing — these are <p>, and the default 1em top/bottom
+   margin (34px each at this size) stacks on top of the flex gap, pushing the
+   last item off the bottom of the slide and into the caption. */
+.axis-list-item{position:relative;font-size:34px;line-height:1.4;font-weight:300;margin:0}
+.axis-list-item::before{content:"";position:absolute;left:-46px;top:12px;
+  width:18px;height:18px;border-radius:50%;background:var(--blue)}
+.axis-list-item.is-amber::before{background:var(--amber)}
+
+/* ── Parts ─────────────────────────────────────────────────────────── */
+.tag{font-family:var(--font-mono);font-size:24px;letter-spacing:.1em;
+  text-transform:uppercase;padding:14px 26px;display:inline-block;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%)}
+.tag.is-solid{background:var(--amber);color:var(--ink)}
+.tag.is-outline{border:1.5px solid var(--blue);color:var(--blue)}
+.tag.is-navy{background:var(--navy);color:var(--on-ink)}
+
+.attr-chip{display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:26px;padding:12px 22px;
+  border-radius:24px;background:var(--paper-2);color:var(--navy)}
+.attr-chip::before{content:"";width:10px;height:10px;border-radius:50%;
+  background:var(--blue)}
+.attr-chip.is-amber::before{background:var(--amber)}
+
+.stat{display:flex;flex-direction:column;gap:18px}
+.stat-figure{font-family:var(--font-display);font-weight:500;font-size:132px;
+  letter-spacing:-.04em;line-height:1}
+.stat-label{font-size:32px;line-height:1.4;font-weight:300;color:#3C4266}
+.ground-ink .stat-label{color:var(--on-ink)}
+
+.code-block{background:#080B1E;padding:56px 64px;border-radius:22px}
+.code-block pre{margin:0;font-family:var(--font-mono);font-size:34px;
+  line-height:1.9;color:var(--on-ink)}
+.code-block .c-str{color:var(--amber-lift)}
+/* A second, slightly lifted code surface, so two panels on one slide read as a
+   contrast rather than one wide block. */
+.code-block.is-muted{background:#0E1226}
+.code-block .c-key{color:#6E7BA8}
+.code-block .c-attr{color:#9FADEE}
+
+.waterfall{display:flex;flex-direction:column;gap:26px}
+.wf-row{display:flex;align-items:center;gap:32px}
+.wf-label{font-family:var(--font-mono);font-size:26px;color:var(--muted-ink);
+  width:300px;flex:none;text-align:right}
+.wf-track{flex:1;height:40px;position:relative}
+.wf-bar{position:absolute;top:0;bottom:0;border-radius:20px;
+  background:var(--blue);left:var(--x,0);width:var(--w,100%)}
+.wf-bar.is-amber{background:var(--amber)}
+.wf-bar.is-blue-lift{background:var(--blue-lift)}
+.wf-bar.is-blue-mute{background:var(--blue-mute)}
+.wf-dur{font-family:var(--font-mono);font-size:26px;color:var(--muted-ink);
+  width:150px;flex:none}
+/* Waterfall labels sit directly on the slide ground, so they are ground-qualified
+   like .small: --muted-ink on paper (5.67:1 / 5.15:1), --on-ink-dim on ink (6.01:1).
+   --on-ink-dim unqualified was 2.82:1 on paper — under the 3:1 large-text floor. */
+.ground-ink .wf-label,.ground-ink .wf-dur{color:var(--on-ink-dim)}
+.wf-row.is-amber .wf-label,.wf-row.is-amber .wf-dur{color:var(--amber-text)}
+.ground-ink .wf-row.is-amber .wf-label,.ground-ink .wf-row.is-amber .wf-dur{color:var(--amber-lift)}
+
+.mascot{position:absolute;height:auto}
+
+/* ── Employer marks — L01 Cover and L08 Close only ─────────────────── */
+/* Both marks paint with fill="currentColor", so `color` drives them and one
+   file works on either ground. Capped at 28px: half the OTel mark. */
+/* Delivered as CSS masks, not <img>: an SVG loaded through <img> renders in an
+   isolated document and cannot see this stylesheet, so `currentColor` there
+   resolves to black. Masking paints the mark in whatever `background-color` we
+   set, which is what makes one file work on both grounds. */
+.employer-mark{
+  height:28px;display:block;align-self:flex-start;margin-top:18px;
+  /* Subtlety comes from the muted tokens rather than from opacity — the mark
+     stays a solid, crisp shape instead of a faded one, and it sits at the same
+     weight as the secondary type beside it. */
+  background-color:var(--on-ink-dim);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:contain;mask-size:contain;
+  -webkit-mask-position:left center;mask-position:left center;
+}
+.ground-paper .employer-mark,
+.ground-paper-2 .employer-mark{background-color:var(--muted-ink)}
+/* aspect-ratio comes from each mark's viewBox, so nothing is ever distorted. */
+.employer-mark.is-dash0{aspect-ratio:267/51;
+  -webkit-mask-image:url("assets/dash0-logo.svg");mask-image:url("assets/dash0-logo.svg")}
+/* Optical correction, not a spec change: the Dynatrace lockup is longer and thinner
+   (5.63:1 vs 5.24:1) and its wordmark sits smaller inside its own box, so at a matched
+   28px it reads smaller than the Dash0 mark. 34px makes them look equal. */
+.employer-mark.is-dynatrace{height:34px;aspect-ratio:800/142;
+  -webkit-mask-image:url("assets/dynatrace-logo.svg");mask-image:url("assets/dynatrace-logo.svg")}
+
+/* ── Speaker photos (L07 "Who?") ───────────────────────────────────── */
+/* Square, per the system's "right angles are reserved for imagery" rule.
+   Delivered as a background-image so a missing file degrades to an empty
+   --paper-2 tile instead of a broken-image icon on stage. */
+/* Circular, because in this system a circle is an .axis-node — an event on the
+   trace. The speakers are the first two events on it, so their portraits ARE
+   nodes, haloed the way the system haloes "you are here". This is the one place
+   imagery is not right-angled, and it earns it by carrying the metaphor. */
+.speaker-photo{
+  width:200px;height:200px;flex:none;border-radius:50%;
+  background-color:var(--paper-2);
+  background-size:cover;background-position:center top;
+  position:relative;z-index:1;
+  /* A gap ring in the ground colour, then the node ring. The gap is what makes
+     the portrait read as sitting ON the axis rather than pinned over it, and it
+     is what visually binds two photographs that have different backgrounds. */
+  box-shadow:0 0 0 8px var(--paper), 0 0 0 18px var(--blue-lift);
+}
+.ground-ink .speaker-photo{box-shadow:0 0 0 8px var(--ink), 0 0 0 18px var(--blue-lift)}
+/* Lead speaker takes the amber ring, mirroring the cover, where the first
+   speaker is the amber node and the second is blue. One emphasis, carried by
+   the same device on both slides. */
+.speaker-photo.is-lead{box-shadow:0 0 0 8px var(--paper), 0 0 0 18px var(--amber)}
+.ground-ink .speaker-photo.is-lead{box-shadow:0 0 0 8px var(--ink), 0 0 0 18px var(--amber)}
+.speaker-photo.is-kasper{background-image:url("assets/kasper.jpg")}
+.speaker-photo.is-adriana{background-image:url("assets/adriana.jpg")}
+
+/* ── Demo-thread marker ────────────────────────────────────────────── */
+/* The talk interleaves two threads: an ecosystem survey (beats 1,2,3,5,8) and
+   the Capybara SRE demo narrative (beats 4,6,7). This marks the demo slides so
+   the room can tell which one it is in — capybara on screen means we are inside
+   the running system. A deliberate, documented extension of the mascot rule:
+   it stays at the 90px floor, sits in one fixed corner, and never competes with
+   the slide's amber emphasis. */
+/* ── LinkedIn QR tiles (cover) ─────────────────────────────────────── */
+/* Real scannable codes, generated locally with qrencode and recoloured to
+   --paper on --ink, so the deck stays offline-safe. Quiet zone comes from the
+   tile's own padding: a QR pressed to the edge of a dark slide does not scan. */
+/* White modules on transparent — the ink ground shows through and serves as the
+   quiet zone. Confirmed scanning on a phone.
+   Data modules are dots; the three finder patterns and the alignment pattern
+   are SOLID SQUARES. That split is load-bearing and was established the hard
+   way: dots alone scanned fine, and the codes stopped scanning the moment the
+   finders were drawn as rounded rings. Those patterns are what a scanner uses
+   to locate and orient the code — style the data, never the finders. */
+.qr-tile{
+  width:132px;height:132px;flex:none;padding:10px;
+  display:block;
+}
+/* An inverted code is invisible on a light ground — fall back to ink-on-paper. */
+.ground-paper .qr-tile,.ground-paper-2 .qr-tile{
+  background:var(--paper);filter:invert(1) hue-rotate(180deg);
+}
+.qr-tile img{width:100%;height:100%;display:block}
+
+/* ── Deck footer — the axis runs through the whole talk ────────────── */
+/* One continuous signal axis across every slide, with the capybara asleep at
+   the end of it. Literalises the system's own idea: a trace is a line with
+   events on it, and each slide is an event on the talk's own trace.
+   Not on the cover or the close — both already run the axis as a design
+   feature at their own height and carry the full mascot. */
+.deck-footer{position:absolute;left:0;right:0;bottom:80px;height:2px;pointer-events:none}
+/* The line's transparency lives on ::before, NOT on .deck-footer. Opacity on the
+   parent also fades ::after, which is why the capybara looked ghosted no matter
+   what opacity it was given. */
+.deck-footer::before{content:"";position:absolute;inset:0;opacity:.55;
+  background:linear-gradient(90deg,transparent,var(--blue) 8%,var(--blue) 62%,var(--amber) 88%,transparent)}
+.deck-footer::after{content:"";position:absolute;right:110px;bottom:-38px;
+  width:96px;height:77px;background:url("assets/capybara-mascot.png") no-repeat center/contain;
+  transform:rotate(13deg)}
+
+/* ── Normalizer flow (beat 5) ───────────────────────────────────────── */
+/* The rewrite IS the slide, so it moves: a dot travels each row left→right,
+   staggered, entering the processor as llm.* and leaving as gen_ai.*. The one
+   row the processor has no mapping for rides a dashed amber track straight
+   through and arrives unchanged — that is the "partial" in partial
+   normalization, made visual instead of asserted.
+   The columns carry the content on their own, so the slide is fully legible
+   with motion disabled; the dot is decoration, never the only carrier. */
+.flow-track{flex:none;position:relative;height:2px;background:var(--navy)}
+.flow-track.is-amber{background:none;border-top:2px dashed var(--amber);height:0}
+.flow-dot{position:absolute;top:50%;width:11px;height:11px;margin:-5px 0 0 -5px;
+  border-radius:50%;background:var(--blue-lift);
+  animation:flow-travel 4.6s cubic-bezier(.5,0,.5,1) infinite}
+.flow-dot.is-amber{background:var(--amber)}
+@keyframes flow-travel{
+  0%{left:0;opacity:0} 6%{opacity:1} 94%{opacity:1} 100%{left:100%;opacity:0}
+}
+/* Motion is never load-bearing: hide it rather than freeze it mid-track. */
+@media (prefers-reduced-motion:reduce){.flow-dot{animation:none;opacity:0}}
+@media print{.flow-dot{animation:none;opacity:0}}

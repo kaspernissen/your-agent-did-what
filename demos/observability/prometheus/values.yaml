@@ -1,0 +1,48 @@
+# Prometheus for the shared cluster.
+#
+# Adapted from a working setup in dash0/demos/otel-platform-demo. Trimmed to what this
+# demo needs: no alertmanager, no node exporter, no pushgateway, no kube-state-metrics.
+#
+# The one flag that matters is web.enable-otlp-receiver. With it, the collector pushes
+# metrics straight here over OTLP and Prometheus needs no scrape config for our apps —
+# which keeps the wiring the same shape as the traces path.
+alertmanager: { enabled: false }
+configmapReload:
+  prometheus: { enabled: false }
+kube-state-metrics: { enabled: false }
+prometheus-node-exporter: { enabled: false }
+prometheus-pushgateway: { enabled: false }
+
+server:
+  fullnameOverride: prometheus
+  extraFlags:
+    - "web.enable-otlp-receiver"
+  tsdb:
+    # The demo pushes on a 15s interval and a laptop's clock is not always kind about
+    # ordering across a restart; a window here is cheaper than debugging a rejected
+    # sample mid-talk.
+    out_of_order_time_window: 30m
+  persistentVolume: { enabled: false }
+  service:
+    servicePort: 9090
+  resources:
+    limits:
+      # 1Gi looks generous for five pods, and it is not about our metrics: the chart's
+      # default scrape jobs (kubernetes-api-servers especially) carry most of the
+      # cardinality. An OOMKilled Prometheus recovers silently and loses its in-memory
+      # data, which shows up as a gap in the graph you are presenting.
+      memory: 1Gi
+
+serverFiles:
+  prometheus.yml:
+    otlp:
+      keep_identifying_resource_attributes: true
+      # Without promotion these arrive as resource attributes rather than labels, and
+      # you cannot group a graph by service or pod.
+      promote_resource_attributes:
+        - service.name
+        - service.namespace
+        - service.instance.id
+        - k8s.namespace.name
+        - k8s.pod.name
+        - k8s.deployment.name

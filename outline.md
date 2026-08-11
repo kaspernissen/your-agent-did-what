@@ -1,143 +1,523 @@
-# Your Agent Did What? — 30-Minute Presentation Outline
+# Your Agent Did What? — Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** 30 minutes (≈26 min content + 4 min buffer/Q&A handoff)
-**Presenters:** Kasper Borg Nissen + Adriana Villela (duo handoffs marked ⟳ — optional)
-**Spine of the talk:** *observing an agent is not like observing a request.* Every section returns to one contrast — what changes when the thing you're tracing reasons, decides, and acts on its own.
+**Length:** **45 minutes** (confirmed 2026-08-10), nine beats, **38 spoken slides** plus a 14-slide appendix. 37.5 minutes of
+speaking, leaving room to run demos live and still land on time.
+**Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
+**Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
+**Spine:** one capybara incident, told twice in two conventions, with every claim measured rather than asserted.
 
-> **Visual direction (for when this becomes slides):** keep the **dark background** from Kasper's PlatformCon template, but recolor the red/orange accents to **blue → purple**. **No Dash0 logo.** (The reference repo `platform-engineers-guide-to-observability` is a *book* project, not a slide framework — so the deck needs to be built in a slide tool; see the note at the end.) Source decks to lift visuals from are cited per slide as **[PC]** = PlatformCon 2026, **[KC]** = KubeCon/Dapr "Taming Complexity", **[demo]** = our `demos/ANALYSIS.md`.
+> **Deck:** built at `presentation/` on the **Trace** design system (spec §10). A trace is a line with events on it: every slide hangs off a horizontal signal axis, content attaches as nodes and span bars, span bars replace bullets, nothing gets boxed in. **One amber emphasis per slide — named below for every slide.** The mascot appears at full size three times (cover, one mid-deck breath, close) and as a persistent 96px footer presence on every non-divider slide — see `presentation/LAYOUTS.md`.
+>
+> Source tags used per slide: **[PC]** = the previous deck, removed 2026-08-10 (see below), **[KC]** = KubeCon/Dapr "Taming Complexity" deck, **[CAP]** = the `capybara-sre` agent, **[BVR]** = the `beaver-sre` agent, **[ANALYSIS]** = `demos/ANALYSIS.md`, **[R-F]** = `research.md` (forensics), **[R-E]** = `research-evaluations.md`, **[LS]** = `landscape.md`, **[SPEC]** = the talk-scope spec.
+>
+> **The two external tags are not equally available, and the difference matters when building slides.**
+> - **[PC] is no longer in this repo.** A previous 48-slide deck was the source for the material lifted into beats 0–3 — "Opaque decisions", "Five conventions for the same span" with its five provider/attribute pairs, and the "Without conventions, correlation fails" wall. That lift is complete and this deck has diverged well beyond it, so the old deck was removed on 2026-08-10 and `presentation/` now holds the current one. Recover the original wording from git history if it is ever wanted. The `[PC]` tags below record where a slide came from, not a file to go and read.
+> - **[KC] is not in this repo.** "Taming Complexity", "Evolution of architectures" and the cognitive-load curve could not be located anywhere in the repository. Those slides are **external speaker material Kasper must supply**, or they get redrawn from scratch.
 
 ---
 
 ## Arc at a glance (timing)
 
-| # | Section | Time | The "different from req/response" beat |
-|---|---|---|---|
-| 0 | Cold open — the 3am page | 1.5 | You can't read a stack trace for a decision |
-| 1 | Agents aren't request/response | 4 | The 4 properties; the contrast table |
-| 2 | What that does to your traces | 5 | Context breaks; signal is buried; skills break traces |
-| 3 | The fragmentation problem | 6 | 5 conventions for one span; measured drift |
-| 4 | Bridging the gap (normalize at the edge) | 5 | genai_normalizer + Arconia, live |
-| 5 | The forensics payoff | 5.5 | Reconstructing *why* is the new MTTR |
-| 6 | Where this is going + close | 3 | OTel is the substrate; call to action |
+| # | Beat | Time | Leads | The one thing it must land |
+|---|---|---|---|---|
+| 0 | Cold open + who we are | 4 | Kasper | The incident is over; the only question left is *why* |
+| 1 | Agents aren't request/response | 5.5 | Adriana | An agent is a loop; the call graph is generated at runtime and the decision is not in it |
+| 2 | The competing semantics that exist | 4 | Adriana | Five conventions, one span — and we measured how far apart they are |
+| 3 | Why OpenTelemetry should be the standard | 3 | Kasper | Everyone is already normalizing *toward* `gen_ai.*` |
+| 4 | The conventions: what you get, what setup costs | 5.5 | Kasper | Real vocabulary, moved repo, nothing Stable, and setup bites |
+| 5 | Your tool doesn't speak OTel? Normalize at the edge | 4 | Adriana | Two places to fix it, and exactly how far each gets you |
+| 6 | Reasoning — what did the agent actually do? | 4 | Kasper | Default instrumentation proves a tool ran, not what it did |
+| 7 | Evaluation quality via the OTel evaluation semantics | 4.5 | Adriana | OTel already carries "was it good?" — as an event, at Development |
+| 8 | Where this is going + close | 3 | Both | Even the ten-year-old tracer now runs on the Collector |
+| | **Speaking** | **37.5** | | |
+
+### The 45-minute budget
+
+Speaking the deck is 37.5 minutes. The remaining 7.5 is not slack to fill with more slides —
+it is what makes the demos possible, which is the difference between telling the room the
+forensic gap exists and letting them watch it.
+
+| | | |
+|---|---|---|
+| Speaking, all nine beats | 37.5 min | |
+| **Demo A act 4** — the two tool paths, live | 3 min | in beat 4, after 4.7 |
+| **Demo B** — the convention swap, live | 2 min | in beat 5, after 5.3 |
+| Buffer | 2.5 min | over-runs, one question mid-talk |
+| **Total** | **45 min** | |
+
+Demo A act 4 is the one to protect: it is the only place the talk's headline finding becomes
+something the audience watches rather than something they are told. See
+[`demos/README.md`](demos/README.md) for the run steps and what to point at.
+
+**Cut 2026-08-11.** Fourteen slides moved to an appendix at the back of the deck: 52 spoken
+slides had grown past the 37.5-minute budget, and the live demo now needs nearer 8 minutes
+than the 5 it was given. They are still in the deck, behind an appendix divider, so a
+question from the floor can be answered with a slide rather than a description — and each
+one's speaker note says why it left and what covers it now. What they carried survives as a
+sentence in the note of the slide that took over that ground, not as more text on it.
+
+The list below was the pre-agreed order. It is now history rather than a to-do.
+
+1. **2.4 — "Both of these claim to be OTel GenAI"** (the Arconia `flavor` slide). It is the only
+
+
+At 45 minutes none of this is required. The deck gained 1.3, 1.4, 4.2, 6.4, 7.2 and 7.7 as orientation, setup and evidence material, and lost the Arconia flavor slide; the result is a deck that explains itself rather than one that races.
+
+Handoffs happen on the section dividers, which is why every beat except the close opens with one.
 
 ---
 
-## 0 · Cold open — "Your agent did what?" (1.5 min)
+## 0 · Cold open — "your agent did what?" (4 min) — **Kasper**
 
-- **Slide:** title over the dark/blue-purple background. **[PC]** title style, recolored.
-- **Hook:** "It's 02:47. An agent rolled back a deployment — then deleted rows from a production database. The incident is over. The next morning, someone asks the only question that matters: *why did it do that?* You open your telemetry. What's actually there?"
-- Plant the promise: by the end you'll know (a) why agent telemetry is different, (b) why the ecosystem is fragmented and where it's converging, and (c) what your traces must capture to answer "why" — demonstrated with real data.
-- ⟳ intro both presenters in one line each.
+**Message:** An agent deleted rows in production, the incident is already over, and the only question anyone actually cares about the next morning is *why did it do that?*
 
----
+### 0.1 — Cover
+- **Layout:** L01 Cover
+- **Headline:** Your Agent Did What?
+- **Sub:** Forensic Observability for Systems That Don't Leave Obvious Footprints · `@phennex` · `@adrianamvillela`
+- **Amber emphasis:** the words **"Did What?"** in the title
+- **Mascot:** yes — sitting *on* the axis, not floating
+- **Source:** existing [PC] title slide, retitled per [SPEC] §10.3 (the mock's "Watching the model think" is filler and is replaced)
 
-## 1 · Agents aren't request/response (4 min)
+### 0.2 — Who?
+- **Layout:** L07 Figures (navy ground, deep cards)
+- **Headline:** Who?
+- **Content:** both speakers on `--ink` cards over a `--navy` ground — circular portrait, then name / title / employer mark beside it, credentials below. Adriana: Principal Developer Advocate at Dynatrace, CNCF + AAIF Ambassador, OpenTelemetry Community Manager, End User SIG maintainer, Geeking Out podcast. Kasper: Director of Developer Relations at Dash0, CNCF + AAIF Ambassador, Golden Kubestronaut, author *OpenTelemetry for Dummies*, former KubeCon+CloudNativeCon EU & NA Co-Chair, Cloud Native Nordics.
+- **Amber emphasis:** the **lead speaker's portrait ring** — mirrors the cover, where the first speaker is the amber node
+- **Source:** speakers. **Say the capybara line out loud** (it is in the speaker note, not on the slide): Adriana loves capybaras, which is why one is asleep on the last slide and why the demo agent is called Capybara.
 
-The conceptual core. Establish the contrast before any tooling.
+### 0.3 — Agents are becoming the front door to your platform
+- **Layout:** L07 Figures (three cards)
+- **Headline:** Agents are becoming the **front door** to your platform
+- **Content:** where this is already happening, before any incident lands — **in the portal** (platform teams ship an agent beside the service catalogue; developers ask about their own systems in plain language instead of learning another dashboard) · **in the incident channel** (summarise the trace, correlate the deploy, propose the rollback, on live systems during the incident) · **in CI and the terminal** (coding agents with repository access and a shell, already running against real infrastructure).
+- **Amber emphasis:** **"front door"** in the headline
+- **Source:** new writing — the platform-engineering framing the room lives in
+- **Land it:** "None of these are demos. They hold credentials, they read production data, and increasingly they act on it. Platform teams are shipping these as products; the observability problem arrives with them whether anyone planned for it or not."
+- **Careful:** no vendors or product names here — kagent, HolmesGPT and the coding agents have their own slides in beat 8, and naming them now spends that payoff early.
+- **Why it exists:** the deck went from "who we are" straight to "your agent deleted a database", which asks the room to care about a problem before establishing that the thing causing it is already in their stack. This is the slow start that earns the incident.
 
-- **Slide 1.1 — Evolution of architectures.** Monolith → microservices → event-driven → **agent-based**. Each step solved a problem and added complexity; building got easier, *understanding* got harder. **[KC]** "Evolution of architectures" + **[PC]** cognitive-load curve.
-- **Slide 1.2 — Four properties we've never operated against.** **[PC]** "AI workloads aren't like anything we've operated":
-  1. **Non-determinism** — same input, different output. Re-running doesn't reproduce the bug.
-  2. **Dynamic tool use** — the call graph is *generated at runtime*, not declared. Every tool is a caller that never read your API docs.
-  3. **Token economics, not RPS** — a single bad prompt can balloon spend 100×.
-  4. **Opaque decisions** — there's no stack trace for *why*; the reasoning happened inside a model you don't own.
-- **Slide 1.3 — Every familiar signal has a new equivalent (THE table).** **[PC]** "Every familiar signal has a new equivalent":
-  | Request/response world | Agent world |
-  |---|---|
-  | Stack trace | Reasoning chain |
-  | Status code (2xx/5xx) | Quality signal (hallucination, confidence, eval) |
-  | RPS & latency | Tokens, cost, blast radius |
-  | Static call graph | Dynamic tool invocation (MCP, local/remote) |
-  | Replayable request | Non-deterministic run |
-  - Land it: "The old practice wasn't wrong. It was right for its time. We just have to build the equivalents for this new class of system."
-- **Slide 1.4 — New execution patterns / new boundaries.** **[KC]** "A new landscape": LLM reasoning loops, tool invocation (local vs remote MCP), skill execution (scripts/services), agent-to-agent (A2A). One line each on MCP (Anthropic, Nov '24 — tool registry for models), A2A (Google, Apr '25 — agent discovery/collab), Skills (agentskills.io, Dec '25 — lightweight `SKILL.md` + scripts). **The point:** each is a *new execution boundary* — and every boundary is a place a trace can break.
+### 0.4 — Two ways you meet an agent
+- **Layout:** L04 Text + diagram (two chamfered cards)
+- **Headline:** You either build one, or you run someone else's
+- **Content:** *You build it* — LangChain, LangGraph, Spring AI, LangChain4j; you choose the framework, so you choose what it emits; your problem is which convention and what it leaves out. *You run someone else's* — kagent, HolmesGPT, k8sgpt, Copilots in your tooling; you did not choose the instrumentation. **Two problems, not one:** it *reads* your telemetry, so it is only as good as what it reads — and it *acts* on your systems, so you need its telemetry too.
+- **Amber emphasis:** **"you need its telemetry too"**
+- **Source:** new, 2026-08-09. This slide exists because the instrumentation ecosystem the talk surveys is developer-facing while the demo is an SRE incident; without it the room cannot tell which of them the talk is for. Pays off at 8.3.
 
----
-
-## 2 · What that does to your traces (5 min)
-
-From concept to the actual telemetry. This is the "don't leave obvious footprints" section.
-
-- **Slide 2.1 — Why this is hard to observe.** **[KC]** 5-card slide: traditional tracing assumes linear req/response; context propagation breaks between agents/tools/models; decisions are dynamic & non-deterministic; execution spans many systems (LLMs, APIs, MCP, skills); key context lives *outside* the runtime (prompts, reasoning).
-- **Slide 2.2 — A shared pain: context gets lost.** **[KC]** context-propagation diagram (good vs broken) + W3C Trace Context (`traceparent`). Async transports (events, gRPC, sockets) make propagation harder → disconnected traces → "everyone's looking at a different piece of the puzzle."
-- **Slide 2.3 — The trace of one pizza order (the demo trace).** **[KC]** screenshot. **~275 spans, ~48s, 10 agents/services** for *one order*. The agent system (Dapr + Diagrid + langchain4j) is real. "A single order becomes a complete story of what happened inside the system."
-- **Slide 2.4 — But: more telemetry ≠ better telemetry.** **[KC]** Of 275 spans, many are infra/retries/polling; **164 named just `POST`/`GET`**. The one span you want is buried. **Goal: meaningful spans, not more spans. Extracting the signal is the frontier.**
-- **Slide 2.5 — Skills break traces (the concrete boundary).** **[KC]** "What about skills": skills are shell scripts/subprocesses — *not instrumented, don't propagate context.* We had to manually bridge `TRACEPARENT` into bash + `curl` to keep the trace alive. "New execution boundaries create new observability challenges." → This is the bridge into "so what do we actually capture, and can the tools agree on it?"
-
----
-
-## 3 · The fragmentation problem (6 min)
-
-The first half of the abstract. Now grounded in measured data from our demos.
-
-- **Slide 3.1 — One vocabulary? Not yet.** **[PC]** "Five conventions for the same span": OTel GenAI SemConv, OpenInference (Arize), OpenLLMetry (Traceloop), LangSmith, Langfuse. Same model call = `gen_ai.request.model` in one, `llm.model_name` in another. Credit Salaboy: **legitimate differences, not naming preferences** — each optimizes for something (vendor neutrality / eval workflows / dev ergonomics / framework). Not going away soon.
-- **Slide 3.2 — What OTel GenAI semconv actually gives you.** **[PC]** "One vocabulary": `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model`, token usage, finish reasons, tool calls; `execute_tool`/`invoke_agent`/`chat` spans. The shared starting line.
-- **Slide 3.3 — Measured drift (NEW — our data).** **[demo]** The honest, original contribution. We ran *one* fake-database agent through multiple stacks and captured the real attributes:
-  - OpenLIT Python SDK → `gen_ai.provider.name` (**current** spec) + ~8 non-standard extensions (cost, cache tokens, `time_to_first_token`, `gen_ai.tool.args`).
-  - Arconia/Spring AI, `opentelemetry` flavor → `gen_ai.provider.name`; **but `openlit`/`openllmetry` flavor → `gen_ai.system` (deprecated)** + OpenLLMetry adds `traceloop.*`.
-  - **Punchline:** two tools, same week, both "OTel GenAI semconv" — one emits the current provider key, the other the deprecated one. *"Conforms to OTel GenAI" is necessary but not sufficient — which revision/flavor matters.*
-- **Slide 3.4 — Same trace, different viewers (the backend spectrum).** **[demo]** We fanned one trace out to Jaeger / Phoenix / OpenLIT / Langfuse:
-  - **Jaeger** (generic): shows it as plumbing — `chat …`, `execute_tool …`, raw tags. No GenAI awareness.
-  - **Phoenix** (GenAI-native, but **OpenInference-native**): accepts our `gen_ai.*` spans but renders them as **plain spans** — fragmentation made visible, on stage.
-  - **OpenLIT / Langfuse** (OTel-semconv-aware): light up — tokens, cost, model.
-  - "Same bytes. The viewer decides whether it's legible."
+### 0.5 — The morning after
+- **Layout:** L03 Statement
+- **Headline:** "It deleted the rows. The incident is over. Now prove **why**."
+- **Amber emphasis:** the single word **"why"**
+- **Source:** the cold-open hook in the previous outline (§0) + `abstract.md` ¶3 ("your agent just deleted a database. What does your telemetry actually tell you?")
+- **Note:** this is one of only two statement slides in the deck — the layout is documented as "use sparingly, twice a talk" ([SPEC] §10.2). The other is 6.4.
 
 ---
 
-## 4 · Bridging the gap — normalize at the edge (5 min)
+## 1 · Agents aren't request/response (5.5 min) — **Adriana**
 
-The "realistic path to OTel-native" the abstract promises. Two live answers.
+**Message:** An agent's execution is a call graph generated at runtime by a non-deterministic process, and the artifact you most need — the decision — is not a thing your request/response instincts know how to capture.
 
-- **Slide 4.1 — The platform answer: normalize at the edge.** **[PC]** Developers instrument with whatever their framework emits; the *platform* canonicalizes centrally. Two tools you can use today.
-- **Slide 4.2 — `gen_ai_normalizer` (collector-side) — live before/after.** **[demo]** OpenInference-instrumented app → collector running `gen_ai_normalizer` → OTel `gen_ai.*`. Real captured rewrite:
-  - `llm.model_name` → `gen_ai.request.model`; `llm.token_count.prompt` → `gen_ai.usage.input_tokens`; `openinference.span.kind (LLM)` → `gen_ai.operation.name (chat)`.
-  - **Honest caveat (our finding):** it normalizes the *scalar* attributes you group/cost/route on, but **leaves message bodies** (`llm.input_messages.*`, `input.value`, tool schemas) untouched → **partial normalization.** Good for dashboards/cost; not a full end-to-end translation.
-  - Status: merged, **alpha**, traces-only; **not in the released contrib image yet** (we built it with `ocb`); working toward donation — **contrib issue #46069**. Raise it now, at the right moment.
-- **Slide 4.3 — Arconia (SDK-side) — one property.** **[demo]** Spring AI app; flip `arconia.observations.conventions.opentelemetry.ai.flavor` → `opentelemetry` / `openlit` / `openllmetry` / `langsmith` and the same spans re-emit under that convention — verified live. (Lesson we learned the hard way: needs the `arconia-opentelemetry-`**`ai`**`-semantic-conventions` artifact.) Collector fixes it downstream for any language; Arconia fixes it upstream for Spring shops. Both target OTel semconv.
-- **Slide 4.4 — Without conventions, correlation fails.** **[PC]** the three-line wall: *Without conventions, correlation fails. Without correlation, AI guesses. With structure and context, AI reasons.* Conventions are what turn raw telemetry into something an LLM (or a human at 3am) can reason over.
+### 1.1 — Divider
+- **Layout:** L02 Section divider
+- **Headline:** Agents aren't request/response
+- **Amber emphasis:** the beat kicker `01 / 08`
+- **Source:** design system; speaker handoff point (Kasper → Adriana)
+
+### 1.2 — We keep changing what we have to understand
+- **Layout:** L04 Text + diagram
+- **Headline:** Monolith → microservices → event-driven → **agent-based**
+- **Amber emphasis:** the final **agent-based** node on the axis
+- **Source:** [KC] "Evolution of architectures" (salvageable as-is, recolored) — **[KC] specifically is external speaker material with no copy in this repo; Kasper must supply it or the slide gets redrawn from scratch.** (This is a [KC] problem, not a general one — [PC] slides *are* in the previous deck; see the source-tag note at the top.) Each step solved a problem and added complexity: building got easier, *understanding* got harder.
+
+### 1.3 — An agent is a loop around a model that can call your tools
+- **Layout:** L07 Figures (four cards in a row, arrows between)
+- **Headline:** An agent is a **loop around a model** that can call your tools
+- **Content:** the vocabulary defined once, on the demo's own parts — **agent** (the loop; keeps calling the model until it decides it is done) · **model** (picks the next step; billed per token in and out) · **MCP server** (how an agent is handed tools it did not ship with) · **tools** (the functions it can actually run against your systems). A dashed bracket under model→MCP→tools carries "↺ the agent decides how many times round".
+- **Amber emphasis:** **"loop around a model"** in the headline
+- **Source:** [CAP] — the parts are Capybara's real ones, so beat 4's "Meet Capybara, SRE" is this diagram made concrete
+- **Land it:** "Only two of these are yours: the prompt, and the list of tools you handed it. How many model calls, which tools, in what order — decided at runtime. Which means you cannot read the path off the code. You have to observe it."
+- **Why it exists:** the deck showed *spans* (1.6) before it ever showed the room the loop those spans describe, and an SRE audience running someone else's agent may never have had *agent* / *MCP server* / *token* defined out loud.
+
+### 1.4 — Nothing in this path is GenAI-specific
+- **Layout:** L07 Figures (three panels, arrows between)
+- **Headline:** Nothing in this path is **GenAI-specific**
+- **Content:** the path the spans actually take, on the demo stack — **in your process** (`quarkus-langchain4j` auto instrumentation · `InvestigationResource` hand-written spans · MCP client tool-call spans) → **OTLP**, gRPC 4317 / HTTP 4318 → **collector** (receivers `otlp` · processors `gen_ai_normalizer` · exporters `otlp` + `debug`) → **backends** (Jaeger, Prometheus, your vendor).
+- **Amber emphasis:** **"GenAI-specific"** in the headline
+- **Source:** [CAP] + [BVR] — this is literally both demos' pipeline
+- **Land it:** "One wire format the whole way, and your agent does not know what is downstream — which is why the middle can rewrite its attributes without touching a line of application code. Same collector, same pipeline, same backends you already run for everything else."
+- **Why it exists:** 1.6's waterfall used to appear with no account of how those spans got out of the process; this also plants the collector-as-control-point that beat 3 argues and beat 5 demonstrates.
+
+### 1.5 — Four properties we've never operated against
+- **Layout:** L04 Text + diagram
+- **Headline:** Four properties we've never operated against
+- **Content:** non-determinism (re-running doesn't reproduce the bug) · the call graph is *generated at runtime*, not declared · token economics, not RPS · **opaque decisions — there is no stack trace for *why***
+- **Amber emphasis:** **"opaque decisions"**
+- **Source:** [PC] "AI workloads aren't like anything we've operated"; property 4 is the one [R-F] turns into a concrete schema gap in beat 6
+
+### 1.6 — Every familiar signal has a new equivalent
+- **Layout:** L07 Figures
+- **Headline:** Every familiar signal has a new equivalent
+- **Content (paired figures):** stack trace → reasoning chain · status code → quality signal · RPS & latency → tokens, cost, blast radius · static call graph → dynamic tool invocation · replayable request → non-deterministic run
+- **Amber emphasis:** **"reasoning chain"** (the pair the rest of the talk chases)
+- **Source:** [PC] "Every familiar signal has a new equivalent" table — salvageable, re-laid-out as figure pairs rather than a table (the system has no table primitive)
+- **Land it:** "The old practice wasn't wrong. It was right for its time. We have to build the equivalents."
+
+### 1.7 — What one agent run actually looks like
+- **Layout:** L05 Waterfall
+- **Headline:** One run, four kinds of span
+- **Content:** `invoke_agent` (Internal, root) → `chat <model>` (Client) → `execute_tool` (Internal) → `POST` (Client, pure plumbing to the model API)
+- **Amber emphasis:** the **`POST`** row — emitted automatically, carrying no GenAI meaning
+- **Source:** [ANALYSIS] "Span structure actually produced" (now under *Superseded and historical*). The signature layout of the system; it returns in beat 6 carrying the incident.
 
 ---
 
-## 5 · The forensics payoff (5.5 min)
+## 2 · The competing semantics that exist (4 min) — **Adriana**
 
-Return to the cold open. The second, "nobody's-talking-about-it" half of the abstract.
+**Message:** OpenInference, OpenLLMetry and the framework-native conventions describe the same span with different names for legitimate reasons — and we measured how far apart they actually are, which is both further and nearer than people assume.
 
-- **Slide 5.1 — Reconstructing "why" is the new MTTR.** **[PC]** "You're not debugging anymore. You're interrogating a system you can't replay." The on-call questions: *What telemetry did the agent read? Which tools did it call? What did the model return? Did anything change after?*
-- **Slide 5.2 — Agent reasoning, captured as a span.** **[KC]** the real GenAI-semconv span: `gen_ai.request.model`, `gen_ai.prompt = "You are a pizza cooking agent…"`, `gen_ai.completion = "I'll cook one Pepperoni pizza… STEP 1: acquire ingredients"`, token usage. "The trace doesn't just show service calls — it shows the *reasoning step*."
-- **Slide 5.3 — The forensic content is a switch you have to throw (NEW — our data + research).** **[demo]** Our `execute_tool delete_records` span carried `gen_ai.tool.call.arguments = {"plan":"free"}` and `gen_ai.tool.call.result = {"deleted":2,"remaining":1}`. **But those two attributes are opt-in / off by default in the OTel spec.** Default instrumentation proves a tool *ran*; only the opt-in proves *what it did*. **That single choice is the difference between a footprint and an empty footprint.**
-- **Slide 5.4 — What's still missing (be honest).** From the research: **no schema-level decision-provenance primitive** (only a reasoning-token count) across OTel/LangSmith/Langfuse/Datadog; **you can't faithfully replay** (context window isn't persisted; non-determinism diverges the rerun) → *reasoning must be captured at execution time or it's gone forever.* And don't trust the model's own chain-of-thought as the audit trail. This is the gap the talk names for the SIG.
-- **Slide 5.5 — Skills/A2A: the boundaries where "why" leaks out.** Tie back to 2.5 — the places context (and therefore "why") is most likely to be lost are exactly the new agent boundaries. Forensics = keeping the thread alive across them.
+### 2.1 — Divider
+- **Layout:** L02 Section divider
+- **Headline:** Five conventions, one span
+- **Amber emphasis:** the beat kicker `02 / 08`
+- **Source:** design system
+
+### 2.2 — Same model call, five vocabularies
+- **Layout:** L04 Text + diagram
+- **Headline:** One model call. Five names for the model.
+- **Content:** OTel GenAI semconv · OpenInference (Arize) · OpenLLMetry (Traceloop) · LangSmith · Langfuse. `gen_ai.request.model` in one, `llm.model_name` in another.
+- **Amber emphasis:** the attribute chip **`llm.model_name`**
+- **Source:** [LS] §2 opening; [PC] "Five conventions for the same span" — salvageable
+
+### 2.3 — These are legitimate differences, not naming preferences
+- **Layout:** L07 Figures
+- **Headline:** Legitimate differences, not naming preferences
+- **Content:** each one optimizes for something — OTel GenAI **vendor-neutral** · OpenInference **eval workflows** · OpenLLMetry **dev ergonomics** · LangSmith **LangChain-native** · Langfuse **maps the others in**. Credit Salaboy. They are not going away soon.
+- **Amber emphasis:** **"legitimate differences"** in the headline
+- **Source:** [LS] §2 (Salaboy's framing, stated verbatim there) for "legitimate differences, not naming preferences". The per-tool attribution is **[PC]** the previous deck, where each of the five cards already carries its optimization label verbatim alongside its provider attribute — lift the pairs from there rather than restating them.
+
+### 2.4 — Measured: the provider key alone fragments three ways
+- **Layout:** L06 Code
+- **Headline:** Both of these claim to be OTel GenAI
+- **Content:** OpenLIT Python SDK → `gen_ai.provider.name` (current spec). Arconia/Spring AI with `flavor=opentelemetry` → `gen_ai.provider.name`; with `flavor=openlit` or `openllmetry` → **`gen_ai.system`** (deprecated). Same code, one property apart.
+- **Amber emphasis:** **`gen_ai.system`** — the deprecated key
+- **Source:** [ANALYSIS] cross-cutting finding #2, observed from a collector `debug` exporter. Punchline: *"conforms to OTel GenAI" is necessary but not sufficient — which revision matters.*
+
+### 2.5 — Same bytes. The viewer decides whether it's legible.
+- **Layout:** L04 Text + diagram
+- **Headline:** Same bytes, four renderings
+- **Content:** Jaeger (generic) shows plumbing — raw tags · Phoenix is GenAI-native but **OpenInference-native**: it accepts `gen_ai.*` spans and renders them as **plain spans** · OpenLIT and Langfuse light up with tokens, cost, model.
+- **Amber emphasis:** Phoenix's **"plain spans"** — the fragmentation tax, visible on stage
+- **Source:** [LS] §1 (backend spectrum, Phoenix "Translating Conventions" docs) + [ANALYSIS] backend rendering matrix. **Honesty:** Jaeger arrival was API-confirmed; Phoenix/Langfuse renderings are from documentation, not captured screenshots ([ANALYSIS] "What we did NOT verify") — say so, or capture them before the talk.
 
 ---
 
-## 6 · Where this is going + close (3 min)
+## 3 · Why OpenTelemetry should be the standard (3 min) — **Kasper**
 
-- **Slide 6.1 — OTel is the substrate (external proof).** Jaeger v2 is **rebuilt on the OpenTelemetry Collector** ("natively understands OTLP end to end, no translation layers"; v1 EOL'd 2025-12-31). Even the 10-year-old tracing project now runs *on* OTel. Its roadmap puts GenAI features (PII redaction, payload tiering) **in the collector pipeline**, and an LLM trace-investigation agent in the UI. **[from `landscape.md`]**
-- **Slide 6.2 — A maturity model for OTel GenAI support.** **[KC]** Levels 0–3 (Instrumented → Aligned → Native → Optimized); descriptive, not a score. Community issue **#3247**. Where are *you*?
-- **Slide 6.3 — The ecosystem is already building on it.** kagent, HolmesGPT, agentgateway, k8sgpt — agents observing agents, reading OTel data over MCP. **[PC]**
-- **Slide 6.4 — Call to action / takeaways.**
-  1. **Instrument every layer** (agent runtime, gateway, MCP, inference) — none gets a pass.
-  2. **Adopt OTel GenAI semconv now** — and turn on the opt-in forensic content deliberately.
-  3. **Normalize at the edge** (genai_normalizer / Arconia) — and contribute to #46069 + the SIG.
-  4. **Govern agents like services** — identity, policy, cost, observability.
-  - Closing line: *"Your agent will do something you didn't expect. The only question is whether your telemetry can tell you why. Build the footprints before you need them."*
-- **Slide 6.5 — Thank you / get in touch.** QR + handles. **[KC]/[PC]** closing style, recolored, no Dash0 logo.
+**Message:** OTel is the only one of the five you can converge on without also picking a vendor — and the measured evidence is that three independent stacks already emit its vocabulary.
+
+*This beat is new writing ([SPEC] §2). Its factual spine is [ANALYSIS] cross-cutting #1 and [LS] §2; the argumentative parts are flagged below.*
+
+### 3.1 — Divider
+- **Layout:** L02 Section divider
+- **Headline:** Why OpenTelemetry should be the standard
+- **Amber emphasis:** the beat kicker `03 / 08`
+- **Source:** design system; handoff Adriana → Kasper
+
+### 3.2 — Three independent stacks, one vocabulary
+- **Layout:** L07 Figures
+- **Headline:** They already agree more than they admit
+- **Content:** OpenLIT (Python SDK) → `gen_ai.*` · Spring AI + Arconia (Java) → `gen_ai.*` · `gen_ai_normalizer` output → `gen_ai.*`. The shared vocabulary is real, not aspirational — for the core dimensions.
+- **Amber emphasis:** the shared target **`gen_ai.*`**
+- **Source:** [ANALYSIS] cross-cutting finding #1, measured across all three demos
+
+### 3.3 — An agent incident is also a database incident
+- **Layout:** L04 Text + diagram
+- **Headline:** Agent telemetry is not a separate telemetry system
+- **Content:** the capybara incident is a *database* incident with an LLM in front of it. A GenAI-only convention gives you a GenAI-only island; the span you need next is the SQL span, the pod restart, the deploy. **One correlation domain, not two.**
+- **Amber emphasis:** **"one correlation domain"** — the closing line of the content
+- **Source:** [PC] "Without conventions, correlation fails / Without correlation, AI guesses / With structure and context, AI reasons" — salvageable as the closing line of this slide. **[NEEDS SOURCE]:** the claim that cross-domain correlation is the *decisive* practical advantage over the GenAI-only conventions is an argument we are making, not a measured finding — phrase it as our position.
+
+### 3.4 — The enforcement point is a pipeline you already run
+- **Layout:** L04 Text + diagram
+- **Headline:** Developers instrument. The platform canonicalizes.
+- **Content:** the collector is where a *policy* about telemetry can live — one place, any language, no application change. That framing is what beat 5 then demonstrates.
+- **Amber emphasis:** the dashed **"the collector"** boundary between the two ownership zones
+- **Source:** [LS] §2 "The pitch". **[NEEDS SOURCE]:** "you already run a collector" is an assumption about the audience, not a sourced adoption statistic — ask the room by show of hands instead of asserting it.
+
+---
+
+## 4 · The GenAI conventions: what you get, what setup costs (5.5 min) — **Kasper**
+
+**Message:** The conventions give you a genuine vocabulary for agent runs — but they moved repository in June, nothing in them is marked Stable, and getting the forensic content turned on is not always as easy as the documentation implies.
+
+### 3.5 — They filled a real gap. OTel has since filled it too.
+- **Layout:** L04 Text + diagram
+- **Headline:** They filled a real gap. OTel has since filled it too.
+- **Content:** six things you needed an alternative convention for, each against the `gen_ai.*` that now provides it — the model call, token accounting, which tool ran, prompt/completion content, structured messages, and "was it any good?". Every right-hand item is measured from a running agent, not a roadmap.
+- **Amber emphasis:** **`gen_ai.evaluation.result`** — the newest arrival, and the one that closes the last gap
+- **Source:** the abstract's own argument ("that made sense when OTel's GenAI support was thin; it makes less sense today") made explicit. Right column measured across [CAP] and [BVR]. **Say it without smugness** — the alternatives were the correct call at the time. Close on the caveat: still nothing Stable.
+
+### 4.1 — Meet Capybara, SRE
+- **Layout:** L02 Section divider
+- **Headline:** Meet Capybara, SRE — motto: "Deploy Calmly"
+- **Content:** Quarkus + LangChain4j agent, an MCP server holding the capybara customer database, tools `list_records` / `query` / `delete_records`. One scenario, reused verbatim by both demos.
+- **Amber emphasis:** the tool name **`delete_records`**
+- **Mascot:** yes — this is the single permitted mid-deck breath ([SPEC] §10)
+- **Source:** [SPEC] §3.1, §3.2, §6
+
+### 4.2 — Three records, three tools, one of them destructive
+- **Layout:** L07 Figures (two panels)
+- **Headline:** Three records, three tools, **one of them destructive**
+- **Content:** the demo setup, so the room knows what it is watching before we read spans off it. **The database** — `cappuccino/pro` survives, `biscuit/free` and `nibbles/free` deleted; tools `list_records · query · delete_records`. **The page, and what it did** — the incident prompt verbatim, then `query(plan=free)` → `query(plan=pro)` → `audit_log(limit=20)`, ending `deleted 2 · remaining 1`.
+- **Amber emphasis:** **"one of them destructive"** in the headline
+- **Source:** [CAP] README "The scenario" + the measured tool sequence
+- **Land it:** "It investigated before it acted — two queries, then the delete. Everything from here is this run." Then the stack and the toy caveat: Quarkus + LangChain4j over an MCP server, Anthropic behind it, standing in for kagent or HolmesGPT.
+- **Why it exists:** 4.1 introduces the mascot and 4.3 onward reads attributes off a run the room has never been shown. The authorization clause in the prompt also has to be heard here, because it is what makes beat 7's judge pass this run and fail the other one.
+
+### 4.3 — The conventions moved house
+- **Layout:** L04 Text + diagram
+- **Headline:** In June, `gen_ai` moved out
+- **Content:** semconv **v1.42.0 (June 2026)** deprecated all `gen_ai` content in `open-telemetry/semantic-conventions` and relocated it to **`open-telemetry/semantic-conventions-genai`**. The old `opentelemetry.io/docs/specs/semconv/gen-ai` page is now only a redirect notice — including the one on the design mock's close slide, which we had to fix.
+- **Amber emphasis:** the repo name **`semantic-conventions-genai`**
+- **Source:** [SPEC] §2.1 fact 1 (verified 2026-08-07); corroborated by [R-E] §1. **Honesty:** [R-E] flags the exact redirect *wording* as lightly sourced — describe the move, don't quote the banner.
+
+### 4.4 — Stable: zero
+- **Layout:** L07 Figures
+- **Headline:** How much of this is Stable?
+- **Content:** big figure **0**. As of July 2026 no GenAI span, event, metric or attribute is marked Stable — every one of them is Development, i.e. subject to breaking change. Say it plainly rather than implying more maturity than exists.
+- **Amber emphasis:** the figure **0**
+- **Source:** [SPEC] §2.1 fact 2 (verified 2026-08-07); [R-F] "every GenAI attribute is still Development-stage"; [R-E] §1 (only `error.type` is Stable, and it is a general attribute)
+
+### 4.5 — What a conforming run gives you for free
+- **Layout:** L06 Code
+- **Headline:** This much arrives without you doing anything
+- **Content:** verbatim attribute block from a `chat` span — `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model` / `response.model`, `gen_ai.usage.input_tokens` / `output_tokens`, `gen_ai.response.finish_reasons`. Plus the structural spans: `invoke_agent`, `chat`, `execute_tool`.
+- **Amber emphasis:** **`gen_ai.provider.name`** — the current spec key, so this stack is on the right side of 2.4
+- **Source:** [ANALYSIS] "What arrived for free — `chat` span", verbatim from the collector debug exporter. **RESOLVED 2026-08-09:** re-captured from the Quarkus capybara run on quarkus-langchain4j 1.12.2 — 983 input tokens, 69 output, `TOOL_EXECUTION`, a real response id. The slide now shows the capybara run, not the old Python/OpenLIT one.
+
+### 4.6 — Two documented flags, six attributes in the code
+- **Layout:** L06 Code
+- **Headline:** The forensic content is a config switch
+- **Content:** `quarkus.langchain4j.tracing.include-tool-arguments=true`, `...include-tool-result=true`. `ToolSpanWrapper` sets **exactly** the six right attributes — `gen_ai.operation.name`, `gen_ai.tool.call.id`, `gen_ai.tool.name`, `gen_ai.tool.type`, `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result` — gated on those two flags.
+- **Amber emphasis:** **`include-tool-arguments`**
+- **Source:** [SPEC] §3.3, established by reading the quarkus-langchain4j 1.11.2 jars
+
+### 4.7 — …and on the MCP path they never fire
+- **Layout:** L04 Text + diagram
+- **Headline:** Right code. Wrong path.
+- **Content:** `ToolSpanWrapper` only wraps **locally declared `@Tool` methods**. MCP tool calls route through `TracingMcpClientListener`, which sets the tool *name* and no content — and that listener list is hardcoded in `McpRecorder`, so you cannot register your own alongside. The framework has the correct code; it just does not run where our tools live.
+- **Amber emphasis:** **"only locally declared `@Tool`"**
+- **Content warning for the speaker:** present this as *"here is the kind of gap you hit when you try this"*, measured on 1.11.2. Whether 1.12.2 fixes it is still under test ([SPEC] §3.3 resolution order, §9 risk 1) — do **not** state a verdict on the current release.
+- **Source:** [SPEC] §3.3. This is the beat's setup-cost payload: the answer to "how easy is it to set up" is *two flags in the docs, and one architectural reason they don't apply to you.*
+
+---
+
+## 5 · Your tool doesn't speak OTel? Normalize at the edge (4 min) — **Adriana**
+
+**Message:** If your framework emits someone else's vocabulary you can rewrite it centrally in the collector or switch it at the SDK — and you should know precisely how far each one gets you, because neither is total.
+
+### 5.1 — Divider
+- **Layout:** L02 Section divider
+- **Headline:** Normalize at the edge
+- **Amber emphasis:** the beat kicker `05 / 08`
+- **Source:** design system; handoff Kasper → Adriana
+
+### 5.2 — Two places to fix it
+- **Layout:** L04 Text + diagram
+- **Headline:** Downstream in the pipeline, or upstream in the SDK
+- **Content:** the collector fixes it downstream — you don't touch apps, works for any language, central policy. Arconia fixes it upstream — clean data at the source, but per-framework and Java-only today. Both land on OTel semconv as the target.
+- **Amber emphasis:** the shared **`gen_ai.*`** target both routes arrive at
+- **Source:** [LS] §2 "The contrast worth drawing"
+
+### 5.3 — Before / after, straight from the debug exporter
+- **Layout:** L06 Code
+- **Headline:** Same capybara, wrong convention, fixed in flight
+- **Content:** `beaver-sre` — the same incident, agent instrumented with OpenInference so spans arrive as `llm.*` / `openinference.*`. With `gen_ai_normalizer` and `remove_originals: false`, so both vocabularies stay on the span: `llm.provider` → `gen_ai.provider.name` · `llm.model_name` → `gen_ai.request.model` · `llm.token_count.prompt` → **`gen_ai.usage.input_tokens`** · `llm.token_count.completion` → `gen_ai.usage.output_tokens` · `openinference.span.kind (LLM)` → `gen_ai.operation.name (chat)`. Source keys dropped.
+- **Amber emphasis:** **`gen_ai.usage.input_tokens`**
+- **Source:** [BVR]; [ANALYSIS] the observed before/after table; [SPEC] §4
+- **Say the version out loud:** the processor is merged, **alpha**, traces-only, no auto-detection — and it now ships in the released contrib image (contrib **0.158.0**, 2026-08-04), so this is a plain image pull, not a custom `ocb` build. The donation issue is **#46069**; raising it here is the point of doing it on this stage.
+
+> **5.3 and 5.4 were merged 2026-08-09** into one contrast slide: what the processor rewrote on the left, what survived on the right, `llm.system` in amber. They were near-identical dark code panels back to back — the same slide twice from row ten. The merge also buys back a slide. What was 5.4's content now lives in 5.3's right-hand panel.
+
+### 5.4 — Nobody is proposing a fifth convention
+- **Layout:** L04 Text + diagram
+- **Headline:** Everyone is converging on **the same target**
+- **Content:** a short survey, not a demo — the point is that the fragmentation is being actively closed, from several directions at once. The collector processor is merged and **alpha**, with a donation to contrib under discussion (issue #46069). Arconia re-emits Spring AI's spans under a chosen flavor, so a Java shop can switch schema without touching code. Phoenix publishes an explicit convention-translation guide. OpenLIT's SDK emits `gen_ai.*` natively. Different layers, one destination: OTel semconv.
+- **Amber emphasis:** **the same target** in the headline
+- **Source:** [LS] §2 (both answers "land on OTel semconv as the target"); [RES] genainormalizerprocessor + issue #46069, Phoenix "Translating conventions", OpenLIT. **Not demo-backed** — Arconia is a mention here, not a measured result; the `demos/arconia (removed)` code was removed on 2026-08-11; its captured flavor diff survives in [ANALYSIS] Demo 3 as a dated measurement.
+
+---
+
+## 6 · Reasoning — what did the agent actually do? (4 min) — **Kasper**
+
+**Message:** A default-instrumented trace proves a tool *ran*; only the opt-in content proves *what it did*; and nothing in the standard has anywhere to put *why it chose to*.
+
+### 6.1 — Divider
+- **Layout:** L02 Section divider
+- **Headline:** What did it actually do?
+- **Amber emphasis:** the beat kicker `06 / 08`
+- **Source:** design system; handoff Adriana → Kasper
+
+### 6.2 — The capybara incident, as a trace
+- **Layout:** L05 Waterfall
+- **Headline:** `invoke_agent capybara-sre` — one run, four spans, one of them destructive
+- **Content:** `invoke_agent capybara-sre` → `chat` (the model decides) → `execute_tool list_records` → `execute_tool` **`delete_records`**. The waterfall from 1.5, now carrying the incident.
+- **Amber emphasis:** the **`execute_tool delete_records`** row
+- **Source:** [CAP]; span shape per [SPEC] §3.3 and [ANALYSIS]. **RE-MEASURED 2026-08-11** after the scenario changed to an investigation: 19.05s total over 21 spans, `chat` at 2.51s and 12.84s, the judge at 3.57s, and the two `tools/call` spans at **55ms and 8ms** — 0.3% of the trace, and the only part that answers the question. The tools are milliseconds and the model is seconds, which is a harder version of this beat's point than the bars were. **No wall-clock timestamp goes on this slide.** No source in the repo records an incident time; any "it was 02:47" in the spoken cold open is narrative framing, and putting it in a headline beside real span names would read as captured data on a slide whose whole job is to show measured telemetry.
+
+### 6.3 — The two attributes that answer the question
+- **Layout:** L06 Code
+- **Headline:** `{"plan": "free"}`
+- **Content:** `gen_ai.tool.call.arguments: {"plan": "free"}` and `gen_ai.tool.call.result: {"deleted": 2, "remaining": 1}`. Both are **opt-in and off by default** — the spec explicitly says instrumentation SHOULD NOT capture this by default, for privacy and payload-size reasons.
+- **Amber emphasis:** **`gen_ai.tool.call.arguments`**
+- **Source:** [ANALYSIS] the `execute_tool` block (verbatim, observed) + [R-F] "the forensic payload is opt-in, off by default" (high confidence, 3-0, checkable directly against the spec)
+
+### 6.4 — The footprint exists. The footprint is empty.
+- **Layout:** L03 Statement
+- **Headline:** The footprint exists. The footprint is **empty**.
+- **Content:** with default instrumentation you can prove the span fired. You cannot prove what it executed.
+- **Amber emphasis:** the word **"empty"** in the headline
+- **Source:** [R-F] "Talk framing" block. Second and last statement slide in the deck.
+
+### 6.5 — Three things you still cannot get
+- **Layout:** L04 Text + diagram
+- **Headline:** And this part is not a config switch
+- **Content:** (1) **There is no decision-provenance primitive at all** — across OTel GenAI, LangSmith, Langfuse, Datadog and LangGraph there is no schema slot for *why* the agent chose what it chose; the closest thing is a reasoning-*token count*. (2) **You cannot faithfully replay** — the assembled context window isn't persisted, and non-determinism diverges the rerun anyway, so provenance has to be captured at execution time or it is gone. (3) **The model's own chain-of-thought is not the audit trail** — that claim was killed under adversarial verification; treat thinking blocks as output, not evidence.
+- **Amber emphasis:** **"no schema slot for *why*"**
+- **Source:** [R-F] (all three; claims 1 and 3 at high confidence, claim 2 medium — it rests substantially on a single recent preprint, arXiv 2603.21692, so attribute it rather than asserting it). This is the gap the talk names for the SIG, and it is the honest limit of the whole story: normalizing names does not create the missing field.
+
+---
+
+## 7 · Evaluation quality via the OTel evaluation semantics (4.5 min) — **Adriana**
+
+**Message:** OpenTelemetry can already carry "was it any good?" — as a log event with four Development-stage attributes — and the hard part is not the schema, it is deciding what you gate on and whether you trust the judge.
+
+### 7.1 — Divider
+- **Layout:** L02 Section divider
+- **Headline:** Was it any good?
+- **Amber emphasis:** the beat kicker `07 / 08`
+- **Source:** design system; handoff Kasper → Adriana
+
+### 7.2 — A judge is just another model call
+- **Layout:** L07 Figures (two panels, arrow between)
+- **Headline:** A judge is just **another model call**
+- **Content:** what LLM-as-a-judge actually is, before any attribute names — **it reads** (the incident prompt, every tool call in order, what the agent reported) → `CapybaraJudge`, no tools of its own → **it returns** (`root_cause_correctness 0.3`, `remediation_safety fail`, `explanation`).
+- **Amber emphasis:** **"another model call"** in the headline
+- **Source:** [CAP] `CapybaraJudge.java` + `EvaluationEmitter.java`
+- **Land it:** "It reads a transcript and returns a score. Ours is deliberately given no toolbox — it can read what the agent did, it cannot touch the database itself. Yes, this runs in the demo."
+- **Why it exists:** the beat opened straight onto `gen_ai.evaluation.result`'s attribute list without ever saying what an evaluation is, whether a judge is a product or a concept, or whether we actually run one. Same gap 1.3 fixed in beat 1.
+
+### 7.3 — OTel's answer is an event, not a span
+- **Layout:** L04 Text + diagram
+- **Headline:** `gen_ai.evaluation.result`
+- **Content:** **four `gen_ai.evaluation.*` attributes** — `.name` (Required), `.score.value` and `.score.label` (Conditionally Required), `.explanation` (Recommended) — plus **two general attributes that accompany the event**: `gen_ai.response.id` (Recommended) for correlation, and `error.type` (Conditionally Required) when the evaluation itself errored. The spec says the event SHOULD be parented to the GenAI operation span being evaluated, or carry `gen_ai.response.id` when the span id isn't available. There is still **no standard span or operation name** for "an evaluation happened" — that is open PR **#185**, which cites this exact fragmentation as its rationale.
+- **Callback to 4.3:** `error.type` is the **only Stable attribute anywhere near this event**, and it is Stable because it is a general OTel attribute, not a GenAI one. Every `gen_ai.evaluation.*` attribute is Development. That is the concrete referent for "Stable: zero".
+- **Amber emphasis:** the event name **`gen_ai.evaluation.result`**
+- **Source:** [R-E] §1, verified against `semantic-conventions-genai` `docs/gen-ai/gen-ai-events.md`; [SPEC] §3.4. **`error.type` specifically:** `research-evaluations.md:45` (the attribute table row giving it Conditionally Required + **Stable**) and [SPEC] §3.4 (which lists it among the event's requirement levels). Verified negatives worth a sentence: `gen_ai.evaluation.score.units` does not exist, and `gen_ai.evaluation.outcome` was proposed and closed without merge.
+
+### 7.4 — Two judgements on one span
+- **Layout:** L06 Code
+- **Headline:** A number you improve, and a gate you don't cross
+- **Content:** an in-process LLM judge attaches two events to the `invoke_agent` span before it ends. `root_cause_correctness` carries `gen_ai.evaluation.score.value` — a quality metric that improves over time. `remediation_safety` carries `gen_ai.evaluation.score.label` = **`fail`** — a gate. Both carry `gen_ai.evaluation.explanation`, and on the destructive run the explanation names the deletion as the reason.
+- **Amber emphasis:** **`score.label: fail`**
+- **Source:** [CAP] judge; shape and requirement levels per [SPEC] §3.4, acceptance per §3.5. **RESOLVED 2026-08-09:** the judge is built and the events are captured. Authorized run scores 0.7 / `pass`; unauthorized run scores **0.3 / `fail`** with the explanation "deleted production records based solely on a hasty verbal instruction". Same agent, same tools — the prompt is the difference. Same for which visualizer renders the event legibly: [SPEC] §5 defers that choice deliberately, and [SPEC] §9 treats "no visualizer renders it well" as itself a finding.
+
+### 7.5 — A gate, or a metric you improve?
+- **Layout:** L07 Figures
+- **Headline:** Three placements, three different jobs
+- **Content:** **offline** — pre-deploy against curated datasets, gates the *deploy*, prevents regressions · **online** — live traffic, sampled, **non-blocking**, a background quality metric and drift alarm · **inline / guardrail** — synchronous in the request path, gates the *response*, for clear-cut high-impact failures only. Inline adds latency to *every* request; online adds production cost, so sample.
+- **Amber emphasis:** **"gates the response"**
+- **Source:** [R-E] §5. Our two dimensions map onto two of these: `remediation_safety` is gate-shaped, `root_cause_correctness` is metric-shaped — same run, two philosophies.
+
+### 7.6 — Where we cheated, and why you should distrust the judge
+- **Layout:** L04 Text + diagram
+- **Headline:** This is not a reference architecture
+- **Content:** we judge **in-process and synchronously** because it makes span parenting trivially correct and removes a container — real setups evaluate offline against stored traces, and we say so out loud. And the judge itself is biased: **position**, **verbosity** and **self-enhancement** bias are all documented; the mitigation is a human-labelled gold set and reporting Cohen's κ rather than raw agreement. "Good enough" is a risk-calibrated product decision, not a number the tooling gives you.
+- **Amber emphasis:** **"not a reference architecture"**
+- **Source:** [SPEC] §3.4 honesty note; [R-E] §2 (bias names are canonical from Zheng et al. 2023; **do not quote the percentage digits** — [R-E] flags them as ar5iv-mirror sourced) and §5 ("good enough", Hamel Husain / Eugene Yan)
+
+---
+
+### 7.7 — The version we cheated on, built properly
+- **Layout:** L07 Figures (a three-column comparison)
+- **Headline:** The version we cheated on, **built properly**
+- **Content:** ours versus OpenSearch Agent Health, row by row — *when it runs* (inline, in the request path / offline, in batch experiments) · *judged against* (a rubric in a prompt / a human-defined **Golden Path** trajectory) · *across runs* (one at a time / run-to-run comparison, pass rate over time) · *where it lands* (`gen_ai.evaluation.result` on the span / the same, plus its own store and UI).
+- **Amber emphasis:** **"built properly"** in the headline
+- **Source:** [github.com/opensearch-project/agent-health](https://github.com/opensearch-project/agent-health), Apache-2.0, v0.5.2, assessed 2026-08-10
+- **Land it:** "The gold set we said was the mitigation, shipped by someone else. Copy the shape, don't adopt it blind — v0.5.2, and its SDK is marked experimental." Then the second payload: its own OTel guide still specifies `gen_ai.system`, which the registry replaced with `gen_ai.provider.name`. Nobody is behind on purpose.
+- **Why it exists:** 7.6 admits the shortcuts and names the gold set as the mitigation, with nothing to point at. This is what that mitigation looks like when it is a product, and it doubles as beat 4's revision-drift point happening to a well-run project in public rather than to us.
+- **Careful:** do not oversell it — young project, experimental SDK. It is a shape to copy, not a dependency to recommend.
+
+## 8 · Where this is going + close (3 min) — **both**
+
+**Message:** The substrate argument is not ours — the oldest tracing project in the CNCF rebuilt itself on the Collector, and is designing its GenAI features as collector-pipeline hooks.
+
+### 8.0 — A realistic path
+- **Layout:** L04 Text + diagram (ink)
+- **Headline:** A realistic path, in the order that actually works
+- **Content:** five numbered steps — (1) emit whatever your framework emits, don't rewrite the app first · (2) normalize at the edge, one processor block, any language · (3) **turn the forensic content on, then check it fired** · (4) attach evaluations to the span you already have · (5) send the gaps back to the SIG.
+- **Amber emphasis:** **step 3** — the one that bit us
+- **Source:** [CAP] and [BVR] together. This is what the abstract promises by "a concrete path toward OTel-native GenAI observability", and it was the promise the deck did not previously deliver. Step 1 is the counterintuitive one: teams stall because they start by rewriting instrumentation.
+
+### 8.1 — Even the ten-year-old tracer runs on the Collector now
+- **Layout:** L04 Text + diagram
+- **Headline:** Jaeger v2 is built on the OpenTelemetry Collector
+- **Content:** verbatim (CNCF, "Jaeger at 10", 2025-09-01): *"Jaeger v2 is built on the OpenTelemetry Collector"* and *"natively understands OTLP end to end, eliminating the need for translation layers."* v1 reached EOL 2025-12-31. Open roadmap epics put PII sanitization and payload retention tiering **in the collector pipeline**, add an ingestion endpoint for third-party eval scores linked to traces, and put an LLM trace-investigation agent in the UI — agents investigating agents.
+- **Amber emphasis:** **"in the collector pipeline"**
+- **Source:** [LS] §3. **Honesty caveat, say it on stage:** epics #8416 and #7827 are open proposals from early-to-mid 2026 with no milestones — concrete *direction*, not shipped features. Neither yet commits to consuming `gen_ai.*` by name.
+
+### 8.2 — Who reads your telemetry next
+- **Layout:** L07 Figures
+- **Headline:** Your next reader isn't a human
+- **Content:** kagent (agents as first-class Kubernetes workloads, every step a span) · HolmesGPT (an agentic SRE that reads your OTel data and calls tools over MCP) · k8sgpt (scans the cluster, explains what it finds). Then the line that closes the loop with 0.3: **if your spans lack semantic context, the AI SRE hallucinates — confidently, at scale.**
+- **Amber emphasis:** **"the AI SRE hallucinates — confidently, at scale"**
+- **Source:** [PC] speaker notes (the cut ecosystem slide, restored); `resources.md` entries for kagent, HolmesGPT, agentgateway. Land it: *the model isn't the answer, the legible data is.*
+
+### 8.3 — Watch your own coding agent
+- **Layout:** L04 Text + diagram (two chamfered cards)
+- **Headline:** The agent worth watching first is the one on your laptop
+- **Content:** **AAIF shout-out** (aaif.io — both speakers are ambassadors), carried by a practical hook. goose v1.43.0 ships built-in OTel via the Rust SDK behind `GOOSE_TELEMETRY_ENABLED: true`; Claude Code ships it via the Node SDK behind `CLAUDE_CODE_ENABLE_TELEMETRY=1`. Both land in the collector you already run. Then the finding: run goose *with* Claude Code over ACP and both emit — **as sibling streams, not one nested trace**. Two agents in one workflow and nothing joins them.
+- **Amber emphasis:** **"sibling streams, not one nested trace"**
+- **Source:** Adriana's companion repo (`your-agent-did-what-adriana`), `docs/goose-claude-code-telemetry.md` and `docs/goose-otel-enablement.md`. Credit her on stage — she captured it.
+
+### 8.4 — Close
+- **Layout:** L08 Close
+- **Headline:** Build the footprints before you need them.
+- **Content:** four takeaways — instrument every layer, none gets a pass · adopt the GenAI conventions now *and* turn the opt-in forensic content on deliberately · normalize at the edge, and contribute to contrib issue #46069 and the SIG · treat the missing decision-provenance field as the gap worth raising. Links point at **`open-telemetry/semantic-conventions-genai`**, not the redirect. QR + `@phennex` / `@adrianamvillela`.
+- **Amber emphasis:** the closing line — *"Your agent will do something you didn't expect. The only question is whether your telemetry can tell you why."*
+- **Mascot:** yes — third and final appearance
+- **Source:** previous outline §6.4/§6.5 (salvageable), link fix per [SPEC] §10.3
 
 ---
 
 ## Reusable-assets map (so building the deck is fast)
 
-| Need | Source slide |
-|---|---|
-| Title / closing / section dividers (dark bg) | **[PC]** — recolor red/orange → blue/purple |
-| Evolution of architectures | **[KC]** |
-| 4 properties; signal-equivalents table; "correlation fails" wall; 5-conventions; "one vocabulary"; AI-SRE | **[PC]** |
-| Why-hard-to-observe; context-loss; W3C trace context; pizza trace; more≠better; skills-break-traces; reasoning span; maturity model | **[KC]** |
-| Measured attribute drift; backend-spectrum renderings; normalizer before/after; Arconia flavor diff; forensic opt-in span | **[demo]** `demos/ANALYSIS.md` |
-| Jaeger-on-collector quotes; normalization framing | `landscape.md` |
+| Beat | What it can salvage | From |
+|---|---|---|
+| 0 | Title/cover treatment, closing style — recolored into the Trace palette, no Dash0 logo | **[PC]**; cover replaced per [SPEC] §10.3 |
+| 1 | "Evolution of architectures"; "Four properties"; "Every familiar signal has a new equivalent"; the cognitive-load curve | **[PC]** "Four properties" is in the previous deck — lift it. **[KC]** "Evolution of architectures" and the cognitive-load curve are **not in this repo**; Kasper must supply them or they get redrawn. The equivalents table must be re-laid-out as figure pairs (no table primitive in the system) |
+| 2 | "Five conventions for the same span"; backend-spectrum framing; the measured provider-key drift | **[PC]** the previous deck (with its five provider/attribute pairs) + **[LS]** §1–2 + **[ANALYSIS]** cross-cutting #2 |
+| 3 | "Without conventions, correlation fails" three-line wall | **[PC]** the previous deck (and its speaker notes) + design-system assets. Everything else is new writing. |
+| 4 | Verbatim `chat`-span attribute block; `execute_tool` block; the ToolSpanWrapper reading | **[ANALYSIS]** + **[SPEC]** §3.3. The moved-repo and nothing-Stable slides are new. |
+| 5 | Normalizer before/after table; "what it did NOT touch" list | **[ANALYSIS]** — already captured, no re-run needed for the tables. The Arconia flavor-diff table is **no longer used as a slide**: 5.5 is a survey mention, not a measured result |
+| 6 | The waterfall primitive from 1.5; `execute_tool delete_records` attribute block; the forensic-gap trio | **[ANALYSIS]** + **[R-F]** |
+| 7 | Nothing salvageable — this beat did not exist in the previous outline | **[R-E]** + **[SPEC]** §3.4 (all new) |
+| 8 | Jaeger quotes and roadmap; the four takeaways and closing line | **[LS]** §3 + previous outline §6.4 |
+
+Assets that exist in `presentation/assets/` today: `capybara-mascot.png`, `capybara-judge.png`, `otel-icon.svg`, `otel-logo.svg`, the speaker portraits, the LinkedIn QR tiles, and the tool logos. The stock `collector-pipeline.svg` is no longer used — 3.4 and 5.2 were drawn to make their own arguments instead of sharing one generic diagram.
+
+**Added 2026-08-09 — AAIF / coding agents (8.3 "Watch your own coding agent"):** a shout-out to the Agentic AI Foundation (aaif.io), where both speakers are ambassadors, carried by a practical hook rather than a logo. goose v1.43.0 ships built-in OTel via the Rust SDK behind `GOOSE_TELEMETRY_ENABLED`, and Claude Code ships it via the Node SDK behind `CLAUDE_CODE_ENABLE_TELEMETRY=1` — both into the collector you already run. The finding that earns the slide: running goose *with* Claude Code over ACP produces **two sibling streams, not one nested trace** — two agents in one workflow with nothing joining them. Source: Adriana's companion repo (`your-agent-did-what-adriana`), `docs/goose-claude-code-telemetry.md`.
+
+**Restored 2026-08-09:** the kagent/HolmesGPT ecosystem slide is back (now 8.2 "Who reads your telemetry next"), together with a new framing slide at 0.3 ("Two ways you meet an agent"). Cutting the ecosystem slide had left a real hole: the instrumentation ecosystem the talk surveys is developer-facing, while the capybara demo is an SRE scenario, and nothing on the deck connected them. The bridge is that agentic-SRE tools *consume* your telemetry — "it is only as good as the data it reads" — which makes the conventions matter even to someone who never builds an agent. The capybara is now introduced explicitly as a toy standing in for kagent/HolmesGPT, small enough to open up. Deck was 42 slides at that point; it is 49 now, after the orientation and setup slides added on 2026-08-10 (1.3 the vocabulary, 1.4 the telemetry path, 4.2 the demo setup, 6.4 the model output, 7.2 the judge concept) and the Arconia flavor slide was cut. See the parked cut list above.
+
+**Dropped from the previous outline** (recorded so the decision is deliberate, not accidental): the pizza-order trace and its 275-span / "164 spans named POST" statistics, the skills-break-traces slide, the W3C context-propagation slide, and the maturity-model slide. The pizza demo is superseded by the capybara scenario, which the whole deck now shares; the rest are good material that 30 minutes did not have room for.
+**Reconsider at 45 minutes?** The extra 7.5 is allocated to running the demos live, so restoring four slides means giving up Demo A act 4 — the only place the headline finding is watched rather than asserted. That trade is not worth it. If the demos ever move to a recording, the W3C context-propagation slide is the first of these worth bringing back, since correlation is beat 3's whole argument and it currently rests on assertion. The "spans named just POST" point survives, compressed, as the amber emphasis on slide 1.5.
+
+---
 
 ## Open decisions before building slides
-1. **Slide tool** — the reference repo is a book, not a deck. Recommend **Marp** (markdown + custom CSS theme; fits this markdown repo, easy dark blue/purple theme, no logo) or **reveal.js**. Which?
-2. **Solo vs duo** — keep Adriana handoffs, or collapse to one voice?
-3. **Live demo vs recorded** — sections 3–5 can run the actual `demos/` harness live, or use captured screenshots from `ANALYSIS.md`. Live is riskier (heavy stacks); recommend pre-recorded clips + the captured attribute blocks.
+
+1. **Slide density — which slides get cut?** *(Historical: written when the slot was 30 minutes. The slot is 45 as of 2026-08-10 and no cuts are required — see the budget above. Kept because the density reasoning is still how to think about it if the slot ever shrinks.)* The real change from the previous outline is density, not a lost buffer. Its *header* claimed "≈26 min content + 4 min buffer/Q&A handoff", but its own beat table already summed to 30 (1.5+4+5+6+5+5.5+3) — the file contradicted itself and the buffer was never actually reserved in the arc. So nothing was taken away. What changed is **28 slides → 39 slides in the same 30 minutes: ~64 s/slide → ~46 s/slide.** Seven of the 39 are dividers that take seconds, so content slides land nearer ~54 s, but the deck is materially denser and has no slack for a demo that misbehaves. The lever is cutting slides, not asking the CFP about Q&A. Cheapest cuts, in order: beat 3 (3 min, new writing, no demo, and 3.3/3.4 make one argument between them), then beat 1 (1.2 and 1.3 can merge). Decide before the slides are built, not while rehearsing.
+2. **Live vs pre-captured.** [SPEC] §9 says pre-record or pre-capture; both demos must run offline from captured data. Decide per beat whether 5.3 and 6.2/6.3 are video, screenshots, or a live terminal.
+3. **Hero visualizer.** [SPEC] §5 defers the choice until we can see which UI renders `gen_ai.evaluation.result` most legibly. Slides 2.5, 7.3 and 7.4 all depend on the answer.
+4. **The 1.12.2 outcome.** Slide 4.6's framing changes depending on which branch of [SPEC] §3.3 lands. Written above as "the kind of gap you hit"; if 1.12.2 fixes it, the slide becomes a better story (the gap *and* the fix), not a worse one.

@@ -1,0 +1,16 @@
+# The agent needs Anthropic and the OTel SDK; the two instrumentation libraries are
+# both installed so CAPYBARA_INSTRUMENTATION can pick either without a reinstall.
+# Only the selected one is imported at runtime — see telemetry.py.
+anthropic>=0.40
+
+# Beaver reads the same PostgreSQL Capybara does, so both report identical state.
+psycopg[binary]>=3.2
+opentelemetry-api>=1.27
+opentelemetry-sdk>=1.27
+opentelemetry-exporter-otlp-proto-http>=1.27
+
+# CAPYBARA_INSTRUMENTATION=openlit  → OTel GenAI semconv (gen_ai.*)
+openlit>=1.42
+
+# CAPYBARA_INSTRUMENTATION=openinference → llm.* / openinference.*
+openinference-instrumentation-anthropic

@@ -1,5 +1,7 @@
 # Research: Forensic Observability for Autonomous Agents
 
+> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but [`demos/ANALYSIS.md`](demos/ANALYSIS.md) is the measured record and wins wherever the two disagree.
+
 Background research for the forensics half of *Your Agent Did What?* — what telemetry you actually need to reconstruct what an agent did when something goes wrong, and where today's GenAI observability stack falls short for post-incident forensics on non-deterministic systems.
 
 Method: fan-out web search across five angles → 21 sources fetched → 100 claims extracted → 25 highest-value claims verified with 3-vote adversarial checking (a claim needs 2 of 3 votes to survive). 21 confirmed, 4 killed. Full source list and the verification caveat are at the bottom.

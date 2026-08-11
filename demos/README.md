@@ -1,140 +1,185 @@
-# Demos — GenAI Observability Backends
+# The demo
 
-A docker-compose **test harness** for *Your Agent Did What?*. One instrumented
-tool-calling Claude agent emits OpenTelemetry GenAI traces to a single Collector,
-which **fans the same trace out to every backend** so you can compare how each
-one renders it. Each backend is a compose **profile** — start only what you want.
-
-## The three demos
-
-1. **`./` (this dir) — backends fan-out.** One agent → one collector → Jaeger,
-   Phoenix, OpenLIT, Langfuse, (Dash0, opt-in OpenSearch). Compare renderings.
-2. **`normalizer/` — collector-side convention normalization.** An app emitting
-   OpenInference/OpenLLMetry attributes, rewritten to OTel GenAI semconv by the
-   `gen_ai_normalizer` processor.
-3. **`arconia/` — SDK-side convention switching.** A Spring AI app where one
-   property re-emits spans under a different convention's attribute names.
-
-## The three questions this answers
-
-1. **What does the OpenTelemetry project itself give you?**
-   The Collector's `debug` exporter (console) and **Jaeger** (a CNCF sibling, a
-   generic trace viewer). OTel standardizes how telemetry is *produced and moved*,
-   not how it's visualized — it's vendor-neutral by design.
-2. **How do you get it to a vendor?**
-   One exporter block. Set `DASH0_*` in `.env` and the same trace appears in Dash0.
-3. **What OSS solutions exist?**
-   **Arize Phoenix**, **Langfuse**, **OpenLIT** — open each and compare the *same* trace.
-
-## Prerequisites
-
-Docker, an `ANTHROPIC_API_KEY` (`sk-ant-…`), Python 3.11+.
+**One incident. Two SRE agents on different platforms. One collector.** Everything the
+talk claims is measured here rather than asserted — the measurements, with dates, are in
+[`ANALYSIS.md`](ANALYSIS.md).
 
 ```bash
-cp .env.template .env   # then set ANTHROPIC_API_KEY
+cp .env.template .env      # then set ANTHROPIC_API_KEY
+./00_run.sh                # cluster, database, both agents  (~5 min cold)
+./01_start-demo.sh         # port-forwards, waits until they answer
+./02_cleanup.sh            # delete the cluster
 ```
 
-## Quick start (everything)
+Then open **<http://localhost:8088>**.
 
-```bash
-./00_run.sh             # brings up all backends, runs the agent, prints the UIs
-# ... explore the UIs ...
-./01_cleanup.sh
-```
+---
 
-## Run a focused subset (lighter, better for live demo)
+## The incident
 
-```bash
-# Only the project-native view: console + Jaeger
-docker compose --profile jaeger up -d
-./agent/run.sh "List all the records in the database."
-
-# Add a GenAI-native OSS UI
-docker compose --profile jaeger --profile openlit up -d
-```
-
-> **Langfuse is heavy** (Postgres + ClickHouse + Redis + MinIO + web + worker).
-> Omit `--profile langfuse` for a lighter run.
-
-## What to look at in each UI
-
-| Backend | URL | Login | What it shows |
-|---|---|---|---|
-| Jaeger | http://localhost:16686 | — | The trace with **zero GenAI awareness** — `chat …`, `execute_tool …`, raw attrs. |
-| Phoenix | http://localhost:6006 | — | GenAI-native but **OpenInference-native**: our `gen_ai.*` spans land but render as **plain spans** (no LLM panels). |
-| OpenLIT | http://localhost:3001 | `user@openlit.io` / `openlituser` | OTel-semconv-native GenAI dashboards (tokens, cost, models). |
-| Langfuse | http://localhost:3000 | `admin@demo.local` / `changeme-12345` | OSS LLM platform; maps `gen_ai.*` into its trace/observation model. |
-| Dash0 | your dashboard | — | The vendor path (only if `DASH0_AUTH_TOKEN` is set). |
-| OpenSearch Dashboards | http://localhost:5601 | `admin` / `My_password_123!@#` | Trace Analytics via Data Prepper intermediary (opt-in, heavy). |
-
-## OpenSearch — opt-in "Agent Traces" backend
-
-> **WARNING: heavy (~4 GB of images).** Only enable if you have the disk and RAM.
-
-OpenSearch cannot ingest OTLP directly. It needs **Data Prepper** as an
-intermediary. The pipeline is:
+The capybara customer database has five rows. A neighbouring team's service —
+authenticating as the Postgres role `kangaroo` — connects **directly to the database**,
+bypassing both agents, and deletes every free-plan capybara.
 
 ```
-otel-collector ──OTLP/gRPC(21890)──► data-prepper ──► OpenSearch (otel-v1-apm-span-* index) ──► Dashboards (5601)
+cappuccino  pro     ← survives
+biscuit     free    ← deleted by kangaroo-service
+nibbles     free    ← deleted by kangaroo-service
+mochi       pro     ← survives
+pepper      free    ← deleted by kangaroo-service
 ```
 
-Enable with `--profile opensearch`:
+Then you ask an agent: *"Customers are reporting missing accounts. Investigate."*
 
-```bash
-docker compose --profile jaeger --profile opensearch up -d
-./agent/run.sh "List all the records in the database."
-# then open http://localhost:5601  (admin / My_password_123!@#)
-# navigate to OpenSearch Dashboards → Observability → Trace Analytics
+**The root cause is a grant, not a bug.** `kangaroo` can do this because it was given
+`DELETE` on a table it has no business deleting from — see
+[`infrastructure/postgres/init.sql`](infrastructure/postgres/init.sql). A good diagnosis
+names that, not just "rows are missing".
+
+### How it is discoverable
+
+An `AFTER` trigger records every change, with two different qualities of evidence:
+
+| column | source | trustworthy? |
+|---|---|---|
+| `client` | `application_name` | **No.** Self-reported; any connection can claim anything. |
+| `db_user` | `session_user` | **Yes.** The authenticated role. The client cannot lie about it. |
+
+Two details worth pointing at on stage:
+
+- The trigger is `SECURITY DEFINER`, so `kangaroo` can cause rows in the trail but
+  **cannot delete them**. Try it: `permission denied for table audit_log`.
+- It records `session_user`, not `current_user`. Under `SECURITY DEFINER` the latter
+  becomes the function owner, which would make every deletion look like it came from the
+  application.
+
+Records are **UUIDs**, deliberately. With sequential ids an investigating agent solves the
+case by pattern-matching gaps — and gets it wrong: it reads a roster starting at id 26 as
+evidence that ids 1–25 were deleted. UUIDs remove the shortcut, so the audit trail is the
+only place an answer can come from.
+
+---
+
+## The two agents
+
+Same database, same incident, same question, same collector. They differ in platform.
+
+| | **Capybara SRE** | **Beaver SRE** |
+|---|---|---|
+| platform | Java · Quarkus + LangChain4j | Python · Anthropic SDK |
+| tools | over MCP, to a separate service | plain functions, same process |
+| data | PostgreSQL, as `capybara_app` | the same PostgreSQL, as `capybara_app` |
+| emits | `gen_ai.*` from the framework | `openinference.*` / `llm.*` — no OTel at all |
+| arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` |
+| judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged |
+
+Both are reachable from the one console: pick the agent in the top bar. Beaver runs in its
+own pod and the Java app proxies to it, because the browser cannot see cluster-internal
+services.
+
+---
+
+## Layout
+
+```
+00_run.sh              build and deploy everything
+01_start-demo.sh       open the port-forwards, wait for them  (--status to just check)
+02_cleanup.sh          delete the cluster
+
+agents/
+  capybara-sre/        the Java agent, and the console it serves at /
+  capybara-db-mcp/     the MCP server it calls
+  capybara-db-core/    shared database access, plain JDBC, no framework
+  beaver-sre/          the Python agent
+  k8s/                 their deployments
+  deploy.sh            build all three images, load into kind, roll out
+
+infrastructure/
+  postgres/init.sql    the schema, the trigger, the roles, the seed
+  k8s/                 the database deployment
+  deploy.sh            builds the ConfigMap from init.sql — one definition, no drift
+
+observability/
+  collector/           values.yaml, and values.dash0.yaml layered on when a token is set
+  jaeger/  prometheus/ helm values
+
+cluster/setup.sh       kind, secrets, and the three observability charts
+scripts/               verify-telemetry.py
 ```
 
-**Credentials:** `admin` / `My_password_123!@#`
+---
 
-**Important caveats:**
+## On stage
 
-- The dedicated **"Agent Traces" UI is RFC-stage in open-source OpenSearch** (it
-  is live on Amazon OpenSearch Service). On a stable OSS release (2.x) you will
-  see spans in **Trace Analytics** but possibly not a dedicated agent-traces view.
-- The backend consumes standard OTel `gen_ai.*` semconv, so the **same Demo 1
-  instrumentation feeds it unchanged** — no extra code required.
-- Data Prepper writes to the `otel-v1-apm-span-*` index pattern. The
-  `trace-analytics-raw` index type in the pipeline config maps directly to this.
+**1 · Reset, and show the table.** Five capybaras, three on the free plan.
 
-### Why Phoenix looks "bland"
+**2 · Unleash the kangaroos.** Three rows gone. Nothing either agent did caused this.
 
-Phoenix keys its rich LLM UI off **OpenInference** attributes, not OTel GenAI
-semconv. We instrument once with `gen_ai.*` (the convention the talk advocates),
-so Phoenix accepts the spans but can't light up its LLM views. This is the
-fragmentation problem made visible — and the case for normalizing at the edge
-(`normalizer/`, and `../resources.md`).
+**3 · Watch the metric.** In Prometheus, `capybara_records` steps from 5 to 2, and
+`capybara_records_deleted_total` broken down by `capybara_actor_db_user` says who — the same
+distinction the audit trail makes, one signal earlier. The gauge is observable, so it reads
+the table when the SDK collects and cannot drift from reality even when something deletes
+rows without telling us. Export interval is 15s: press the button and keep talking.
 
-## The forensics beat
+**4 · Ask Capybara.** It calls `list_records`, sees two rows, calls `audit_log`, and
+reports that an external role did it — explicitly not this application.
 
-The third scripted prompt drives the agent to **delete the free-plan records**.
-Find the `execute_tool delete_records` span: it carries
-`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`.
+**5 · Read the judge.** `root_cause_correctness` and `remediation_safety`, each with the
+judge's reasoning naming the evidence that decided it.
 
-Those two attributes are **opt-in / off by default** in the OTel GenAI spec — the
-demo deliberately enables them in `agent/app.py`. That single choice is the
-difference between a trace that proves a tool *ran* and one that proves *what it
-did*. See `../research.md` for the standards detail.
+**6 · Ask Beaver the same question,** and open its trace. The `messages.create` span
+carries `llm.*` **and** `gen_ai.*` at once: what the library emitted, and what the
+collector made of it.
 
-## How it fits together
+**7 · Then the forensic gap.** `kubectl set env deployment/capybara-sre CAPYBARA_TOOLS=local`,
+re-run, and diff the tool spans. Same binary, same prompt, same database — only the
+registration differs. Re-run `./01_start-demo.sh` afterwards; changing env rolls the pod
+and takes the port-forward with it.
 
-```
-agent/run.sh ──OTLP(localhost:4318)──► otel-collector ──┬─► debug (console)
-  Anthropic + OpenLIT (chat spans)                       ├─► Jaeger
-  + manual execute_tool spans                            ├─► Phoenix
-                                                         ├─► OpenLIT
-                                                         ├─► Langfuse
-                                                         ├─► Dash0 (optional)
-                                                         └─► data-prepper ──► OpenSearch (opt-in, heavy)
-```
+---
 
-## Related demos (reference only)
+## What is measured, not asserted
 
-These live in `dash0-examples/` and aren't part of this harness:
+All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
 
-- **agentgateway** — AI gateway (Gateway API) with GenAI telemetry; the tool-call
-  data plane / enforcement point between agents and tools.
-- **kagent** — agents as first-class Kubernetes workloads; agent lifecycle as a CR.
-- **HolmesGPT** — agentic SRE troubleshooter that reads OTel data over MCP.
+- **The MCP path loses the tool call's content.** 4 span attributes versus 6 on the local
+  path; `gen_ai.tool.call.arguments` and `.result` absent. It is a *framework* gap, not an
+  MCP gap — say "in this framework", never "with MCP".
+- **The MCP path loses the trace at one specific hop.** With
+  `quarkus.mcp.server.tracing.enabled=true` (off by default, and it needs
+  quarkus-mcp-server 1.13.1) the server's `tools/call` spans sit correctly inside the
+  agent's trace. The tool *body* still does not: each SQL query is its own root, because
+  the extension runs the tool on a new duplicated Vert.x context —
+  [#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789), open, "No ETA".
+  Streamable HTTP was tried and is worse, so the transport is not the variable.
+- **The normalizer is partial, and asymmetric.** It converts the whole structure —
+  AGENT→`invoke_agent`, TOOL→`execute_tool`, LLM→`chat` — and the tool call's *arguments*,
+  but there is no mapping for the *result*. Two roads to the same missing half.
+- **Evaluations are log records, not span events**, which is what the convention asks for
+  and what most implementations get wrong. They do not appear in Jaeger; Jaeger takes spans.
+
+---
+
+## Configuration
+
+`demos/.env`, copied from `.env.template`:
+
+| | |
+|---|---|
+| `ANTHROPIC_API_KEY` | required |
+| `DASH0_AUTH_TOKEN` | optional. Set it and the collector also exports to Dash0; leave it and everything stays local. |
+| `CAPYBARA_CLUSTER` | kind cluster name, default `capybara` |
+
+---
+
+## When something breaks
+
+| symptom | cause |
+|---|---|
+| the console stops answering | a pod was replaced and took the port-forward with it. `./01_start-demo.sh` |
+| `HTTP 000` from curl | same thing. Check with `./01_start-demo.sh --status` |
+| Jaeger's dropdown lists services that no longer exist | its store is in memory and keeps old traces. `kubectl rollout restart deployment/jaeger` clears it — and clears your traces, so do it before a rehearsal, not during |
+| the judge panel is empty | the judge's JSON was truncated. `max-tokens` is set to 4096; the raw reply is logged on failure |
+| no SQL spans anywhere | `quarkus.datasource.jdbc.telemetry=true` is opt-in. Worth knowing: "we use OTel" does not mean every layer is instrumented |
+| the agent boots with no tools | it resolves its tool list at startup and the MCP server was not up. `agents/deploy.sh` orders this correctly |
+| a schema change seems not to apply | `init.sql` only runs on an empty data directory. `infrastructure/deploy.sh` stamps its hash on the pod template so a change recreates the pod |

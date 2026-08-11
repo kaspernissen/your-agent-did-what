@@ -1,0 +1,74 @@
+# The shared collector, used by both demos.
+#
+# gen_ai_normalizer is enabled for every pipeline, including the traffic that does not
+# need it. That is safe by design: the processor only rewrites the source conventions
+# listed under `sources`, so spans already in gen_ai.* pass through untouched while
+# OpenInference spans are rewritten. One collector serves both without per-service
+# routing.
+mode: deployment
+replicaCount: 1
+image:
+  repository: otel/opentelemetry-collector-contrib
+  tag: "0.158.0"
+resources:
+  limits: { memory: 512Mi }
+  requests: { memory: 256Mi }
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc: { endpoint: 0.0.0.0:4317 }
+        http: { endpoint: 0.0.0.0:4318 }
+
+  processors:
+    batch:
+      timeout: 5s
+      send_batch_size: 1024
+    gen_ai_normalizer:
+      sources:
+        # remove_originals: false on purpose. With it true the processor deletes each
+        # attribute it managed to map, so the span that arrives shows only the leftovers
+        # it could NOT translate -- which reads like the library emitted an odd subset.
+        # Keeping the originals means one span carries both vocabularies side by side:
+        # what the library said, and what the collector made of it. That comparison is
+        # the demo.
+        - name: openinference
+          remove_originals: false
+        - name: openllmetry
+          remove_originals: false
+
+  exporters:
+    # kubectl logs the collector to read spans, exactly like the local demo's stdout.
+    debug:
+      verbosity: detailed
+    otlp/jaeger:
+      endpoint: jaeger-collector.default.svc.cluster.local:4317
+      tls: { insecure: true }
+
+    # Prometheus with --web.enable-otlp-receiver accepts OTLP directly, so metrics take
+    # the same shape of path as traces: app -> collector -> backend. No scrape config,
+    # no /metrics endpoint on the apps to expose.
+    otlphttp/prometheus:
+      endpoint: http://prometheus.default.svc:9090/api/v1/otlp
+      tls: { insecure: true }
+
+  extensions:
+    health_check:
+      endpoint: 0.0.0.0:13133
+
+  service:
+    extensions: [health_check]
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [gen_ai_normalizer, batch]
+        exporters: [debug, otlp/jaeger]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug, otlphttp/prometheus]
+      logs:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug]
