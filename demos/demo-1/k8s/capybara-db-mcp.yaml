@@ -20,6 +20,13 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8086
+          env:
+            - name: CAPYBARA_DB_URL
+              value: "jdbc:postgresql://capybara-db:5432/capybara"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: grpc
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector-opentelemetry-collector.default.svc.cluster.local:4317"
           livenessProbe:
             httpGet:
               path: /q/health

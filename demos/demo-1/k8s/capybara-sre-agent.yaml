@@ -28,6 +28,13 @@ spec:
                   key: api-key
             - name: CAPYBARA_MCP_URL
               value: "http://capybara-db-mcp:8086/mcp/sse"
+            # One variable serves all three datasources — app, kangaroo and admin —
+            # because each appends its own ApplicationName to this base URL.
+            - name: CAPYBARA_DB_URL
+              value: "jdbc:postgresql://capybara-db:5432/capybara"
+            # mcp (default) or local: which instrumentation sees the tool call.
+            - name: CAPYBARA_TOOLS
+              value: "mcp"
             - name: OTEL_JAVAAGENT_ENABLED
               value: "false"
             - name: OTEL_EXPORTER_OTLP_PROTOCOL

@@ -126,37 +126,5 @@ services:
       MINIO_ROOT_PASSWORD: miniosecret
     entrypoint: ["sh", "-c", "mkdir -p /data/langfuse && minio server /data"]
 
-  opensearch:
-    image: opensearchproject/opensearch:2.18.0
-    profiles: ["opensearch"]
-    environment:
-      - discovery.type=single-node
-      - DISABLE_SECURITY_PLUGIN=false
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=My_password_123!@#
-      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.18.0
-    profiles: ["opensearch"]
-    depends_on: [opensearch]
-    ports:
-      - "5601:5601"
-    environment:
-      - 'OPENSEARCH_HOSTS=["https://opensearch:9200"]'
-
-  data-prepper:
-    image: opensearchproject/data-prepper:2.10.0
-    profiles: ["opensearch"]
-    depends_on: [opensearch]
-    volumes:
-      - ./collector/data-prepper-pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml:ro
-
 volumes:
   openlit-data:

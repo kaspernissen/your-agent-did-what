@@ -1,0 +1,61 @@
+# The shared collector, used by both demos.
+#
+# gen_ai_normalizer is enabled here even though demo 1 does not need it, and that
+# is the point rather than an oversight: the processor only rewrites the source
+# conventions it is told about, so demo 1's gen_ai.* spans pass through untouched
+# while demo 2's llm.* / openinference.* spans get rewritten. One collector, and the
+# difference between the two demos is visible in the same pipeline.
+mode: deployment
+replicaCount: 1
+image:
+  repository: otel/opentelemetry-collector-contrib
+  tag: "0.158.0"
+resources:
+  limits: { memory: 512Mi }
+  requests: { memory: 256Mi }
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc: { endpoint: 0.0.0.0:4317 }
+        http: { endpoint: 0.0.0.0:4318 }
+
+  processors:
+    batch:
+      timeout: 5s
+      send_batch_size: 1024
+    gen_ai_normalizer:
+      sources:
+        - name: openinference
+          remove_originals: true
+        - name: openllmetry
+          remove_originals: true
+
+  exporters:
+    # kubectl logs the collector to read spans, exactly like the local demo's stdout.
+    debug:
+      verbosity: detailed
+    otlp/jaeger:
+      endpoint: jaeger-collector.default.svc.cluster.local:4317
+      tls: { insecure: true }
+
+  extensions:
+    health_check:
+      endpoint: 0.0.0.0:13133
+
+  service:
+    extensions: [health_check]
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [gen_ai_normalizer, batch]
+        exporters: [debug, otlp/jaeger]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug]
+      logs:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug]

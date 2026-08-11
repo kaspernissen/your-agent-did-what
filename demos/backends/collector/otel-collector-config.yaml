@@ -38,17 +38,13 @@ exporters:
       Authorization: Bearer ${env:DASH0_AUTH_TOKEN}
       Dash0-Dataset: ${env:DASH0_DATASET}
 
-  otlp/dataprepper:
-    endpoint: data-prepper:21890
-    tls:
-      insecure: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlp/jaeger, otlphttp/phoenix, otlphttp/openlit, otlphttp/langfuse, otlp/dash0, otlp/dataprepper]
+      exporters: [debug, otlp/jaeger, otlphttp/phoenix, otlphttp/openlit, otlphttp/langfuse, otlp/dash0]
     metrics:
       receivers: [otlp]
       processors: [batch]
