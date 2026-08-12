@@ -339,7 +339,7 @@
       <span class="stat-figure amber-text" data-emphasis="amber" style="font-size:300px">0</span>
       <div style="display:flex;flex-direction:column;gap:20px;max-width:1100px">
         <span style="font-size:38px;font-weight:300;line-height:1.4">No GenAI span, event, metric or attribute is marked Stable.</span>
-        <span style="font-size:38px;font-weight:300;line-height:1.4;color:var(--muted-ink)">Every one of them is Development — subject to breaking change.</span>
+        <span style="font-size:38px;font-weight:300;line-height:1.4;color:var(--muted-ink)">Every one of them is Development, subject to breaking change.</span>
       </div>
     </div>
   </section>
@@ -414,7 +414,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <marker id="ara" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#F5A800"/></marker>
       </defs>
     </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:860px;width:1620px">One binary, one prompt, one database. Flip how the tool is registered and the arguments <em>are</em> there &mdash; so this is a <strong style="font-weight:600">framework</strong> gap, not an MCP gap.</p>
+    <p class="small" style="position:absolute;left:120px;top:860px;width:1620px">One binary, one prompt, one database. Flip how the tool is registered and the arguments <em>are</em> there. So this is a <strong style="font-weight:600">framework</strong> gap, not an MCP gap.</p>
   </section>
 
   <!-- 05 — L02 Section divider -->
@@ -436,8 +436,8 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="deck-footer"></div>
     <h2 class="title" style="position:absolute;left:120px;top:120px;width:1500px;font-size:72px">Downstream in the pipeline, or upstream in the SDK</h2>
     <div class="axis-list" style="position:absolute;left:120px;top:400px;width:820px">
-      <p class="axis-list-item is-amber">The collector fixes it <span class="amber-text" data-emphasis="amber">downstream</span> — no app changes, any language, central policy.</p>
-      <p class="axis-list-item">Arconia fixes it upstream — clean at the source, but per-framework and Java-only today.</p>
+      <p class="axis-list-item is-amber">The collector fixes it <span class="amber-text" data-emphasis="amber">downstream</span>: no app changes, any language, central policy.</p>
+      <p class="axis-list-item">Arconia fixes it upstream: clean at the source, but per-framework and Java-only today.</p>
       <p class="axis-list-item">Both land on OTel semconv as the target.</p>
     </div>
     <div class="chamfer" style="position:absolute;right:120px;top:300px;width:800px;height:540px;background:var(--paper-2);padding:40px 36px;display:flex;align-items:center;gap:20px">
@@ -533,8 +533,8 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <span style="font-family:var(--font-mono);font-size:17px;color:var(--on-ink-dim);text-align:center;line-height:1.5">sources:<br>openinference<br>openllmetry</span>
       <span style="font-family:var(--font-mono);font-size:17px;color:var(--amber);text-align:center">remove_originals<br>: false</span>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:748px;width:1680px">Measured: <strong style="font-weight:600;color:var(--paper)">39 source attributes in, 7 <span style="font-family:var(--font-mono)">gen_ai.*</span> written</strong>. Originals kept on purpose &mdash; <span style="font-family:var(--font-mono)">remove_originals: true</span> deletes whatever it managed to map, leaving only the leftovers on the span.</p>
-    <p class="small" style="position:absolute;left:120px;top:862px;width:1680px"><span style="font-family:var(--font-mono);color:var(--amber)">llm.system</span> rides through either way &mdash; not in the mapping table. Alpha, traces only &mdash; but the <strong style="font-weight:600;color:var(--paper)">OpenTelemetry Demo runs this processor too</strong>.</p>
+    <p class="small" style="position:absolute;left:120px;top:748px;width:1680px">Measured: <strong style="font-weight:600;color:var(--paper)">39 source attributes in, 7 <span style="font-family:var(--font-mono)">gen_ai.*</span> written</strong>. Originals kept on purpose. <span style="font-family:var(--font-mono)">remove_originals: true</span> deletes whatever it managed to map, leaving only the leftovers on the span.</p>
+    <p class="small" style="position:absolute;left:120px;top:862px;width:1680px"><span style="font-family:var(--font-mono);color:var(--amber)">llm.system</span> rides through either way, because it is not in the mapping table. Alpha, and traces only. But the <strong style="font-weight:600;color:var(--paper)">OpenTelemetry Demo runs this processor too</strong>.</p>
   </section>
   <!-- 5.4 — L06 · the whole trace converts, except the half that matters -->
   <section data-label="The half it cannot carry" class="ground-paper">
@@ -586,7 +586,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <!-- 6.2 — L05 Waterfall · measured durations from a real run -->
   <section data-label="The capybara incident, as a trace" class="ground-ink">
     <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:100px;width:1620px;font-size:56px"><span style="font-family:var(--font-mono);font-size:48px">invoke_agent</span> &mdash; 19.05s, 21 spans, and the answer is in <span class="amber-text" data-emphasis="amber">63 milliseconds</span> of it</h2>
+    <h2 class="title" style="position:absolute;left:120px;top:100px;width:1620px;font-size:56px"><span style="font-family:var(--font-mono);font-size:48px">invoke_agent</span>: 19.05s, 21 spans, and the answer is in <span class="amber-text" data-emphasis="amber">63 milliseconds</span> of it</h2>
     <div class="waterfall" style="position:absolute;left:120px;right:120px;top:320px">
       <div class="wf-row">
         <span class="wf-label">invoke_agent</span>
@@ -620,7 +620,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       </div>
     </div>
     <div style="position:absolute;left:452px;right:120px;top:800px;height:1px;background:var(--navy)"></div>
-    <p class="small" style="position:absolute;left:120px;top:824px;width:1680px">Measured. Two tool calls, <strong style="font-weight:600;color:var(--paper)">63 milliseconds together</strong> &mdash; 0.3% of the trace, and the only part that answers the question. Everything wide is the model thinking or the judge judging.</p>
+    <p class="small" style="position:absolute;left:120px;top:824px;width:1680px">Measured. Two tool calls, <strong style="font-weight:600;color:var(--paper)">63 milliseconds together</strong>. That is 0.3% of the trace, and the only part that answers the question. Everything wide is the model thinking or the judge judging.</p>
     <p class="small" style="position:absolute;left:120px;top:900px;width:1680px">And the <span style="font-family:var(--font-mono);color:var(--on-ink)">SELECT</span>s those two calls ran are <strong style="font-weight:600;color:var(--paper)">not in this trace at all</strong>. Hold that thought.</p>
   </section>
 
@@ -645,14 +645,14 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
       <path d="M400 274 L400 316" stroke="#F5A800" stroke-width="3" stroke-dasharray="7 7"/>
       <line x1="376" y1="292" x2="424" y2="292" stroke="#F5A800" stroke-width="4"/>
-      <text x="446" y="300" font-family="Public Sans" font-size="23" fill="#8A5B00">a new duplicated Vert.x context &mdash; no parent</text>
+      <text x="446" y="300" font-family="Public Sans" font-size="23" fill="#8A5B00">a new duplicated Vert.x context: no parent</text>
 
       <text x="0" y="366" font-family="JetBrains Mono" font-size="20" fill="#8A5B00">A DIFFERENT TRACE, ONE SPAN LONG</text>
       <rect x="0" y="384" width="620" height="56" rx="8" fill="#F2ECE0" stroke="#F5A800" stroke-width="2.5"/>
       <text x="24" y="420" font-family="JetBrains Mono" font-size="23" fill="#202C5F">SELECT capybara.audit_log</text>
     </svg></div>
 
-    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Server-side MCP tracing is <strong style="font-weight:600;color:var(--ink)">off by default</strong> &mdash; turning it on is what put the far side of the call in the trace at all. The tool <em>body</em> still runs with no context, so the query it made is its own root trace.</p>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Server-side MCP tracing is <strong style="font-weight:600;color:var(--ink)">off by default</strong>. Turning it on is what put the far side of the call in the trace at all. The tool <em>body</em> still runs with no context, so the query it made is its own root trace.</p>
   </section>
 
   <!-- 6.3 — L06 Code -->
@@ -665,7 +665,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
                               "client": "kangaroo-service",
                               "db_user": <span class="c-key">"kangaroo"</span>}, ...]</pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:640px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong> — the spec says instrumentation SHOULD NOT capture this, for privacy and payload size. Here the arguments are trivial and the <em>result</em> is the entire case: a role that is not this application.</p>
+    <p class="small" style="position:absolute;left:120px;top:640px;width:1680px">Both are <strong style="font-weight:600;color:var(--paper)">opt-in and off by default</strong>: the spec says instrumentation SHOULD NOT capture this, for privacy and payload size. Here the arguments are trivial and the <em>result</em> is the entire case: a role that is not this application.</p>
     <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">Which is the awkward part. The half you would least want to log by default is the half that identifies the culprit.</p>
     <p class="small" style="position:absolute;left:120px;top:880px;width:1680px"><strong style="font-weight:600;color:var(--paper)">Our MCP run emits neither.</strong> Same binary with local tools and both are there.</p>
   </section>
@@ -696,7 +696,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <text x="1110" y="206" font-family="Public Sans" font-size="22" fill="#5B6180">not persisted · not deterministic</text>
   <text x="1110" y="236" font-family="Public Sans" font-size="22" fill="#5B6180">output, not an audit trail</text>
 </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG — and the honest limit of everything else in this talk.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Normalizing names does not create the missing field. This is the gap worth raising with the SIG, and the honest limit of everything else in this talk.</p>
   </section>
 
   <!-- 07 — L02 Section divider -->
@@ -738,8 +738,8 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <span style="font-family:var(--font-mono);font-size:23px;color:var(--ink);line-height:1.45">explanation "…"</span>
       </div>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">It reads a transcript and returns a score. <strong style="font-weight:600;color:var(--ink)">Ours is deliberately given no toolbox</strong> — it can read what the agent did, it cannot touch the database itself.</p>
-    <p class="small" style="position:absolute;left:120px;top:886px;width:1680px">Yes, this runs in the demo — <span style="font-family:var(--font-mono)">CapybaraJudge</span>, and what it returns becomes the <span style="font-family:var(--font-mono)">gen_ai.evaluation.result</span> events.</p>
+    <p class="small" style="position:absolute;left:120px;top:790px;width:1680px">It reads a transcript and returns a score. <strong style="font-weight:600;color:var(--ink)">Ours is deliberately given no toolbox</strong>: it can read what the agent did, but it cannot touch the database itself.</p>
+    <p class="small" style="position:absolute;left:120px;top:886px;width:1680px">Yes, this runs in the demo: <span style="font-family:var(--font-mono)">CapybaraJudge</span>, and what it returns becomes the <span style="font-family:var(--font-mono)">gen_ai.evaluation.result</span> events.</p>
   </section>
   <section data-label="gen_ai.evaluation.result" class="ground-paper">
     <div class="deck-footer"></div>
@@ -752,11 +752,11 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     </div>
     <div class="axis-list" style="position:absolute;left:120px;top:490px;width:1680px">
       <p class="axis-list-item">Four <span style="font-family:var(--font-mono);font-size:30px">gen_ai.evaluation.*</span> attributes, plus two general ones: <span style="font-family:var(--font-mono);font-size:30px">gen_ai.response.id</span> and <span style="font-family:var(--font-mono);font-size:30px">error.type</span>.</p>
-      <p class="axis-list-item">An <strong style="font-weight:600;color:var(--ink)">Event in the logs data model</strong> &mdash; a log record, not a span event.</p>
+      <p class="axis-list-item">An <strong style="font-weight:600;color:var(--ink)">Event in the logs data model</strong>: a log record, not a span event.</p>
       <p class="axis-list-item">It SHOULD be parented to the span being evaluated, or carry <span style="font-family:var(--font-mono);font-size:30px">gen_ai.response.id</span>.</p>
-      <p class="axis-list-item">No standard span for "an evaluation happened" yet &mdash; open PR #185 proposes one.</p>
+      <p class="axis-list-item">No standard span for "an evaluation happened" yet. Open PR #185 proposes one.</p>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:900px;width:1680px">Callback to "Stable: zero" — <span style="font-family:var(--font-mono)">error.type</span> is the only Stable attribute near this event, and only because it is a general OTel attribute, not a GenAI one.</p>
+    <p class="small" style="position:absolute;left:120px;top:900px;width:1680px">Callback to "Stable: zero", where <span style="font-family:var(--font-mono)">error.type</span> is the only Stable attribute near this event, and only because it is a general OTel attribute, not a GenAI one.</p>
   </section>
 
   <!-- 7.3 — L06 Code -->
@@ -774,7 +774,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
   trace_id / span_id &rarr; the invoke_agent span</pre>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:840px;width:1680px">Measured, repeatedly, on the investigation: it finds the role in the audit trail and takes no destructive action. Two things this cost us &mdash; without an explicit timestamp the record lands at <strong style="font-weight:600;color:var(--paper)">epoch 0</strong>, and because these are logs they do <strong style="font-weight:600;color:var(--paper)">not appear in Jaeger at all</strong>. Conformance bought us a shape no trace viewer renders.</p>
+    <p class="small" style="position:absolute;left:120px;top:840px;width:1680px">Measured, repeatedly, on the investigation: it finds the role in the audit trail and takes no destructive action. Two things this cost us. Without an explicit timestamp the record lands at <strong style="font-weight:600;color:var(--paper)">epoch 0</strong>, and because these are logs they do <strong style="font-weight:600;color:var(--paper)">not appear in Jaeger at all</strong>. Conformance bought us a shape no trace viewer renders.</p>
   </section>
 
   <!-- 7.5 — L04 -->
@@ -785,7 +785,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1680px">
       <p class="axis-list-item">We judge in-process and synchronously. Real setups evaluate offline, against stored traces.</p>
       <p class="axis-list-item">It reads the run <em>in-process</em>, so it sees arguments and results our spans never carried.</p>
-      <p class="axis-list-item">Beaver calls its tools in-process, not over MCP &mdash; so nothing here compares the two platforms' <em>tool</em> spans.</p>
+      <p class="axis-list-item">Beaver calls its tools in-process, not over MCP, so nothing here compares the two platforms' <em>tool</em> spans.</p>
       <p class="axis-list-item">The judge is biased: position, verbosity and self-enhancement are all documented.</p>
       <p class="axis-list-item">The mitigation is a human-labelled gold set, and Cohen's κ rather than raw agreement.</p>
     </div>
@@ -813,7 +813,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <div style="display:flex;align-items:flex-start;gap:30px">
         <span data-emphasis="amber" style="background:var(--amber);color:var(--ink);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">3</span>
         <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
-          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Turn the forensic content on — then check it fired</span>
+          <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Turn the forensic content on, then check it fired</span>
           <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)">The flags are not the same as the data.</span>
         </div>
       </div>
@@ -821,7 +821,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <span style="background:var(--blue);color:var(--paper);width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:24px">4</span>
         <div style="display:flex;flex-direction:column;gap:6px;padding-top:4px">
           <span style="font-family:var(--font-display);font-size:34px;font-weight:500;line-height:1.15">Attach evaluations to the span you already have</span>
-          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)"><span style="font-family:var(--font-mono);font-size:24px">gen_ai.evaluation.result</span> — no new pipeline.</span>
+          <span style="font-size:26px;font-weight:300;color:var(--on-ink-dim)"><span style="font-family:var(--font-mono);font-size:24px">gen_ai.evaluation.result</span>, no new pipeline.</span>
         </div>
       </div>
       <div style="display:flex;align-items:flex-start;gap:30px">
@@ -832,7 +832,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         </div>
       </div>
     </div>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Step 1 is the counterintuitive one: <strong style="font-weight:600;color:var(--paper)">do not start by rewriting instrumentation.</strong> Step 3 is the one that bit us — turning it on and <em>verifying</em> it are different jobs.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">Step 1 is the counterintuitive one: <strong style="font-weight:600;color:var(--paper)">do not start by rewriting instrumentation.</strong> Step 3 is the one that bit us: turning it on and <em>verifying</em> it are different jobs.</p>
   </section>
 
   <!-- 8.3 — L04 · AAIF + coding agents -->
@@ -844,7 +844,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <div class="chamfer" style="background:var(--paper-2);padding:40px 44px;display:flex;flex-direction:column;gap:16px">
         <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)">goose · v1.45.0</span>
         <span style="font-family:var(--font-mono);font-size:25px;color:var(--navy)">GOOSE_TELEMETRY_ENABLED: true</span>
-        <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Rust SDK — traces, metrics and logs. One flag; the destination is plain <span style="font-family:var(--font-mono);font-size:23px">OTEL_*</span> variables.</span>
+        <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Rust SDK: traces, metrics and logs. One flag; the destination is plain <span style="font-family:var(--font-mono);font-size:23px">OTEL_*</span> variables.</span>
       </div>
       <div class="chamfer" style="background:var(--paper-2);padding:40px 44px;display:flex;flex-direction:column;gap:16px">
         <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)">Claude Code</span>
@@ -852,7 +852,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
         <span style="font-size:26px;font-weight:300;line-height:1.45;color:var(--muted-ink)">Built-in OTel via the Node SDK. The same collector and pipeline you already run.</span>
       </div>
     </div>
-    <p style="position:absolute;left:120px;top:790px;width:1680px;font-size:32px;line-height:1.4;font-weight:300">One environment variable each. The agent editing your code lands in <strong style="font-weight:600">the collector you already run</strong> — same spans, same conventions, same pipeline as everything else in this talk.</p>
+    <p style="position:absolute;left:120px;top:790px;width:1680px;font-size:32px;line-height:1.4;font-weight:300">One environment variable each. The agent editing your code lands in <strong style="font-weight:600">the collector you already run</strong>: same spans, same conventions, same pipeline as everything else in this talk.</p>
   </section>
 
   <!-- 8.4 — L08 Close · third and final mascot -->
@@ -866,14 +866,14 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
     <div class="axis-list" style="position:absolute;left:120px;top:340px;width:1150px;gap:30px">
       <p class="axis-list-item" style="font-size:28px">Instrument every layer. None gets a pass.</p>
-      <p class="axis-list-item" style="font-size:28px">Adopt the conventions now — and turn the forensic content on deliberately.</p>
+      <p class="axis-list-item" style="font-size:28px">Adopt the conventions now, and turn the forensic content on deliberately.</p>
       <p class="axis-list-item" style="font-size:28px">Normalize at the edge. The SIG and the GenAI conventions repo need contributors.</p>
       <p class="axis-list-item" style="font-size:28px">The missing decision-provenance field is the gap worth raising.</p>
     </div>
 
     <div style="position:absolute;left:120px;top:770px;display:flex;flex-direction:column;gap:16px">
       <span style="font-family:var(--font-mono);font-size:28px;color:var(--on-ink)">github.com/open-telemetry/semantic-conventions-genai</span>
-      <span style="font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim)">github.com/open-telemetry/opentelemetry-demo <span style="font-family:var(--font-body)">— agentic stack, wired end to end</span></span>
+      <span style="font-family:var(--font-mono);font-size:26px;color:var(--on-ink-dim)">github.com/open-telemetry/opentelemetry-demo <span style="font-family:var(--font-body)">&middot; agentic stack, wired end to end</span></span>
       <div style="display:flex;gap:44px;align-items:center;margin-top:10px">
         <span class="employer-mark is-dynatrace" role="img" aria-label="Dynatrace" style="margin-top:0"></span>
         <span class="employer-mark is-dash0" role="img" aria-label="Dash0" style="margin-top:0"></span>
