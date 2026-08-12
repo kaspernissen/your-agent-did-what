@@ -117,26 +117,26 @@
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The vocabulary, once</p>
     <h2 class="title" style="position:absolute;left:120px;top:200px;width:1560px;font-size:68px">An agent is a <span class="amber-text" data-emphasis="amber">loop around a model</span> that can call your tools</h2>
     <div style="position:absolute;left:120px;right:120px;top:400px;display:flex;align-items:stretch">
-      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">AGENT</span>
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px;box-shadow:inset 6px 0 0 var(--navy)">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--navy)"><span style="font-size:26px;line-height:1;vertical-align:-3px;margin-right:9px">&#8634;</span>AGENT</span>
         <span style="font-size:25px;font-weight:300;line-height:1.35;color:var(--ink)">The loop. Keeps calling the model until it decides it is done.</span>
         <span style="font-family:var(--font-mono);font-size:21px;color:var(--muted-ink);margin-top:auto">capybara-sre</span>
       </div>
       <span style="width:56px;flex:none;display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--blue)">→</span>
-      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">MODEL</span>
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px;box-shadow:inset 6px 0 0 var(--blue)">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)"><span style="font-size:26px;line-height:1;vertical-align:-3px;margin-right:9px">&#10022;</span>MODEL</span>
         <span style="font-size:25px;font-weight:300;line-height:1.35;color:var(--ink)">Picks the next step. Billed per token, in and out.</span>
         <span style="font-family:var(--font-mono);font-size:21px;color:var(--muted-ink);margin-top:auto">983 in · 69 out</span>
       </div>
       <span style="width:56px;flex:none;display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--blue)">→</span>
-      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">MCP SERVER</span>
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px;box-shadow:inset 6px 0 0 var(--blue-lift)">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue-lift)"><span style="font-size:26px;line-height:1;vertical-align:-3px;margin-right:9px">&#8646;</span>MCP SERVER</span>
         <span style="font-size:25px;font-weight:300;line-height:1.35;color:var(--ink)">How an agent is handed tools it did not ship with.</span>
         <span style="font-family:var(--font-mono);font-size:21px;color:var(--muted-ink);margin-top:auto">capybara-db · SSE</span>
       </div>
       <span style="width:56px;flex:none;display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--blue)">→</span>
-      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue)">TOOLS</span>
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:32px 26px;display:flex;flex-direction:column;gap:14px;box-shadow:inset 6px 0 0 var(--blue-mute)">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue-mute)"><span style="font-size:26px;line-height:1;vertical-align:-3px;margin-right:9px">&#9881;</span>TOOLS</span>
         <span style="font-size:25px;font-weight:300;line-height:1.35;color:var(--ink)">The functions it can actually run against your systems.</span>
         <span style="font-family:var(--font-mono);font-size:21px;color:var(--muted-ink);margin-top:auto">query · delete_records</span>
       </div>
@@ -145,7 +145,7 @@
          the layout audit can still see the label as text. -->
     <div style="position:absolute;left:554px;right:120px;top:664px;height:26px;border:2px dashed var(--amber);border-top:none;border-radius:0 0 14px 14px;opacity:.55"></div>
     <p style="position:absolute;left:554px;right:120px;top:702px;text-align:center;margin:0;font-family:var(--font-mono);font-size:22px;color:var(--amber-text)">↺ the agent decides how many times round</p>
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Only two of these are yours: the prompt, and the list of tools you handed it. <strong style="font-weight:600;color:var(--ink)">How many model calls, which tools, in what order — decided at runtime.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Only two of these are yours: the prompt, and the list of tools you handed it. <strong style="font-weight:600;color:var(--ink)">How many model calls, which tools, in what order: all decided at runtime.</strong></p>
     <p class="small" style="position:absolute;left:120px;top:878px;width:1680px">Which means you cannot read the path off the code. You have to observe it.</p>
   </section>
 
@@ -191,7 +191,7 @@
       <text x="1512.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text>
       <text x="1512.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">model</text>
     </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call, described five different ways. OTel GenAI is what the others are converging on — amber is what beaver-sre actually emits, and what we normalize.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call, described five different ways. OTel GenAI is what the others are converging on. Keep an eye on <strong style="font-weight:600;color:var(--ink)">OpenInference</strong>: we come back to it when we normalize.</p>
   </section>
 
   <!-- 03 — L02 Section divider -->
@@ -1429,7 +1429,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "First, why this is a different problem rather than a harder version of the old one.",
   "An agent is a loop.\n\nThere's a model, and there's a list of tools you handed it. The model doesn't run anything — it picks the next step. Something else executes that step, feeds the result back, and the loop goes round again until the model says it's finished. MCP is just how it gets handed tools it didn't ship with. Tokens are the billing unit, and usually the only cost signal you get.\n\nTwo things here are yours: the prompt, and the tool list. That's it.\n\nHow many model calls, which tools, in what order — decided at runtime, every time. Which means you cannot read the path off the code. You have to observe it.\n\n⚑ This diagram is the demo, made abstract. When Capybara turns up later, it is this.",
   "So we observe it. And immediately there's a problem: nobody agrees on what to call any of it.",
-  "One HTTP call to one model. Five different names for the model.\n\nOpenTelemetry says gen_ai.request.model. OpenInference says llm.model_name. OpenLLMetry has its own. So does LangSmith. So does Langfuse.\n\nNone of these people were being difficult. Each convention was built for a real job — tracing, evaluation, prompt management — and each optimised for that job.\n\nBut the consequence is yours to carry: your dashboard, your alert, your query works on one vendor's spans and silently returns nothing on another's.\n\nThe one in amber is what our Python agent actually emits, and the one we normalize later.\n\n⚑ OTel GenAI is what the others are converging on — but don't overclaim that here; the beat on normalization shows exactly what does not converge.",
+  "One HTTP call to one model. Five different names for the model.\n\nOpenTelemetry says gen_ai.request.model. OpenInference says llm.model_name. OpenLLMetry has its own. So does LangSmith. So does Langfuse.\n\nNone of these people were being difficult. Each convention was built for a real job: tracing, evaluation, prompt management. Each optimised for that job.\n\nBut the consequence is yours to carry. Your dashboard, your alert, your query works on one vendor's spans and silently returns nothing on another's.\n\nRemember OpenInference, the thick branch. We come back to it later and rewrite it in flight.\n\n⚑ Don't name the second agent yet, it hasn't been introduced. And don't say \"the amber one\": name the convention, or the room has to decode the colour scheme to follow you.",
   "Which raises the obvious question: why pick OpenTelemetry, rather than the one your framework already emits?",
   "Because they already agree more than the previous slide suggests.\n\nThree independent stacks here — a Python SDK, a Java one, and the output of a collector processor. Nobody coordinated. All three land on gen_ai.* names for the things that matter most: the model, the provider, the token counts.\n\nThe shared vocabulary is real, not aspirational. For the core dimensions — and that qualifier is load-bearing, because we'll show you where it breaks.\n\nAnd this is the argument for the specification rather than any one implementation of it. It is the only vocabulary here that nobody owns. Adopt a vendor's names and you inherit their roadmap and their commercial interest. Adopt the spec and everything downstream can read you — including the tools that don't exist yet.\n\n⚑ One sentence if the room looks sceptical: the other conventions filled a real gap when OTel had nothing, and OTel has since filled it. Choosing OTel today is a different call than two years ago, not a criticism of anyone who chose otherwise.",
   "And here's the argument that actually decides it.\n\nThe incident we opened with is a database incident with a language model in front of it. When rows go missing, the next span you need isn't a GenAI span. It's the SQL. The pod restart. The deploy that changed a grant.\n\nA GenAI-only convention gives you a GenAI-only island. Same six spans either way — but only one of them lets you join the model call to the thing it caused.\n\nWorth being precise: a shared vocabulary makes that join possible. Whether the context survives every hop is a separate problem, and we hit one where it doesn't.\n\n⚑ That “decisive advantage” is our position, not a measurement, and the slide says so. Reconcile with beat 6 before someone does it for you: what carried the attribution in our incident was the database's own audit trail, not the trace.",
