@@ -1,0 +1,70 @@
+# Publish the slides to GitHub Pages, without the speaker notes.
+#
+# The notes are embedded in index.html, so the build strips them before upload. That is not
+# a formality: they contain stage directions, what not to say, and which claims are our
+# position rather than measurements. See presentation/strip-notes.py.
+#
+# Pages must be set to "GitHub Actions" as its source. This repository is private, and
+# publishing Pages from a private repository needs GitHub Pro or higher; the published site
+# is public either way.
+name: Publish deck
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'presentation/**'
+      - '.github/workflows/publish-deck.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and let a newer push cancel an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assemble the public site
+        run: |
+          set -euo pipefail
+          mkdir -p site
+          cp -R presentation/. site/
+
+          # Presenter and authoring tooling has no business on a public site.
+          rm -f  site/notes.html site/audit-layout.html site/start.sh \
+                 site/check-deck.py site/test-check-deck.py site/strip-notes.py \
+                 site/README.md site/LAYOUTS.md
+          rm -rf site/__pycache__ site/design-system
+
+          python3 presentation/strip-notes.py site/index.html
+
+          # Prove it, on the artifact rather than on the source.
+          if grep -q "speaker-notes" site/index.html; then
+            echo "notes survived the strip; refusing to publish" >&2
+            exit 1
+          fi
+          echo "Publishing $(find site -type f | wc -l) files"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -162,3 +162,22 @@ It reports two classes — `OVERFLOW` (text past the slide bounds) and `OVERLAP`
 elements on the same pixels) — with the slide number, its label, and the offending text.
 Verified by planting a deliberate overflow and a deliberate collision and confirming both
 are caught; a silent audit would be worse than none.
+
+## Publishing
+
+`.github/workflows/publish-deck.yml` publishes the slides to GitHub Pages on a push to `main`
+that touches `presentation/`, or on demand from the Actions tab.
+
+It strips the speaker notes first. They live inside `index.html`, so publishing the deck would
+otherwise publish every stage direction and withdrawn-claim caveat with it, and a password on a
+separate page would be theatre because the payload ships in the public file either way.
+`strip-notes.py` does the removal and fails the build if anything survives.
+
+Also excluded: `notes.html`, `audit-layout.html`, the checkers, `start.sh`, and the
+design-system source. The published site is the deck and nothing else.
+
+Two things to set once, which a workflow cannot do for you:
+
+- **Settings → Pages → Source: GitHub Actions.**
+- Pages from a **private** repository needs GitHub Pro or higher. The published site is public
+  regardless of repository visibility; GitHub has no password option for Pages.
