@@ -786,3 +786,25 @@ existing venv from before `openinference` was added to `requirements.txt` failed
 `requirements.txt`'s hash changes.
 
 ---
+
+---
+
+### Our own stack emits removed attributes (measured 2026-08-13, in-cluster)
+
+`gen_ai.prompt` and `gen_ai.completion` are gone from the registry, replaced by
+`gen_ai.input.messages` and `gen_ai.output.messages` with typed parts. Read off a live trace,
+the two agents in this demo disagree about which revision they are on:
+
+| span | emits |
+|---|---|
+| `completion claude-sonnet-4-6` (capybara-sre, Java) | `gen_ai.prompt`, `gen_ai.completion` |
+| `messages.create` (beaver-sre, via `gen_ai_normalizer`) | `gen_ai.input.messages`, `gen_ai.output.messages` |
+
+The important part is that this is **not a stale pin**. quarkus-langchain4j 1.12.2 is the
+current release, and `include-prompt` / `include-completion` are the only switches it offers,
+so the choice is the removed keys or no message content at all. A maintained extension, fully
+up to date, emitting attributes the specification deleted.
+
+That makes it a better illustration of "Stable: zero" than any third-party example, because it
+is ours and it is live. It also means one trace view shows both revisions of the convention at
+once, which is the fragmentation argument made without a single slide.

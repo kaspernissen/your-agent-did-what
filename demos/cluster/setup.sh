@@ -31,7 +31,7 @@ echo "--- Jaeger ---"
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts >/dev/null 2>&1 || true
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts >/dev/null 2>&1 || true
 helm repo update >/dev/null
-helm upgrade --install jaeger jaegertracing/jaeger --version 3.4.1 \
+helm upgrade --install jaeger jaegertracing/jaeger --version 4.12.0 \
   -f ../observability/jaeger/values.yaml --wait
 
 echo "--- Prometheus ---"
@@ -65,7 +65,7 @@ cat <<EOF
 === Shared cluster ready ===
 
   collector  otel-collector-opentelemetry-collector.default.svc:4317 (gRPC) / :4318 (HTTP)
-  jaeger UI  kubectl port-forward svc/jaeger-query 16686:16686  →  http://localhost:16686
+  jaeger UI  kubectl port-forward svc/jaeger 16686:16686  →  http://localhost:16686
   prometheus kubectl port-forward svc/prometheus 9090:9090       →  http://localhost:9090
   spans      kubectl logs -l app.kubernetes.io/name=opentelemetry-collector -f
 

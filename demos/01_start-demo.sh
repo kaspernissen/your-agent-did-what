@@ -13,7 +13,7 @@ cd "$(dirname "$0")"
 # service:local:remote:probe-path
 TARGETS=(
   "capybara-sre:8088:8088:/"
-  "jaeger-query:16686:16686:/"
+  "jaeger:16686:16686:/"
   "prometheus:9090:9090:/-/ready"
 )
 

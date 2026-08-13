@@ -43,7 +43,7 @@ config:
     debug:
       verbosity: detailed
     otlp/jaeger:
-      endpoint: jaeger-collector.default.svc.cluster.local:4317
+      endpoint: jaeger:4317
       tls: { insecure: true }
 
     # Prometheus with --web.enable-otlp-receiver accepts OTLP directly, so metrics take
