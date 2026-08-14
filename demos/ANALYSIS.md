@@ -808,3 +808,47 @@ up to date, emitting attributes the specification deleted.
 That makes it a better illustration of "Stable: zero" than any third-party example, because it
 is ours and it is live. It also means one trace view shows both revisions of the convention at
 once, which is the fragmentation argument made without a single slide.
+
+---
+
+### A coding agent over MCP records what the tool did; the framework does not (2026-08-14)
+
+The beat-4 finding had a control from the OpenTelemetry Demo's Python stack. This is a better
+one, because it is a different product, on a laptop, talking to the *same* MCP server, exporting
+to the *same* collector, and it is a current release.
+
+goose v1.46.0 (Ollama, `qwen3.6:35b-a3b-q4_K_M`) driven by a recipe against `prod-db-mcp`:
+
+```
+dispatch_tool_call
+  gen_ai.tool.name              production_db__list_records
+  gen_ai.tool.call.id           …
+  gen_ai.tool.call.arguments    {}
+  gen_ai.tool.call.result       {"content":[{"type":"text","text":"[CapybaraRecord[id=ac3d…
+```
+
+The same operation on capybara-sre, Quarkus + quarkus-langchain4j 1.12.2, also over MCP:
+
+```
+tools/call list_records
+  gen_ai.operation.name
+  gen_ai.tool.name
+```
+
+Two `gen_ai.*` attributes against four, and the two that matter are the ones missing. Both are
+current releases. Both are talking MCP. The coding agent records what came back; the platform
+framework records that something was called.
+
+Content capture in goose is behind the convention's own opt-in,
+`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true`, which takes the literal string and
+silently ignores `1`. So it is opt-in in both stacks: the difference is that goose's opt-in
+works on MCP tool calls and quarkus-langchain4j's does not.
+
+Two more things this run showed, worth knowing before quoting it:
+
+- Span names are goose's own: `reply`, `reply_stream`, `stream_response_from_provider`,
+  `dispatch_tool_call`. The convention asks for `{operation} {target}`. The attributes are right
+  and the names are not, which is the same pattern the normalizer beat shows: the operation name
+  is an attribute, not the span name.
+- `reply` and `reply_stream` both carry `gen_ai.operation.name` and the *same* token counts, so
+  summing tokens across them double-counts a session. Use the provider spans.

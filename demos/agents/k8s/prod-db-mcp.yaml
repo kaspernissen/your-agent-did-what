@@ -1,0 +1,54 @@
+# The MCP server a developer's coding agent connects to.
+#
+# Same image as capybara-db-mcp, and that is the point: the server is not the problem. It is
+# handed the `kangaroo` role's credentials, which carry DELETE on a table they have no business
+# deleting from, so anything driving this server inherits that. The over-grant is the bug and it
+# lives in the grants, not in anyone's code.
+#
+# application_name is `goose`, so the audit trail records the agent as the client while
+# session_user records the human's role. One of those is self-reported and one is authenticated,
+# which is exactly the distinction the trail exists to make.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-db-mcp
+  labels: { app: prod-db-mcp }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: prod-db-mcp }
+  template:
+    metadata:
+      labels: { app: prod-db-mcp }
+    spec:
+      containers:
+        - name: prod-db-mcp
+          image: capybara-db-mcp:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8086 }]
+          env:
+            # A distinct service name, so its spans are separable from the other MCP server's.
+            # quarkus.application.name is build-time and baked into the image, so it cannot be
+            # changed by env; OTEL_SERVICE_NAME is the SDK's own override and works at runtime.
+            - { name: OTEL_SERVICE_NAME,             value: prod-db-mcp }
+            - { name: QUARKUS_DATASOURCE_USERNAME,   value: kangaroo }
+            - { name: QUARKUS_DATASOURCE_PASSWORD,   value: kangaroo }
+            - { name: QUARKUS_DATASOURCE_JDBC_URL,
+                value: "jdbc:postgresql://capybara-db:5432/capybara?ApplicationName=goose" }
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
+                value: http://otel-collector-opentelemetry-collector.default.svc:4317 }
+          readinessProbe:
+            httpGet: { path: /q/health/ready, port: 8086 }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests: { memory: 256Mi }
+            limits:   { memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-db-mcp
+spec:
+  selector: { app: prod-db-mcp }
+  ports: [{ port: 8086, targetPort: 8086 }]

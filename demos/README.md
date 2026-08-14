@@ -109,6 +109,37 @@ scripts/               verify-telemetry.py
 
 ---
 
+## The developer with an agent (optional, alongside)
+
+A second MCP server, `prod-db-mcp`, runs the *same image* as `capybara-db-mcp` but is handed the
+`kangaroo` role's credentials and `application_name=goose`. Same server code, different grants,
+which is the real failure: the MCP server is fine, the credentials it was given are not.
+
+Point a coding agent at it and the deletion happens for the ordinary reason. A developer asks for
+a tidy-up, the agent does what it was asked, and it succeeds because the credentials permit it.
+
+```bash
+brew install block-goose-cli        # v1.46.0 or newer; earlier releases emit no gen_ai.*
+ollama pull qwen3.6:35b-a3b-q4_K_M  # keep Ollama on the host: Docker cannot pass the GPU on a Mac
+agents/goose/run-recipe.sh
+```
+
+What the audit trail then records, and why it is better than the button:
+
+```
+DELETE  biscuit  client=goose  role=kangaroo
+```
+
+`client` names the agent and is self-reported. `db_user` names the human's credentials and is
+authenticated. One row, two questions, and only one of the answers can be forged.
+
+The agent's own telemetry lands in the same collector as everything else, so its
+`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` sit beside Capybara's investigation.
+See [`ANALYSIS.md`](ANALYSIS.md) for what that comparison shows.
+
+**The kangaroo button still works and is still the reliable trigger.** This runs alongside it,
+not instead of it: it depends on a local model behaving, which a button does not.
+
 ## On stage
 
 **1 · Reset, and show the table.** Five capybaras, three on the free plan.
