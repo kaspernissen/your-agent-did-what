@@ -1012,3 +1012,31 @@ One precision worth keeping, since it is the kind of thing an audience checks. T
 `gen_ai.system_instructions`, `gen_ai.input.messages` and `gen_ai.output.messages`. For
 `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` the mechanism is the `Opt-In` requirement
 level plus a sensitive-information warning. Same practical outcome, different wording.
+
+---
+
+### The three agents are not equivalent, and the difference is on purpose to notice
+
+All three hold the same four tools (`list_records`, `query`, `audit_log`, `delete_records`) against
+the same table, and all three call the same provider with the same prompt. But they do not execute
+those tools the same way:
+
+| | tool declaration | executed | who can see the call |
+|---|---|---|---|
+| `capybara-sre` | discovered from `capybara-db-mcp` over MCP | **another process** | the MCP client listener, not the tool wrapper |
+| `beaver-sre` | `TOOL_SCHEMAS` in `tools.py`, dispatched in `agent.py` | in-process | the instrumentation, directly |
+| `otter-sre` | same code, same schemas | in-process | the instrumentation, directly |
+
+`agents/beaver-sre/db.py:83` connects with plain psycopg as `capybara_app`, the same role the MCP
+server uses, with `application_name=beaver-sre`.
+
+So the model-call comparison across the three is sound: one provider, one prompt, three libraries.
+**The tool-call comparison is confounded**, and in the direction that flatters the Python agents: the
+only agent whose tool body runs across a process boundary is the only one missing the arguments and
+the result. That is the same conclusion the local-versus-MCP test reached inside one binary, reached
+a second way, so it is corroboration rather than a flaw — but it must be stated, not glossed.
+
+Making them genuinely equivalent means pointing beaver and otter at `capybara-db-mcp` through the
+Python MCP SDK instead of importing `tools.py`. That is the experiment that would isolate the
+variable properly, because then all three would differ only in instrumentation library. Worth doing
+if the talk wants to claim a like-for-like tool comparison; not required for the claims it makes now.
