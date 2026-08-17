@@ -91,6 +91,23 @@
     <p class="small" style="position:absolute;left:120px;top:860px">The logs say the call succeeded. The trace says it took four seconds. Neither says what it was thinking.</p>
   </section>
 
+  <!-- 1.1 — L02 Section divider -->
+  <section data-label="Divider — 01" class="ground-ink">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">01</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Agents aren't request/response</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <span style="font-size:36px;font-weight:300;color:var(--paper)">Four properties we've never operated against</span>
+        <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Every familiar signal has a new equivalent</span>
+        <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">What one agent run actually looks like</span>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══ BEAT 1 · Agents aren't request/response ══════════════════ -->
 
   <!-- 1.0 — L04 · zoom out before zooming in: the agent is one part of a bigger thing -->
@@ -131,23 +148,6 @@
     <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Most of this you can already observe. The one on the right is the one that decides what to do while it is running, and that is the part this talk is about.</p>
   </section>
 
-  <!-- 1.1 — L02 Section divider -->
-  <section data-label="Divider — 01" class="ground-ink">
-    <div class="diagonal-split" style="background:var(--amber)"></div>
-    <div style="position:absolute;left:120px;top:300px;width:820px">
-      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">01</div>
-      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Agents aren't request/response</h2>
-    </div>
-    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
-      <p class="kicker" style="margin:0">Up next</p>
-      <div style="display:flex;flex-direction:column;gap:26px">
-        <span style="font-size:36px;font-weight:300;color:var(--paper)">Four properties we've never operated against</span>
-        <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Every familiar signal has a new equivalent</span>
-        <span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">What one agent run actually looks like</span>
-      </div>
-    </div>
-  </section>
-
   <!-- 1.3 — L04 Text + diagram -->
   <!-- 1.2 — L03 · the vocabulary, defined once, on the demo scenario -->
   <section data-label="What an agent is made of" class="ground-paper">
@@ -185,6 +185,53 @@
     <p style="position:absolute;left:554px;right:120px;top:702px;text-align:center;margin:0;font-family:var(--font-mono);font-size:22px;color:var(--amber-text)">↺ the agent decides how many times round</p>
     <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Only two of these are yours: the prompt, and the list of tools you handed it. <strong style="font-weight:600;color:var(--ink)">How many model calls, which tools, in what order: all decided at runtime.</strong></p>
     <p class="small" style="position:absolute;left:120px;top:878px;width:1680px">Which means you cannot read the path off the code. You have to observe it.</p>
+  </section>
+  <section data-label="Four properties" class="ground-paper">
+    <div class="deck-footer"></div>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1300px;font-size:72px">Four properties we've never operated against</h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1600px">
+      <p class="axis-list-item">Non-determinism — re-running it does not reproduce the bug.</p>
+      <p class="axis-list-item">The call graph is <em>generated at runtime</em>, not declared anywhere you can read.</p>
+      <p class="axis-list-item">Token economics, not requests per second.</p>
+      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">Opaque decisions</span> — there is no stack trace for <em>why</em>.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:900px">The first three are uncomfortable. The fourth is the one this talk is about.</p>
+  </section>
+
+  <!-- 1.4 — L07 Figures · one aligned column -->
+  <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The practice isn't wrong. It's incomplete.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
+    <div style="position:absolute;left:120px;right:120px;top:390px;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">stack trace</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:40px;font-weight:600">reasoning chain</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">status code</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">quality signal</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">RPS &amp; latency</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">tokens, cost, blast radius</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">static call graph</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">dynamic tool invocation</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:36px">
+        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">replayable request</span>
+        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
+        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">non-deterministic run</span>
+      </div>
+    </div>
+    <div class="axis" style="left:120px;right:120px;top:850px"></div>
+    <p class="small" style="position:absolute;left:120px;top:900px">The old practice was right for its time. We have to build the equivalents.</p>
   </section>
 
 
@@ -983,42 +1030,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:900px">We are four architectures deep and still reaching for tools designed for the first one.</p>
   </section>
 
-  <!-- 1.4 — L07 Figures · one aligned column -->
-  <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">The practice isn't wrong. It's incomplete.</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1400px;font-size:72px">Every familiar signal has a new equivalent</h2>
-    <div style="position:absolute;left:120px;right:120px;top:390px;display:flex;flex-direction:column;gap:26px">
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">stack trace</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span class="amber-text" data-emphasis="amber" style="font-family:var(--font-display);font-size:40px;font-weight:600">reasoning chain</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">status code</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">quality signal</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">RPS &amp; latency</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">tokens, cost, blast radius</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">static call graph</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">dynamic tool invocation</span>
-      </div>
-      <div style="display:flex;align-items:baseline;gap:36px">
-        <span style="width:440px;flex:none;text-align:right;font-size:30px;font-weight:300;color:var(--muted-ink)">replayable request</span>
-        <span style="width:34px;flex:none;font-family:var(--font-mono);font-size:28px;color:var(--blue)">→</span>
-        <span style="font-family:var(--font-display);font-size:40px;font-weight:500">non-deterministic run</span>
-      </div>
-    </div>
-    <div class="axis" style="left:120px;right:120px;top:850px"></div>
-    <p class="small" style="position:absolute;left:120px;top:900px">The old practice was right for its time. We have to build the equivalents.</p>
-  </section>
-
   <!-- 1.5 — L05 Waterfall -->
   <section data-label="One run, four kinds of span" class="ground-ink">
     <div class="deck-footer"></div>
@@ -1389,17 +1400,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">One wire format the whole way, and your agent does not know what is downstream — which is why <strong style="font-weight:600;color:var(--ink)">the middle can rewrite its attributes without touching a line of application code.</strong></p>
     <p class="small" style="position:absolute;left:120px;top:878px;width:1680px">Same collector, same pipeline, same backends you already run for everything else.</p>
   </section>
-  <section data-label="Four properties" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1300px;font-size:72px">Four properties we've never operated against</h2>
-    <div class="axis-list" style="position:absolute;left:120px;top:380px;width:1600px">
-      <p class="axis-list-item">Non-determinism — re-running it does not reproduce the bug.</p>
-      <p class="axis-list-item">The call graph is <em>generated at runtime</em>, not declared anywhere you can read.</p>
-      <p class="axis-list-item">Token economics, not requests per second.</p>
-      <p class="axis-list-item is-amber"><span class="amber-text" data-emphasis="amber">Opaque decisions</span> — there is no stack trace for <em>why</em>.</p>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:900px">The first three are uncomfortable. The fourth is the one this talk is about.</p>
-  </section>
   <section data-label="The conventions moved house" class="ground-paper">
     <div class="deck-footer"></div>
     <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">semconv v1.42.0 · June 2026</p>
@@ -1464,9 +1464,11 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Good morning. This is “Your Agent Did What?” — the subtitle is doing a lot of work, so it can stay on screen rather than be read out.\n\nThere are two of us up here because we hit this problem separately, on different stacks, and arrived at the same uncomfortable place.\n\nQRs in the corners if you want to find us afterwards.\n\n⚑ Hold here while the room settles.",
   "Twenty seconds each, and the slide has the credentials so they don't need reading out.\n\nThe part that matters later: we're both CNCF ambassadors, and both AI-agent ambassadors for the AAIF. That second one comes back at the end, when we talk about the agent you're already running and probably not watching.\n\n⚑ If anyone asks about the capybara: one of us genuinely loves them, which is why the demo agent is called Capybara and why there's one asleep in the footer of every slide.",
   "Here's the situation this talk is about.\n\nRows are gone. The incident is over — nobody's asking you to stop it. They're asking you to explain it. Why did this happen, and can you prove it.\n\nAnd you go looking. The logs say the call succeeded. The trace says it took four seconds. Neither of them says what it was thinking, or what it actually touched.\n\nThat gap — between “something happened” and “here is why” — is the whole talk. Everything else is us trying to close it with the tools we already have.\n\n⚑ Don't name a culprit here. The reveal later is that no agent did this, and saying otherwise now contradicts that in twenty minutes.",
-  "Before we get specific, one level up.\n\nWhen people say \"we shipped an LLM feature\", this is usually what they mean. There is orchestration that builds the prompts and keeps the state. A model, hosted or called over an API. Retrieval, so the answers are grounded in your data. Tools and agents, which take actions. And underneath it all, ordinary application scaffolding.\n\nMost of this you already know how to operate. The database, the HTTP calls, the auth, the storage. Your existing instrumentation covers it.\n\nIt is the box on the right that is new, because it is the only one that decides what to do while it is running. That is the part this talk is about.\n\n⚑ Do not linger. This exists so nobody is lost when we say \"agent\" for the next thirty minutes, and so the room sees that the agent is a component rather than the whole system.",
   "First, why this is a different problem rather than a harder version of the old one.",
+  "Before we get specific, one level up.\n\nWhen people say \"we shipped an LLM feature\", this is usually what they mean. There is orchestration that builds the prompts and keeps the state. A model, hosted or called over an API. Retrieval, so the answers are grounded in your data. Tools and agents, which take actions. And underneath it all, ordinary application scaffolding.\n\nMost of this you already know how to operate. The database, the HTTP calls, the auth, the storage. Your existing instrumentation covers it.\n\nIt is the box on the right that is new, because it is the only one that decides what to do while it is running. That is the part this talk is about.\n\n⚑ Do not linger. This exists so nobody is lost when we say \"agent\" for the next thirty minutes, and so the room sees that the agent is a component rather than the whole system.",
   "An agent is a loop.\n\nThere's a model, and there's a list of tools you handed it. The model doesn't run anything — it picks the next step. Something else executes that step, feeds the result back, and the loop goes round again until the model says it's finished. MCP is just how it gets handed tools it didn't ship with. Tokens are the billing unit, and usually the only cost signal you get.\n\nTwo things here are yours: the prompt, and the tool list. That's it.\n\nHow many model calls, which tools, in what order — decided at runtime, every time. Which means you cannot read the path off the code. You have to observe it.\n\n⚑ This diagram is the demo, made abstract. When Capybara turns up later, it is this.",
+  "So what is actually different about operating this.\n\nFour things, and the first three are uncomfortable rather than novel. It is non-deterministic, so re-running it does not reproduce the bug. The call graph is generated at runtime, so it is not declared anywhere you can read. And the cost model is tokens, not requests per second, so your capacity intuition does not transfer.\n\nThe fourth is the one this talk is about. When it does something, there is no stack trace for why it chose that.\n\n⚑ Do not oversell the first three, most of the room has met them. Slow down on the fourth; everything after this beat is an attempt to close that gap with the tools we already have.",
+  "And the useful way to think about it is not that our practice is wrong. It is that it is incomplete.\n\nEverything we rely on has an equivalent on the other side. A stack trace becomes a reasoning chain. A status code becomes a quality signal, because a run can succeed and still be wrong. Requests per second becomes tokens, cost and blast radius. A static call graph becomes tool invocations decided at runtime. And a replayable request becomes a run you cannot replay.\n\nNone of those equivalents exist by default. We have to build them, and the rest of this talk is about how far the conventions get you.\n\n⚑ This is the slide to point back to in beat 7. The judge is the quality signal in that right-hand column, made real.",
   "So we observe it. And immediately there's a problem: nobody agrees on what to call any of it.",
   "One HTTP call to one model. Five different names for the model.\n\nOpenTelemetry says gen_ai.request.model. OpenInference says llm.model_name. OpenLLMetry has its own. So does LangSmith. So does Langfuse.\n\nNone of these people were being difficult. Each convention was built for a real job: tracing, evaluation, prompt management. Each optimised for that job.\n\nBut the consequence is yours to carry. Your dashboard, your alert, your query works on one vendor's spans and silently returns nothing on another's.\n\nRemember OpenInference, the thick branch. We come back to it later and rewrite it in flight.\n\n⚑ Don't name the second agent yet, it hasn't been introduced. And don't say \"the amber one\": name the convention, or the room has to decode the colour scheme to follow you.",
   "Which raises the obvious question: why pick OpenTelemetry, rather than the one your framework already emits?",
@@ -1498,7 +1500,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Appendix divider. Never shown in the flow — the deck ends on Close. These are here so a question can be answered with a slide instead of a description.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The build-versus-run split is one sentence in the note for “Agents are already the interface”, which makes the same point faster.\n\nTwo ways you meet an agent, and this slide tells the room which of them they are. Most people are both. Land: if you only ever RUN someone else's agent, the conventions still decide whether the thing reading your telemetry is any good. This is the slide that keeps the SRE half of the room with us through the framework beats.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The four-architectures framing is good but the talk does not need it to earn the loop diagram that follows.\n\nFour architectures deep. Each step solved a real problem and added complexity somewhere else. Land: building got steadily easier, understanding got harder every single time — and we still reach for tools designed for the monolith. Careful: this is a run-up, not an argument about microservices. Keep it moving.",
-  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. Beat 1 was six slides of framing before anything was shown.\n\nThe old practice was not wrong, it was right for its time. Land: 'reasoning chain' is the equivalent we chase for the next twenty minutes. Careful: do not imply we deliver it — slide 38 is where we admit nobody can.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut as a duplicate. The beat-6 waterfall makes the same point with better data — the span carrying the wall time has no GenAI meaning in it.\n\nWhat one agent run actually looks like. Point at POST: it comes free from your HTTP instrumentation, carries no GenAI meaning, and it is 3.91 of the 3.97 seconds the model call took. Land: your existing instrumentation already sees the time and none of the meaning. This waterfall returns at slide 34 carrying the deletion. If asked: measured, from the Python agent in demos/agents/beaver-sre — the same trace as slide 34. Durations re-measured 2026-08-11 after the scenario changed: the POST is 2.35 of the 2.51 seconds. The point is unchanged — the span carrying the wall time has no GenAI meaning in it.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. “One model call, five names” already lands that the conventions differ for real reasons; this elaborated on it.\n\nThese are NOT arbitrary naming preferences — each optimizes for something real, which is why they will not simply go away. Careful: credit Salaboy out loud here. The framing is his and it is deliberately not on the slide.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut on evidence. The fan-out harness behind it was removed, the panes were wireframes rather than screenshots, and only Jaeger and Phoenix ingestion was ever confirmed. The measurement stands in ANALYSIS.md under Superseded and historical.\n\nFour renderings of identical bytes. Land: Phoenix is GenAI-native but OpenInference-native, so it accepts gen_ai.* spans and renders them as plain spans — the fragmentation tax, made visible. Careful: Jaeger AND Phoenix ingestion are both confirmed on a live run (Phoenix reported 2 traces at 6.5s p50). What each UI looks like is drawn from documentation — these panes are wireframes, not screenshots. The slide says so; say it too.",
@@ -1512,7 +1513,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The strongest of the cuts, and the first to restore if a beat runs short — but it is the slide least connected to anything measured.\n\nWho reads your telemetry next. Land the callback: the AI SRE is only as good as the data it reads, and if your spans lack semantic context it hallucinates confidently, at scale. Land: the model is not the answer, the legible data is — the whole argument for conventions, made by the tools rather than by us.",
   "APPENDIX — not in the spoken flow. Cut for time. Beat 0 had two framing slides; “The morning after” is the stronger one.\n\nSlow down here — this is the grounding the room needs before any incident lands. The point is not that agents are coming; it is that they are already the interface. Platform teams are shipping them beside the service catalogue, in the incident channel, in CI. Ask the room: who already has one of these in their portal? Hands will go up. Land the turn: none of these are demos. They hold credentials, they read production data, and increasingly they act on it — which is what makes this an operations problem rather than an AI problem. Careful: do not list vendors or products here; kagent, HolmesGPT and the coding agents get their own slides in beat 8, and naming them now spends that payoff early. Fold in the build-versus-run split here, in one line: most of us are both, and the conventions are what make running someone else's agent survivable.",
   "APPENDIX — not in the spoken flow. Cut for time. That nothing in the OTLP path is GenAI-specific is one sentence on a neighbouring slide.\n\nThe path the spans take, on the stack we actually demo. Keep it quick — this is orientation, not architecture review. Land the headline: nothing in this path is GenAI-specific. It is the same OTLP, the same collector and the same backends you already run, which is the entire reason OTel is the right target and is the argument beat 3 then makes properly. Point at the middle column: the agent does not know what is downstream, so attributes can be rewritten there without touching application code — that is beat 5's demo in one sentence. Careful: gen_ai_normalizer is listed as a processor because it is one, but do not explain it here; it gets its own beat. If asked why Jaeger is the demo default: it is what the run script brings up, and beat 2 shows what it does and does not render. If asked about the MCP client row: that is the default path. The same agent can declare those tools locally instead, which changes which instrumentation writes the tool span — the whole of beat 4 — but nothing about the pipeline to the right of it.",
-  "APPENDIX — not in the spoken flow. Cut for time. Its fourth property is the subject of the whole talk, and lands better said than listed.\n\nFast through the first three properties. Slow right down on the fourth: there is no stack trace for why. Land: the first three are uncomfortable, the fourth is what this talk is about — and it comes back as the hard limit at slide 38.",
   "APPENDIX — not in the spoken flow. Cut for time. The repo move and the missing versioned release are a line in “Stable: zero”.\n\nThe conventions moved repo in June. If your bookmarks still point at the old URL, that is the move you missed — it is a redirect notice now. Land: no releases, no tags, nothing to pin. You can follow a commit or a dated snapshot, but there is no schema URL to pin against. Careful: describe the move; do not read the redirect banner aloud.",
   "APPENDIX — not in the spoken flow. Cut for time. Jaeger now running on the Collector is a closing aside rather than a slide.\n\nThe substrate argument, and it is not ours — it was made for us. Land: none of this is a roadmap item. redaction and transform for PII, tailsampling and filter for retention, and evaluation scores that ride as events on the span you already export — all shipping in contrib 0.158.0 today. The gen_ai_normalizer from beat 5 is another stage in the same pipeline. These are things you configure, not things you wait for. Then the Jaeger tell: the UI that showed the room raw tags back in beat 2 now runs on the Collector itself, v1 hit EOL 2025-12-31 — the plumbing moved before the UI did. Careful: do NOT hang the slide on Jaeger's GenAI epics (#8416, #7827). They are open with no milestones and neither commits to gen_ai.* by name, so they are direction, not evidence. Mention them only if asked."
 ]

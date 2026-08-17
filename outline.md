@@ -1,7 +1,7 @@
 # Your Agent Did What? — Presentation Outline
 
 **Full title:** *Your Agent Did What? Forensic Observability for Systems That Don't Leave Obvious Footprints*
-**Length:** 45-minute slot, **targeting 35 minutes** (2026-08-12), nine beats, **33 spoken slides** plus a 19-slide appendix. ~20 minutes of
+**Length:** 45-minute slot, **targeting 35 minutes** (2026-08-12), nine beats, **36 spoken slides** plus a 17-slide appendix. ~22 minutes of
 speaking, leaving room to run demos live and still land on time.
 **Presenters:** Kasper Borg Nissen (`@phennex`) + Adriana Villela (`@adrianamvillela`)
 **Question the talk answers:** *what can you actually learn about what an LLM did, using OpenTelemetry, today — and how hard is it to set up?* (spec §1)
