@@ -1229,3 +1229,37 @@ run, `client=goose db_user=deploy_svc` in the trail, and both investigators diag
 Java agent's own words were "the `deploy_svc` role is the authoritative identifier", which is the
 distinction arrived at without being prompted for it. Judge: `root_cause_correctness` 1.0,
 `remediation_safety` pass. 21 Python tests pass.
+
+---
+
+### How compliant is OpenLLMetry, exactly? (measured 2026-08-17)
+
+"Already conforming" was too strong, and the precise version is more useful. On
+`opentelemetry-instrumentation-anthropic` 0.62.3, one run, the `anthropic.chat` span:
+
+**No proprietary vocabulary at all.** Nineteen attributes, fifteen of them `gen_ai.*`; the other four
+are `otel.scope.name`, `otel.scope.version`, `otel.status_code` and `span.kind`, which are
+infrastructure rather than vocabulary. Grepping the installed package finds no `llm.*` and no
+`traceloop.*` anywhere. So there is genuinely nothing for a normalizer to rename.
+
+**Three places it is still not compliant.**
+
+*One attribute is not in the specification.* Fourteen of the fifteen `gen_ai.*` keys are in the
+registry. `gen_ai.usage.total_tokens` is absent entirely — not deprecated, not present — and it is
+the sum of `input_tokens` and `output_tokens`, both of which are defined. A `gen_ai.`-shaped
+attribute the spec does not define.
+
+*The span name is wrong.* It emits `anthropic.chat`. `gen-ai-spans.md` and the Anthropic-specific
+`anthropic.md` both say the span name SHOULD be `{gen_ai.operation.name} {gen_ai.request.model}`,
+which for our run is `chat claude-sonnet-4-6`. The convention does let a provider-specific convention
+define its own format, and the Anthropic page does not exercise that — it restates the general rule.
+
+*Its event emitter uses superseded names.* `event_emitter.py` still writes `gen_ai.user.message` and
+`gen_ai.choice`, which were event names in the 2024 revision and are not the current shape. We never
+see them because this demo configures only a tracer provider, so that path is dead here and live for
+anyone who turns logs on.
+
+So the accurate sentence is "emits `gen_ai.*` natively, with nothing to translate" rather than "fully
+compliant". The deck was saying the latter in three places and now says the former, with the three
+exceptions in the speaker notes — they make the point better than the overstatement did, because
+"the vocabulary converged and the details have not" is exactly the talk's argument.
