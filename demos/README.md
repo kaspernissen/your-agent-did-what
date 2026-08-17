@@ -60,22 +60,36 @@ only place an answer can come from.
 
 ---
 
-## The two agents
+## The three agents
 
-Same database, same incident, same question, same collector. They differ in platform.
+Same database, same incident, same question, same tools, same MCP server, same collector. The
+only thing that differs is what writes the telemetry — which is the point, and it took work to
+make true. The Python agents used to call their tools in-process, so any comparison of their
+*tool* spans measured the topology instead of the libraries. They now go through
+`capybara-db-mcp` like the Java one does; see `agents/beaver-sre/mcp_db.py`.
 
-| | **Capybara SRE** | **Beaver SRE** |
-|---|---|---|
-| platform | Java · Quarkus + LangChain4j | Python · Anthropic SDK |
-| tools | over MCP, to a separate service | plain functions, same process |
-| data | PostgreSQL, as `capybara_app` | the same PostgreSQL, as `capybara_app` |
-| emits | `gen_ai.*` from the framework | `openinference.*` / `llm.*` — no OTel at all |
-| arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` |
-| judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged |
+| | **Capybara SRE** | **Beaver SRE** | **Otter SRE** |
+|---|---|---|---|
+| platform | Java · Quarkus + LangChain4j | Python · Anthropic SDK | Python · Anthropic SDK |
+| instrumented by | the framework | OpenInference | OpenLLMetry |
+| tools | over MCP, to `capybara-db-mcp` | the same, over MCP | the same, over MCP |
+| data | PostgreSQL, as `capybara_app` | via the MCP server | via the MCP server |
+| model call emits | `gen_ai.prompt` / `gen_ai.completion`, both removed from the spec | `llm.*` / `openinference.*` | `gen_ai.*`, already current |
+| arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` | unchanged, nothing to convert |
+| tool span | the framework's, 6 attributes | hand-written, arguments only | hand-written, arguments and result |
+| judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged | not judged |
 
-Both are reachable from the one console: pick the agent in the top bar. Beaver runs in its
-own pod and the Java app proxies to it, because the browser cannot see cluster-internal
-services.
+The two Python agents run the same image and the same loop; `CAPYBARA_INSTRUMENTATION` picks the
+library. Their tool spans are hand-written, because nothing auto-instruments a loop somebody wrote
+by hand — which is why that row still says as much about our code as about their libraries.
+
+All three are reachable from the one console: pick the agent in the top bar. The Java app serves
+that console and proxies to the Python pods, because the browser cannot see cluster-internal
+services. Keeping the console inside `capybara-sre` is a deliberate choice rather than an
+oversight: splitting it out would need its own image and a proxy for CORS, and it buys no
+telemetry improvement — the proxy's HTTP client is uninstrumented, so the Python agents' traces
+are already clean single-service roots. Goose is not in the console at all, by design: it runs in
+a terminal, which is where a developer would actually meet it.
 
 ---
 
@@ -90,7 +104,9 @@ agents/
   capybara-sre/        the Java agent, and the console it serves at /
   capybara-db-mcp/     the MCP server it calls
   capybara-db-core/    shared database access, plain JDBC, no framework
-  beaver-sre/          the Python agent
+  beaver-sre/          the Python agent, run twice: beaver (OpenInference), otter (OpenLLMetry)
+                       db.py reads Postgres directly, mcp_db.py goes through the MCP server
+  goose/               the recipe and runner for the developer-with-an-agent path
   k8s/                 their deployments
   deploy.sh            build all three images, load into kind, roll out
 
