@@ -225,6 +225,19 @@ re-run, and diff the tool spans. Same binary, same prompt, same database — onl
 registration differs. Re-run `./01_start-demo.sh` afterwards; changing env rolls the pod
 and takes the port-forward with it.
 
+**8 · And the context gap, with the fix in your hand.** The tool body's SQL joins the agent's trace
+because `CapybaraDbTools` reads `traceparent` out of the MCP request's `_meta` itself. To show the gap
+as quarkus-mcp-server leaves it:
+
+```sh
+kubectl set env deployment/capybara-db-mcp CAPYBARA_MCP_PROPAGATE_CONTEXT=false
+kubectl rollout restart deployment/capybara-sre   # or its MCP session dies with the server
+./01_start-demo.sh
+```
+
+21 spans and the `SELECT` in a trace of its own. Set it back to `true` for 27 spans and one trace. See
+[`ANALYSIS.md`](ANALYSIS.md) for the measurement and why `@WithSpan` alone does not work.
+
 ---
 
 ## What is measured, not asserted
@@ -271,6 +284,7 @@ All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
 | the judge panel is empty | the judge's JSON was truncated. `max-tokens` is set to 4096; the raw reply is logged on failure |
 | no SQL spans anywhere | `quarkus.datasource.jdbc.telemetry=true` is opt-in. Worth knowing: "we use OTel" does not mean every layer is instrumented |
 | the agent boots with no tools | it resolves its tool list at startup and the MCP server was not up. `agents/deploy.sh` orders this correctly |
+| the tool body's SQL is in its own trace | `CAPYBARA_MCP_PROPAGATE_CONTEXT` is `false`, which is the gap mode. `true` restores it. If it is already `true`, restart `capybara-sre` — a stale MCP session survives the server restart |
 | a schema change seems not to apply | `init.sql` only runs on an empty data directory. `infrastructure/deploy.sh` stamps its hash on the pod template so a change recreates the pod |
 | goose stalls, or the model never calls the tool | do not debug it live. `curl -X POST http://localhost:8088/incident/rehearse-deletion` puts the database in the same state with the same `deploy_svc` credentials. You lose the coding agent's telemetry and nothing else |
 | the local model is not installed at all | same door. The investigation half of the demo needs no model beyond the agents' own |
