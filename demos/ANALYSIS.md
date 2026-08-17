@@ -895,3 +895,94 @@ removed `gen_ai.prompt` / `gen_ai.completion`. Same collector, same trace view.
 The `openllmetry` source in `gen_ai_normalizer` is still correct for older releases. It simply has
 no work to do against a current one, which is the healthiest possible reason for a normalizer
 source to go quiet.
+
+---
+
+### Where the GenAI SIG actually is (checked 2026-08-17)
+
+The conventions and the Python instrumentations both left the repositories we had been reading.
+
+`semantic-conventions/CHANGELOG.md` under **v1.42.0** (12 June 2026), issue
+[#3696](https://github.com/open-telemetry/semantic-conventions/issues/3696): every `gen_ai.*`
+attribute, metric, event and span under `model/gen-ai/`, `model/openai/` and `model/mcp/` is
+deprecated there and has moved to
+[semantic-conventions-genai](https://github.com/open-telemetry/semantic-conventions-genai). The old
+`docs/gen-ai/README.md` is now a "Moved" notice. The new repo predates the announcement (created
+5 May 2026), commits daily, has **no releases and no tags**, and its README still reads
+`## Schema URL` / `TODO`. Of 188 stability markers in `model/`, 188 are `development`.
+
+Instrumentations moved too, to
+[opentelemetry-python-genai](https://github.com/open-telemetry/opentelemetry-python-genai) (created
+12 May 2026), 13 packages on a shared `opentelemetry-util-genai`. Released at 1.0b0: anthropic,
+langchain, openai, openai-agents; google-genai at 1.0b1. Skeletons for agno, crewai, llama-index,
+qwen-agent, smolagents, weaviate-client and `claude-agent-sdk`.
+
+**There is now a first-party OTel Anthropic instrumentation.** That is a fourth candidate for the
+demo and the natural reference column against our three.
+
+#### MCP is specified, including the gap this demo demonstrates
+
+`docs/gen-ai/mcp.md` is 115KB of normative convention. The parts that bear on our findings:
+
+- **Context propagation** happens in the MCP request's `params._meta`, carrying `traceparent`,
+  `tracestate` and `baggage` written *unprefixed*, per MCP
+  [SEP-414](https://modelcontextprotocol.io/community/seps/414-request-meta) in spec revision
+  2025-11-25. The server SHOULD use that as the remote parent and SHOULD link the ambient context.
+- MCP and transport contexts are explicitly independent: retries and multiplexing mean one MCP
+  request can span several HTTP requests, so the client span parents the server span regardless of
+  transport, with links recording the transport context.
+- `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` are referenced by **both** MCP client
+  and server spans, at `requirement_level: opt_in`.
+- Anti-duplication rule: if MCP instrumentation can reliably detect that outer GenAI instrumentation
+  is already tracing the tool execution, it SHOULD NOT create its own span, and SHOULD instead add
+  MCP attributes to the existing one.
+
+So "MCP loses trace context" is a **conformance** gap in quarkus-mcp-server, not a hole in the
+specification. quarkiverse/quarkus-mcp-server#789 is what stands between this demo and a joined
+trace. Anywhere the talk implies the spec is silent on MCP, it is now wrong.
+
+#### The SIG wrote down the rule we found by measuring
+
+`instrumentation/AGENTS.md` in the Python repo is a set of litmus tests for instrumentation authors:
+
+> **Tool execution** — No (the client only returns tool calls and the tool runs in application code
+> the library never sees) → `execute_tool` is **not instrumentable** by this library. Do not emit it
+> from a model-client scenario; a span around the app's own function is not something generic
+> instrumentation of the client could produce.
+
+Plus, six days earlier: "don't instrument inference in agentic frameworks" — if a framework
+delegates the model call to an instrumentable library, the framework must not emit it.
+
+#### A conformance runner, and a generated compliance matrix
+
+`reference/` runs each library against a deterministic mock server;
+[semantic-conventions-conformance](https://github.com/open-telemetry/semantic-conventions-conformance)
+validates the captured telemetry against `model/` with Weaver and writes per-library results.
+Inference is supported by 13 libraries, Execute Tool by 11, and the **Evaluation Result event by
+exactly three**: azure-ai-evaluation, deepeval, dspy.
+
+#### What is still missing
+
+`gen_ai.tool.call.reason` does not exist, and nothing equivalent does: the only reason-shaped keys
+are `gen_ai.request.reasoning.level`, `gen_ai.usage.reasoning.output_tokens` and
+`finish_reason`. Two things did arrive nearby, and neither closes it:
+
+- a `plan` span (`gen_ai.plan.internal`) for "the decision phase where an agent formulates a
+  strategy before executing it", with the plan's model call as its child — emitted by two libraries
+- a `ReasoningPart` in the input *and* output message JSON schemas, which carries narrated
+  reasoning, not the reason
+
+Per the SIG's own status note, agentic conventions are the area where they most want contributors,
+which makes this the gap worth taking to them rather than working around.
+
+#### Content placement is still an open proposal
+
+The "Modeling GenAI calls on telemetry" design doc proposes prompts and completions as opt-in span
+attributes *or* opt-in events at `debug`/`trace` severity, same format either way, plus an
+instrumentation hook that uploads content and stamps `gen_ai.request.inputs_ref`, or a collector
+component that does the same. It argues against the events route bluntly: "the only useful bit of
+data this event carries is a link, which would be more useful on the span."
+
+Not landed: no `_ref` attributes exist in the registry. Two things it does settle for us.
+`gen_ai.evaluation.result` is still an event in `model/gen-ai/events.yaml`, so emitting it as a log
+record is correct. And content being opt-in is deliberate design, not an oversight.
