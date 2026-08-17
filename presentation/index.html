@@ -128,39 +128,42 @@
   <!-- 1.0 — L04 · zoom out before zooming in: the agent is one part of a bigger thing -->
   <section data-label="What an LLM application is" class="ground-paper">
     <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Before we talk about agents</p>
-    <h2 class="title" style="position:absolute;left:120px;top:196px;width:1560px;font-size:68px">An agent is <span class="amber-text" data-emphasis="amber">one part</span> of an LLM application</h2>
+    <p class="kicker" style="position:absolute;left:120px;top:118px;margin:0">Before we talk about agents</p>
+    <h2 class="title" style="position:absolute;left:120px;top:178px;width:1560px;font-size:64px">An agent is <span class="amber-text" data-emphasis="amber">one part</span> of an LLM application</h2>
 
-    <div class="chamfer" style="position:absolute;left:120px;right:120px;top:350px;background:var(--paper-2);padding:26px 28px 30px">
-      <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--muted-ink)">LLM APPLICATION</span>
+    <div style="position:absolute;left:120px;right:120px;top:310px"><svg viewBox="0 0 1680 560" style="width:100%;height:auto">
+      <defs><marker id="l5" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#6E6B66"/></marker></defs>
 
-      <div class="chamfer" style="margin-top:18px;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--navy)">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--navy)">ORCHESTRATION</span>
-        <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Builds the prompts, keeps the state, routes the calls</span>
-      </div>
+      <!-- the whole thing is one application; the parts inside are what is new about it -->
+      <rect x="0" y="0" width="1680" height="560" rx="24" fill="#EDEAE3" stroke="#C9C6BE" stroke-width="2"/>
+      <text x="44" y="50" font-family="Public Sans" font-weight="600" font-size="30" fill="#33312D">LLM application</text>
 
-      <div style="display:flex;gap:18px;margin-top:18px">
-        <div class="chamfer" style="flex:1;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--blue)">
-          <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">MODEL</span>
-          <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Hosted or called over an API</span>
-        </div>
-        <div class="chamfer" style="flex:1;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--blue-lift)">
-          <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">RETRIEVAL</span>
-          <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Grounds the answer in your data</span>
-        </div>
-        <div class="chamfer" style="flex:1;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--amber)">
-          <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--amber-text)">TOOLS &amp; AGENTS</span>
-          <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Takes actions, loops until done</span>
-        </div>
-      </div>
+      <rect x="44" y="72" width="1592" height="112" rx="14" fill="#E6E3FD" stroke="#6B5BD6" stroke-width="2"/>
+      <text x="80" y="122" font-family="Public Sans" font-weight="600" font-size="34" fill="#4B3FBF">Orchestration layer</text>
+      <text x="80" y="162" font-family="Public Sans" font-size="25" fill="#5B4FCF">Builds prompts, manages state, routes calls</text>
 
-      <div class="chamfer" style="margin-top:18px;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--muted-ink)">
-        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--muted-ink)">SCAFFOLDING</span>
-        <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">UI, auth, storage, logging: the parts you already know how to run</span>
-      </div>
-    </div>
+      <path d="M304 190 L304 240" stroke="#6E6B66" stroke-width="3" marker-end="url(#l5)"/>
+      <path d="M840 190 L840 240" stroke="#6E6B66" stroke-width="3" marker-end="url(#l5)"/>
+      <path d="M1376 190 L1376 240" stroke="#6E6B66" stroke-width="3" marker-end="url(#l5)"/>
 
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Most of this you can already observe. The one on the right is the one that decides what to do while it is running, and that is the part this talk is about.</p>
+      <rect x="44" y="248" width="520" height="144" rx="14" fill="#DCF2E8" stroke="#2E7D5B" stroke-width="2"/>
+      <text x="304" y="310" text-anchor="middle" font-family="Public Sans" font-weight="600" font-size="34" fill="#155C3F">Model</text>
+      <text x="304" y="352" text-anchor="middle" font-family="Public Sans" font-size="25" fill="#1F7A55">LLM via API or hosted</text>
+      <rect x="580" y="248" width="520" height="144" rx="14" fill="#FBE6DC" stroke="#C4653A" stroke-width="2"/>
+      <text x="840" y="310" text-anchor="middle" font-family="Public Sans" font-weight="600" font-size="34" fill="#96471F">Retrieval (RAG)</text>
+      <text x="840" y="352" text-anchor="middle" font-family="Public Sans" font-size="25" fill="#B25C31">Grounds answers in data</text>
+      <rect x="1116" y="248" width="520" height="144" rx="14" fill="#FBE2EC" stroke="#B84A72" stroke-width="2"/>
+      <text x="1376" y="310" text-anchor="middle" font-family="Public Sans" font-weight="600" font-size="34" fill="#8E2F52">Tools / agents</text>
+      <text x="1376" y="352" text-anchor="middle" font-family="Public Sans" font-size="25" fill="#AB4468">Actions, multi-step loops</text>
+
+      <path d="M840 398 L840 444" stroke="#6E6B66" stroke-width="3" marker-end="url(#l5)"/>
+
+      <rect x="44" y="452" width="1592" height="92" rx="14" fill="#F1EFEA" stroke="#A9A6A0" stroke-width="2"/>
+      <text x="80" y="496" font-family="Public Sans" font-weight="600" font-size="32" fill="#45433F">Application scaffolding</text>
+      <text x="80" y="530" font-family="Public Sans" font-size="25" fill="#6E6B66">UI, auth, storage, logging</text>
+    </svg></div>
+
+    <p class="small" style="position:absolute;left:120px;top:906px;width:1680px">Most of this you already know how to observe. The box on the right is the one that decides what to do while it is running, and that is the part this talk is about.</p>
   </section>
 
 
