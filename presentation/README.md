@@ -147,6 +147,11 @@ bars, nothing boxed in), and breaking one still ships.
   `.code-block` now use `border-radius`. The angled cut survives on `.tag`, where it reads
   as a detail rather than a container. `trace.css` carries the original polygons in a
   comment if this is ever reverted. There is no check either way.
+- **Which animal, where.** The capybara is the through-line: cover, close, dividers, and the
+  slides about the investigating agents. Beaver, otter and goose appear only where they *are*
+  the subject — beaver on the normalizer slides, goose on the two slides about the incident it
+  caused, and each of the four on its own appendix reference card. Do not scatter them for
+  variety; the deck reads as one story because one character carries it.
 - **Mascot placement.** The capybara appears only on the cover, the close, and at most
   **one** mid-deck breath; never on a data slide (so never on L05 or L07); never below
   **90px**; and it *sits on* the axis rather than floating above it. The checker only
