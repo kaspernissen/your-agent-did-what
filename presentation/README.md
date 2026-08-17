@@ -25,6 +25,32 @@ presentation/
   design-system/       # the vendored design-system reference sheet LAYOUTS.md is drawn from
 ```
 
+## Mascots
+
+`img/mascots/` holds 22 cut-out PNGs, cropped from two sprite sheets. The convention, so a new
+one drops straight in:
+
+- **Named `<animal>-<pose>.png`**, lowercase, hyphenated: `capybara-investigating.png`,
+  `beaver-tail-slap.png`. The pose is what it is *doing*, because that is how you pick one.
+- **Transparent background, and no white halo.** The sheets were on white, so the cut-outs
+  needed the fringe removed as well as the background; two of them shipped with opaque white
+  pockets before anyone noticed. Check against a dark slide, not a light one.
+- **No fixed canvas.** Existing files run 354–669px wide and 387–925px tall; slides set a `width`
+  and let the aspect ratio follow. Keep the subject filling the frame so that works.
+- Used on slides via `class="mascot"`, and the deck checker allows **at most one per slide**.
+
+### Still needed
+
+Two characters exist in the story but not in the folder, and are emoji placeholders in the root
+`README.md` until they do:
+
+| character | wanted as | where it would be used |
+|---|---|---|
+| **otter** | `otter-*.png` | the cast table; `otter-sre` is the third investigating agent |
+| **goose** | `goose-*.png` | the cast table; goose is what caused the incident |
+
+A goose would also earn a place on the deck's demo slides, which currently carry a beaver.
+
 ## Run it
 
 ```bash

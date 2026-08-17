@@ -30,17 +30,27 @@ Python · Anthropic SDK · instrumented by OpenInference · reads the same datab
 Emits no OTel vocabulary at all; the collector rewrites it in flight — most of it.</td>
 </tr>
 <tr>
-<td width="150" align="center"><img src="presentation/img/mascots/capybara-sprawled.png" width="120" alt="the coding agent"></td>
-<td><strong>goose</strong> — a developer's own coding agent<br>
+<!-- placeholder until presentation/img/mascots/otter-*.png exists — see presentation/README.md#mascots -->
+<td width="150" align="center"><span style="font-size:72px">&#129446;</span></td>
+<td><strong>Otter, SRE</strong> — the same Python agent, a third vocabulary<br>
+Python · Anthropic SDK · instrumented by OpenLLMetry · same tools, same MCP server.<br>
+Emits <code>gen_ai.*</code> natively and needs no normalizing at all — the only one of the three
+that records what a tool returned.</td>
+</tr>
+<tr>
+<!-- placeholder until presentation/img/mascots/goose-*.png exists — see presentation/README.md#mascots -->
+<td width="150" align="center"><span style="font-size:72px">&#129706;</span></td>
+<td><strong>goose</strong> — a developer's own coding agent, and the one that did it<br>
 Asked to tidy up the free plan. It calls <code>delete_records</code> on an MCP server holding
 <code>deploy_svc</code> credentials, which carry <code>DELETE</code>. Nobody granted the agent
 anything; the root cause is a grant rather than a bug.</td>
 </tr>
 </table>
 
-All three agents are asked the same question about the same incident: *"Customers are
-reporting missing accounts. Investigate."* One database, one MCP server, one collector — so
-anything that differs in the telemetry belongs to the platform, not to the story.
+The three SRE agents are asked the same question about the same incident: *"Customers are
+reporting missing accounts. Investigate."* Same tools, same MCP server, same database, same
+collector — so anything that differs in the telemetry belongs to the platform, not to the story.
+goose is not asked anything; goose is what happened.
 
 The deletion is a real coding-agent run against a local model. When that is inconvenient —
 no ollama, or a laptop having a bad day — `POST /incident/rehearse-deletion` reproduces the
@@ -64,7 +74,7 @@ not give you.
 | **[`research-evaluations.md`](research-evaluations.md)** | The same for evaluations and LLM-as-a-judge. |
 | **[`landscape.md`](landscape.md)** | The visualization and normalization landscape, and the Jaeger roadmap. |
 | **[`resources.md`](resources.md)** | Annotated links — conventions, tools, backends, CNCF projects. |
-| **[`presentation/img/mascots/`](presentation/img/mascots/)** | 22 cut-out mascots, transparent, for slides and consoles. |
+| **[`presentation/img/mascots/`](presentation/img/mascots/)** | 22 cut-out mascots, transparent, for slides and consoles. Otter and goose are still emoji placeholders — see [the convention](presentation/README.md#mascots). |
 | **`docs/superpowers/`** | The specs and plans this was built from. History, not live documentation. |
 
 ---
