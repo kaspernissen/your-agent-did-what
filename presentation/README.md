@@ -27,8 +27,8 @@ presentation/
 
 ## Mascots
 
-`img/mascots/` holds 22 cut-out PNGs, cropped from two sprite sheets. The convention, so a new
-one drops straight in:
+`img/mascots/` holds 43 cut-out PNGs, cropped from four character sheets — capybara, beaver, otter
+and goose. The convention, so a new one drops straight in:
 
 - **Named `<animal>-<pose>.png`**, lowercase, hyphenated: `capybara-investigating.png`,
   `beaver-tail-slap.png`. The pose is what it is *doing*, because that is how you pick one.
@@ -39,17 +39,24 @@ one drops straight in:
   and let the aspect ratio follow. Keep the subject filling the frame so that works.
 - Used on slides via `class="mascot"`, and the deck checker allows **at most one per slide**.
 
-### Still needed
+### Cutting a new sheet
 
-Two characters exist in the story but not in the folder, and are emoji placeholders in the root
-`README.md` until they do:
+[`img/mascots/cut-sheet.py`](img/mascots/cut-sheet.py) does it: flood-fill the background inward
+from the border, then erode one pixel. Both halves matter, and both were learned the hard way:
 
-| character | wanted as | where it would be used |
-|---|---|---|
-| **otter** | `otter-*.png` | the cast table; `otter-sre` is the third investigating agent |
-| **goose** | `goose-*.png` | the cast table; goose is what caused the incident |
+- **Flood fill from the border, never a global colour key.** The goose is nearly the same white
+  as the paper it was drawn on, so keying on white eats the bird.
+- **Keep the tolerance tight.** Measured on these sheets: clear background is min-channel
+  251–255, the lightest body cream is 244. A loose tolerance lets the fill leak through the body
+  and chew the outline from the inside, which shows up as speckles along one edge.
+- **Erode one pixel afterwards.** The sheets are JPEG, so every outline carries a ring of pixels
+  blended toward white. They look fine on a light slide and read as a pale halo on a dark one.
+- **Check the result on `--ink`, not on paper.** That is the only place the two failures above
+  are visible.
 
-A goose would also earn a place on the deck's demo slides, which currently carry a beaver.
+Poses whose artwork contains baked-in text were dropped: the goose sheet's cloud, cube and
+lectern panels all carried words, which would fight the deck's own typography. The otter's
+equivalents are blank, so they were kept.
 
 ## Run it
 

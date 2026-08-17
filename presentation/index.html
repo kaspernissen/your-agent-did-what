@@ -559,7 +559,7 @@
     </svg></div>
 
     <p class="small" style="position:absolute;left:120px;top:846px;width:1360px;line-height:1.5">All three call the same tools on the same MCP server, and we ask all three the same question:<br><span style="font-family:var(--font-mono);color:var(--ink)">&ldquo;Customers are reporting missing accounts. Investigate.&rdquo;</span></p>
-    <img src="img/mascots/beaver-logs.png" alt="" class="mascot" style="right:110px;bottom:30px;width:170px">
+    <img src="img/mascots/goose-walking.png" alt="" class="mascot" style="right:96px;bottom:22px;width:196px">
   </section>
 
   <!-- 4.3 — L07 Figures -->
@@ -1043,6 +1043,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   <!-- 6.5 — L04 · the schema, with a hole in it -->
   <section data-label="What the coding agent recorded" class="ground-paper">
     <div class="deck-footer"></div>
+    <img src="img/mascots/goose-tablet.png" alt="" class="mascot" style="right:78px;bottom:18px;width:184px;z-index:1">
     <p class="kicker" style="position:absolute;left:120px;top:100px;margin:0">goose v1.46.0 &middot; ollama qwen3.6 &middot; the developer&rsquo;s own agent</p>
     <h2 class="title" style="position:absolute;left:120px;top:156px;width:1620px;font-size:54px">The agent that did it wrote down <span class="amber-text" data-emphasis="amber">what it deleted</span></h2>
 
@@ -1065,7 +1066,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 
     <p class="small" style="position:absolute;left:120px;top:772px;width:1700px">Both attributes, on the span that ran the tool. The result is the confession: <span style="font-family:var(--font-mono);color:var(--ink)">deleted=3</span>. Our own framework, over the same protocol, records neither.</p>
 
-    <div class="chamfer" style="position:absolute;left:120px;right:120px;top:872px;background:var(--paper-2);padding:18px 26px;box-shadow:inset 6px 0 0 var(--amber)">
+    <div class="chamfer" style="position:absolute;left:120px;right:316px;top:872px;background:var(--paper-2);padding:18px 26px;box-shadow:inset 6px 0 0 var(--amber)">
       <span style="font-size:22px;font-weight:300;line-height:1.4;color:var(--ink)">Two catches. Its MCP server&rsquo;s spans landed in <strong style="font-weight:600">six separate single-span traces</strong>, because goose does not propagate context over MCP. And the token totals appear three times in one trace, so summing them triples the bill.</span>
     </div>
   </section>

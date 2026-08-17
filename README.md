@@ -30,16 +30,14 @@ Python · Anthropic SDK · instrumented by OpenInference · reads the same datab
 Emits no OTel vocabulary at all; the collector rewrites it in flight — most of it.</td>
 </tr>
 <tr>
-<!-- placeholder until presentation/img/mascots/otter-*.png exists — see presentation/README.md#mascots -->
-<td width="150" align="center"><span style="font-size:72px">&#129446;</span></td>
+<td width="150" align="center"><img src="presentation/img/mascots/otter-tablet.png" width="120" alt="Otter SRE"></td>
 <td><strong>Otter, SRE</strong> — the same Python agent, a third vocabulary<br>
 Python · Anthropic SDK · instrumented by OpenLLMetry · same tools, same MCP server.<br>
 Emits <code>gen_ai.*</code> natively and needs no normalizing at all — the only one of the three
 that records what a tool returned.</td>
 </tr>
 <tr>
-<!-- placeholder until presentation/img/mascots/goose-*.png exists — see presentation/README.md#mascots -->
-<td width="150" align="center"><span style="font-size:72px">&#129706;</span></td>
+<td width="150" align="center"><img src="presentation/img/mascots/goose-walking.png" width="120" alt="goose"></td>
 <td><strong>goose</strong> — a developer's own coding agent, and the one that did it<br>
 Asked to tidy up the free plan. It calls <code>delete_records</code> on an MCP server holding
 <code>deploy_svc</code> credentials, which carry <code>DELETE</code>. Nobody granted the agent
@@ -74,7 +72,7 @@ not give you.
 | **[`research-evaluations.md`](research-evaluations.md)** | The same for evaluations and LLM-as-a-judge. |
 | **[`landscape.md`](landscape.md)** | The visualization and normalization landscape, and the Jaeger roadmap. |
 | **[`resources.md`](resources.md)** | Annotated links — conventions, tools, backends, CNCF projects. |
-| **[`presentation/img/mascots/`](presentation/img/mascots/)** | 22 cut-out mascots, transparent, for slides and consoles. Otter and goose are still emoji placeholders — see [the convention](presentation/README.md#mascots). |
+| **[`presentation/img/mascots/`](presentation/img/mascots/)** | 43 cut-out mascots, transparent, for slides and consoles — capybara, beaver, otter and goose. See [the convention](presentation/README.md#mascots). |
 | **`docs/superpowers/`** | The specs and plans this was built from. History, not live documentation. |
 
 ---
