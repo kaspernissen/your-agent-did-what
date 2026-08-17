@@ -773,14 +773,15 @@
   <!-- 5.3 — L07 · the rewrite as a pipeline, animated; see .flow-* in trace.css -->
   <section data-label="Before / after" class="ground-ink">
     <div class="deck-footer"></div>
+    <img src="img/mascots/beaver-pointing.png" alt="" class="mascot" style="right:196px;bottom:56px;width:172px">
     <p class="kicker" style="position:absolute;left:120px;top:96px;margin:0">beaver-sre · same incident, a Python agent, OpenInference</p>
-    <h2 class="title" style="position:absolute;left:120px;top:150px;width:1600px;font-size:60px">Same capybara, wrong convention, <span class="amber-text" data-emphasis="amber">fixed in flight</span></h2>
-    <div style="position:absolute;left:120px;top:250px;display:flex;width:1680px">
+    <h2 class="title" style="position:absolute;left:120px;top:150px;width:1600px;font-size:60px">The wrong vocabulary, <span class="amber-text" data-emphasis="amber">fixed in flight</span></h2>
+    <div style="position:absolute;left:120px;top:320px;display:flex;width:1680px">
       <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--on-ink-dim)">OPENINFERENCE, IN</span>
       <span style="width:640px;flex:none"></span>
       <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--blue-mute)">OTEL GENAI, OUT</span>
     </div>
-    <div style="position:absolute;left:120px;top:310px;width:1680px">
+    <div style="position:absolute;left:120px;top:380px;width:1680px">
       <div style="display:flex;align-items:center;height:46px">
         <span style="width:580px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--on-ink-dim)">llm.provider</span>
         <span class="flow-track" style="width:180px"><span class="flow-dot" style="animation-delay:0.00s"></span></span>
@@ -838,7 +839,7 @@
         <span style="width:460px;flex:none;font-family:var(--font-mono);font-size:21px;color:var(--amber)">llm.system</span>
       </div>
     </div>
-    <div class="chamfer" style="position:absolute;left:880px;top:296px;width:280px;height:396px;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px">
+    <div class="chamfer" style="position:absolute;left:880px;top:366px;width:280px;height:396px;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px">
       <span style="font-family:var(--font-mono);font-size:20px;color:var(--paper);text-align:center;line-height:1.3">gen_ai_<br>normalizer</span>
       <span style="font-family:var(--font-mono);font-size:17px;color:var(--on-ink-dim);text-align:center;line-height:1.5">sources:<br>openinference<br>openllmetry</span>
       <span style="font-family:var(--font-mono);font-size:17px;color:var(--amber);text-align:center">remove_originals<br>: false</span>
@@ -847,10 +848,11 @@
   <!-- 5.4 — L06 · the whole trace converts, except the half that matters -->
   <section data-label="The half it cannot carry" class="ground-paper">
     <div class="deck-footer"></div>
+    <img src="img/mascots/beaver-splashing.png" alt="" class="mascot" style="right:250px;bottom:58px;width:178px">
     <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">beaver-sre &middot; the tool span, not the model call</p>
     <h2 class="title" style="position:absolute;left:120px;top:186px;width:1620px;font-size:60px">It converts the structure. It does not convert the <span class="amber-text" data-emphasis="amber">result</span>.</h2>
 
-    <div style="position:absolute;left:120px;right:120px;top:340px"><svg viewBox="0 0 1680 330" style="width:100%;height:auto">
+    <div style="position:absolute;left:120px;right:120px;top:440px"><svg viewBox="0 0 1680 330" style="width:100%;height:auto">
       <text x="0" y="24" font-family="JetBrains Mono" font-size="20" fill="#5B6180">OPENINFERENCE, IN</text>
       <text x="960" y="24" font-family="JetBrains Mono" font-size="20" fill="#425CC7">OTEL GENAI, OUT</text>
 
