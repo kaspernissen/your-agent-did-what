@@ -93,6 +93,44 @@
 
   <!-- ═══ BEAT 1 · Agents aren't request/response ══════════════════ -->
 
+  <!-- 1.0 — L04 · zoom out before zooming in: the agent is one part of a bigger thing -->
+  <section data-label="What an LLM application is" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Before we talk about agents</p>
+    <h2 class="title" style="position:absolute;left:120px;top:196px;width:1560px;font-size:68px">An agent is <span class="amber-text" data-emphasis="amber">one part</span> of an LLM application</h2>
+
+    <div class="chamfer" style="position:absolute;left:120px;right:120px;top:350px;background:var(--paper-2);padding:26px 28px 30px">
+      <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.16em;color:var(--muted-ink)">LLM APPLICATION</span>
+
+      <div class="chamfer" style="margin-top:18px;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--navy)">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--navy)">ORCHESTRATION</span>
+        <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Builds the prompts, keeps the state, routes the calls</span>
+      </div>
+
+      <div style="display:flex;gap:18px;margin-top:18px">
+        <div class="chamfer" style="flex:1;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--blue)">
+          <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">MODEL</span>
+          <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Hosted or called over an API</span>
+        </div>
+        <div class="chamfer" style="flex:1;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--blue-lift)">
+          <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">RETRIEVAL</span>
+          <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Grounds the answer in your data</span>
+        </div>
+        <div class="chamfer" style="flex:1;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--amber)">
+          <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--amber-text)">TOOLS &amp; AGENTS</span>
+          <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">Takes actions, loops until done</span>
+        </div>
+      </div>
+
+      <div class="chamfer" style="margin-top:18px;background:var(--paper);padding:18px 22px;box-shadow:inset 6px 0 0 var(--muted-ink)">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--muted-ink)">SCAFFOLDING</span>
+        <span style="display:block;font-size:23px;font-weight:300;color:var(--ink);margin-top:6px">UI, auth, storage, logging: the parts you already know how to run</span>
+      </div>
+    </div>
+
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Most of this you can already observe. The one on the right is the one that decides what to do while it is running, and that is the part this talk is about.</p>
+  </section>
+
   <!-- 1.1 — L02 Section divider -->
   <section data-label="Divider — 01" class="ground-ink">
     <div class="diagonal-split" style="background:var(--amber)"></div>
@@ -1426,6 +1464,7 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Good morning. This is “Your Agent Did What?” — the subtitle is doing a lot of work, so it can stay on screen rather than be read out.\n\nThere are two of us up here because we hit this problem separately, on different stacks, and arrived at the same uncomfortable place.\n\nQRs in the corners if you want to find us afterwards.\n\n⚑ Hold here while the room settles.",
   "Twenty seconds each, and the slide has the credentials so they don't need reading out.\n\nThe part that matters later: we're both CNCF ambassadors, and both AI-agent ambassadors for the AAIF. That second one comes back at the end, when we talk about the agent you're already running and probably not watching.\n\n⚑ If anyone asks about the capybara: one of us genuinely loves them, which is why the demo agent is called Capybara and why there's one asleep in the footer of every slide.",
   "Here's the situation this talk is about.\n\nRows are gone. The incident is over — nobody's asking you to stop it. They're asking you to explain it. Why did this happen, and can you prove it.\n\nAnd you go looking. The logs say the call succeeded. The trace says it took four seconds. Neither of them says what it was thinking, or what it actually touched.\n\nThat gap — between “something happened” and “here is why” — is the whole talk. Everything else is us trying to close it with the tools we already have.\n\n⚑ Don't name a culprit here. The reveal later is that no agent did this, and saying otherwise now contradicts that in twenty minutes.",
+  "Before we get specific, one level up.\n\nWhen people say \"we shipped an LLM feature\", this is usually what they mean. There is orchestration that builds the prompts and keeps the state. A model, hosted or called over an API. Retrieval, so the answers are grounded in your data. Tools and agents, which take actions. And underneath it all, ordinary application scaffolding.\n\nMost of this you already know how to operate. The database, the HTTP calls, the auth, the storage. Your existing instrumentation covers it.\n\nIt is the box on the right that is new, because it is the only one that decides what to do while it is running. That is the part this talk is about.\n\n⚑ Do not linger. This exists so nobody is lost when we say \"agent\" for the next thirty minutes, and so the room sees that the agent is a component rather than the whole system.",
   "First, why this is a different problem rather than a harder version of the old one.",
   "An agent is a loop.\n\nThere's a model, and there's a list of tools you handed it. The model doesn't run anything — it picks the next step. Something else executes that step, feeds the result back, and the loop goes round again until the model says it's finished. MCP is just how it gets handed tools it didn't ship with. Tokens are the billing unit, and usually the only cost signal you get.\n\nTwo things here are yours: the prompt, and the tool list. That's it.\n\nHow many model calls, which tools, in what order — decided at runtime, every time. Which means you cannot read the path off the code. You have to observe it.\n\n⚑ This diagram is the demo, made abstract. When Capybara turns up later, it is this.",
   "So we observe it. And immediately there's a problem: nobody agrees on what to call any of it.",
