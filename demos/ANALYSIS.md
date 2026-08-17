@@ -941,6 +941,13 @@ So "MCP loses trace context" is a **conformance** gap in quarkus-mcp-server, not
 specification. quarkiverse/quarkus-mcp-server#789 is what stands between this demo and a joined
 trace. Anywhere the talk implies the spec is silent on MCP, it is now wrong.
 
+Re-measured against the running demo on 2026-08-17, and the split is narrower than "MCP loses trace
+context" suggests. The client-to-server half works: one `POST /chat` produced a single 21-span trace
+spanning both services, with `capybara-db-mcp / tools/call audit_log` correctly parented under the
+client span of the same name. What does not survive is the handoff into the tool body, so
+`SELECT capybara.audit_log` is a one-span root trace of its own. Half the written convention is
+implemented; the demo's gap is the other half.
+
 #### The SIG wrote down the rule we found by measuring
 
 `instrumentation/AGENTS.md` in the Python repo is a set of litmus tests for instrumentation authors:
@@ -983,6 +990,25 @@ instrumentation hook that uploads content and stamps `gen_ai.request.inputs_ref`
 component that does the same. It argues against the events route bluntly: "the only useful bit of
 data this event carries is a link, which would be more useful on the span."
 
-Not landed: no `_ref` attributes exist in the registry. Two things it does settle for us.
-`gen_ai.evaluation.result` is still an event in `model/gen-ai/events.yaml`, so emitting it as a log
-record is correct. And content being opt-in is deliberate design, not an oversight.
+Most of it has landed, as normative guidance rather than as attributes. `gen-ai-spans.md` now
+carries a "Full (buffered) content" section with three usage patterns: don't record content
+(default), record it on the span attributes (pre-production), or **store it externally and record
+references on the span**, which it recommends for production "where telemetry volume is a concern or
+sensitive data needs to be handled securely". The upload hook is specified too: instrumentations MAY
+support in-process hooks, they SHOULD be invoked regardless of the sampling decision, the hook may
+enrich or modify the span and message objects, and the application or distro owns the upload and the
+recording of references. A collector-side implementation is explicitly allowed.
+
+What has *not* landed is the naming. The section ends with `TODO: document a common approach to
+record references to externally stored content`, and no reference attribute exists in the registry.
+`### Streaming chunks` is also still `TODO`, so the streaming options in the design doc remain open.
+
+Two things the section does settle for us. `gen_ai.evaluation.result` is still an event in
+`model/gen-ai/events.yaml`, so emitting it as a log record is correct. And content being opt-in is
+deliberate design, not an oversight.
+
+One precision worth keeping, since it is the kind of thing an audience checks. The flat
+"instrumentations SHOULD NOT capture them by default" sentence is written about
+`gen_ai.system_instructions`, `gen_ai.input.messages` and `gen_ai.output.messages`. For
+`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` the mechanism is the `Opt-In` requirement
+level plus a sensitive-information warning. Same practical outcome, different wording.
