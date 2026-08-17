@@ -162,6 +162,11 @@ bars, nothing boxed in), and breaking one still ships.
   `.code-block` now use `border-radius`. The angled cut survives on `.tag`, where it reads
   as a detail rather than a container. `trace.css` carries the original polygons in a
   comment if this is ever reverted. There is no check either way.
+- **The bottom-right corner is taken.** `.deck-footer` puts a small capybara on the axis at roughly
+  `right:60px, bottom:10px` on **every** slide. Anything else placed there collides with it, and it has
+  happened five times in this deck: two slide mascots, a caption, a callout band and a paragraph. Keep
+  slide mascots at `right:170px` or further in, and stop full-width bands at `right:330px` if they reach
+  below `y:820`.
 - **Which animal, where.** The capybara is the through-line: cover, close, dividers, and the
   slides about the investigating agents. Beaver, otter and goose appear only where they *are*
   the subject — beaver on the normalizer slides, goose on the two slides about the incident it
