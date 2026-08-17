@@ -30,6 +30,12 @@ spec:
             # A distinct service name, so its spans are separable from the other MCP server's.
             # quarkus.application.name is build-time and baked into the image, so it cannot be
             # changed by env; OTEL_SERVICE_NAME is the SDK's own override and works at runtime.
+            # QUARKUS_OTEL_SERVICE_NAME, not OTEL_SERVICE_NAME. Quarkus ignores the standard
+            # variable: service.name comes from quarkus.application.name, which is build-time and
+            # baked into this shared image as capybara-db-mcp. With only OTEL_SERVICE_NAME set,
+            # every span this server produced was filed under the *other* MCP server's name, so the
+            # over-privileged path and the investigators' path looked like one service.
+            - { name: QUARKUS_OTEL_SERVICE_NAME,     value: prod-db-mcp }
             - { name: OTEL_SERVICE_NAME,             value: prod-db-mcp }
             - { name: QUARKUS_DATASOURCE_USERNAME,   value: kangaroo }
             - { name: QUARKUS_DATASOURCE_PASSWORD,   value: kangaroo }
@@ -37,6 +43,9 @@ spec:
                 value: "jdbc:postgresql://capybara-db:5432/capybara?ApplicationName=goose" }
             - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
                 value: http://otel-collector-opentelemetry-collector.default.svc:4317 }
+            # Stated for parity with capybara-db-mcp. The image already defaults to grpc; leaving
+            # the two servers configured differently is how you end up debugging the wrong one.
+            - { name: OTEL_EXPORTER_OTLP_PROTOCOL, value: grpc }
           readinessProbe:
             httpGet: { path: /q/health/ready, port: 8086 }
             initialDelaySeconds: 5

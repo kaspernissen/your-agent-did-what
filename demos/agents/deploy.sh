@@ -36,8 +36,12 @@ kubectl apply -f k8s/ >/dev/null
 # blocking the Vert.x event loop, so Vert.x dumps a blocked-thread stack every two seconds
 # until the server is back. The agent also resolves its tool list at startup, so one that
 # starts first can come up with no tools at all.
-kubectl rollout restart deployment/capybara-db-mcp
+# Both MCP servers, and prod-db-mcp is easy to forget: it runs the same image under different
+# credentials, so a stale replica silently serves the Goose path with old code. It did, for
+# three days, which is why that path emitted no server spans at all.
+kubectl rollout restart deployment/capybara-db-mcp deployment/prod-db-mcp
 kubectl rollout status  deployment/capybara-db-mcp --timeout=180s
+kubectl rollout status  deployment/prod-db-mcp    --timeout=180s
 
 kubectl rollout restart deployment/capybara-sre deployment/beaver-sre deployment/otter-sre
 kubectl rollout status  deployment/capybara-sre --timeout=180s

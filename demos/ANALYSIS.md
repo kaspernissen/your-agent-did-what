@@ -1092,3 +1092,93 @@ conversation.
 The `SELECT` from the tool body is still a one-span root trace, from both clients. Same server, same
 quarkiverse/quarkus-mcp-server#789, regardless of who calls it — which is now demonstrated rather
 than assumed.
+
+---
+
+### No agent holds a credential, and every agent can empty the table (2026-08-17)
+
+Prompted by a good question: does the Goose path delete because the agent inherited someone's
+credentials? Nearly. The agent never sees a credential. What it inherits is the *authority* that
+credential carries, and it gets it by asking for a tool by name.
+
+Verified against the running database:
+
+```
+                      grants on capybaras                          exposed tool
+capybara_app   SELECT, INSERT, UPDATE, DELETE                      delete_records
+kangaroo       SELECT, DELETE                                      delete_records
+```
+
+`capybara-db-mcp` connects as `capybara_app` and serves the three investigator agents.
+`prod-db-mcp` runs the same image as `kangaroo` and serves Goose. Both advertise `delete_records`
+in `tools/list` — confirmed by calling it — and nothing filters the toolbox on the client side for
+capybara-sre; only the Goose recipe restricts `available_tools`.
+
+So **all four agents can delete every row right now**, and the only thing preventing it during an
+investigation is the model choosing not to ask.
+
+The uncomfortable part is *why* `capybara_app` has DELETE. `init.sql` says it plainly: "Read and
+write the table, which is what a customer-facing app needs." The role was scoped to the
+application's needs, years of habit say that is correct, and then an agent was pointed at it and
+inherited the lot. `init.sql` labels `kangaroo`'s SELECT+DELETE "the over-grant. This is the bug",
+and it is — but `capybara_app` is the same class of mistake with a better excuse, and it is the one
+the *investigating* agents sit behind.
+
+This is the confused deputy, and it is why the audit trail cannot name the agent: Postgres records
+the identity that authenticated, which is always the server's. `client` is self-reported through the
+connection string, so `client=goose` is a label the server chose to send, not an authenticated fact.
+The MCP authorization spec addresses exactly this shape — a server must reject tokens not issued for
+it, and token passthrough is forbidden — which is the standards-level version of the same warning.
+
+Deck: "One question, one loop" now says this outright rather than the reassuring thing it said first.
+Its original title, "The agent never touches the database", was literally true and rhetorically
+backwards.
+
+---
+
+### The Goose path, measured end to end (2026-08-17)
+
+Two bugs were hiding the half of this path that matters, and neither was in the agent.
+
+**`OTEL_SERVICE_NAME` does nothing in Quarkus.** `prod-db-mcp` runs the same image as
+`capybara-db-mcp` and had only `OTEL_SERVICE_NAME=prod-db-mcp` set, so every span it produced was
+filed under `capybara-db-mcp` — the name baked in at build time from `quarkus.application.name`.
+`prod-db-mcp` never appeared in Jaeger's service list at all, while `tools/call delete_records` and
+`DELETE capybara.capybaras` sat under the *investigators'* server. The over-privileged path and the
+read-only path looked like one service. Fixed with `QUARKUS_OTEL_SERVICE_NAME`, which is
+runtime-overridable; the standard variable is kept beside it with a comment, because the next person
+will reach for it too.
+
+**`agents/deploy.sh` never restarted `prod-db-mcp`.** It rebuilds the image and restarts four
+deployments; the fifth ran a three-day-old replica. Now both MCP servers restart together.
+
+With both fixed, one Goose run over the recipe:
+
+```
+goose · 7 spans, one service
+  reply                             6261 in · 339 out
+    reply_stream                    6261 in · 339 out
+      stream_response_from_provider 1867 / 86
+      dispatch_tool_call            list_records     args + result
+      stream_response_from_provider 2137 / 204
+      dispatch_tool_call            delete_records   args + result
+      stream_response_from_provider 2257 / 49
+
+gen_ai.tool.call.arguments  {"plan":"free"}
+gen_ai.tool.call.result     {"content":[{"type":"text","text":
+                             "DeleteResult[deleted=3, remaining=2]"}],"isError":false}
+```
+
+**Goose records both content attributes.** The result is the confession, and the audit trail for the
+same second reads `client=goose`, `db_user=kangaroo`. So a Rust coding agent from a different company
+records what our platform framework, over the same protocol, does not.
+
+Two things it gets wrong, both worth stating on stage:
+
+- **It does not propagate trace context over MCP.** `prod-db-mcp` produced six separate single-span
+  traces, all orphaned. The MCP Python SDK does this correctly through `_meta`; goose 1.46.0 does not.
+- **Token totals appear three times per trace.** The three provider calls sum to exactly the figures
+  on `reply_stream` and again on `reply` (6261 / 339). Summing across the trace triples the bill.
+
+Which gives the talk its scoreboard: the coding agent has the content and not the correlation, our
+framework has the correlation and not the content, and nothing in this demo has both.
