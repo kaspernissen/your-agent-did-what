@@ -451,6 +451,18 @@
   </section>
 
   <!-- 4.1 — L02 Section divider · the single mid-deck mascot -->
+  <section data-label="Divider — 04" class="ground-ink">
+    <img src="img/mascots/beaver-tail-slap.png" alt="" class="mascot" style="right:120px;bottom:60px;width:210px;z-index:1">
+    <div class="diagonal-split" style="background:var(--amber)"></div>
+    <div style="position:absolute;left:120px;top:300px;width:820px">
+      <div style="font-family:var(--font-display);font-size:220px;font-weight:600;line-height:.9;letter-spacing:-.05em;color:var(--ink)" data-emphasis="amber">04</div>
+      <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:36px 0 0">Rows went missing</h2>
+    </div>
+    <div style="position:absolute;right:120px;top:300px;width:600px;display:flex;flex-direction:column;gap:34px">
+      <p class="kicker" style="margin:0">Up next</p>
+      <div style="display:flex;flex-direction:column;gap:26px"><span style="font-size:36px;font-weight:300;color:var(--paper)">Three agents, one database, two ways in</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">What a conforming run gives you</span><span style="font-size:36px;font-weight:300;color:var(--on-ink-dim)">Where the trail goes cold</span></div>
+    </div>
+  </section>
   <section data-label="Meet Capybara, SRE" class="ground-ink">
     <div class="diagonal-split" style="background:var(--amber)"></div>
     <img src="img/mascots/capybara-investigating.png" alt="" class="mascot" style="right:150px;bottom:60px;width:270px;z-index:1">
@@ -472,48 +484,81 @@
   <!-- 4.2 — L07 · what the demo is and how it is wired -->
   <section data-label="The demo setup" class="ground-paper">
     <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">The demo &middot; one database, one collector</p>
-    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1600px;font-size:60px">Something deleted production <span class="amber-text" data-emphasis="amber">data</span>. Neither agent did it.</h2>
+    <p class="kicker" style="position:absolute;left:120px;top:110px;margin:0">The demo &middot; two ways in, one database, one pipeline</p>
+    <h2 class="title" style="position:absolute;left:120px;top:172px;width:1600px;font-size:56px">Something deleted production <span class="amber-text" data-emphasis="amber">data</span>. No agent admits to it.</h2>
 
-    <div style="position:absolute;left:120px;right:120px;top:330px"><svg viewBox="0 0 1680 430" style="width:100%;height:auto">
-      <!-- the rogue service, going straight at the database -->
-      <rect x="0" y="0" width="380" height="86" rx="10" fill="#F5A800"/>
-      <text x="190" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#10142E">kangaroo-service</text>
-      <text x="190" y="66" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#10142E">another team&rsquo;s deployment</text>
-      <path d="M390 43 L700 43 L700 176" stroke="#F5A800" stroke-width="4" fill="none" marker-end="url(#d-am)"/>
-      <text x="410" y="30" font-family="JetBrains Mono" font-size="19" fill="#8A5B00">DELETE &middot; db role kangaroo</text>
-
-      <!-- the database in the middle: both agents read it, the kangaroo wrote it -->
-      <rect x="560" y="186" width="560" height="104" rx="10" fill="#202C5F"/>
-      <text x="840" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="24" fill="#FAF7F2">PostgreSQL &middot; capybaras</text>
-      <text x="840" y="252" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#A9B6EE">5 rows &rarr; 2, and an audit trail</text>
-      <text x="840" y="278" text-anchor="middle" font-family="JetBrains Mono" font-size="18" fill="#A9B6EE">client &middot; db_user</text>
-
-      <!-- the two agents, asked the same question -->
-      <rect x="0" y="330" width="500" height="90" rx="10" fill="#F2ECE0" stroke="#425CC7" stroke-width="2"/>
-      <text x="250" y="366" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#202C5F">capybara-sre</text>
-      <text x="250" y="396" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#5B6180">Java &middot; tools over MCP &middot; judged</text>
-      <path d="M250 326 L250 300 L620 300 L620 292" stroke="#425CC7" stroke-width="3" fill="none" marker-end="url(#d-bl)"/>
-
-      <rect x="1180" y="330" width="500" height="90" rx="10" fill="#F2ECE0" stroke="#425CC7" stroke-width="2"/>
-      <text x="1430" y="366" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#202C5F">beaver-sre</text>
-      <text x="1430" y="396" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#5B6180">Python &middot; OpenInference</text>
-      <path d="M1430 326 L1430 300 L1060 300 L1060 292" stroke="#425CC7" stroke-width="3" fill="none" marker-end="url(#d-bl)"/>
-
-      <!-- one collector -->
-      <rect x="1240" y="0" width="440" height="86" rx="10" fill="#F2ECE0" stroke="#5B6180" stroke-width="2"/>
-      <text x="1460" y="38" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#202C5F">one collector</text>
-      <text x="1460" y="66" text-anchor="middle" font-family="Public Sans" font-size="18" fill="#5B6180">Jaeger &middot; Prometheus &middot; vendor</text>
-      <path d="M1230 43 L1130 43" stroke="#5B6180" stroke-width="2" stroke-dasharray="6 6"/>
-      <text x="760" y="120" font-family="Public Sans" font-size="21" fill="#5B6180">both agents export here</text>
-
+    <div style="position:absolute;left:120px;right:120px;top:300px"><svg viewBox="0 0 1680 500" style="width:100%;height:auto">
       <defs>
         <marker id="d-am" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#F5A800"/></marker>
         <marker id="d-bl" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#425CC7"/></marker>
+        <marker id="d-gy" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5B6180"/></marker>
       </defs>
+
+      <!-- Top band: the two things that can delete rows. Both hold the kangaroo role. -->
+      <rect x="0" y="0" width="530" height="88" rx="10" fill="#F5A800"/>
+      <text x="265" y="37" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#10142E">kangaroo-service</text>
+      <text x="265" y="66" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#10142E">another team&rsquo;s deployment</text>
+
+      <rect x="620" y="0" width="530" height="88" rx="10" fill="#F5A800"/>
+      <text x="885" y="37" text-anchor="middle" font-family="JetBrains Mono" font-size="23" fill="#10142E">goose + ollama</text>
+      <text x="885" y="66" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#10142E">a developer&rsquo;s own coding agent</text>
+
+      <path d="M265 96 L265 196" stroke="#F5A800" stroke-width="4" fill="none" marker-end="url(#d-am)"/>
+      <text x="285" y="150" font-family="JetBrains Mono" font-size="18" fill="#8A5B00">plain DELETE</text>
+      <path d="M885 96 L885 196" stroke="#F5A800" stroke-width="4" fill="none" marker-end="url(#d-am)"/>
+      <text x="905" y="140" font-family="JetBrains Mono" font-size="18" fill="#8A5B00">prod-db-mcp</text>
+      <text x="905" y="164" font-family="JetBrains Mono" font-size="18" fill="#8A5B00">delete_records</text>
+
+      <!-- Middle band: the shared state, and the two columns that tell them apart. -->
+      <rect x="180" y="204" width="790" height="112" rx="10" fill="#202C5F"/>
+      <text x="575" y="242" text-anchor="middle" font-family="JetBrains Mono" font-size="25" fill="#FAF7F2">PostgreSQL &middot; capybaras</text>
+      <text x="575" y="272" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#A9B6EE">5 rows &rarr; 2, and an audit trail</text>
+      <text x="575" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="18" fill="#A9B6EE">client &middot; db_user &middot; both write as kangaroo</text>
+
+      <!-- Bottom band: three investigators, same state, three vocabularies. -->
+      <rect x="0" y="404" width="330" height="96" rx="10" fill="#F2ECE0" stroke="#425CC7" stroke-width="2"/>
+      <text x="165" y="440" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#202C5F">capybara-sre</text>
+      <text x="165" y="466" text-anchor="middle" font-family="Public Sans" font-size="17" fill="#5B6180">Java &middot; langchain4j</text>
+      <text x="165" y="488" text-anchor="middle" font-family="Public Sans" font-size="17" fill="#5B6180">tools over MCP &middot; judged</text>
+      <path d="M165 396 L165 340 L400 340 L400 324" stroke="#425CC7" stroke-width="3" fill="none" marker-end="url(#d-bl)"/>
+
+      <rect x="360" y="404" width="330" height="96" rx="10" fill="#F2ECE0" stroke="#425CC7" stroke-width="2"/>
+      <text x="525" y="440" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#202C5F">beaver-sre</text>
+      <text x="525" y="466" text-anchor="middle" font-family="Public Sans" font-size="17" fill="#5B6180">Python &middot; OpenInference</text>
+      <text x="525" y="488" text-anchor="middle" font-family="Public Sans" font-size="17" fill="#5B6180">normalized at the edge</text>
+      <path d="M525 396 L525 324" stroke="#425CC7" stroke-width="3" fill="none" marker-end="url(#d-bl)"/>
+
+      <rect x="720" y="404" width="330" height="96" rx="10" fill="#F2ECE0" stroke="#425CC7" stroke-width="2"/>
+      <text x="885" y="440" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#202C5F">otter-sre</text>
+      <text x="885" y="466" text-anchor="middle" font-family="Public Sans" font-size="17" fill="#5B6180">Python &middot; OpenLLMetry</text>
+      <text x="885" y="488" text-anchor="middle" font-family="Public Sans" font-size="17" fill="#5B6180">already conforming</text>
+      <path d="M885 396 L885 340 L750 340 L750 324" stroke="#425CC7" stroke-width="3" fill="none" marker-end="url(#d-bl)"/>
+
+
+      <!-- Right rail: one pipeline, everything on the left feeds it. -->
+      <path d="M1160 88 L1160 44 L1240 44" stroke="#5B6180" stroke-width="2" fill="none" stroke-dasharray="6 6" marker-end="url(#d-gy)"/>
+      <path d="M1160 452 L1160 396 L1240 396" stroke="#5B6180" stroke-width="2" fill="none" stroke-dasharray="6 6" marker-end="url(#d-gy)"/>
+      <path d="M1160 88 L1160 452" stroke="#5B6180" stroke-width="2" fill="none" stroke-dasharray="6 6"/>
+      <text x="1065" y="272" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#5B6180">every box</text>
+      <text x="1065" y="298" text-anchor="middle" font-family="Public Sans" font-size="19" fill="#5B6180">exports here</text>
+
+      <rect x="1250" y="0" width="430" height="88" rx="10" fill="#F2ECE0" stroke="#5B6180" stroke-width="2"/>
+      <text x="1465" y="37" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#202C5F">OTel Collector</text>
+      <text x="1465" y="66" text-anchor="middle" font-family="Public Sans" font-size="18" fill="#5B6180">one endpoint, every service</text>
+      <path d="M1465 96 L1465 172" stroke="#5B6180" stroke-width="3" fill="none" marker-end="url(#d-gy)"/>
+
+      <rect x="1250" y="180" width="430" height="88" rx="10" fill="#F2ECE0" stroke="#425CC7" stroke-width="3"/>
+      <text x="1465" y="217" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#202C5F">gen_ai_normalizer</text>
+      <text x="1465" y="246" text-anchor="middle" font-family="Public Sans" font-size="18" fill="#5B6180">originals kept, side by side</text>
+      <path d="M1465 276 L1465 352" stroke="#5B6180" stroke-width="3" fill="none" marker-end="url(#d-gy)"/>
+
+      <rect x="1250" y="360" width="430" height="88" rx="10" fill="#F2ECE0" stroke="#5B6180" stroke-width="2"/>
+      <text x="1465" y="397" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#202C5F">Jaeger &middot; Prometheus</text>
+      <text x="1465" y="426" text-anchor="middle" font-family="Public Sans" font-size="18" fill="#5B6180">and a vendor backend</text>
     </svg></div>
 
-    <p class="small" style="position:absolute;left:120px;top:800px;width:1680px">Then we ask each of them the same question: <span style="font-family:var(--font-mono);color:var(--ink)">&ldquo;Customers are reporting missing accounts. Investigate.&rdquo;</span></p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1360px;line-height:1.5">All three read the same rows, over MCP, and we ask all three the same question:<br><span style="font-family:var(--font-mono);color:var(--ink)">&ldquo;Customers are reporting missing accounts. Investigate.&rdquo;</span></p>
+    <img src="img/mascots/beaver-logs.png" alt="" class="mascot" style="right:110px;bottom:36px;width:178px">
   </section>
 
   <!-- 4.3 — L07 Figures -->
@@ -1570,8 +1615,9 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "Which raises the obvious question: why pick OpenTelemetry, rather than the one your framework already emits?",
   "Because they already agree more than the previous slide suggests.\n\nThree independent stacks here — a Python SDK, a Java one, and the output of a collector processor. Nobody coordinated. All three land on gen_ai.* names for the things that matter most: the model, the provider, the token counts.\n\nThe shared vocabulary is real, not aspirational. For the core dimensions — and that qualifier is load-bearing, because we'll show you where it breaks.\n\nAnd this is the argument for the specification rather than any one implementation of it. It is the only vocabulary here that nobody owns. Adopt a vendor's names and you inherit their roadmap and their commercial interest. Adopt the spec and everything downstream can read you — including the tools that don't exist yet.\n\n⚑ One sentence if the room looks sceptical: the other conventions filled a real gap when OTel had nothing, and OTel has since filled it. Choosing OTel today is a different call than two years ago, not a criticism of anyone who chose otherwise.",
   "And here's the argument that actually decides it.\n\nThe incident we opened with is a database incident with a language model in front of it. When rows go missing, the next span you need isn't a GenAI span. It's the SQL. The pod restart. The deploy that changed a grant.\n\nA GenAI-only convention gives you a GenAI-only island. Same six spans either way — but only one of them lets you join the model call to the thing it caused.\n\nWorth being precise: a shared vocabulary makes that join possible. Whether the context survives every hop is a separate problem, and we hit one where it doesn't.\n\n⚑ That “decisive advantage” is our position, not a measurement, and the slide says so. Reconcile with beat 6 before someone does it for you: what carried the attribution in our incident was the database's own audit trail, not the trace.",
+  "Beat four. Everything so far has been how agents are built and how they describe themselves. Now something breaks, and we find out what that description is worth. The setup is small on purpose: one table, three agents that can read it, and two different things that can delete from it. Watch for the moment where all three agents agree on what the data looks like now and none of them can tell you how it got that way.",
   "So let's stop talking about it in the abstract.\n\nThis is Capybara. It's an SRE agent that knows one thing — a customer database — and it has four tools. Three of them read. One of them deletes.\n\nThe one in amber is the interesting one: audit_log. That's the tool that answers who.",
-  "Here's what we built.\n\nFive capybaras in a Postgres table. Customers, on a free plan or a pro plan.\n\nThen a service from another team connects straight to that database. Not through the agent. Not through the MCP server. Straight in, as its own database role — and it deletes every free-plan row. Five rows become two.\n\nNobody's agent did that. Worth being explicit, because the title of this talk invites you to assume otherwise.\n\nThen we ask an agent — two of them, actually. Same question, same database, same collector. Customers are reporting missing accounts. Investigate.\n\nAnd the root cause isn't a bug. That role had DELETE on a table it has no business touching. Somebody granted it, and it was fine right up until it wasn't.\n\n⚑ One incident, one database, one collector — so anything that differs in the telemetry belongs to the platform, not the story. The row count is also a Prometheus gauge: the deletion shows up as a step from five to two before anyone asks a question. Mention that only if you'll show it.",
+  "Spend a moment here, because every later trace comes back to this picture. Bottom row, three investigators: capybara-sre is Java on langchain4j calling tools over MCP and scored by a judge, beaver-sre is Python on OpenInference and gets normalized at the edge, otter-sre is Python on OpenLLMetry and, as we found this week, already emits the conventions. Same prompt, same database, three vocabularies. Middle, one Postgres table with an audit trail that records the client name and the database role. Top row, two ways rows disappear: a rogue deployment from another team running a plain DELETE, and a developer's own Goose agent reaching production through an MCP server. Both hold the kangaroo role, so the database sees the same identity twice, which is the whole problem. Right rail, one collector, the normalizer, and the backends. Every box on the left exports there, which is why we can compare them at all.",
   "Before we read any of this telemetry, one thing you should know about it.\n\nHow much of the GenAI semantic conventions is Stable? Zero. Not “mostly”. Not “the important parts”. Every span, every attribute, every event and metric is marked Development — which means it can change underneath you, and it does.\n\nIn June the whole thing moved to its own repository, and that repository still has no versioned release. So you can follow a commit or a dated snapshot. There's no schema URL to pin.\n\nEverything after this slide is measured against a moving target. We'll tell you the versions.\n\n⚑ The sharpest example of revision drift is our own stack, so lead with that. gen_ai.prompt and gen_ai.completion were removed from the registry, replaced by gen_ai.input.messages and gen_ai.output.messages. The Java agent in this demo still emits the removed pair, on quarkus-langchain4j 1.12.2, which is the current release. Not a stale pin: a maintained extension, fully up to date, emitting attributes the specification deleted. Meanwhile the collector's normalizer produces the current keys for the Python agent, so one trace view shows both revisions at once. Measured 2026-08-13.\n\nA second example if you want one that is not us: OpenSearch's agent-health ships an OTel guide telling you to set gen_ai.system, which isn't in the registry any more, and gen_ai.tool.call_id where the registry says gen_ai.tool.call.id. Checked 2026-08-10. Not a criticism of them — it is what happens to everyone while a convention is Development.",
   "Now the good news, and it's genuinely good.\n\nThis arrives without you writing a line of instrumentation. The operation, the provider, the model, the token counts in and out, the finish reason. Plus the structural spans: invoke_agent, chat, execute_tool.\n\nThat's a conforming stack doing its job. Captured verbatim from a real run — nothing on this slide was hand-written.\n\nIf you're starting from nothing, this is a lot of value for one dependency.\n\n⚑ 983 input tokens reproduces — it's the deterministic first call. The output count and the response id change every run, which is beat 1's non-determinism turning up in our own slide.",
   "And the part everybody actually wants — what the tool was called with, and what it returned — is two configuration flags away.\n\nTurn them on, and the framework sets exactly the six attributes the convention defines. The arguments. The result. This is the part the documentation promises, and the documentation is right.\n\nIt's off by default, and that's a defensible default: the spec says instrumentation should not capture this unless you ask, because of privacy and payload size.\n\n⚑ Worth flagging for anyone about to copy this into production: these two flags put tool arguments and results into your traces. That's the forensic value and the privacy problem, in the same switch.",
