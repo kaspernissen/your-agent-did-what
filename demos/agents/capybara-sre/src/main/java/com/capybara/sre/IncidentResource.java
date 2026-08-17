@@ -15,34 +15,40 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Stage controls: cause the incident, and put things back.
+ * Stage controls: put the database back, and rehearse the deletion without a model.
  *
- * <h2>What the kangaroo is, honestly</h2>
+ * <h2>Why a rehearsal endpoint exists at all</h2>
  *
- * A neighbouring team's service connected straight to the capybara database and
- * deleted rows. This endpoint stands in for that service: it connects using the
- * {@code kangaroo} role's own credentials and issues the DELETE the way that service
- * would.
+ * The incident is caused by a coding agent. A developer asks goose to tidy up the free
+ * plan, goose calls {@code delete_records} on {@code prod-db-mcp}, and that server is
+ * holding {@code deploy_svc} credentials which carry DELETE. See
+ * {@code agents/goose/run-recipe.sh}; that is the real path and the one to demo.
  *
- * It is a fault injector living in the agent's process, not a separate deployment —
- * that keeps the demo to one binary. What is <em>not</em> faked is the part the
- * investigation depends on: the connection authenticates as {@code kangaroo}, so
- * Postgres records the deletion against that role, and the agent has to discover it
- * from the audit trail like it would any other client.
+ * It needs ollama and a local model, which a conference network cannot be relied on to
+ * make available. So this endpoint reproduces the database state that run leaves behind:
+ * it connects with the same {@code deploy_svc} credentials and issues the same DELETE.
  *
- * The root cause is real too. {@code kangaroo} can do this because it was granted
- * DELETE on a table it has no business deleting from — see {@code postgres/init.sql}.
- * That grant is the bug, and it is the thing a good diagnosis should name.
+ * Two honest caveats, because a stand-in that is mistaken for the real thing is worse
+ * than no stand-in. It produces no agent telemetry, so nothing in the trace explains
+ * <em>why</em> the rows went — which is exactly the evidence the talk is about. And the
+ * {@code client} column will read {@code goose} because this connection says so through
+ * ApplicationName, which is a self-reported label rather than an authenticated fact. That
+ * is true of the real run too, and it is the point: {@code db_user} is the only column
+ * Postgres vouches for.
+ *
+ * What is not faked either way is the root cause. {@code deploy_svc} can do this because
+ * it was granted DELETE on a table it has no business deleting from — see
+ * {@code postgres/init.sql}. That grant is the bug, and it is what a good diagnosis names.
  */
 @Path("/incident")
 public class IncidentResource {
 
     private static final Logger LOG = Logger.getLogger(IncidentResource.class);
 
-    /** The kangaroo's own credentials, so the audit trail attributes this correctly. */
+    /** The service account's own credentials, so the audit trail attributes this correctly. */
     @Inject
-    @DataSource("kangaroo")
-    javax.sql.DataSource kangarooDataSource;
+    @DataSource("deploy")
+    javax.sql.DataSource deployDataSource;
 
     @Inject
     CapybaraMetrics metrics;
@@ -57,20 +63,20 @@ public class IncidentResource {
     CapybaraDatabase db;
 
     @POST
-    @Path("/kangaroo")
+    @Path("/rehearse-deletion")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> kangarooRampage() {
-        try (Connection c = kangarooDataSource.getConnection();
+    public Map<String, Object> rehearseDeletion() {
+        try (Connection c = deployDataSource.getConnection();
              PreparedStatement ps = c.prepareStatement("DELETE FROM capybaras WHERE plan = 'free'")) {
             int deleted = ps.executeUpdate();
             // Attributed to the role, not to the client name the connection claims.
-            metrics.recordDeletion("kangaroo", deleted);
-            LOG.warnf("kangaroo-service deleted %d free-plan capybaras", deleted);
+            metrics.recordDeletion("deploy_svc", deleted);
+            LOG.warnf("rehearsal: deleted %d free-plan capybaras as deploy_svc", deleted);
             return Map.of("deleted", deleted,
-                          "by", "kangaroo-service (db role: kangaroo)",
+                          "by", "goose (db role: deploy_svc)",
                           "remaining", db.listRecords().size());
         } catch (SQLException e) {
-            LOG.error("kangaroo rampage failed", e);
+            LOG.error("rehearsal deletion failed", e);
             return Map.of("error", e.getMessage());
         }
     }

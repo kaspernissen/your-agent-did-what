@@ -68,17 +68,25 @@ CREATE TRIGGER capybaras_audit
 
 -- Two roles, because in a real system services do not share credentials.
 --
---   capybara_app  what the MCP server and the agent connect as. Read and write
---                 the table, which is what a customer-facing app needs.
---   kangaroo      a neighbouring team's service. It was granted DELETE on a table
---                 it has no business deleting from — the actual root cause of the
---                 incident, sitting in the grants rather than in anyone's code.
+--   capybara_app  what the read-only MCP server and the investigating agents connect
+--                 as. Read and write the table, which is what a customer-facing app
+--                 needs — and more than an investigator should hold. See ANALYSIS.md.
+--   deploy_svc    a deployment service account. The kind of credential a developer
+--                 legitimately has, in a .env file or a password manager, and the kind
+--                 they hand to a tool without thinking of it as handing over DELETE.
+--                 The root cause sits in this grant rather than in anyone's code.
 CREATE ROLE capybara_app LOGIN PASSWORD 'capybara_app';
 GRANT SELECT, INSERT, UPDATE, DELETE ON capybaras TO capybara_app;
 GRANT SELECT ON audit_log TO capybara_app;
 
-CREATE ROLE kangaroo LOGIN PASSWORD 'kangaroo';
-GRANT SELECT, DELETE ON capybaras TO kangaroo;   -- the over-grant. This is the bug.
+CREATE ROLE deploy_svc LOGIN PASSWORD 'deploy_svc';
+GRANT SELECT, DELETE ON capybaras TO deploy_svc;   -- the over-grant. This is the bug.
+
+-- Naming, because it is load-bearing for the demo. The audit trail records db_user, the
+-- role Postgres authenticated, and client, which the connection self-reports through
+-- ApplicationName. Those must stay different: db_user names a credential and client names
+-- whatever the caller claimed to be. An agent has no credential of its own, so the trail
+-- can only ever name the account it borrowed.
 
 -- Seed. Deliberately small so every row is accounted for on a slide. created_at
 -- gives the roster a stable order; UUIDs sort arbitrarily.

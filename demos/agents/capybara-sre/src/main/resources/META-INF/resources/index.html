@@ -154,7 +154,6 @@
   </div>
 
   <div class="stage" id="stage">
-    <button id="rampage" class="danger">&#129432; Unleash the kangaroos</button>
     <button id="reset" class="quiet">&#8634; Reset the database</button>
     <span id="state" class="state"></span>
   </div>
@@ -380,10 +379,6 @@
       btn.disabled = false;
     }
   }
-
-  $('rampage').addEventListener('click', () => stageAction($('rampage'), '/incident/kangaroo',
-    d => d.error ? ('failed: ' + d.error)
-                 : d.deleted + ' deleted by ' + d.by + ' — ' + d.remaining + ' left'));
 
   $('reset').addEventListener('click', () => stageAction($('reset'), '/incident/reset',
     d => d.records + ' capybaras restored, audit trail cleared'));

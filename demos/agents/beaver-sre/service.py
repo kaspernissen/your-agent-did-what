@@ -39,7 +39,7 @@ def investigate(prompt: str) -> dict:
 
     Nothing is staged or reset here. Beaver reads the same database Capybara does, so the
     incident is whatever actually happened — triggered from Capybara's console, by a
-    service authenticating as the kangaroo role. An agent that set up its own incident
+    coding agent borrowing the deploy_svc role. An agent that set up its own incident
     would be reporting on itself.
 
     A fresh agent per call: the trace id and tool calls it records are per-run state, and

@@ -30,16 +30,17 @@ Python · Anthropic SDK · instrumented by OpenInference · reads the same datab
 Emits no OTel vocabulary at all; the collector rewrites it in flight — most of it.</td>
 </tr>
 <tr>
-<td width="150" align="center"><img src="presentation/img/mascots/capybara-sprawled.png" width="120" alt="the kangaroos"></td>
-<td><strong>The kangaroos</strong> — a neighbouring team's service<br>
-Connects straight to Postgres as the <code>kangaroo</code> role and deletes every free-plan
-row. Nobody's agent did it, and the root cause is a grant rather than a bug.</td>
+<td width="150" align="center"><img src="presentation/img/mascots/capybara-sprawled.png" width="120" alt="the coding agent"></td>
+<td><strong>goose</strong> — a developer's own coding agent<br>
+Asked to tidy up the free plan. It calls <code>delete_records</code> on an MCP server holding
+<code>deploy_svc</code> credentials, which carry <code>DELETE</code>. Nobody granted the agent
+anything; the root cause is a grant rather than a bug.</td>
 </tr>
 </table>
 
-Both agents are asked the same question about the same incident: *"Customers are reporting
-missing accounts. Investigate."* One database, one collector — so anything that differs in
-the telemetry belongs to the platform, not to the story.
+All three agents are asked the same question about the same incident: *"Customers are
+reporting missing accounts. Investigate."* One database, one MCP server, one collector — so
+anything that differs in the telemetry belongs to the platform, not to the story.
 
 ---
 

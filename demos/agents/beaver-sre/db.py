@@ -3,7 +3,7 @@
 Three implementations behind one small interface:
 
   PostgresDatabase  the real one, and the same one Capybara reads. Both agents then
-                    report on the identical state, so when the kangaroos are unleashed
+                    report on the identical state, so when goose deletes the free plan
                     from Capybara's console, Beaver sees exactly that and nothing it
                     invented for itself.
 
@@ -13,7 +13,7 @@ Three implementations behind one small interface:
 
   InMemoryDatabase  for tests, and for running this agent with no cluster at all. It
                     seeds the *aftermath* — the free-plan rows already gone, with a
-                    matching audit trail — because standalone there is no kangaroo
+                    matching audit trail — because standalone there is no coding agent
                     button to press. That is a fabricated incident and the docstring
                     says so; the Postgres path fabricates nothing.
 
@@ -51,7 +51,7 @@ class InMemoryDatabase:
             self._records = [dict(r) for r in _ROSTER if r["plan"] != "free"]
             self._audit = [
                 {"operation": "DELETE", "user": r["user"], "plan": r["plan"],
-                 "client": "kangaroo-service", "db_user": "kangaroo"}
+                 "client": "goose", "db_user": "deploy_svc"}
                 for r in _ROSTER if r["plan"] == "free"
             ]
         else:

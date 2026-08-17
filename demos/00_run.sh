@@ -41,7 +41,7 @@ cat <<'DONE'
   Then, to walk the scenario:
 
     1. Reset the database, and show the five capybaras
-    2. Unleash the kangaroos — three rows gone, and not by the agent
+    2. Run agents/goose/run-recipe.sh — three rows gone, and not by these agents
     3. Watch capybara_records drop in Prometheus
     4. Ask Capybara what happened; read the judge
     5. Ask Beaver the same thing, and open its trace

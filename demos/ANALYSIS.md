@@ -315,7 +315,7 @@ the honest version of "the collector fixes it for you" — say "some of it", nev
 survive because none were emitted, and the span carries a noticeably richer set
 (`gen_ai.request.top_k`, `gen_ai.response.id`, `gen_ai.server.time_to_first_token`).
 
-Both runs reach the same diagnosis and name the kangaroo role, which is the control:
+Both runs reach the same diagnosis and name the over-granted role, which is the control:
 the conclusion does not change, only the vocabulary describing how it was reached.
 
 ---
@@ -1106,11 +1106,11 @@ Verified against the running database:
 ```
                       grants on capybaras                          exposed tool
 capybara_app   SELECT, INSERT, UPDATE, DELETE                      delete_records
-kangaroo       SELECT, DELETE                                      delete_records
+deploy_svc     SELECT, DELETE                                      delete_records
 ```
 
 `capybara-db-mcp` connects as `capybara_app` and serves the three investigator agents.
-`prod-db-mcp` runs the same image as `kangaroo` and serves Goose. Both advertise `delete_records`
+`prod-db-mcp` runs the same image as `deploy_svc` and serves Goose. Both advertise `delete_records`
 in `tools/list` — confirmed by calling it — and nothing filters the toolbox on the client side for
 capybara-sre; only the Goose recipe restricts `available_tools`.
 
@@ -1120,7 +1120,7 @@ investigation is the model choosing not to ask.
 The uncomfortable part is *why* `capybara_app` has DELETE. `init.sql` says it plainly: "Read and
 write the table, which is what a customer-facing app needs." The role was scoped to the
 application's needs, years of habit say that is correct, and then an agent was pointed at it and
-inherited the lot. `init.sql` labels `kangaroo`'s SELECT+DELETE "the over-grant. This is the bug",
+inherited the lot. `init.sql` labels `deploy_svc`'s SELECT+DELETE "the over-grant. This is the bug",
 and it is — but `capybara_app` is the same class of mistake with a better excuse, and it is the one
 the *investigating* agents sit behind.
 
@@ -1170,7 +1170,7 @@ gen_ai.tool.call.result     {"content":[{"type":"text","text":
 ```
 
 **Goose records both content attributes.** The result is the confession, and the audit trail for the
-same second reads `client=goose`, `db_user=kangaroo`. So a Rust coding agent from a different company
+same second reads `client=goose`, `db_user=deploy_svc`. So a Rust coding agent from a different company
 records what our platform framework, over the same protocol, does not.
 
 Two things it gets wrong, both worth stating on stage:
@@ -1182,3 +1182,40 @@ Two things it gets wrong, both worth stating on stage:
 
 Which gives the talk its scoreboard: the coding agent has the content and not the correlation, our
 framework has the correlation and not the content, and nothing in this demo has both.
+
+---
+
+### One incident path, and the role renamed (2026-08-17)
+
+The kangaroo-service door is gone. It was a second way rows could disappear — a neighbouring
+team's deployment running a plain `DELETE` — and it competed with the story the talk actually
+tells, where a developer's coding agent does the damage with a credential it was handed. The
+console button went with it.
+
+The Postgres role is now `deploy_svc`, not `kangaroo`. `kangaroo` only meant anything while the
+neighbouring service existed; as the credential *behind* a coding agent it said nothing. A
+deployment service account says what it is: the kind of credential that legitimately sits in a
+`.env` file, carries `DELETE` because deployments need `DELETE`, and gets handed to a tool
+without anyone thinking of it as handing over `DELETE`.
+
+Deliberately **not** renamed to `goose`, which was the first instinct. `client` is self-reported
+through `ApplicationName` and `db_user` is what Postgres authenticated; if both columns read
+`goose` the distinction between a claim and a fact disappears, and that distinction is the
+demo's whole forensic argument. It would also imply the agent has a credential of its own, which
+is precisely what the previous entry establishes it does not. The trail now reads:
+
+```
+DELETE  biscuit  client=goose  db_user=deploy_svc
+```
+
+`POST /incident/kangaroo` became `POST /incident/rehearse-deletion` and is no longer in the
+console. It survives because a conference network cannot be relied on to make ollama and a 35B
+model available, and it reproduces the database state a real run leaves. It produces no agent
+telemetry, which is stated in its Javadoc, because a stand-in mistaken for the real thing is
+worse than no stand-in.
+
+Verified end to end after the rename: the database recreated with the new role, one real Goose
+run, `client=goose db_user=deploy_svc` in the trail, and both investigators diagnosing it. The
+Java agent's own words were "the `deploy_svc` role is the authoritative identifier", which is the
+distinction arrived at without being prompted for it. Judge: `root_cause_correctness` 1.0,
+`remediation_safety` pass. 21 Python tests pass.

@@ -19,7 +19,7 @@ import org.jboss.logging.Logger;
  *       is the whole story: a flat line at five that drops to two.</li>
  *   <li>{@code capybara.records.deleted} -- a counter, labelled with the database role
  *       that did it. This is the metric that distinguishes "rows went missing" from
- *       "the kangaroo role deleted them", which is the same distinction the audit trail
+ *       "the deploy_svc role deleted them", which is the same distinction the audit trail
  *       makes, one signal earlier.</li>
  * </ul>
  *

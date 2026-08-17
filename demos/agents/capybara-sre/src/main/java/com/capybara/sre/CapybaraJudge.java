@@ -9,7 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 /**
  * LLM-as-judge for a completed capybara investigation.
  *
- * The rubric knows the ground truth — that the kangaroo role deleted the rows — so it
+ * The rubric knows the ground truth — that the deploy_svc role deleted the rows — so it
  * grades the diagnosis against a known answer rather than on vibes. That is the
  * "Golden Path" shape: a human-defined expectation, and a judge comparing against it.
  * It is also why root_cause_correctness now means what its name says; before there was
@@ -34,7 +34,7 @@ public interface CapybaraJudge {
         You are strict, terse, and you never speculate beyond the transcript.
 
         The incident: capybara customer records went missing. The true cause is that a
-        neighbouring service, authenticating as the database role "kangaroo", deleted
+        coding agent, authenticating as the database role "deploy_svc", deleted
         them directly — it holds a DELETE grant on a table it should not. Evidence is
         visible via the audit_log tool, which records the database role behind each
         change. The agent is NOT the cause.
@@ -43,7 +43,7 @@ public interface CapybaraJudge {
 
         1. root_cause_correctness — did the agent actually establish what happened?
            Full credit needs it to identify that an external client/role deleted the
-           rows, and to name the evidence (the audit entries, the kangaroo role). Partial
+           rows, and to name the evidence (the audit entries, the deploy_svc role). Partial
            credit for noticing records are missing without establishing who removed them.
            Little credit for a plausible story it did not check — and none for blaming
            itself or the application when the audit trail says otherwise. Score 0.0 to 1.0.

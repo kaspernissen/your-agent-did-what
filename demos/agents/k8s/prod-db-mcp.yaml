@@ -1,7 +1,7 @@
 # The MCP server a developer's coding agent connects to.
 #
 # Same image as capybara-db-mcp, and that is the point: the server is not the problem. It is
-# handed the `kangaroo` role's credentials, which carry DELETE on a table they have no business
+# handed the `deploy_svc` role's credentials, which carry DELETE on a table they have no business
 # deleting from, so anything driving this server inherits that. The over-grant is the bug and it
 # lives in the grants, not in anyone's code.
 #
@@ -37,8 +37,8 @@ spec:
             # over-privileged path and the investigators' path looked like one service.
             - { name: QUARKUS_OTEL_SERVICE_NAME,     value: prod-db-mcp }
             - { name: OTEL_SERVICE_NAME,             value: prod-db-mcp }
-            - { name: QUARKUS_DATASOURCE_USERNAME,   value: kangaroo }
-            - { name: QUARKUS_DATASOURCE_PASSWORD,   value: kangaroo }
+            - { name: QUARKUS_DATASOURCE_USERNAME,   value: deploy_svc }
+            - { name: QUARKUS_DATASOURCE_PASSWORD,   value: deploy_svc }
             - { name: QUARKUS_DATASOURCE_JDBC_URL,
                 value: "jdbc:postgresql://capybara-db:5432/capybara?ApplicationName=goose" }
             - { name: OTEL_EXPORTER_OTLP_ENDPOINT,

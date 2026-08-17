@@ -28,7 +28,7 @@ spec:
                   key: api-key
             - name: CAPYBARA_MCP_URL
               value: "http://capybara-db-mcp:8086/mcp/sse"
-            # One variable serves all three datasources — app, kangaroo and admin —
+            # One variable serves all three datasources — app, deploy and admin —
             # because each appends its own ApplicationName to this base URL.
             - name: CAPYBARA_DB_URL
               value: "jdbc:postgresql://capybara-db:5432/capybara"

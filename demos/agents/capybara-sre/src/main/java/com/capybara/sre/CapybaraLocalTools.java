@@ -46,7 +46,7 @@ public class CapybaraLocalTools {
     public String delete_records(@P(value = "plan whose records to delete; omit to delete ALL", required = false) String plan) {
         var result = db.deleteRecords(blankToNull(plan));
         // The application connects as capybara_app, so that is the role the database saw.
-        // Counting agent deletions under the same metric as the kangaroo's is the point:
+        // Counting agent deletions under the same metric as the service account's is the point:
         // one graph, and the label says which of them did it.
         metrics.recordDeletion("capybara_app", result.deleted());
         return result.toString();

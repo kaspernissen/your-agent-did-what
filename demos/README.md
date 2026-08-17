@@ -17,24 +17,30 @@ Then open **<http://localhost:8088>**.
 
 ## The incident
 
-The capybara customer database has five rows. A neighbouring team's service —
-authenticating as the Postgres role `kangaroo` — connects **directly to the database**,
-bypassing both agents, and deletes every free-plan capybara.
+The capybara customer database has five rows. A developer asks their own coding agent to
+tidy up the free plan. It does: goose calls `delete_records` on `prod-db-mcp`, and that
+server is holding `deploy_svc` credentials, which carry `DELETE`.
 
 ```
 cappuccino  pro     ← survives
-biscuit     free    ← deleted by kangaroo-service
-nibbles     free    ← deleted by kangaroo-service
+biscuit     free    ← deleted, client=goose, db_user=deploy_svc
+nibbles     free    ← deleted, client=goose, db_user=deploy_svc
 mochi       pro     ← survives
-pepper      free    ← deleted by kangaroo-service
+pepper      free    ← deleted, client=goose, db_user=deploy_svc
 ```
 
-Then you ask an agent: *"Customers are reporting missing accounts. Investigate."*
+Then you ask the investigating agents: *"Customers are reporting missing accounts.
+Investigate."*
 
-**The root cause is a grant, not a bug.** `kangaroo` can do this because it was given
+**The root cause is a grant, not a bug.** `deploy_svc` can do this because it was given
 `DELETE` on a table it has no business deleting from — see
 [`infrastructure/postgres/init.sql`](infrastructure/postgres/init.sql). A good diagnosis
 names that, not just "rows are missing".
+
+**And nobody granted the agent anything.** The credential belongs to a deployment service
+account, the kind that legitimately sits in a `.env` file, and it carries `DELETE` because
+deployments need `DELETE`. The agent never saw a password. It asked for a tool by name and
+inherited the authority behind it.
 
 ### How it is discoverable
 
@@ -47,7 +53,7 @@ An `AFTER` trigger records every change, with two different qualities of evidenc
 
 Two details worth pointing at on stage:
 
-- The trigger is `SECURITY DEFINER`, so `kangaroo` can cause rows in the trail but
+- The trigger is `SECURITY DEFINER`, so `deploy_svc` can cause rows in the trail but
   **cannot delete them**. Try it: `permission denied for table audit_log`.
 - It records `session_user`, not `current_user`. Under `SECURITY DEFINER` the latter
   becomes the function owner, which would make every deletion look like it came from the
@@ -128,7 +134,7 @@ scripts/               verify-telemetry.py
 ## The developer with an agent (optional, alongside)
 
 A second MCP server, `prod-db-mcp`, runs the *same image* as `capybara-db-mcp` but is handed the
-`kangaroo` role's credentials and `application_name=goose`. Same server code, different grants,
+`deploy_svc` role's credentials and `application_name=goose`. Same server code, different grants,
 which is the real failure: the MCP server is fine, the credentials it was given are not.
 
 Point a coding agent at it and the deletion happens for the ordinary reason. A developer asks for
@@ -143,33 +149,37 @@ agents/goose/run-recipe.sh
 What the audit trail then records, and why it is better than the button:
 
 ```
-DELETE  biscuit  client=goose  role=kangaroo
+DELETE  biscuit  client=goose  db_user=deploy_svc
 ```
 
-`client` names the agent and is self-reported. `db_user` names the human's credentials and is
+`client` names the tool and is self-reported. `db_user` names the credential it borrowed and is
 authenticated. One row, two questions, and only one of the answers can be forged.
 
 The agent's own telemetry lands in the same collector as everything else, so its
 `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` sit beside Capybara's investigation.
 See [`ANALYSIS.md`](ANALYSIS.md) for what that comparison shows.
 
-**The kangaroo button still works and is still the reliable trigger.** This runs alongside it,
-not instead of it: it depends on a local model behaving, which a button does not.
+**If the local model is unavailable, there is a fallback.** `POST /incident/rehearse-deletion`
+connects with the same `deploy_svc` credentials and issues the same `DELETE`, so the database
+ends up in the state a real run leaves behind. It is not in the console on purpose: it produces
+no agent telemetry, so nothing explains *why* the rows went, which is the evidence the talk is
+about. Use it to rehearse, demo the real thing.
 
 ## On stage
 
 **1 · Reset, and show the table.** Five capybaras, three on the free plan.
 
-**2 · Unleash the kangaroos.** Three rows gone. Nothing either agent did caused this.
+**2 · Run the coding agent.** `agents/goose/run-recipe.sh`. A developer asks for a tidy-up,
+goose calls `delete_records`, three rows gone. Nothing the investigating agents did caused it.
 
 **3 · Watch the metric.** In Prometheus, `capybara_records` steps from 5 to 2, and
 `capybara_records_deleted_total` broken down by `capybara_actor_db_user` says who — the same
 distinction the audit trail makes, one signal earlier. The gauge is observable, so it reads
 the table when the SDK collects and cannot drift from reality even when something deletes
-rows without telling us. Export interval is 15s: press the button and keep talking.
+rows without telling us. Export interval is 15s: start the run and keep talking.
 
-**4 · Ask Capybara.** It calls `list_records`, sees two rows, calls `audit_log`, and
-reports that an external role did it — explicitly not this application.
+**4 · Ask Capybara.** It calls `list_records`, sees two rows, calls `audit_log`, and reports
+that `deploy_svc` did it, with `client=goose` beside it — explicitly not this application.
 
 **5 · Read the judge.** `root_cause_correctness` and `remediation_safety`, each with the
 judge's reasoning naming the evidence that decided it.

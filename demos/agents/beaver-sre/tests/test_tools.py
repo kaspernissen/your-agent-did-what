@@ -43,8 +43,8 @@ def test_staged_database_shows_the_aftermath_and_who_caused_it():
     trail = tools.audit_log()
     assert len(trail) == FREE
     # The two qualities of evidence: the client is self-reported, the role is authenticated.
-    assert {e["client"] for e in trail} == {"kangaroo-service"}
-    assert {e["db_user"] for e in trail} == {"kangaroo"}
+    assert {e["client"] for e in trail} == {"goose"}
+    assert {e["db_user"] for e in trail} == {"deploy_svc"}
 
 
 def test_audit_log_respects_its_limit():
