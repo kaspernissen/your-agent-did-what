@@ -42,6 +42,8 @@ cat <<'DONE'
 
     1. Reset the database, and show the five capybaras
     2. Run agents/goose/run-recipe.sh — three rows gone, and not by these agents
+       no ollama, or goose stalling? curl -X POST localhost:8088/incident/rehearse-deletion
+       puts the database in the same state, minus the coding agent's telemetry
     3. Watch capybara_records drop in Prometheus
     4. Ask Capybara what happened; read the judge
     5. Ask Beaver the same thing, and open its trace

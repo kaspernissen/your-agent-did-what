@@ -159,11 +159,29 @@ The agent's own telemetry lands in the same collector as everything else, so its
 `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` sit beside Capybara's investigation.
 See [`ANALYSIS.md`](ANALYSIS.md) for what that comparison shows.
 
-**If the local model is unavailable, there is a fallback.** `POST /incident/rehearse-deletion`
-connects with the same `deploy_svc` credentials and issues the same `DELETE`, so the database
-ends up in the state a real run leaves behind. It is not in the console on purpose: it produces
-no agent telemetry, so nothing explains *why* the rows went, which is the evidence the talk is
-about. Use it to rehearse, demo the real thing.
+### The extra door
+
+`POST /incident/rehearse-deletion` reproduces this incident without goose, ollama or a model. It
+connects with the same `deploy_svc` credentials and issues the same `DELETE`, so the database, the
+audit trail, the metric and every investigation built on top of them behave identically.
+
+```sh
+curl -X POST http://localhost:8088/incident/rehearse-deletion
+# {"deleted":3,"remaining":2,"by":"goose (db role: deploy_svc)"}
+```
+
+It exists because this is the one step in the demo that depends on a laptop cooperating, and a
+conference is a poor place to find out that it will not. Use it to rehearse, and keep it in reach
+on stage.
+
+Two things it does not do, both deliberate. It produces **no agent telemetry**, so nothing in any
+trace explains *why* the rows went — which is precisely the evidence this talk is about, so the
+coding-agent slides have nothing to show if you use it. And it reports `client=goose` through
+`ApplicationName` even though no goose ran, which is honest in a way worth noticing: `client` is
+self-reported, so a connection claiming to be goose is exactly what the forgeable column looks
+like. `db_user` still says `deploy_svc`, because that one Postgres vouches for.
+
+It is not in the console, so nobody clicks it by accident while the room is watching.
 
 ## On stage
 
@@ -171,6 +189,20 @@ about. Use it to rehearse, demo the real thing.
 
 **2 · Run the coding agent.** `agents/goose/run-recipe.sh`. A developer asks for a tidy-up,
 goose calls `delete_records`, three rows gone. Nothing the investigating agents did caused it.
+
+> **The extra door.** This step is the one that depends on things outside the cluster: ollama
+> running, the model loaded, a laptop that has not decided to throttle. If it stalls, or the
+> model wanders off and never calls the tool, do not debug it on stage:
+>
+> ```sh
+> curl -X POST http://localhost:8088/incident/rehearse-deletion
+> ```
+>
+> Same `deploy_svc` credentials, same `DELETE`, same audit trail — the database lands exactly
+> where a real run leaves it, so steps 3 to 7 all work unchanged. What you lose is goose's own
+> telemetry, so skip the coding-agent trace and say you are showing the investigation side. It
+> is a deliberate escape hatch, not a cheat, but it is worth saying out loud if the room can see
+> the terminal.
 
 **3 · Watch the metric.** In Prometheus, `capybara_records` steps from 5 to 2, and
 `capybara_records_deleted_total` broken down by `capybara_actor_db_user` says who — the same
@@ -240,3 +272,5 @@ All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
 | no SQL spans anywhere | `quarkus.datasource.jdbc.telemetry=true` is opt-in. Worth knowing: "we use OTel" does not mean every layer is instrumented |
 | the agent boots with no tools | it resolves its tool list at startup and the MCP server was not up. `agents/deploy.sh` orders this correctly |
 | a schema change seems not to apply | `init.sql` only runs on an empty data directory. `infrastructure/deploy.sh` stamps its hash on the pod template so a change recreates the pod |
+| goose stalls, or the model never calls the tool | do not debug it live. `curl -X POST http://localhost:8088/incident/rehearse-deletion` puts the database in the same state with the same `deploy_svc` credentials. You lose the coding agent's telemetry and nothing else |
+| the local model is not installed at all | same door. The investigation half of the demo needs no model beyond the agents' own |

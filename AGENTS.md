@@ -9,7 +9,7 @@ number in one place without the other is the main way to do damage here.
 
 ```
 presentation/     the deck — 52 slides, plus a conformance checker and a geometry audit
-demos/            the demo — two agents, one incident, one collector, in kind
+demos/            the demo — three agents, one incident, one collector, in kind
   agents/         capybara-sre (Java) · capybara-db-mcp · capybara-db-core · beaver-sre (Python)
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
   observability/  collector, jaeger and prometheus values

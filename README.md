@@ -42,6 +42,12 @@ All three agents are asked the same question about the same incident: *"Customer
 reporting missing accounts. Investigate."* One database, one MCP server, one collector — so
 anything that differs in the telemetry belongs to the platform, not to the story.
 
+The deletion is a real coding-agent run against a local model. When that is inconvenient —
+no ollama, or a laptop having a bad day — `POST /incident/rehearse-deletion` reproduces the
+database state with the same credentials, so the investigation half of the demo stands on its
+own. See [`demos/README.md`](demos/README.md#the-extra-door) for what that door does and does
+not give you.
+
 ---
 
 ## What's in here

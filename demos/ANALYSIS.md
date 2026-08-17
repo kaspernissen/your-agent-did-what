@@ -1209,10 +1209,20 @@ DELETE  biscuit  client=goose  db_user=deploy_svc
 ```
 
 `POST /incident/kangaroo` became `POST /incident/rehearse-deletion` and is no longer in the
-console. It survives because a conference network cannot be relied on to make ollama and a 35B
-model available, and it reproduces the database state a real run leaves. It produces no agent
-telemetry, which is stated in its Javadoc, because a stand-in mistaken for the real thing is
-worse than no stand-in.
+console. **Kept deliberately, and documented as the extra door**: the goose run is the one step in
+the demo that depends on a laptop cooperating, and a conference is a poor place to discover that it
+will not. The endpoint reproduces the database state, the audit trail and the metric, so steps three
+onward behave identically.
+
+Two things it does not reproduce, both stated in its Javadoc and in `README.md`. No agent telemetry,
+so nothing explains *why* the rows went, which means the coding-agent slides have nothing to show if
+you use it. And it reports `client=goose` through `ApplicationName` although no goose ran — honest in
+a useful way, since it is exactly what the forgeable column looks like when something claims an
+identity. `db_user` still reads `deploy_svc`, which is the column Postgres vouches for.
+
+Documented in five places, because an escape hatch nobody can find under pressure is not an escape
+hatch: the stage walkthrough in `demos/README.md`, its own section there, two rows in that file's
+troubleshooting table, the walkthrough `00_run.sh` prints after a deploy, and the root `README.md`.
 
 Verified end to end after the rename: the database recreated with the new role, one real Goose
 run, `client=goose db_user=deploy_svc` in the trail, and both investigators diagnosing it. The
