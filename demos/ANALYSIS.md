@@ -1288,7 +1288,7 @@ exceptions in the speaker notes — they make the point better than the overstat
 
 ---
 
-### Can the MCP context gap be fixed from our side? Measured: no (2026-08-17)
+### Can the MCP context gap be fixed from our side? Measured: yes (2026-08-17)
 
 quarkiverse/quarkus-mcp-server **#789 is still open** — checked against the GitHub API, not from memory:
 "Tracing context is not propagated into e.g. tool executions", two comments, never closed. So there is no
@@ -1321,13 +1321,46 @@ with no OpenTelemetry context at all, which matches #789's description of a new 
 underneath one span we control. So you can make the tool body's own work coherent; what you cannot do from
 inside the tool method is attach it to the caller, because nothing in scope knows the caller's span.
 
-What would fix it: #789 landing, or the framework exposing a hook around tool dispatch so the server span's
-context can be re-attached. A third option exists and is ugly enough to mention only as a thought
-experiment — pass `traceparent` as a tool argument and re-parent explicitly, which works and puts
-transport concerns in your tool signature.
+**And then we fixed it.** MCP already carries what is needed, so the framework does not have to change.
 
-The experiment was reverted; `CapybaraDbTools` carries no annotations. Worth keeping the result because
-"we tried and here is what it proves" is a better answer on stage than "the framework has a bug".
+`traceparent` travels in the request's `params._meta` — the unprefixed key SEP-414 reserves — and
+quarkus-mcp-server hands that map to the tool as a `Meta` parameter. `MetaKey.of("traceparent")` reads it.
+So the tool extracts the caller's context itself and starts its span against that parent:
+
+```java
+Context parent = openTelemetry.getPropagators().getTextMapPropagator()
+        .extract(Context.root(), meta, META_GETTER);
+Span span = tracer.spanBuilder("execute_tool " + toolName).setParent(parent).startSpan();
+try (Scope ignored = span.makeCurrent()) { return body.get(); } finally { span.end(); }
+```
+
+Measured before and after, same prompt, same tools:
+
+```
+propagation off   18-21 spans   SQL in the agent's trace: no
+propagation on    27 spans      SQL in the agent's trace: yes
+
+  capybara-sre     tools/call audit_log
+    capybara-db-mcp  tools/call audit_log
+    capybara-db-mcp  execute_tool audit_log        <- ours, parented from _meta
+      capybara-db-mcp  DataSource.getConnection
+      capybara-db-mcp  SELECT capybara.audit_log   <- the query that touched the rows
+```
+
+`capybara.mcp.propagate-context` switches it, defaulting to on, so the gap stays demonstrable:
+
+```sh
+kubectl set env deployment/capybara-db-mcp CAPYBARA_MCP_PROPAGATE_CONTEXT=false
+```
+
+Note what the workaround also buys: the span is named `execute_tool <name>` and carries
+`gen_ai.operation.name` and `gen_ai.tool.name`, so the server side now has a conforming tool span it did
+not have before — and it is the obvious place to attach `gen_ai.tool.call.arguments` and `.result` if you
+want them.
+
+So the honest position moves from "the framework has a bug, wait for #789" to "the framework has a bug,
+here are twenty lines that close it, and the protocol already carried what those lines needed". That is a
+better thing to say on stage and a better thing to post on the issue.
 
 One operational note earned the hard way while running it: restarting `capybara-db-mcp` under a live agent
 kills the agent's MCP session and the next request returns 500. Restart the server first, then the agent —
