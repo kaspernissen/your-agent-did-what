@@ -1,11 +1,15 @@
 """Where the capybara records live, for Beaver.
 
-Two implementations behind one small interface:
+Three implementations behind one small interface:
 
   PostgresDatabase  the real one, and the same one Capybara reads. Both agents then
                     report on the identical state, so when the kangaroos are unleashed
                     from Capybara's console, Beaver sees exactly that and nothing it
                     invented for itself.
+
+  McpDatabase       the same rows, reached over MCP through capybara-db-mcp rather than
+                    directly, so this agent executes its tools where Capybara executes its.
+                    See mcp_db.py for why that matters to the comparison.
 
   InMemoryDatabase  for tests, and for running this agent with no cluster at all. It
                     seeds the *aftermath* — the free-plan rows already gone, with a
@@ -22,6 +26,8 @@ role is authenticated.
 from __future__ import annotations
 
 import os
+
+import mcp_db
 
 DSN_ENV = "CAPYBARA_DB_DSN"
 APPLICATION_NAME = "beaver-sre"
@@ -119,6 +125,15 @@ class PostgresDatabase:
 
 
 def from_env():
-    """Postgres when a DSN is configured, otherwise the hermetic stand-in."""
+    """MCP when a server is configured, else Postgres when a DSN is, else the stand-in.
+
+    MCP is checked first because it is the interesting path: it makes this agent reach the
+    table the same way Capybara does, through `capybara-db-mcp`, so the two differ only in
+    what writes their telemetry. The DSN path stays for running the agent against a bare
+    database with no MCP server in front of it.
+    """
+    url = os.environ.get(mcp_db.URL_ENV, "").strip()
+    if url:
+        return mcp_db.McpDatabase(url)
     dsn = os.environ.get(DSN_ENV, "").strip()
     return PostgresDatabase(dsn) if dsn else InMemoryDatabase()

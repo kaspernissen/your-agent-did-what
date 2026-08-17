@@ -1036,7 +1036,59 @@ only agent whose tool body runs across a process boundary is the only one missin
 the result. That is the same conclusion the local-versus-MCP test reached inside one binary, reached
 a second way, so it is corroboration rather than a flaw — but it must be stated, not glossed.
 
-Making them genuinely equivalent means pointing beaver and otter at `capybara-db-mcp` through the
-Python MCP SDK instead of importing `tools.py`. That is the experiment that would isolate the
-variable properly, because then all three would differ only in instrumentation library. Worth doing
-if the talk wants to claim a like-for-like tool comparison; not required for the claims it makes now.
+**Done, 2026-08-17.** `mcp_db.py` gives the Python agents an `McpDatabase` with the same four
+methods, and `from_env()` prefers it whenever `CAPYBARA_MCP_URL` is set, so all three agents now run
+their tools in the same other process and differ only in what writes the telemetry. Results below.
+
+---
+
+### With the variable isolated: nobody records the tool content (2026-08-17)
+
+All three agents now call the same four tools on the same MCP server. Measured on one run each,
+same prompt, same table:
+
+| span | emitted by | attrs | carries arguments | carries result |
+|---|---|---|---|---|
+| `tools/call list_records` (client) | quarkus-langchain4j MCP listener | 6 | no | no |
+| `MCP send tools/call list_records` | **the MCP Python SDK's own instrumentation** | 4 | no | no |
+| `tools/call list_records` (server) | quarkus-mcp-server | 12 | no | no |
+| `audit_log` | our code, OpenInference vocabulary | 12 | yes | as `output.value` |
+| `execute_tool audit_log` | our code, OTel vocabulary | 8 | yes | **yes** |
+
+Three independent MCP implementations appear in one trace — a Java client, a Python client and a
+Java server — and none of them records what the tool was given or what it returned. The convention
+defines `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` for exactly these spans and marks
+them `Opt-In`. Every implementation took the opt-out. The only telemetry carrying the content is the
+spans we wrote by hand.
+
+That is a stronger claim than the one the talk started with. It is not "one framework is behind"; it
+is "the content is available at every hop and nobody stores it by default".
+
+#### Two things worth knowing about mcp 2.x
+
+**It ships its own OpenTelemetry instrumentation.** `mcp/shared/_otel.py` provides `otel_span`,
+`inject_trace_context` and `extract_trace_context`, and the client emits `MCP send <method>` spans.
+`mcp/server/_otel.py` sets `gen_ai.operation.name=execute_tool` and `gen_ai.tool.name`. So the SDK
+implements the convention's *structure* and skips only the two opt-in content attributes.
+
+**Trace context crosses without help.** `inject_trace_context` writes W3C traceparent into the
+request's `_meta`, which is the SEP-414 mechanism the convention prescribes, and
+quarkus-mcp-server reads the same envelope. Verified by removing our own injection: the Python
+agent's 19-span trace still spans both services, with `capybara-db-mcp / tools/call audit_log`
+parented to `beaver-sre / MCP send tools/call audit_log`. So on this path, propagation is solved and
+only content is missing.
+
+Note the API changed from 1.x: `streamable_http_client` (not `streamablehttp_client`) yields two
+streams rather than three, and it talks `httpx2`, so `opentelemetry-instrumentation-httpx` does not
+see it.
+
+#### Cost of the change
+
+A session per tool call, mirroring the Postgres path's connection per call. That means `initialize`
+and `tools/list` on every call, so a two-tool investigation carries four extra spans. Honest, and
+visible in the trace, but if the stage traces look cluttered the fix is to hold one session per
+conversation.
+
+The `SELECT` from the tool body is still a one-span root trace, from both clients. Same server, same
+quarkiverse/quarkus-mcp-server#789, regardless of who calls it — which is now demonstrated rather
+than assumed.

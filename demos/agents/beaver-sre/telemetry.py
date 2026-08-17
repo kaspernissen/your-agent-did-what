@@ -61,7 +61,23 @@ def configure(agent_name: str) -> trace.Tracer:
         _configure_openllmetry(agent_name)
     else:
         _configure_plain(agent_name)
+    _instrument_http()
     return trace.get_tracer(TRACER_NAME)
+
+
+def _instrument_http() -> None:
+    """Instrument httpx, which is what the Anthropic SDK talks.
+
+    Transport rather than vocabulary, so it runs whichever instrumentation was selected. It
+    gives the model call an HTTP child span, the same shape the Java agent shows. It does not
+    cover the MCP client: mcp 2.x uses httpx2, and mcp_db.py carries trace context itself
+    through MCP's _meta. Missing package is not an error.
+    """
+    try:
+        from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+    except ImportError:
+        return
+    HTTPXClientInstrumentor().instrument()
 
 
 def _configure_openlit(agent_name: str) -> None:

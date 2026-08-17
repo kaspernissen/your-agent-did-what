@@ -5,6 +5,16 @@ anthropic>=0.40
 
 # Beaver reads the same PostgreSQL Capybara does, so both report identical state.
 psycopg[binary]>=3.2
+
+# CAPYBARA_MCP_URL → reach the same tools over MCP instead, the way Capybara does.
+# 2.x, whose client API differs from 1.x: streamable_http_client yields two streams, and
+# call_tool takes the `_meta` map that carries trace context. See mcp_db.py.
+mcp>=2.0
+
+# Spans for the Anthropic SDK's own HTTP calls, which mirrors what the Java agent shows.
+# Note this does NOT cover the MCP client: mcp 2.x talks httpx2 and ships its own OTel
+# instrumentation, including traceparent in MCP's _meta. See mcp_db.py.
+opentelemetry-instrumentation-httpx>=0.48b0
 opentelemetry-api>=1.27
 opentelemetry-sdk>=1.27
 opentelemetry-exporter-otlp-proto-http>=1.27
