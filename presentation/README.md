@@ -25,6 +25,21 @@ presentation/
   design-system/       # the vendored design-system reference sheet LAYOUTS.md is drawn from
 ```
 
+## Rendering a slide to check it
+
+The conformance checker cannot see overlap, clipping or contrast, and every layout defect found in
+this deck was found by rendering. Screenshot one slide at 1920x1080:
+
+```sh
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+  --hide-scrollbars --allow-file-access-from-files --force-device-scale-factor=1 \
+  --window-size=1920,1080 --screenshot=out.png "file://$PWD/slide.html"
+```
+
+`--allow-file-access-from-files` is not optional. Without it the `employer-mark` logos silently
+render as nothing, because they are painted with `mask-image` pointing at a file URL — which looks
+exactly like a broken slide and is not one. Costs an afternoon if you forget.
+
 ## Mascots
 
 `img/mascots/` holds 43 cut-out PNGs, cropped from four character sheets — capybara, beaver, otter
