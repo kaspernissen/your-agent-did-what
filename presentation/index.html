@@ -83,12 +83,27 @@
     </div>
   </section>
 
-  <!-- 0.4 — L03 Statement -->
-  <section data-label="The morning after" class="ground-paper">
+  <!-- 1.2 — L04 Text + diagram -->
+  <section data-label="We keep changing what we have to understand" class="ground-paper">
     <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The problem</p>
-    <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">It deleted the rows. The incident is over. Now prove <span class="amber-text" data-emphasis="amber">why</span>.</h2>
-    <p class="small" style="position:absolute;left:120px;top:860px">The logs say the call succeeded. The trace says it took four seconds. Neither says what it was thinking.</p>
+    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">We keep changing what we have to understand</h2>
+    <div style="position:absolute;left:120px;right:120px;top:470px">
+      <div class="axis" style="left:0;right:0;top:0"></div>
+      <div style="position:relative;display:flex;justify-content:space-between">
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
+        <div class="axis-node is-amber is-halo" style="position:relative;left:0;top:0;margin:-13px 0 0" data-emphasis="amber"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:44px">
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px">Monolith</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Microservices</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Event-driven</span>
+        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:right">LLM applications</span>
+      </div>
+    </div>
+    <p class="body" style="position:absolute;left:120px;top:760px;width:1450px">Each step solved a real problem and added complexity somewhere else. Building got steadily easier. <strong style="font-weight:600">Understanding got harder every single time.</strong></p>
+    <p class="small" style="position:absolute;left:120px;top:900px">We are four architectures deep and still reaching for tools designed for the first one.</p>
   </section>
 
   <!-- 1.1 — L02 Section divider -->
@@ -148,6 +163,31 @@
     <p class="small" style="position:absolute;left:120px;top:830px;width:1680px">Most of this you can already observe. The one on the right is the one that decides what to do while it is running, and that is the part this talk is about.</p>
   </section>
 
+
+  <!-- 1.x — L04 · the words, once, so nobody is lost for the next half hour -->
+  <section data-label="Terminology" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">The words, once</p>
+    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1560px;font-size:64px">Five words we will use for the next half hour</h2>
+    <div style="position:absolute;left:120px;right:120px;top:320px;display:grid;grid-template-columns:230px 1fr;gap:20px 30px;align-items:baseline">
+      <span style="font-family:var(--font-mono);font-size:26px;color:var(--blue)">provider</span>
+      <span style="font-size:27px;font-weight:300;color:var(--ink)">Whoever hosts and serves the model. Anthropic, OpenAI, or your own Ollama.</span>
+
+      <span style="font-family:var(--font-mono);font-size:26px;color:var(--blue)">model</span>
+      <span style="font-size:27px;font-weight:300;color:var(--ink)">The thing that generates. Claude Sonnet, GPT, Qwen.</span>
+
+      <span style="font-family:var(--font-mono);font-size:26px;color:var(--blue)">MCP</span>
+      <span style="font-size:27px;font-weight:300;color:var(--ink)">How an agent is handed tools it did not ship with. An API designed for models rather than people.</span>
+
+      <span style="font-family:var(--font-mono);font-size:26px;color:var(--amber-text)" data-emphasis="amber">agent</span>
+      <span style="font-size:27px;font-weight:300;color:var(--ink)">A model, instructions, tools, and a loop: observe, reason, act, evaluate, repeat until done.</span>
+
+      <span style="font-family:var(--font-mono);font-size:26px;color:var(--blue)">harness</span>
+      <span style="font-size:27px;font-weight:300;color:var(--ink)">What runs the agent: memory, lifecycle, observability. goose, Claude Code and Copilot are both agent and harness.</span>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:876px;width:1680px">The loop is the word that matters. Everything difficult about observing this comes from the fact that it repeats a decision you did not write.</p>
+  </section>
+
   <!-- 1.3 — L04 Text + diagram -->
   <!-- 1.2 — L03 · the vocabulary, defined once, on the demo scenario -->
   <section data-label="What an agent is made of" class="ground-paper">
@@ -198,6 +238,38 @@
     <p class="small" style="position:absolute;left:120px;top:900px">The first three are uncomfortable. The fourth is the one this talk is about.</p>
   </section>
 
+  <!-- 1.x — L03 · the stakes, without the scaremongering -->
+  <section data-label="Why should we care" class="ground-ink">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Why this matters</p>
+    <h2 class="title" style="position:absolute;left:120px;top:210px;width:1600px;font-size:64px">Nobody builds an agent to do something <span class="amber-text" data-emphasis="amber">destructive</span></h2>
+    <div class="axis-list" style="position:absolute;left:120px;top:420px;width:1680px">
+      <p class="axis-list-item">They are built to be useful, given tools, and pointed at real systems.</p>
+      <p class="axis-list-item">Without guardrails, useful and destructive are the same capability.</p>
+      <p class="axis-list-item">When one does something you did not expect, the questions are always the same three: what did it decide, which tools did it use, and why.</p>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:860px;width:1680px">You cannot mitigate what you cannot reconstruct. Everything after this is about whether your telemetry can answer those three.</p>
+  </section>
+
+  <section data-label="Two ways you meet an agent" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Two audiences, one dependency</p>
+    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">You either build one, or you run someone else's</h2>
+    <div style="position:absolute;left:120px;right:120px;top:420px;display:grid;grid-template-columns:1fr 1fr;gap:90px">
+      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)">You build it</span>
+        <span style="font-size:32px;font-weight:300;line-height:1.4">LangChain, LangGraph, Spring AI, LangChain4j. You choose the framework, so you choose what it emits.</span>
+        <span style="font-size:26px;line-height:1.45;color:var(--muted-ink);margin-top:auto">Your problem: which convention, and what it leaves out.</span>
+      </div>
+      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
+        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-text)">You run someone else's</span>
+        <span style="font-size:32px;font-weight:300;line-height:1.4">kagent, HolmesGPT, k8sgpt, Copilots in your tooling. You did not choose the instrumentation.</span>
+        <span style="font-size:26px;line-height:1.45;margin-top:auto">Two problems, not one. It <em>reads</em> your telemetry, so it is only as good as what it reads — and it <em>acts</em> on your systems, so <span class="amber-text" data-emphasis="amber">you need its telemetry too</span>.</span>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1650px">Most of us are both. The conventions are what make the second case survivable, which is why the first case matters even if you never build an agent.</p>
+  </section>
+
   <!-- 1.4 — L07 Figures · one aligned column -->
   <section data-label="Every familiar signal has a new equivalent" class="ground-paper">
     <div class="deck-footer"></div>
@@ -234,7 +306,6 @@
     <p class="small" style="position:absolute;left:120px;top:900px">The old practice was right for its time. We have to build the equivalents.</p>
   </section>
 
-
   <!-- 02 — L02 Section divider -->
   <section data-label="Divider — 02" class="ground-ink">
     <div class="diagonal-split" style="background:var(--amber)"></div>
@@ -267,6 +338,7 @@
       <circle cx="840.0" cy="200" r="9" fill="#425CC7"/>
       <text x="840.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">OpenLLMetry</text>
       <text x="840.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">llm.request.model</text>
+      <text x="840.0" y="326" text-anchor="middle" font-family="Public Sans" font-size="18" fill="#1B7F5A">now gen_ai.request.model</text>
       <path d="M840 96 C840 150 1176.0 140 1176.0 196" fill="none" stroke="#A9B6EE" stroke-width="2"/>
       <circle cx="1176.0" cy="200" r="9" fill="#425CC7"/>
       <text x="1176.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">LangSmith</text>
@@ -276,7 +348,36 @@
       <text x="1512.0" y="256" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="500" fill="#10142E">Langfuse</text>
       <text x="1512.0" y="300" text-anchor="middle" font-family="JetBrains Mono" font-size="21" fill="#5B6180">model</text>
     </svg></div>
-    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call, described five different ways. OTel GenAI is what the others are converging on. Keep an eye on <strong style="font-weight:600;color:var(--ink)">OpenInference</strong>: we come back to it when we normalize.</p>
+    <p class="small" style="position:absolute;left:120px;top:830px;width:1600px">The same HTTP call, described five different ways. And the converging is not hypothetical: <strong style="font-weight:600;color:var(--ink)">OpenLLMetry already emits <span style="font-family:var(--font-mono)">gen_ai.*</span></strong> as of 0.62.3, measured this week. Keep an eye on OpenInference: we come back to that one when we normalize.</p>
+  </section>
+
+  <!-- 2.x — L04 · the distinction nobody makes, and it changes what you get -->
+  <section data-label="Two kinds of instrumentation" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">Where the telemetry comes from</p>
+    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1600px;font-size:62px">Instrumenting the <span class="amber-text" data-emphasis="amber">agent</span> is not instrumenting the SDK</h2>
+    <div style="position:absolute;left:120px;right:120px;top:330px;display:flex;gap:24px;align-items:stretch">
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:26px 28px">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--amber-text)">THE AGENT INSTRUMENTS ITSELF</span>
+        <p style="font-size:25px;font-weight:300;line-height:1.4;color:var(--ink);margin:12px 0 16px">It knows the loop, the tools and the session, because it is the thing running them.</p>
+        <div style="font-family:var(--font-mono);font-size:20px;color:var(--muted-ink);line-height:1.9">
+          Claude Code &rarr; OTel Node SDK<br>
+          goose &rarr; OTel Rust SDK<br>
+          LangChain &rarr; its own, on an older revision
+        </div>
+      </div>
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:26px 28px">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">SOMETHING WRAPS THE SDK</span>
+        <p style="font-size:25px;font-weight:300;line-height:1.4;color:var(--ink);margin:12px 0 16px">A library patches the provider client. It sees calls, not intent.</p>
+        <div style="font-family:var(--font-mono);font-size:20px;color:var(--muted-ink);line-height:1.9">
+          OpenLLMetry<br>
+          OpenInference<br>
+          OTel GenAI instrumentation
+        </div>
+      </div>
+    </div>
+    <p class="small" style="position:absolute;left:120px;top:820px;width:1680px">Provider coverage differs between them, and so do the attribute names. Two products doing the same job can disagree about what to call the model.</p>
+    <p class="small" style="position:absolute;left:120px;top:898px;width:1680px">It matters which one you have: only the first can tell you why a tool was called, because only the first was there when it was decided.</p>
   </section>
 
   <!-- 03 — L02 Section divider -->
@@ -654,6 +755,39 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
     <p class="small" style="position:absolute;left:120px;top:860px;width:1680px">Except the tool&rsquo;s result travels in <span style="font-family:var(--font-mono)">output.value</span>, and <span style="font-family:var(--font-mono)">mappings.go</span> has no entry for it. <strong style="font-weight:600;color:var(--ink)">The same missing half beat 4 found by a different road.</strong> A normalizer answers vocabulary drift; it does not answer forensic content.</p>
   </section>
 
+  <!-- 5.x — L07 · the convergence is real, and it is narrower than it sounds -->
+  <section data-label="The code converges, the vocabulary does not" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:120px;margin:0">Both of these were offered to OpenTelemetry</p>
+    <h2 class="title" style="position:absolute;left:120px;top:186px;width:1620px;font-size:60px">The code is converging. The <span class="amber-text" data-emphasis="amber">vocabulary</span> is not, yet.</h2>
+
+    <div style="position:absolute;left:120px;right:120px;top:340px;display:flex;gap:24px;align-items:stretch">
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:26px 28px">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">OPENLLMETRY &middot; TRACELOOP</span>
+        <p style="font-size:26px;font-weight:300;line-height:1.4;color:var(--ink);margin:14px 0 10px">Offered its instrumentations in <strong style="font-weight:600">February 2025</strong>. Over forty of them.</p>
+        <p style="font-size:24px;font-weight:300;line-height:1.4;color:var(--muted-ink);margin:0">Closed sixteen months later, unlanded.</p>
+        <p style="font-family:var(--font-mono);font-size:19px;color:var(--muted-ink);margin:16px 0 0">community#2571</p>
+      </div>
+      <div class="chamfer" style="flex:1;background:var(--paper-2);padding:26px 28px">
+        <span style="font-family:var(--font-mono);font-size:19px;letter-spacing:.14em;color:var(--blue)">OPENINFERENCE &middot; ARIZE</span>
+        <p style="font-size:26px;font-weight:300;line-height:1.4;color:var(--ink);margin:14px 0 10px">Offered May 2026. <strong style="font-weight:600">Accepted by the governance committee in June.</strong></p>
+        <p style="font-size:24px;font-weight:300;line-height:1.4;color:var(--muted-ink);margin:0">A code grant: the instrumentations, not the project.</p>
+        <p style="font-family:var(--font-mono);font-size:19px;color:var(--muted-ink);margin:16px 0 0">community#3467</p>
+      </div>
+    </div>
+
+    <p class="small" style="position:absolute;left:120px;top:766px;width:1680px">Read the scope line, because it is the one that matters here: the OpenInference <em>specification and semantic conventions are explicitly out of scope</em>. OpenTelemetry keeps its own.</p>
+    <p class="small" style="position:absolute;left:120px;top:880px;width:1680px">So the instrumentation consolidates and the attribute names do not, at least not by this route. Which is exactly why the thing in the middle of your pipeline still has work to do.</p>
+  </section>
+
+  <!-- 0.4 — L03 Statement -->
+  <section data-label="The morning after" class="ground-paper">
+    <div class="deck-footer"></div>
+    <p class="kicker" style="position:absolute;left:120px;top:150px;margin:0">The problem</p>
+    <h2 class="title" style="position:absolute;left:120px;top:280px;width:1520px;font-size:104px">It deleted the rows. The incident is over. Now prove <span class="amber-text" data-emphasis="amber">why</span>.</h2>
+    <p class="small" style="position:absolute;left:120px;top:860px">The logs say the call succeeded. The trace says it took four seconds. Neither says what it was thinking.</p>
+  </section>
+
   <!-- 06 — L02 Section divider -->
   <section data-label="Divider — 06" class="ground-ink">
     <img src="img/mascots/capybara-investigating.png" alt="" class="mascot" style="right:120px;bottom:60px;width:175px;z-index:1">
@@ -986,48 +1120,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
       <h2 style="font-family:var(--font-display);font-size:86px;font-weight:500;line-height:1.05;letter-spacing:-.03em;color:var(--ink);margin:0">Appendix</h2>
       <p style="font-size:36px;font-weight:300;color:var(--on-ink);margin:28px 0 0;max-width:900px">Cut for time, not because they are wrong. Kept so a question has a slide.</p>
     </div>
-  </section>
-
-  <section data-label="Two ways you meet an agent" class="ground-paper">
-    <div class="deck-footer"></div>
-    <p class="kicker" style="position:absolute;left:120px;top:130px;margin:0">Two audiences, one dependency</p>
-    <h2 class="title" style="position:absolute;left:120px;top:200px;width:1500px;font-size:72px">You either build one, or you run someone else's</h2>
-    <div style="position:absolute;left:120px;right:120px;top:420px;display:grid;grid-template-columns:1fr 1fr;gap:90px">
-      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
-        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)">You build it</span>
-        <span style="font-size:32px;font-weight:300;line-height:1.4">LangChain, LangGraph, Spring AI, LangChain4j. You choose the framework, so you choose what it emits.</span>
-        <span style="font-size:26px;line-height:1.45;color:var(--muted-ink);margin-top:auto">Your problem: which convention, and what it leaves out.</span>
-      </div>
-      <div class="chamfer" style="background:var(--paper-2);padding:44px 48px;display:flex;flex-direction:column;gap:18px">
-        <span style="font-family:var(--font-mono);font-size:22px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber-text)">You run someone else's</span>
-        <span style="font-size:32px;font-weight:300;line-height:1.4">kagent, HolmesGPT, k8sgpt, Copilots in your tooling. You did not choose the instrumentation.</span>
-        <span style="font-size:26px;line-height:1.45;margin-top:auto">Two problems, not one. It <em>reads</em> your telemetry, so it is only as good as what it reads — and it <em>acts</em> on your systems, so <span class="amber-text" data-emphasis="amber">you need its telemetry too</span>.</span>
-      </div>
-    </div>
-    <p class="small" style="position:absolute;left:120px;top:880px;width:1650px">Most of us are both. The conventions are what make the second case survivable, which is why the first case matters even if you never build an agent.</p>
-  </section>
-
-  <!-- 1.2 — L04 Text + diagram -->
-  <section data-label="We keep changing what we have to understand" class="ground-paper">
-    <div class="deck-footer"></div>
-    <h2 class="title" style="position:absolute;left:120px;top:120px;width:1400px;font-size:72px">We keep changing what we have to understand</h2>
-    <div style="position:absolute;left:120px;right:120px;top:470px">
-      <div class="axis" style="left:0;right:0;top:0"></div>
-      <div style="position:relative;display:flex;justify-content:space-between">
-        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
-        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
-        <div class="axis-node is-hollow" style="position:relative;left:0;top:0;margin:-13px 0 0"></div>
-        <div class="axis-node is-amber is-halo" style="position:relative;left:0;top:0;margin:-13px 0 0" data-emphasis="amber"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:44px">
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px">Monolith</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Microservices</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:center">Event-driven</span>
-        <span style="font-family:var(--font-display);font-size:38px;font-weight:500;width:300px;text-align:right">Agent-based</span>
-      </div>
-    </div>
-    <p class="body" style="position:absolute;left:120px;top:760px;width:1450px">Each step solved a real problem and added complexity somewhere else. Building got steadily easier. <strong style="font-weight:600">Understanding got harder every single time.</strong></p>
-    <p class="small" style="position:absolute;left:120px;top:900px">We are four architectures deep and still reaching for tools designed for the first one.</p>
   </section>
 
   <!-- 1.5 — L05 Waterfall -->
@@ -1463,14 +1555,18 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
 [
   "Good morning. This is “Your Agent Did What?” — the subtitle is doing a lot of work, so it can stay on screen rather than be read out.\n\nThere are two of us up here because we hit this problem separately, on different stacks, and arrived at the same uncomfortable place.\n\nQRs in the corners if you want to find us afterwards.\n\n⚑ Hold here while the room settles.",
   "Twenty seconds each, and the slide has the credentials so they don't need reading out.\n\nThe part that matters later: we're both CNCF ambassadors, and both AI-agent ambassadors for the AAIF. That second one comes back at the end, when we talk about the agent you're already running and probably not watching.\n\n⚑ If anyone asks about the capybara: one of us genuinely loves them, which is why the demo agent is called Capybara and why there's one asleep in the footer of every slide.",
-  "Here's the situation this talk is about.\n\nRows are gone. The incident is over — nobody's asking you to stop it. They're asking you to explain it. Why did this happen, and can you prove it.\n\nAnd you go looking. The logs say the call succeeded. The trace says it took four seconds. Neither of them says what it was thinking, or what it actually touched.\n\nThat gap — between “something happened” and “here is why” — is the whole talk. Everything else is us trying to close it with the tools we already have.\n\n⚑ Don't name a culprit here. The reveal later is that no agent did this, and saying otherwise now contradicts that in twenty minutes.",
+  "Some context for why this is hard, and it is not because agents are magic.\n\nWe keep changing the shape of what we have to understand. Monolith to microservices to event-driven to LLM applications. Each step solved a real problem and moved complexity somewhere else.\n\nBuilding got steadily easier every time. Understanding got harder every time.\n\nWe are four architectures deep and still reaching for tools designed for the first one.\n\n⚑ Adriana's framing: the fourth era is LLM applications rather than agents, because the scope is broader than the agent sitting inside one.",
   "First, why this is a different problem rather than a harder version of the old one.",
   "Before we get specific, one level up.\n\nWhen people say \"we shipped an LLM feature\", this is usually what they mean. There is orchestration that builds the prompts and keeps the state. A model, hosted or called over an API. Retrieval, so the answers are grounded in your data. Tools and agents, which take actions. And underneath it all, ordinary application scaffolding.\n\nMost of this you already know how to operate. The database, the HTTP calls, the auth, the storage. Your existing instrumentation covers it.\n\nIt is the box on the right that is new, because it is the only one that decides what to do while it is running. That is the part this talk is about.\n\n⚑ Do not linger. This exists so nobody is lost when we say \"agent\" for the next thirty minutes, and so the room sees that the agent is a component rather than the whole system.",
+  "Five words, quickly, so nobody is decoding vocabulary while we talk.\n\nProvider is whoever hosts the model. Model is the thing that generates. MCP is how an agent gets handed tools it did not ship with, an API designed for models rather than people.\n\nAn agent is a model, some instructions, some tools, and a loop: observe, reason, act, evaluate, and round again until it decides it is done.\n\nAnd a harness is what runs the agent. Memory, lifecycle, observability. goose, Claude Code and Copilot are all three of those at once, which is why they are both the thing you observe and the thing doing the observing.\n\n⚑ Do not lecture, most of the room knows some of these. The one to land is the loop: everything difficult later comes from a decision that repeats and that you did not write.",
   "An agent is a loop.\n\nThere's a model, and there's a list of tools you handed it. The model doesn't run anything — it picks the next step. Something else executes that step, feeds the result back, and the loop goes round again until the model says it's finished. MCP is just how it gets handed tools it didn't ship with. Tokens are the billing unit, and usually the only cost signal you get.\n\nTwo things here are yours: the prompt, and the tool list. That's it.\n\nHow many model calls, which tools, in what order — decided at runtime, every time. Which means you cannot read the path off the code. You have to observe it.\n\n⚑ This diagram is the demo, made abstract. When Capybara turns up later, it is this.",
   "So what is actually different about operating this.\n\nFour things, and the first three are uncomfortable rather than novel. It is non-deterministic, so re-running it does not reproduce the bug. The call graph is generated at runtime, so it is not declared anywhere you can read. And the cost model is tokens, not requests per second, so your capacity intuition does not transfer.\n\nThe fourth is the one this talk is about. When it does something, there is no stack trace for why it chose that.\n\n⚑ Do not oversell the first three, most of the room has met them. Slow down on the fourth; everything after this beat is an attempt to close that gap with the tools we already have.",
+  "Worth being clear about the stakes, because this is not a talk about malicious AI.\n\nNobody builds an agent to do something destructive. They build it to be useful, they give it tools, and they point it at real systems. And without guardrails, useful and destructive are the same capability pointed at different rows.\n\nSo when one does something you did not expect, the questions are always the same three. What did it decide. Which tools did it use. And why.\n\nYou cannot mitigate what you cannot reconstruct. The rest of this talk is whether your telemetry can answer those three, and we will find that it answers two of them.\n\n⚑ Land the last line deliberately. It sets up beat 6, where the third question turns out to have no field in any convention.",
+  "And there are two ways you meet one of these, which is worth separating because the problems are different.\n\nEither you build it, with LangChain, LangGraph, Spring AI, LangChain4j. Then you chose the framework, so you chose what it emits, and your problem is which convention and what it leaves out.\n\nOr you run somebody else's. kagent, HolmesGPT, k8sgpt, the copilots already in your tooling. You did not choose the instrumentation.\n\nThat second case has two problems rather than one. It reads your telemetry, so it is only as good as what it reads. And it acts on your systems, so you need its telemetry too.\n\nMost of us are both. The conventions are what make the second case survivable, which is why the first case matters even if you never build an agent.",
   "And the useful way to think about it is not that our practice is wrong. It is that it is incomplete.\n\nEverything we rely on has an equivalent on the other side. A stack trace becomes a reasoning chain. A status code becomes a quality signal, because a run can succeed and still be wrong. Requests per second becomes tokens, cost and blast radius. A static call graph becomes tool invocations decided at runtime. And a replayable request becomes a run you cannot replay.\n\nNone of those equivalents exist by default. We have to build them, and the rest of this talk is about how far the conventions get you.\n\n⚑ This is the slide to point back to in beat 7. The judge is the quality signal in that right-hand column, made real.",
   "So we observe it. And immediately there's a problem: nobody agrees on what to call any of it.",
-  "One HTTP call to one model. Five different names for the model.\n\nOpenTelemetry says gen_ai.request.model. OpenInference says llm.model_name. OpenLLMetry has its own. So does LangSmith. So does Langfuse.\n\nNone of these people were being difficult. Each convention was built for a real job: tracing, evaluation, prompt management. Each optimised for that job.\n\nBut the consequence is yours to carry. Your dashboard, your alert, your query works on one vendor's spans and silently returns nothing on another's.\n\nRemember OpenInference, the thick branch. We come back to it later and rewrite it in flight.\n\n⚑ Don't name the second agent yet, it hasn't been introduced. And don't say \"the amber one\": name the convention, or the room has to decode the colour scheme to follow you.",
+  "One HTTP call to one model. Five different names for the model.\n\nOpenTelemetry says gen_ai.request.model. OpenInference says llm.model_name. OpenLLMetry has its own. So does LangSmith. So does Langfuse.\n\nNone of these people were being difficult. Each convention was built for a real job: tracing, evaluation, prompt management. Each optimised for that job.\n\nBut the consequence is yours to carry. Your dashboard, your alert, your query works on one vendor's spans and silently returns nothing on another's.\n\nRemember OpenInference, the thick branch. We come back to it later and rewrite it in flight.\n\n⚑ Don't name the second agent yet, it hasn't been introduced. And don't say \"the amber one\": name the convention, or the room has to decode the colour scheme to follow you. Correction worth carrying, measured 2026-08-17: OpenLLMetry 0.62.3 no longer emits its own names. Its Anthropic instrumentation sets GEN_AI_REQUEST_MODEL, GEN_AI_INPUT_MESSAGES and GEN_AI_OUTPUT_MESSAGES, which is the current convention including the new message shape. So of the five branches, one has already converged, and it did it on the newest revision rather than the one our own Java stack is on.",
+  "A distinction that took us a while to see, and it changes what you get.\n\nThere are two completely different places this telemetry can come from.\n\nThe agent can instrument itself. It knows the loop, the tools and the session, because it is the thing running them. Claude Code does this on the OTel Node SDK, goose on the Rust one, LangChain with its own, currently on an older revision of the conventions.\n\nOr something wraps the provider SDK from the outside. OpenLLMetry, OpenInference, the OTel GenAI instrumentation. Those see the calls, but not the intent behind them.\n\nIt matters which one you have. Only the first can tell you why a tool was called, because only the first was there when it was decided.\n\n⚑ Also worth saying: provider coverage differs between these libraries, and so do the attribute names. Two products doing the same job disagree about what to call the model, which is the next slide.",
   "Which raises the obvious question: why pick OpenTelemetry, rather than the one your framework already emits?",
   "Because they already agree more than the previous slide suggests.\n\nThree independent stacks here — a Python SDK, a Java one, and the output of a collector processor. Nobody coordinated. All three land on gen_ai.* names for the things that matter most: the model, the provider, the token counts.\n\nThe shared vocabulary is real, not aspirational. For the core dimensions — and that qualifier is load-bearing, because we'll show you where it breaks.\n\nAnd this is the argument for the specification rather than any one implementation of it. It is the only vocabulary here that nobody owns. Adopt a vendor's names and you inherit their roadmap and their commercial interest. Adopt the spec and everything downstream can read you — including the tools that don't exist yet.\n\n⚑ One sentence if the room looks sceptical: the other conventions filled a real gap when OTel had nothing, and OTel has since filled it. Choosing OTel today is a different call than two years ago, not a criticism of anyone who chose otherwise.",
   "And here's the argument that actually decides it.\n\nThe incident we opened with is a database incident with a language model in front of it. When rows go missing, the next span you need isn't a GenAI span. It's the SQL. The pod restart. The deploy that changed a grant.\n\nA GenAI-only convention gives you a GenAI-only island. Same six spans either way — but only one of them lets you join the model call to the thing it caused.\n\nWorth being precise: a shared vocabulary makes that join possible. Whether the context survives every hop is a separate problem, and we hit one where it doesn't.\n\n⚑ That “decisive advantage” is our position, not a measurement, and the slide says so. Reconcile with beat 6 before someone does it for you: what carried the attribution in our incident was the database's own audit trail, not the trace.",
@@ -1484,6 +1580,8 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "There are two places to fix a vocabulary problem, and they're both legitimate.\n\nDownstream, in the collector: you don't touch the applications, it works for any language, and the policy lives in one place your platform team already runs.\n\nOr upstream, in the SDK: cleaner data at the source, but per-framework, and today largely Java-only.\n\nBoth target OpenTelemetry's names. Platforms will mostly want the collector.\n\n⚑ Arconia is the upstream example — Thomas Vitale's work. One property, and Spring AI re-emits under a different convention with no code change.",
   "So here's the collector doing it.\n\nThis is a second agent — Python, instrumented by OpenInference. It emits no OpenTelemetry vocabulary whatsoever. llm.provider, llm.model_name, llm.token_count, and its own idea of what kind of span this is.\n\nOne processor in the pipeline, and the names change in flight. Thirty-nine source attributes come in; seven gen_ai.* attributes get written.\n\nWe deliberately keep the originals, so you can see both. Turn that off and it deletes whatever it managed to map — which leaves only the leftovers on the span, and reads like the library emitted an odd subset.\n\nOne rides straight through: llm.system. It's simply not in the mapping table.\n\n⚑ Alpha, traces only, no auto-detection — but the OpenTelemetry Demo runs this processor too. The span is still named messages.create: the operation name is an attribute, not the span name.",
   "And it converts more than you'd expect. Not just the model call — the whole shape. Its agent span becomes invoke_agent. Its tool spans become execute_tool. The tool name, the call id, the arguments all come across.\n\nThen look at what doesn't.\n\nThe tool's result travels in a key called output.value, and there is no entry for it in the mapping table. So the arguments convert and the result doesn't.\n\nWhich is the same missing half we found on the MCP path, reached by a completely different road. A normalizer answers vocabulary drift. It does not answer forensic content.\n\n⚑ Read at contrib 0.158.0. We haven't filed it — fair thing for someone in the room to pick up.",
+  "One more thing about where this is going, and it is more interesting than \"everyone is converging\".\n\nBoth of these vendors offered their instrumentation to OpenTelemetry.\n\nTraceloop offered OpenLLMetry in February 2025. Over forty instrumentations. It sat, and it was closed sixteen months later having never landed.\n\nArize offered OpenInference in May 2026, and the governance committee accepted it in June.\n\nBut read what was actually donated. It is a code grant: the instrumentations, not the project, and the OpenInference specification and semantic conventions are explicitly out of scope. OpenTelemetry keeps its own.\n\nSo the instrumentation consolidates and the attribute names do not. Not by this route. Which is why the thing in the middle of your pipeline still has work to do.\n\n⚑ Dates and outcomes checked against the issues on 2026-08-17: #2571 opened 2025-02-13, closed 2026-06-16 unlanded, with \"we would love to work with you in the GenAI SIG\". #3467 opened 2026-05-23, GC voted to accept 2026-06-16. If asked what this means practically: your llm.model_name does not become gen_ai.request.model because of the donation. And here is the twist worth landing: Traceloop's code donation never landed, and they converged the vocabulary anyway. OpenLLMetry 0.62.3 emits gen_ai.* natively, on the current revision. So convergence happened without the donation, which is the opposite of what the issue timeline would lead you to expect. The slide title is still right, just not for the reason you would guess: the code consolidated by grant, and the vocabulary consolidated by someone deciding to.",
+  "Here's the situation this talk is about.\n\nRows are gone. The incident is over — nobody's asking you to stop it. They're asking you to explain it. Why did this happen, and can you prove it.\n\nAnd you go looking. The logs say the call succeeded. The trace says it took four seconds. Neither of them says what it was thinking, or what it actually touched.\n\nThat gap — between “something happened” and “here is why” — is the whole talk. Everything else is us trying to close it with the tools we already have.\n\n⚑ Don't name a culprit here. The reveal later is that no agent did this, and saying otherwise now contradicts that in twenty minutes.",
   "Which brings us to the question the incident actually needs answered.",
   "This is the investigation, as a trace. Nineteen seconds, twenty-one spans.\n\nThe two thin bars are the tool calls. Fifty-five milliseconds and eight milliseconds — sixty-three between them. Nought point three percent of the trace, and the only part that answers the question.\n\nEverything wide is the model thinking, or the judge judging.\n\nThat's the shape of an agent trace: almost entirely waiting, with the decisive part too small to see.\n\nAnd the SELECTs those two tool calls ran? They're not in this trace at all. Hold that thought.\n\n⚑ All measured off one run — don't promise the numbers reproduce. The widest bar is usually the HTTP POST under the model call: free from your existing instrumentation, and carrying no GenAI meaning. Here that's 2.35 of the 2.51 seconds.",
   "Here's where they went.\n\nThe agent called the tool. That call crossed the network, and the context crossed with it — the MCP server's own span is right there, correctly parented. So propagation worked.\n\nThen the server hands the tool off to run on a fresh execution context, and the OpenTelemetry context doesn't come with it. The query that tool made starts its own trace. One span, orphaned, nothing pointing at it.\n\nTwo things about that. We had server-side MCP tracing switched off for weeks without noticing, because the default is off — turning it on is what put those spans in the picture at all.\n\nAnd we didn't paper over the rest with a hand-written span. We couldn't honestly: that database work has no parent to attach to.\n\n⚑ quarkus-mcp-server #789, open since May, root-caused to one method, maintainer says “no ETA”. If Streamable HTTP comes up from the floor: measured, and it's worse — the server then emits no span at all.",
@@ -1498,8 +1596,6 @@ quarkus.langchain4j.tracing.<span class="c-attr">include-tool-result</span>=true
   "One last thing, and it's the cheapest experiment in this talk.\n\nThe agent worth instrumenting first isn't in production. It's the one on your laptop, editing your repository, running your commands. Claude Code, Copilot, Cursor — they take an OTLP endpoint, and they'll tell you token spend, tool calls, session length.\n\nPoint it at the collector you already run. It costs about ten minutes.\n\nAnd it's the same forensic question as everything else today, one layer closer to home: your coding agent changed something. Can you prove what?\n\n⚑ This is the AAIF ambassador tie-back from the intro. Ten minutes is honest — it's an env var and an endpoint.\n\n⚑ Corrected 2026-08-13 against Goose's own docs. GOOSE_TELEMETRY_ENABLED is anonymous usage analytics, a different thing, and off by default. OTel export needs no Goose-specific flag: set OTEL_EXPORTER_OTLP_ENDPOINT and it exports, with OTEL_{SIGNAL}_EXPORTER for per-signal control. That is a better story than a vendor flag, so say it that way. And a detail worth having ready, because it dates well: goose emitted no gen_ai.* attributes at all until two PRs merged four hours after 1.45.0 was cut. Both shipped in v1.46.0 on 2026-08-12, verified against the tag, so a plain brew install now gives you sixteen gen_ai.* attributes including tool call arguments and results, behind the convention's own opt-in variable OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT. Which sets up an awkward comparison worth making out loud: the coding agent on your laptop is more conformant than the framework in beat 4.",
   "Build the footprints before you need them.\n\nEverything we showed you today was reconstructing an incident with telemetry that was already there, or discovering it wasn't. The flags, the conventions, the evaluation events — all of it is cheaper to turn on now than to wish for at two in the morning.\n\nThe conventions are Development. They'll move. Turn them on anyway.\n\nThank you.\n\n⚑ QRs and links on screen. Everything measured today is in the repo, with dates and versions.",
   "Appendix divider. Never shown in the flow — the deck ends on Close. These are here so a question can be answered with a slide instead of a description.",
-  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The build-versus-run split is one sentence in the note for “Agents are already the interface”, which makes the same point faster.\n\nTwo ways you meet an agent, and this slide tells the room which of them they are. Most people are both. Land: if you only ever RUN someone else's agent, the conventions still decide whether the thing reading your telemetry is any good. This is the slide that keeps the SRE half of the room with us through the framework beats.",
-  "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. The four-architectures framing is good but the talk does not need it to earn the loop diagram that follows.\n\nFour architectures deep. Each step solved a real problem and added complexity somewhere else. Land: building got steadily easier, understanding got harder every single time — and we still reach for tools designed for the monolith. Careful: this is a run-up, not an argument about microservices. Keep it moving.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut as a duplicate. The beat-6 waterfall makes the same point with better data — the span carrying the wall time has no GenAI meaning in it.\n\nWhat one agent run actually looks like. Point at POST: it comes free from your HTTP instrumentation, carries no GenAI meaning, and it is 3.91 of the 3.97 seconds the model call took. Land: your existing instrumentation already sees the time and none of the meaning. This waterfall returns at slide 34 carrying the deletion. If asked: measured, from the Python agent in demos/agents/beaver-sre — the same trace as slide 34. Durations re-measured 2026-08-11 after the scenario changed: the POST is 2.35 of the 2.51 seconds. The point is unchanged — the span carrying the wall time has no GenAI meaning in it.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut for time. “One model call, five names” already lands that the conventions differ for real reasons; this elaborated on it.\n\nThese are NOT arbitrary naming preferences — each optimizes for something real, which is why they will not simply go away. Careful: credit Salaboy out loud here. The framing is his and it is deliberately not on the slide.",
   "APPENDIX — not in the spoken flow. Jump here only if a question asks for it; the audience has not seen it. Cut on evidence. The fan-out harness behind it was removed, the panes were wireframes rather than screenshots, and only Jaeger and Phoenix ingestion was ever confirmed. The measurement stands in ANALYSIS.md under Superseded and historical.\n\nFour renderings of identical bytes. Land: Phoenix is GenAI-native but OpenInference-native, so it accepts gen_ai.* spans and renders them as plain spans — the fragmentation tax, made visible. Careful: Jaeger AND Phoenix ingestion are both confirmed on a live run (Phoenix reported 2 traces at 6.5s p50). What each UI looks like is drawn from documentation — these panes are wireframes, not screenshots. The slide says so; say it too.",

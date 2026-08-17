@@ -852,3 +852,46 @@ Two more things this run showed, worth knowing before quoting it:
   is an attribute, not the span name.
 - `reply` and `reply_stream` both carry `gen_ai.operation.name` and the *same* token counts, so
   summing tokens across them double-counts a session. Use the provider spans.
+
+---
+
+### OpenLLMetry has already converged (measured 2026-08-17, in-cluster)
+
+Added a third agent to emit OpenLLMetry, expecting a third vocabulary for the normalizer to
+translate. There was nothing to translate. `opentelemetry-instrumentation-anthropic` 0.62.3
+emits the OTel GenAI conventions natively, and on a newer revision than our own Java stack:
+
+```
+anthropic.chat        19 attributes, all gen_ai.*
+  gen_ai.input.messages          gen_ai.usage.cache_read.input_tokens
+  gen_ai.output.messages         gen_ai.usage.cache_creation.input_tokens
+  gen_ai.provider.name           gen_ai.tool.definitions
+  gen_ai.request.model           gen_ai.response.finish_reasons
+```
+
+Confirmed inside the running pod rather than from one trace: the package's constants are
+`GEN_AI_INPUT_MESSAGES`, `GEN_AI_OUTPUT_MESSAGES`, `GEN_AI_PROVIDER_NAME`,
+`GEN_AI_REQUEST_MODEL`. No `llm.*`, no `traceloop.*`.
+
+Three consequences.
+
+**A slide was wrong.** "One model call, five names" showed OpenLLMetry as `llm.request.model`.
+Corrected, with the branch marked as converged rather than removed, because the historical point
+still stands.
+
+**The donation story inverts.** Traceloop offered OpenLLMetry's instrumentations to OpenTelemetry
+in February 2025 and the proposal never landed
+([community#2571](https://github.com/open-telemetry/community/issues/2571), closed 2026-06-16).
+They converged the vocabulary anyway. Meanwhile Arize's OpenInference code grant *was* accepted
+([community#3467](https://github.com/open-telemetry/community/issues/3467), GC vote 2026-06-16) —
+and that grant explicitly excludes the OpenInference specification and semantic conventions.
+So the code consolidated by donation and the vocabulary consolidated by someone deciding to, and
+those are two different projects.
+
+**It is now more conformant than our own Java stack.** OpenLLMetry emits
+`gen_ai.input.messages` / `gen_ai.output.messages`; quarkus-langchain4j 1.12.2 still emits the
+removed `gen_ai.prompt` / `gen_ai.completion`. Same collector, same trace view.
+
+The `openllmetry` source in `gen_ai_normalizer` is still correct for older releases. It simply has
+no work to do against a current one, which is the healthiest possible reason for a normalizer
+source to go quiet.

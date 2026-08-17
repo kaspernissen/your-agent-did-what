@@ -14,3 +14,8 @@ openlit>=1.42
 
 # CAPYBARA_INSTRUMENTATION=openinference → llm.* / openinference.*
 openinference-instrumentation-anthropic
+
+# CAPYBARA_INSTRUMENTATION=openllmetry → Traceloop's names, a third vocabulary for the same call.
+# Note the package name collides conceptually with OpenInference's: both ship an
+# AnthropicInstrumentor, on different module paths. Only one is activated per process.
+opentelemetry-instrumentation-anthropic>=0.62

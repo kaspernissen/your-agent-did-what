@@ -12,7 +12,13 @@ convention.
 
     CAPYBARA_INSTRUMENTATION=openlit        (default)  chat spans in gen_ai.*
     CAPYBARA_INSTRUMENTATION=openinference             chat spans in llm.* / openinference.*
+    CAPYBARA_INSTRUMENTATION=openllmetry               chat spans in OpenLLMetry's names
     CAPYBARA_INSTRUMENTATION=none                      no auto-instrumentation at all
+
+Two of these are sources the collector's gen_ai_normalizer knows about, openinference and
+openllmetry, and it keeps the originals rather than deleting them. So a single trace view shows
+what the library emitted beside what the collector made of it, which is the only way to see that
+the translation is partial.
 """
 from __future__ import annotations
 
@@ -22,8 +28,9 @@ from opentelemetry import trace
 
 OPENLIT = "openlit"
 OPENINFERENCE = "openinference"
+OPENLLMETRY = "openllmetry"
 NONE = "none"
-CHOICES = (OPENLIT, OPENINFERENCE, NONE)
+CHOICES = (OPENLIT, OPENINFERENCE, OPENLLMETRY, NONE)
 
 TRACER_NAME = "your-agent-did-what.capybara-agent"
 
@@ -50,6 +57,8 @@ def configure(agent_name: str) -> trace.Tracer:
         _configure_openlit(agent_name)
     elif choice == OPENINFERENCE:
         _configure_openinference(agent_name)
+    elif choice == OPENLLMETRY:
+        _configure_openllmetry(agent_name)
     else:
         _configure_plain(agent_name)
     return trace.get_tracer(TRACER_NAME)
@@ -71,6 +80,19 @@ def _configure_openinference(agent_name: str) -> None:
     Unlike OpenLIT it does not configure a provider, so we set one up first.
     """
     from openinference.instrumentation.anthropic import AnthropicInstrumentor
+
+    provider = _provider(agent_name)
+    AnthropicInstrumentor().instrument(tracer_provider=provider)
+
+
+def _configure_openllmetry(agent_name: str) -> None:
+    """OpenLLMetry (Traceloop) instruments the same SDK again, with a third set of names.
+
+    Using the Anthropic instrumentation directly rather than traceloop-sdk, because the SDK
+    installs its own exporter and processors, and the point here is that only the vocabulary
+    changes between runs: same loop, same spans, same provider, same collector.
+    """
+    from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
 
     provider = _provider(agent_name)
     AnthropicInstrumentor().instrument(tracer_provider=provider)
@@ -184,6 +206,9 @@ def vocabulary():
     OpenInference vocabulary and the collector normalizes all of it; otherwise there is
     nothing downstream translating, so gen_ai.* is what to write.
     """
+    # OpenInference is the one whose agent and tool spans the normalizer also rewrites, so it is
+    # the only choice where writing the source vocabulary by hand demonstrates anything.
+    # OpenLLMetry's mapping covers the model call, so the hand-written spans stay in gen_ai.*.
     return OpenInferenceVocabulary() if selected() == OPENINFERENCE else GenAIVocabulary()
 
 

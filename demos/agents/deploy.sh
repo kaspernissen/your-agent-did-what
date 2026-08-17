@@ -39,6 +39,7 @@ kubectl apply -f k8s/ >/dev/null
 kubectl rollout restart deployment/capybara-db-mcp
 kubectl rollout status  deployment/capybara-db-mcp --timeout=180s
 
-kubectl rollout restart deployment/capybara-sre deployment/beaver-sre
+kubectl rollout restart deployment/capybara-sre deployment/beaver-sre deployment/otter-sre
 kubectl rollout status  deployment/capybara-sre --timeout=180s
 kubectl rollout status  deployment/beaver-sre   --timeout=180s
+kubectl rollout status  deployment/otter-sre    --timeout=180s

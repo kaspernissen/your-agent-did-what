@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -42,6 +43,9 @@ public class BeaverResource {
     @ConfigProperty(name = "capybara.beaver.url", defaultValue = "http://beaver-sre:8000")
     String beaverUrl;
 
+    @ConfigProperty(name = "capybara.otter.url", defaultValue = "http://otter-sre:8000")
+    String otterUrl;
+
     @Inject
     ObjectMapper objectMapper;
 
@@ -49,13 +53,21 @@ public class BeaverResource {
 
     /** Forwards the question and passes the answer straight back. */
     @POST
-    @Path("/chat")
+    @Path("/chat/{agent}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response chat(ChatRequest req) {
+    public Response chat(@PathParam("agent") String agent, ChatRequest req) {
+        String base = switch (agent) {
+            case "beaver" -> beaverUrl;
+            case "otter" -> otterUrl;
+            default -> null;
+        };
+        if (base == null) {
+            return Response.status(400).entity(Map.of("error", "unknown agent '" + agent + "'")).build();
+        }
         try {
             String body = objectMapper.writeValueAsString(
                     Map.of("prompt", req == null || req.prompt() == null ? "" : req.prompt()));
-            HttpRequest request = HttpRequest.newBuilder(URI.create(beaverUrl + "/run"))
+            HttpRequest request = HttpRequest.newBuilder(URI.create(base + "/run"))
                     .header("Content-Type", MediaType.APPLICATION_JSON)
                     .timeout(TIMEOUT)
                     .POST(HttpRequest.BodyPublishers.ofString(body))
@@ -68,9 +80,9 @@ public class BeaverResource {
                     .entity(response.body())
                     .build();
         } catch (Exception e) {
-            LOG.warnf("beaver-sre unreachable at %s: %s", beaverUrl, e.getMessage());
+            LOG.warnf("%s unreachable at %s: %s", agent, base, e.getMessage());
             return Response.status(503).entity(Map.of(
-                    "error", "Beaver SRE is not reachable. Deploy it: demos/agents/deploy.sh",
+                    "error", "The " + agent + " agent is not reachable. Deploy it: demos/agents/deploy.sh",
                     "detail", e.getClass().getSimpleName() + ": " + e.getMessage())).build();
         }
     }

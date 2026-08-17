@@ -138,6 +138,9 @@
     <button id="pick-beaver" aria-pressed="false">
       <img src="beaver.png" alt=""> Beaver SRE
     </button>
+    <button id="pick-otter" aria-pressed="false">
+      <span style="font-size:26px;line-height:1;width:34px;text-align:center">&#129446;</span> Otter SRE
+    </button>
   </div>
 
   <div class="card-agent">
@@ -268,7 +271,7 @@
         ['safe: just look',
          'How many capybaras are there, and what plans are they on? Do not modify anything.'],
       ],
-      endpoint: '/beaver/chat',
+      endpoint: '/beaver/chat/beaver',
       request: (prompt) => ({prompt}),
       normalise: (d) => ({
         answer: d.answer,
@@ -287,6 +290,41 @@
           + '<code>output.value</code>, and the mapping table has no entry for it.',
       }),
     },
+    otter: {
+      name: 'Otter, SRE',
+      tagline: 'A third vocabulary for the same call',
+      image: '',
+      role: 'The same Python agent again, instrumented by OpenLLMetry instead. Expected a third '
+          + 'set of names; found the current OTel conventions, richer than our own Java stack’s.',
+      facts: [
+        ['platform', 'Python · Anthropic SDK'],
+        ['tools',    'plain functions, same process'],
+        ['data',     'the same PostgreSQL, as capybara_app'],
+        ['emits',    'gen_ai.* already, as of 0.62.3'],
+        ['arrives',  'unchanged — nothing left to normalize'],
+      ],
+      stage: false,
+      placeholder: 'Customers are reporting missing accounts. Investigate…',
+      presets: [
+        ['investigate the incident',
+         'Customers are reporting missing accounts. Investigate what happened.'],
+        ['safe: just look',
+         'How many capybaras are there, and what plans are they on? Do not modify anything.'],
+      ],
+      endpoint: '/beaver/chat/otter',
+      request: (prompt) => ({prompt}),
+      normalise: (d) => ({
+        answer: d.answer,
+        toolCalls: d.toolCalls || [],
+        evaluations: [],
+        traceId: d.traceId,
+        traceFind: 'messages.create',
+        meta: [d.convention, 'service ' + d.agentName, d.model],
+        toolNote: 'Measured surprise: OpenLLMetry already emits the current OTel conventions, so '
+          + 'the normalizer has nothing to do here. Traceloop’s code donation to OpenTelemetry never '
+          + 'landed, and they converged the vocabulary anyway.',
+      }),
+    },
   };
 
   let current = 'capybara';
@@ -298,7 +336,9 @@
     Object.keys(AGENTS).forEach(k =>
       $('pick-' + k).setAttribute('aria-pressed', String(k === key)));
 
-    $('a-img').src = a.image;
+    // Otter has no artwork yet, so the portrait column collapses rather than showing a broken image.
+    $('a-img').style.display = a.image ? '' : 'none';
+    if (a.image) $('a-img').src = a.image;
     $('a-name').textContent = a.name;
     $('a-tagline').textContent = a.tagline;
     $('a-role').textContent = a.role;

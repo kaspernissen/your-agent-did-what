@@ -56,3 +56,52 @@ metadata:
 spec:
   selector: { app: beaver-sre }
   ports: [{ port: 8000, targetPort: 8000 }]
+---
+# A third agent, same image, third vocabulary.
+#
+# OpenLLMetry is the other source gen_ai_normalizer knows about, and the collector keeps the
+# originals, so one trace view shows what Traceloop emitted beside what the collector made of it.
+# Worth knowing while looking at it: Traceloop offered these instrumentations to OpenTelemetry in
+# February 2025 and the proposal never landed.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otter-sre
+  labels: { app: otter-sre, demo: conventions }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: otter-sre }
+  template:
+    metadata:
+      labels: { app: otter-sre, demo: conventions }
+    spec:
+      containers:
+        - name: agent
+          image: beaver-sre:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8000 }]
+          env:
+            - { name: CAPYBARA_INSTRUMENTATION, value: openllmetry }
+            - { name: CAPYBARA_AGENT_NAME,      value: otter-sre }
+            - { name: CAPYBARA_DB_DSN,
+                value: "postgresql://capybara_app:capybara_app@capybara-db:5432/capybara" }
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
+                value: http://otel-collector-opentelemetry-collector.default.svc:4318 }
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef: { name: anthropic-secret, key: api-key }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8000 }
+            initialDelaySeconds: 3
+          resources:
+            requests: { memory: 256Mi }
+            limits:   { memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otter-sre
+spec:
+  selector: { app: otter-sre }
+  ports: [{ port: 8000, targetPort: 8000 }]
