@@ -1285,3 +1285,50 @@ So the accurate sentence is "emits `gen_ai.*` natively, with nothing to translat
 compliant". The deck was saying the latter in three places and now says the former, with the three
 exceptions in the speaker notes — they make the point better than the overstatement did, because
 "the vocabulary converged and the details have not" is exactly the talk's argument.
+
+---
+
+### Can the MCP context gap be fixed from our side? Measured: no (2026-08-17)
+
+quarkiverse/quarkus-mcp-server **#789 is still open** — checked against the GitHub API, not from memory:
+"Tracing context is not propagated into e.g. tool executions", two comments, never closed. So there is no
+release to upgrade to; we run 1.13.1.
+
+Tested whether we can work around it in our own code by annotating a tool method with `@WithSpan`:
+
+```java
+@WithSpan("audit_log tool body")
+@Tool(name = "audit_log", ...)
+public String auditLog(...)
+```
+
+The span appears, and it is a **ROOT of its own three-span trace**:
+
+```
+trace f23b4a696ff8          (the agent's own trace is a separate 21 spans)
+  audit_log tool body       ROOT
+    DataSource.getConnection
+    SELECT capybara.audit_log
+```
+
+Two conclusions, and the second is more useful than the first.
+
+**The context is genuinely absent, not merely unused.** If a stale context were present but ignored by the
+JDBC instrumentation, `@WithSpan` would have produced a child. It produced a root. So the tool body runs
+with no OpenTelemetry context at all, which matches #789's description of a new duplicated Vert.x context.
+
+**A local subtree is achievable, attachment is not.** `@WithSpan` did gather the connection and the SELECT
+underneath one span we control. So you can make the tool body's own work coherent; what you cannot do from
+inside the tool method is attach it to the caller, because nothing in scope knows the caller's span.
+
+What would fix it: #789 landing, or the framework exposing a hook around tool dispatch so the server span's
+context can be re-attached. A third option exists and is ugly enough to mention only as a thought
+experiment — pass `traceparent` as a tool argument and re-parent explicitly, which works and puts
+transport concerns in your tool signature.
+
+The experiment was reverted; `CapybaraDbTools` carries no annotations. Worth keeping the result because
+"we tried and here is what it proves" is a better answer on stage than "the framework has a bug".
+
+One operational note earned the hard way while running it: restarting `capybara-db-mcp` under a live agent
+kills the agent's MCP session and the next request returns 500. Restart the server first, then the agent —
+which is the order `agents/deploy.sh` already uses.

@@ -225,6 +225,13 @@ deck-stage>section{
   width:96px;height:77px;background:url("assets/capybara-mascot.png") no-repeat center/contain;
   transform:rotate(13deg)}
 
+/* On the two beaver slides the footer capybara and a slide beaver ended up side by
+   side, which read as an accident. The footer animal is swappable instead: same
+   position, same tilt, different creature, so a slide about beaver-sre's spans has
+   one beaver on it rather than a beaver and a capybara. */
+.deck-footer.is-beaver::after{background-image:url("img/mascots/beaver-standing.png");
+  width:74px;height:88px;bottom:-46px;transform:rotate(0deg)}
+
 /* ── Normalizer flow (beat 5) ───────────────────────────────────────── */
 /* The rewrite IS the slide, so it moves: a dot travels each row left→right,
    staggered, entering the processor as llm.* and leaving as gen_ai.*. The one
