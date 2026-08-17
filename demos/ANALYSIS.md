@@ -1237,10 +1237,32 @@ distinction arrived at without being prompted for it. Judge: `root_cause_correct
 "Already conforming" was too strong, and the precise version is more useful. On
 `opentelemetry-instrumentation-anthropic` 0.62.3, one run, the `anthropic.chat` span:
 
-**No proprietary vocabulary at all.** Nineteen attributes, fifteen of them `gen_ai.*`; the other four
-are `otel.scope.name`, `otel.scope.version`, `otel.status_code` and `span.kind`, which are
-infrastructure rather than vocabulary. Grepping the installed package finds no `llm.*` and no
-`traceloop.*` anywhere. So there is genuinely nothing for a normalizer to rename.
+**No proprietary vocabulary on the span we measured.** Nineteen attributes, fifteen of them `gen_ai.*`;
+the other four are `otel.scope.name`, `otel.scope.version`, `otel.status_code` and `span.kind`, which
+are infrastructure rather than vocabulary.
+
+**But that is a property of how we wired it, not of OpenLLMetry.** Corrected after Kasper pushed back
+on exactly this. `opentelemetry-semantic-conventions-ai` 0.5.1 is installed and defines **16
+`traceloop.*` attributes** — `traceloop.entity.name`, `traceloop.entity.input` / `.output`,
+`traceloop.association.properties`, `traceloop.correlation.id` and the `traceloop.prompt.*` family. It
+also defines 42 `LLM_*` constants, of which **22 still resolve to `llm.*` values** (`llm.is_streaming`,
+`llm.headers`, `llm.frequency_penalty`, `llm.watsonx.*`) and 20 to `gen_ai.*`. So the package is a
+hybrid, mid-migration.
+
+What saves our span is the integration path. `telemetry.py` drives `AnthropicInstrumentor` directly and
+never installs `traceloop-sdk`, and the SDK is the component that writes the `traceloop.*` entity and
+association attributes. Adopt OpenLLMetry the normal way and you get those on top. The instrumentation
+itself references exactly four constants from that package, and all four resolve to `gen_ai` names:
+`gen_ai.is_streaming`, `gen_ai.request.structured_output_schema`, `gen_ai.response.finish_reason` and
+`gen_ai.usage.total_tokens`.
+
+Three of those four are **not in the OTel registry**, and the fourth is singular where the registry
+says `finish_reasons`. So the count of `gen_ai.`-shaped-but-not-specified attributes this library can
+emit is up to four, not one.
+
+My earlier claim in this file — "no `llm.*` and no `traceloop.*` anywhere" — came from a
+case-sensitive grep scoped to the `anthropic` subpackage, which cannot see `SpanAttributes.TRACELOOP_*`
+constants defined in a dependency. Scope the grep, then trust it.
 
 **Three places it is still not compliant.**
 
