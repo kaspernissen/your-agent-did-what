@@ -57,8 +57,21 @@ else
   echo "No DASH0_AUTH_TOKEN — stdout and Jaeger only. Set it in demos/.env for the vendor path."
 fi
 
+DYNATRACE_VALUES=()
+if [ -n "${DT_API_TOKEN:-}" ]; then
+  kubectl create secret generic dynatrace-secret \
+    --from-literal=token="$DT_API_TOKEN" \
+    --from-literal=endpoint="$DT_ENDPOINT" \
+    --dry-run=client -o yaml | kubectl apply -f -
+  DYNATRACE_VALUES=(-f ../observability/collector/values.dynatrace.yaml)
+  echo "DYNATRACE token found — also exporting to $DT_ENDPOINT"
+else
+  echo "No DYNATRACE_AUTH_TOKEN — stdout and Jaeger only. Set it in demos/.env for the vendor path."
+fi
+
+
 helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-  -f ../observability/collector/values.yaml "${DASH0_VALUES[@]}" --wait
+  -f ../observability/collector/values.yaml "${DASH0_VALUES[@]}" "${DYNATRACE_VALUES[@]}" --wait
 
 cat <<EOF
 

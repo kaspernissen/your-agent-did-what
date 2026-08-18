@@ -1,0 +1,38 @@
+# The vendor path, layered on top of otel-collector-values.yaml.
+#
+# Applied by setup.sh as a second -f only when DASH0_AUTH_TOKEN is set. Kept separate
+# for the same reason the local compose path keeps two configs: collector YAML cannot
+# branch, so an otlp/dash0 exporter with an empty token stays in the pipeline and
+# writes export failures into the same stdout you read spans from.
+#
+# Helm merges maps but replaces lists, so every pipeline's exporters list has to be
+# restated here in full — adding to it is not an option.
+extraEnvs:
+  - name: DT_API_TOKEN
+    valueFrom:
+      secretKeyRef: { name: dynatrace-secret, key: token }
+  - name: DT_ENDPOINT
+    valueFrom:
+      secretKeyRef: { name: dynatrace-secret, key: endpoint }
+
+config:
+  exporters:
+    otlp_http/dynatrace:
+      endpoint: ${env:DT_ENDPOINT}/api/v2/otlp
+      headers:
+        Authorization: "Api-Token ${env:DT_API_TOKEN}"
+
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [gen_ai_normalizer, batch]
+        exporters: [debug, otlp/jaeger, otlp_http/dynatrace]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug, otlphttp/prometheus, otlp_http/dynatrace]
+      logs:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [debug, otlp_http/dynatrace]
