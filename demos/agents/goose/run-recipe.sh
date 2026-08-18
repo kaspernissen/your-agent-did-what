@@ -17,7 +17,7 @@ command -v goose >/dev/null || { echo "goose not installed: brew install block-g
 if [ "$GOOSE_PROVIDER" = "ollama" ]; then
   command -v ollama >/dev/null || { echo "ollama not installed: see ollama.com"; exit 1; }
   ollama list 2>/dev/null | grep -q "${GOOSE_MODEL%%:*}" \
-    || { echo "Model $MODEL not pulled. Run: ollama pull $MODEL"; exit 1; }
+    || { echo "Model $GOOSE_MODEL not pulled. Run: ollama pull $GOOSE_MODEL"; exit 1; }
 fi
 
 # The MCP server the recipe points at, and the collector goose reports to.
@@ -44,6 +44,4 @@ export OTEL_LOGS_EXPORTER=none
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
 echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · provider $GOOSE_PROVIDER · model $GOOSE_MODEL ---"
-# goose run --recipe tidy-free-plan.yaml --provider "$PROVIDER" --model "$MODEL" --no-session
-# export $(grep -v '^#' .env | xargs) && goose run --recipe tidy-free-plan.yaml
 goose run --recipe tidy-free-plan.yaml
