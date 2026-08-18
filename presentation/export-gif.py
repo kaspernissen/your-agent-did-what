@@ -25,11 +25,13 @@ TMP = Path('/Users/kaspernissen/.claude/jobs/3ed0631d/tmp/gifframes')
 CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 SLIDE = 21              # 0-based: slide 22
-DURATION = 4.6          # matches .flow-dot's animation
-FRAMES = 46             # 10fps
+TRAVERSAL = 3.5         # seconds for a dot to cross one track
+FPS = 25                # 10fps read as stepping; 25 reads as flow
+PARTICLES = 3           # dots per track, evenly spaced around the cycle
+INTERVAL = int(1000 / FPS)
+FRAMES = round(TRAVERSAL * FPS)
+CSS_CYCLE = 4.6         # the authored duration, used only to rescale the row stagger
 S = 2
-# rows are: label 120..700 | track 700..880 | box 880..1160 | track 1160..1340 | label 1340..
-# the right edge must stop at 1340 or the gen_ai.* names bleed into the crop
 CROP = (696, 360, 1341, 768)
 
 JS = '''
@@ -38,25 +40,50 @@ JS = '''
   const box = sec.querySelector(".chamfer");
   [...box.children].slice(1).forEach(c => c.remove());
 
-  // Read the authored per-dot delay FIRST. The override below is an `animation`
-  // shorthand, which resets animation-delay to 0s — read after it and every dot
-  // reports 0 and the whole flow moves as one.
-  const dots = [...sec.querySelectorAll(".flow-dot")];
-  const orig = dots.map(d => parseFloat(getComputedStyle(d).animationDelay) || 0);
+  const TRAVERSAL = __TRAVERSAL__, PARTICLES = __PARTICLES__, CSS_CYCLE = __CSS_CYCLE__;
 
-  // headless may report prefers-reduced-motion, which disables the dots outright
-  const on = document.createElement("style");
-  on.textContent = ".flow-dot{animation:flow-travel 4.6s cubic-bezier(.5,0,.5,1) infinite!important}";
-  document.head.appendChild(on);
+  /* Give each track a stream rather than a single dot. The authored per-dot delay
+     staggers the rows into a cascade, so it is kept — rescaled from the 4.6s CSS
+     cycle to the traversal we are rendering — and each extra particle is spaced an
+     equal fraction of the cycle behind it. */
+  const seeds = [...sec.querySelectorAll(".flow-dot")];
+  const parts = [];
+  for (const seed of seeds) {
+    const base = (parseFloat(getComputedStyle(seed).animationDelay) || 0) * (TRAVERSAL / CSS_CYCLE);
+    for (let k = 0; k < PARTICLES; k++) {
+      const el = k === 0 ? seed : seed.parentNode.appendChild(seed.cloneNode(true));
+      parts.push([el, base + k * TRAVERSAL / PARTICLES]);
+    }
+  }
 
-  // Seek each dot to its phase at t, then freeze. setProperty(..., "important")
-  // matters: the rule above is !important, and a plain inline value loses to it,
-  // which pins every dot at 0s and yields an animation that never moves.
-  dots.forEach((d, i) => {
-    const seek = (((__T__ - orig[i]) % __DUR__) + __DUR__) % __DUR__;
-    d.style.setProperty("animation-delay", (-seek) + "s", "important");
-    d.style.setProperty("animation-play-state", "paused", "important");
-  });
+  /* Do not try to SEEK the CSS animation. Pausing it at a negative animation-delay
+     looked right and was not: headless rendered the phases out of order, so
+     consecutive frames put the dot at 176px, 62px, 176px, 3px along a 180px track.
+     Position every particle directly — same keyframes, same easing, computed here. */
+  function bezier(p1x, p1y, p2x, p2y){
+    const cx = 3*p1x, bx = 3*(p2x-p1x)-cx, ax = 1-cx-bx;
+    const cy = 3*p1y, by = 3*(p2y-p1y)-cy, ay = 1-cy-by;
+    const fx = t => ((ax*t+bx)*t+cx)*t;
+    const dfx = t => (3*ax*t+2*bx)*t+cx;
+    const fy = t => ((ay*t+by)*t+cy)*t;
+    return x => { let t = x;
+      for (let i = 0; i < 12; i++){
+        const e = fx(t) - x; if (Math.abs(e) < 1e-7) break;
+        const d = dfx(t);    if (Math.abs(d) < 1e-7) break;
+        t -= e/d;
+      }
+      return fy(t); };
+  }
+  const ease = bezier(.5, 0, .5, 1);          // matches .flow-dot's timing function
+
+  for (const [el, off] of parts) {
+    const p = ((((__T__ - off) % TRAVERSAL) + TRAVERSAL) % TRAVERSAL) / TRAVERSAL;
+    // keyframes: 0% left:0 opacity:0 · 6% opacity:1 · 94% opacity:1 · 100% left:100% opacity:0
+    const op = p < 0.06 ? p/0.06 : (p > 0.94 ? (1-p)/0.06 : 1);
+    el.style.setProperty("animation", "none", "important");
+    el.style.setProperty("left", (ease(p) * 100) + "%", "important");
+    el.style.setProperty("opacity", String(op), "important");
+  }
 '''
 
 def main():
@@ -66,10 +93,12 @@ def main():
     shot = HERE / '_gif.html'
     frames = []
     for i in range(FRAMES):
-        t = DURATION * i / FRAMES
+        t = TRAVERSAL * i / FRAMES
         js = (JS.replace('__SLIDE__', str(SLIDE))
                 .replace('__T__', f'{t:.4f}')
-                .replace('__DUR__', str(DURATION)))
+                .replace('__TRAVERSAL__', str(TRAVERSAL))
+                .replace('__PARTICLES__', str(PARTICLES))
+                .replace('__CSS_CYCLE__', str(CSS_CYCLE)))
         shot.write_text(base.replace('</body>',
             f'<script>addEventListener("load",()=>{{'
             f'document.querySelector("deck-stage").goTo({SLIDE});{js}}});</script></body>', 1))
@@ -91,8 +120,9 @@ def main():
     pal = [f.convert('P', palette=Image.ADAPTIVE, colors=128) for f in frames]
     out = OUT / '22-normalizer-flow.gif'
     pal[0].save(out, save_all=True, append_images=pal[1:],
-                duration=int(1000 * DURATION / FRAMES), loop=0, optimize=True, disposal=2)
+                duration=INTERVAL, loop=0, optimize=True, disposal=2)
     print(f'\n{out.name}  {frames[0].size}  {FRAMES} frames  '
+          f'{FRAMES*INTERVAL/1000:.1f}s loop · {TRAVERSAL}s traversal · {FPS}fps · {PARTICLES}/track  '
           f'{out.stat().st_size / 1e6:.1f}MB')
 
 if __name__ == '__main__':
