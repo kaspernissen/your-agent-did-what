@@ -30,7 +30,49 @@
  * the inline styles, so flex layout, wrapping and the chamfer clip are all
  * accounted for. Emitted as JSON for the Python cropper to consume.
  */
-const SEL = 'svg, .chamfer, .code-block, .diagonal-split, .mascot, .deck-footer, img';
+/* A fixed selector list missed most of the deck: the s3 timeline is a gradient
+   background on a div plus four bordered nodes, and nothing in
+   `svg, .chamfer, .code-block, img` matches that. Detect PAINT instead — anything
+   that draws a background, an image, a border, a clip-path, a shadow, or a
+   painting ::before/::after. */
+const ALPHA = (c) => !(!c || c === "transparent" || /rgba\([^)]*,\s*0\s*\)$/.test(c));
+
+function paintsPseudo(el, which){
+  const cs = getComputedStyle(el, which);
+  if (!cs || cs.content === "none" || cs.content === "normal") return false;
+  return ALPHA(cs.backgroundColor) || cs.backgroundImage !== "none";
+}
+
+function paints(el){
+  const tag = el.tagName.toLowerCase();
+  if (tag === "svg") return !el.parentElement.closest("svg");
+  if (el.closest("svg")) return false;            // shapes inside a diagram travel with it
+  if (tag === "img") return true;
+  const cs = getComputedStyle(el);
+  if (cs.visibility === "hidden" || cs.display === "none" || parseFloat(cs.opacity) === 0) return false;
+  if (ALPHA(cs.backgroundColor)) return true;
+  if (cs.backgroundImage !== "none") return true;
+  if (cs.clipPath && cs.clipPath !== "none") return true;
+  if (cs.boxShadow && cs.boxShadow !== "none") return true;
+  if (cs.maskImage && cs.maskImage !== "none") return true;
+  if (cs.webkitMaskImage && cs.webkitMaskImage !== "none") return true;
+  for (const side of ["Top", "Right", "Bottom", "Left"]) {
+    if (parseFloat(cs["border" + side + "Width"]) > 0 && ALPHA(cs["border" + side + "Color"])) return true;
+  }
+  return paintsPseudo(el, "::before") || paintsPseudo(el, "::after");
+}
+
+function kindOf(el){
+  const tag = el.tagName.toLowerCase();
+  if (tag === "svg" || tag === "img") return tag;
+  const c = el.classList;
+  for (const k of ["chamfer", "code-block", "diagonal-split", "axis-node", "axis",
+                   "deck-footer", "qr-tile", "employer-mark", "speaker-photo",
+                   "mascot", "waterfall", "flow-track", "wf-track"]) {
+    if (c.contains(k)) return k.replace("code-block", "code").replace("chamfer", "card");
+  }
+  return "box";
+}
 
 function isText(el){
   if (!el.textContent || !el.textContent.trim()) return false;
@@ -63,21 +105,21 @@ function isText(el){
       return {x: Math.round(r.left-sb.left), y: Math.round(r.top-sb.top),
               w: Math.round(r.width), h: Math.round(r.height)}; };
 
-    const els = [...clone.querySelectorAll(SEL)]
-      .filter(el => !(el.tagName === 'svg' && el.closest('svg') !== el))
-      .map(el => {
-        const b = box(el);
-        let kind = el.tagName.toLowerCase();
-        if (kind !== 'svg' && kind !== 'img'){
-          kind = el.classList.contains('code-block') ? 'code'
-               : el.classList.contains('chamfer') ? 'card'
-               : el.classList.contains('diagonal-split') ? 'panel'
-               : el.classList.contains('mascot') ? 'mascot' : 'footer';
-        }
-        return Object.assign({kind, src: el.getAttribute('src') || null,
-                              text: (el.textContent||'').trim().slice(0,60)}, b);
-      })
-      .filter(e => e.w > 8 && e.h > 8);
+    const els = [...clone.querySelectorAll("*")].filter(paints).map(el => {
+      const b = box(el);
+      return Object.assign({kind: kindOf(el), src: el.getAttribute("src") || null,
+                            text: (el.textContent || "").trim().slice(0, 60)}, b);
+    }).filter(e => e.w > 6 && e.h > 1);
+
+    /* Composites read better whole than in pieces: the s3 timeline is a rule, four
+       nodes and four labels. Every direct child of the section that contains paint
+       is also exported, so the timeline arrives as one PNG as well as five. */
+    const groups = [...clone.children].filter(el => {
+      if (!el.getBoundingClientRect().width) return false;
+      return paints(el) || el.querySelector("*") && [...el.querySelectorAll("*")].some(paints);
+    }).map(el => Object.assign({kind: "group", src: null,
+                                text: (el.textContent || "").trim().slice(0, 60)}, box(el)))
+      .filter(g => g.w > 6 && g.h > 1);
 
     const text = [...clone.querySelectorAll('*')].filter(isText).map(el => {
       const cs = getComputedStyle(el);
@@ -90,7 +132,7 @@ function isText(el){
       }, box(el));
     }).sort((a,b) => (a.y - b.y) || (a.x - b.x));
 
-    model.push({n: i+1, label: sec.getAttribute('data-label') || '',
+    model.push({n: i+1, label: sec.getAttribute('data-label') || '', groups,
                 ground: (sec.className.match(/ground-\w+/) || ['ground-paper'])[0],
                 elements: els, text, note: notes[i] || ''});
   });
