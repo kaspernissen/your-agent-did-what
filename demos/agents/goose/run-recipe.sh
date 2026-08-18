@@ -9,22 +9,30 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-command -v goose  >/dev/null || { echo "goose not installed: brew install block-goose-cli"; exit 1; }
-command -v ollama >/dev/null || { echo "ollama not installed: see ollama.com"; exit 1; }
+if [ -f ../../.env ]; then set -a; . ../../.env; set +a; fi   # demos/.env
+echo "✅ Loaded environment variables."
 
-MODEL="${GOOSE_MODEL:-qwen3.6:35b-a3b-q4_K_M}"
-ollama list 2>/dev/null | grep -q "${MODEL%%:*}" \
-  || { echo "Model $MODEL not pulled. Run: ollama pull $MODEL"; exit 1; }
+command -v goose >/dev/null || { echo "goose not installed: brew install block-goose-cli"; exit 1; }
+
+if [ "$GOOSE_PROVIDER" = "ollama" ]; then
+  command -v ollama >/dev/null || { echo "ollama not installed: see ollama.com"; exit 1; }
+  ollama list 2>/dev/null | grep -q "${GOOSE_MODEL%%:*}" \
+    || { echo "Model $MODEL not pulled. Run: ollama pull $MODEL"; exit 1; }
+fi
 
 # The MCP server the recipe points at, and the collector goose reports to.
 pkill -f "port-forward svc/prod-db-mcp" 2>/dev/null || true
 kubectl port-forward svc/prod-db-mcp 8086:8086 >/tmp/pf-prod-mcp.log 2>&1 &
 pkill -f "port-forward svc/otel-collector" 2>/dev/null || true
 kubectl port-forward svc/otel-collector-opentelemetry-collector 4318:4318 >/tmp/pf-col.log 2>&1 &
+echo "✅ Set up port-forwarding."
 
+echo "Waiting on OTel Collector readiness..."
 for _ in $(seq 1 30); do
   curl -sf -o /dev/null "http://localhost:4318/" 2>/dev/null && break || sleep 1
+  echo "..."
 done
+echo "✅ Ready!"
 
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
 export OTEL_SERVICE_NAME="goose"
@@ -35,5 +43,7 @@ export OTEL_LOGS_EXPORTER=none
 # is the whole reason for pointing goose at this collector.
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
-echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · model $MODEL ---"
-goose run --recipe tidy-free-plan.yaml --no-session
+echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · provider $GOOSE_PROVIDER · model $GOOSE_MODEL ---"
+# goose run --recipe tidy-free-plan.yaml --provider "$PROVIDER" --model "$MODEL" --no-session
+# export $(grep -v '^#' .env | xargs) && goose run --recipe tidy-free-plan.yaml
+goose run --recipe tidy-free-plan.yaml
