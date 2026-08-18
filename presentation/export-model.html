@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trace deck — element model</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="trace.css">
+<style>
+  body{margin:0;background:#333}
+  /* Must be a real <deck-stage>, not a div: trace.css scopes the body font,
+     padding and colour to `deck-stage > section`. Cloning into a div left every
+     inherited run in the browser default, which showed up as "Times" in the type
+     census and — worse — mis-measured every content-sized card. */
+  deck-stage.stage{display:block;position:relative;width:1920px;height:1080px;overflow:visible}
+  #out{position:fixed;left:0;top:0;z-index:9999;background:#fff;color:#000;
+       font:11px monospace;white-space:pre;max-height:100vh;overflow:auto}
+</style>
+</head>
+<body>
+<pre id="out">running…</pre>
+<div id="host"></div>
+<script>
+/* Element model for the Google Slides export.
+ *
+ * Walks every slide and records, in slide coordinates, the bounding box of
+ * every element worth shipping as its own PNG — diagrams, cards, code panels,
+ * placed images, decorative panels — plus all the text in reading order.
+ *
+ * Geometry comes from getBoundingClientRect on a real render, not from parsing
+ * the inline styles, so flex layout, wrapping and the chamfer clip are all
+ * accounted for. Emitted as JSON for the Python cropper to consume.
+ */
+const SEL = 'svg, .chamfer, .code-block, .diagonal-split, .mascot, .deck-footer, img';
+
+function isText(el){
+  if (!el.textContent || !el.textContent.trim()) return false;
+  if (el.closest('svg')) return false;
+  const kids = [...el.children].filter(c => c.textContent && c.textContent.trim());
+  if (!kids.length) return true;
+  const ownText = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
+  if (!ownText) return false;
+  return kids.every(c => getComputedStyle(c).display.startsWith('inline'));
+}
+
+(async () => {
+  const res = await fetch('index.html', {cache:'no-store'});
+  const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+  const sections = [...doc.querySelectorAll('deck-stage > section')];
+  const notes = JSON.parse(doc.querySelector('#speaker-notes').textContent);
+  const host = document.getElementById('host');
+  const model = [];
+
+  sections.forEach((sec, i) => {
+    const stage = document.createElement('deck-stage');
+    stage.className = 'stage';
+    const clone = sec.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.inset = '0';
+    stage.appendChild(clone);
+    host.appendChild(stage);
+    const sb = stage.getBoundingClientRect();
+    const box = el => { const r = el.getBoundingClientRect();
+      return {x: Math.round(r.left-sb.left), y: Math.round(r.top-sb.top),
+              w: Math.round(r.width), h: Math.round(r.height)}; };
+
+    const els = [...clone.querySelectorAll(SEL)]
+      .filter(el => !(el.tagName === 'svg' && el.closest('svg') !== el))
+      .map(el => {
+        const b = box(el);
+        let kind = el.tagName.toLowerCase();
+        if (kind !== 'svg' && kind !== 'img'){
+          kind = el.classList.contains('code-block') ? 'code'
+               : el.classList.contains('chamfer') ? 'card'
+               : el.classList.contains('diagonal-split') ? 'panel'
+               : el.classList.contains('mascot') ? 'mascot' : 'footer';
+        }
+        return Object.assign({kind, src: el.getAttribute('src') || null,
+                              text: (el.textContent||'').trim().slice(0,60)}, b);
+      })
+      .filter(e => e.w > 8 && e.h > 8);
+
+    const text = [...clone.querySelectorAll('*')].filter(isText).map(el => {
+      const cs = getComputedStyle(el);
+      return Object.assign({
+        t: el.textContent.replace(/\s+/g,' ').trim(),
+        font: cs.fontFamily.split(',')[0].replace(/["']/g,''),
+        size: Math.round(parseFloat(cs.fontSize)),
+        weight: cs.fontWeight, color: cs.color,
+        cls: el.className && el.className.baseVal === undefined ? el.className : '',
+      }, box(el));
+    }).sort((a,b) => (a.y - b.y) || (a.x - b.x));
+
+    model.push({n: i+1, label: sec.getAttribute('data-label') || '',
+                ground: (sec.className.match(/ground-\w+/) || ['ground-paper'])[0],
+                elements: els, text, note: notes[i] || ''});
+  });
+
+  document.getElementById('out').textContent = 'MODEL:' + JSON.stringify(model);
+})();
+</script>
+</body>
+</html>
