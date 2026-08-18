@@ -62,6 +62,37 @@ function paints(el){
   return paintsPseudo(el, "::before") || paintsPseudo(el, "::after");
 }
 
+/* getBoundingClientRect returns the border box, which is the wrong box twice over:
+   a box-shadow halo paints outside it, and a child pulled out by a negative margin
+   (the axis nodes are margin:-13px) sits outside its parent's rect. Measuring the
+   union of everything that PAINTS inside an element — plus each one's shadow reach
+   — is what stops the first and last dots of the slide 3 timeline being sliced in
+   half. Text is excluded from the union deliberately: it is painted out in the
+   export, so including it would only pad the crop with empty space. */
+function shadowReach(cs){
+  if (!cs.boxShadow || cs.boxShadow === "none") return 0;
+  const nums = (cs.boxShadow.match(/-?[\d.]+px/g) || []).map(parseFloat).map(Math.abs);
+  return nums.length ? Math.max(...nums) : 0;
+}
+
+function inkBox(el, sb){
+  const parts = [el, ...el.querySelectorAll("*")].filter(e => e === el || paints(e));
+  let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity, any = false;
+  for (const e of parts){
+    const cs = getComputedStyle(e);
+    if (cs.display === "none" || cs.visibility === "hidden") continue;
+    const q = e.getBoundingClientRect();
+    if (!q.width && !q.height) continue;
+    const x = shadowReach(cs);
+    l = Math.min(l, q.left - x);  t = Math.min(t, q.top - x);
+    r = Math.max(r, q.right + x); b = Math.max(b, q.bottom + x);
+    any = true;
+  }
+  if (!any) { const q = el.getBoundingClientRect(); l = q.left; t = q.top; r = q.right; b = q.bottom; }
+  return {x: Math.round(l - sb.left), y: Math.round(t - sb.top),
+          w: Math.round(r - l), h: Math.round(b - t)};
+}
+
 function kindOf(el){
   const tag = el.tagName.toLowerCase();
   if (tag === "svg" || tag === "img") return tag;
@@ -106,7 +137,7 @@ function isText(el){
               w: Math.round(r.width), h: Math.round(r.height)}; };
 
     const els = [...clone.querySelectorAll("*")].filter(paints).map(el => {
-      const b = box(el);
+      const b = inkBox(el, sb);
       return Object.assign({kind: kindOf(el), src: el.getAttribute("src") || null,
                             text: (el.textContent || "").trim().slice(0, 60)}, b);
     }).filter(e => e.w > 6 && e.h > 1);
@@ -118,7 +149,7 @@ function isText(el){
       if (!el.getBoundingClientRect().width) return false;
       return paints(el) || el.querySelector("*") && [...el.querySelectorAll("*")].some(paints);
     }).map(el => Object.assign({kind: "group", src: null,
-                                text: (el.textContent || "").trim().slice(0, 60)}, box(el)))
+                                text: (el.textContent || "").trim().slice(0, 60)}, inkBox(el, sb)))
       .filter(g => g.w > 6 && g.h > 1);
 
     const text = [...clone.querySelectorAll('*')].filter(isText).map(el => {
