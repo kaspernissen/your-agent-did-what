@@ -43,6 +43,11 @@ helm upgrade --install prometheus prometheus-community/prometheus \
 echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
 # The vendor path is opt-in on the token, exactly like the local compose path. Without
 # it the collector still exports to stdout and Jaeger, so the demo works offline.
+# These stay empty when their token is absent, and an empty array is where this
+# script broke: bash 3.2 — still the system bash on macOS — treats "${ARR[@]}" on
+# an empty array as an unbound variable under `set -u`. Hence the
+# ${ARR[@]+"${ARR[@]}"} form at the helm call: it expands to nothing when unset
+# rather than exploding. Do not "simplify" it back.
 DASH0_VALUES=()
 if [ -n "${DASH0_AUTH_TOKEN:-}" ]; then
   kubectl create secret generic dash0-secret \
@@ -61,17 +66,19 @@ DYNATRACE_VALUES=()
 if [ -n "${DT_API_TOKEN:-}" ]; then
   kubectl create secret generic dynatrace-secret \
     --from-literal=token="$DT_API_TOKEN" \
-    --from-literal=endpoint="$DT_ENDPOINT" \
+    --from-literal=endpoint="${DT_ENDPOINT:?DT_API_TOKEN is set but DT_ENDPOINT is not — both are needed, see demos/.env.template}" \
     --dry-run=client -o yaml | kubectl apply -f -
   DYNATRACE_VALUES=(-f ../observability/collector/values.dynatrace.yaml)
   echo "DYNATRACE token found — also exporting to $DT_ENDPOINT"
 else
-  echo "No DYNATRACE_AUTH_TOKEN — stdout and Jaeger only. Set it in demos/.env for the vendor path."
+  echo "No DT_API_TOKEN — stdout and Jaeger only. Set DT_API_TOKEN and DT_ENDPOINT in demos/.env for the vendor path."
 fi
 
 
 helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
-  -f ../observability/collector/values.yaml "${DASH0_VALUES[@]}" "${DYNATRACE_VALUES[@]}" --wait
+  -f ../observability/collector/values.yaml \
+  ${DASH0_VALUES[@]+"${DASH0_VALUES[@]}"} \
+  ${DYNATRACE_VALUES[@]+"${DYNATRACE_VALUES[@]}"} --wait
 
 cat <<EOF
 
