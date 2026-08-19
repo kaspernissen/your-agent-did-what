@@ -8,16 +8,20 @@ number in one place without the other is the main way to do damage here.
 ## Layout
 
 ```
-presentation/     the deck — 52 slides, plus a conformance checker and a geometry audit
 demos/            the demo — three agents, one incident, one collector, in kind
-  agents/         capybara-sre (Java) · capybara-db-mcp · capybara-db-core · beaver-sre (Python)
+  agents/         capybara-sre (Java) · capybara-db-mcp · prod-db-mcp · beaver-sre · otter-sre · goose
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
   observability/  collector, jaeger and prometheus values
   cluster/        kind, secrets, helm installs
-outline.md        beat-by-beat structure and timing
-ANALYSIS.md       (in demos/) the measurements, with dates and versions
+  ANALYSIS.md     the measurements, with dates and versions
+outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
+SPEAKER-NOTES.md  speaker notes, one section per slide, aligned to the same deck
+SLIDES-STYLE.md   type, colour and geometry spec for editing the Slides deck
+research.md       everything the talk is sourced from
+mascots/          42 transparent cut-outs, used by the README
 docs/superpowers/ the original specs and plans — history, not live documentation
 ```
+
 
 ## The rules that matter
 
@@ -37,21 +41,18 @@ reference slides, beats, or the presentation.
 **One variable per comparison.** The demo's arguments only work because two runs differ in
 exactly one respect. Adding a second difference does not weaken a finding, it deletes it.
 
-## Before committing a deck change
+## The slides are not in this repository
 
-```bash
-cd presentation
-python3 check-deck.py        # design-system conformance; exits non-zero
-python3 test-check-deck.py   # the checker's own tests
-```
+The talk is delivered from **Google Slides**. This repo keeps what makes that deck
+maintainable — `outline.md`, `SPEAKER-NOTES.md`, `SLIDES-STYLE.md` — and nothing else.
 
-Then the geometry audit — the command is in `presentation/README.md`. The checker reads
-markup and cannot see geometry, so **text overflowing a slide or printed on top of other
-text passes it**. The audit is what catches that, and it has caught it repeatedly, including
-three times in one afternoon after adding a line to a fixed layout.
+The HTML deck the Slides version was built from, together with its element exports and the
+tooling that produced them, is archived at `~/Documents/your-agent-did-what/presentation/`.
+It runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
+second copy of a deck that is now maintained elsewhere, and two copies will drift.
 
-Speaker notes live in a JSON array inside `presentation/index.html`; the count must match the
-slide count, and the checker enforces that. If you add a slide, add its note.
+If you change what a slide claims, change `SPEAKER-NOTES.md` and `outline.md` with it — they
+are the only record in this repo of what is actually said on stage.
 
 ## Running the demo
 

@@ -1,27 +1,6 @@
-#!/usr/bin/env python3
-"""Write the human-facing side of the export: type spec, copy deck, and a README."""
-import json, re, unicodedata
-from pathlib import Path
-from collections import Counter
+# Type & colour spec — Trace deck
 
-HERE = Path(__file__).resolve().parent
-OUT = HERE / 'export'
-model = json.loads(Path('/tmp/model.json').read_text())
-spoken = next(m['n'] for m in model if m['label'] == 'Divider — Appendix') - 1
-
-def slug(s, n=40):
-    s = unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode()
-    return (re.sub(r'-+', '-', re.sub(r'[^a-z0-9]+', '-', s.lower())).strip('-') or 'slide')[:n]
-
-hexcol = lambda c: '#%02X%02X%02X' % tuple(int(v) for v in re.findall(r'\d+', c)[:3])
-
-# ── type census, measured off the real render rather than read off the stylesheet
-runs = [t for m in model for t in m['text']]
-census = Counter((t['font'], t['size'], t['weight'], hexcol(t['color'])) for t in runs)
-
-FONTS = f"""# Type & colour spec — Trace deck
-
-Everything here is measured off the rendered deck ({len(runs)} text runs across {len(model)} slides),
+Everything here is measured off the rendered deck (899 text runs across 72 slides),
 not read off the stylesheet, so it is what the slides actually show.
 
 ## Page setup — do this first
@@ -106,27 +85,37 @@ they are cut from those two grounds.
 
 ## Every combination actually used
 
-Top 30 of {len(census)} distinct (family, size, weight, colour) combinations:
+Top 30 of 191 distinct (family, size, weight, colour) combinations:
 
 | Family | px | pt | Weight | Colour | Count |
 |---|---|---|---|---|---|
-"""
-for (f, s, w, c), n in census.most_common(30):
-    FONTS += f'| {f} | {s} | {s/2:g} | {w} | `{c}` | {n} |\n'
-(OUT / 'FONTS.md').write_text(FONTS)
-
-# ── copy deck: every text run, in reading order, ready to paste
-lines = ['# Slide copy\n',
-         'Every text run in reading order, so it can be pasted rather than retyped.',
-         'Sizes are px — halve them for points at the 13.333 × 7.5in page setup.\n']
-for m in model:
-    part = 'SPOKEN' if m['n'] <= spoken else 'APPENDIX'
-    lines.append(f"\n---\n\n## {m['n']:02d} · {m['label']}  ({part}, {m['ground']})\n")
-    lines.append(f"`export/slides/{m['n']:02d}-{slug(m['label'])}.png`\n")
-    for t in m['text']:
-        lines.append(f"- **{t['t']}**  \n  <sub>{t['font']} {t['size']}px / {t['size']/2:g}pt · "
-                     f"w{t['weight']} · {hexcol(t['color'])} · at {t['x']},{t['y']}</sub>")
-    if m['note']:
-        lines.append(f"\n<details><summary>Speaker notes</summary>\n\n{m['note']}\n\n</details>")
-(OUT / 'COPY.md').write_text('\n'.join(lines))
-print('FONTS.md and COPY.md written')
+| JetBrains Mono | 20 | 10 | 400 | `#10142E` | 66 |
+| Public Sans | 28 | 14 | 400 | `#5B6180` | 45 |
+| JetBrains Mono | 26 | 13 | 400 | `#425CC7` | 40 |
+| JetBrains Mono | 17 | 8.5 | 400 | `#5B6180` | 29 |
+| Public Sans | 21 | 10.5 | 300 | `#5B6180` | 20 |
+| JetBrains Mono | 26 | 13 | 400 | `#A9B6EE` | 17 |
+| Public Sans | 26 | 13 | 300 | `#10142E` | 17 |
+| Space Grotesk | 72 | 36 | 500 | `#10142E` | 15 |
+| Public Sans | 34 | 17 | 300 | `#10142E` | 14 |
+| JetBrains Mono | 19 | 9.5 | 400 | `#425CC7` | 14 |
+| JetBrains Mono | 26 | 13 | 400 | `#8A93BC` | 14 |
+| Public Sans | 24 | 12 | 300 | `#5B6180` | 13 |
+| JetBrains Mono | 19 | 9.5 | 400 | `#5B6180` | 13 |
+| Public Sans | 36 | 18 | 300 | `#8A93BC` | 12 |
+| Public Sans | 28 | 14 | 400 | `#8A93BC` | 12 |
+| JetBrains Mono | 18 | 9 | 400 | `#5B6180` | 12 |
+| JetBrains Mono | 24 | 12 | 400 | `#C9CEE8` | 12 |
+| JetBrains Mono | 21 | 10.5 | 400 | `#C9CEE8` | 11 |
+| JetBrains Mono | 21 | 10.5 | 400 | `#10142E` | 10 |
+| JetBrains Mono | 22 | 11 | 400 | `#10142E` | 10 |
+| JetBrains Mono | 20 | 10 | 400 | `#8A5B00` | 9 |
+| Public Sans | 24 | 12 | 400 | `#10142E` | 9 |
+| JetBrains Mono | 20 | 10 | 400 | `#5B6180` | 8 |
+| JetBrains Mono | 24 | 12 | 400 | `#10142E` | 8 |
+| Public Sans | 26 | 13 | 300 | `#8A93BC` | 7 |
+| Space Grotesk | 86 | 43 | 500 | `#10142E` | 7 |
+| Public Sans | 34 | 17 | 400 | `#425CC7` | 7 |
+| JetBrains Mono | 26 | 13 | 400 | `#202C5F` | 7 |
+| JetBrains Mono | 21 | 10.5 | 400 | `#8A93BC` | 7 |
+| JetBrains Mono | 34 | 17 | 400 | `#9FADEE` | 7 |

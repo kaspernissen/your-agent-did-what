@@ -18,26 +18,26 @@ First delivery **SREday London**; then **OSS Summit EU** (October).
 
 <table>
 <tr>
-<td width="150" align="center"><img src="presentation/img/mascots/capybara-investigating.png" width="120" alt="Capybara SRE"></td>
+<td width="150" align="center"><img src="mascots/capybara-investigating.png" width="120" alt="Capybara SRE"></td>
 <td><strong>Capybara, SRE</strong> — <em>"Deploy Calmly"</em><br>
 Java · Quarkus + LangChain4j · tools over MCP · PostgreSQL · judged by an LLM.<br>
 Emits <code>gen_ai.*</code> from the framework, and loses the tool call's content on the MCP path.</td>
 </tr>
 <tr>
-<td width="150" align="center"><img src="presentation/img/mascots/beaver-dashboard.png" width="120" alt="Beaver SRE"></td>
+<td width="150" align="center"><img src="mascots/beaver-dashboard.png" width="120" alt="Beaver SRE"></td>
 <td><strong>Beaver, SRE</strong> — another team, another platform<br>
 Python · Anthropic SDK · instrumented by OpenInference · reads the same database.<br>
 Emits no OTel vocabulary at all; the collector rewrites it in flight — most of it.</td>
 </tr>
 <tr>
-<td width="150" align="center"><img src="presentation/img/mascots/otter-tablet.png" width="120" alt="Otter SRE"></td>
+<td width="150" align="center"><img src="mascots/otter-tablet.png" width="120" alt="Otter SRE"></td>
 <td><strong>Otter, SRE</strong> — the same Python agent, a third vocabulary<br>
 Python · Anthropic SDK · instrumented by OpenLLMetry · same tools, same MCP server.<br>
 Emits <code>gen_ai.*</code> natively and needs no normalizing at all — the only one of the three
 that records what a tool returned.</td>
 </tr>
 <tr>
-<td width="150" align="center"><img src="presentation/img/mascots/goose-walking.png" width="120" alt="goose"></td>
+<td width="150" align="center"><img src="mascots/goose-walking.png" width="120" alt="goose"></td>
 <td><strong>goose</strong> — a developer's own coding agent, and the one that did it<br>
 Asked to tidy up the free plan. It calls <code>delete_records</code> on an MCP server holding
 <code>deploy_svc</code> credentials, which carry <code>DELETE</code>. Nobody granted the agent
@@ -62,37 +62,33 @@ not give you.
 
 | Path | What it is |
 |---|---|
-| **[`presentation/`](presentation/)** | **The deck.** 52 slides across nine beats, on the Trace design system, with a conformance checker and a geometry audit. |
-| **[`demos/`](demos/)** | **The demo.** Two agents, one incident, one collector — in kind, three commands. Every captured attribute in the talk comes from here. |
+| **[`demos/`](demos/)** | **The demo.** Three SRE agents, one coding agent, one incident, one collector — in kind, three commands. Every captured attribute in the talk comes from here. |
 | **[`demos/README.md`](demos/README.md)** | How to run it on stage: the flow, what to look at, and what breaks. |
 | **[`demos/ANALYSIS.md`](demos/ANALYSIS.md)** | The measurements, with versions and dates. The talk's evidence base. |
-| **[`outline.md`](outline.md)** | Beat-by-beat: timing, who leads, what each slide must land, and the parked cut list. |
+| **[`outline.md`](outline.md)** | The talk, slide by slide, aligned to the 46-slide deck: sections, timing, and what each slide must land. |
+| **[`SPEAKER-NOTES.md`](SPEAKER-NOTES.md)** | Speaker notes, one section per slide, aligned to the same deck. |
+| **[`SLIDES-STYLE.md`](SLIDES-STYLE.md)** | Type, colour and geometry spec — fonts, sizes in px *and* pt, the palette. Keeps edits on-brand. |
 | **[`abstract.md`](abstract.md)** | The submitted abstract and ecosystem benefits. |
-| **[`research.md`](research.md)** | Deep research on agent forensics, sourced and adversarially verified. |
-| **[`research-evaluations.md`](research-evaluations.md)** | The same for evaluations and LLM-as-a-judge. |
-| **[`landscape.md`](landscape.md)** | The visualization and normalization landscape, and the Jaeger roadmap. |
-| **[`resources.md`](resources.md)** | Annotated links — conventions, tools, backends, CNCF projects. |
-| **[`presentation/img/mascots/`](presentation/img/mascots/)** | 43 cut-out mascots, transparent, for slides and consoles — capybara, beaver, otter and goose. See [the convention](presentation/README.md#mascots). |
+| **[`research.md`](research.md)** | Everything the talk is sourced from: forensics, evaluations, the backend landscape, the state of the standards, and the link list. |
+| **[`mascots/`](mascots/)** | 42 cut-out mascots, transparent — capybara, beaver, otter and goose. |
 | **`docs/superpowers/`** | The specs and plans this was built from. History, not live documentation. |
 
 ---
 
-## Run the deck
+## Where the slides live
 
-```bash
-cd presentation
-./start.sh
-```
+The talk is delivered from **Google Slides**. This repository holds what keeps that deck
+coherent — the outline, the speaker notes and the style spec — but not the deck itself.
 
-Serves locally and opens **two** windows: the deck and a speaker-notes follower (current
-note · next note · clock · timer). Deck on the projector, notes on your laptop.
+The HTML deck the Slides version was built from, its element exports (backgrounds, diagrams,
+icons, mascots, the animated normalizer GIF) and the tooling that generated them are archived
+**outside this repository**, at `~/Documents/your-agent-did-what/presentation/`. They are kept
+out of the public repo deliberately: 71 MB of rendered PNGs, and a second copy of a deck that
+is now maintained in Slides.
 
-- Navigate: `←` `→` · Space · `Home`/`End` · number keys · `R` resets.
-- Fully offline-safe — fonts are vendored under `presentation/fonts/`.
-- **Before committing slide changes:** run `python3 check-deck.py`, then the geometry audit
-  (command in [`presentation/README.md`](presentation/README.md)). The checker reads markup
-  and cannot see geometry, so text overflowing a slide or printing on top of other text
-  passes it — the audit is what catches that, and it has caught it repeatedly.
+If you need to regenerate an asset, that directory still works standalone — `python3
+check-deck.py`, `./start.sh`, and the `export-*.py` scripts all run from there with no
+dependency on this repository.
 
 ---
 
@@ -114,6 +110,61 @@ key. `demos/.env` is git-ignored; only `.env.template` is committed.
 > Any deploy or `kubectl set env` replaces a pod and takes the port-forward with it, so the
 > console appears to die. Re-run `./01_start-demo.sh`. This cost six debugging sessions
 > before the script existed.
+
+---
+
+## Verifying the agents in Jaeger
+
+`./01_start-demo.sh` port-forwards Jaeger to **<http://localhost:16686>**. This is where you
+confirm the agents actually emitted what the talk says they emit — do it before every
+rehearsal, because a silent instrumentation regression looks exactly like a working demo.
+
+**1 · The services are reporting.** The *Service* dropdown should list `capybara-sre`,
+`beaver-sre`, `otter-sre`, `capybara-db-mcp`, `prod-db-mcp`, and `goose` once you have run the
+recipe. A missing service means that agent has not been asked anything yet, or its exporter
+never connected.
+
+> If the dropdown lists services that no longer exist, Jaeger's store is in memory and keeps
+> old traces. `kubectl rollout restart deployment/jaeger` clears it — and clears your traces,
+> so do that *before* a rehearsal, never during one.
+
+**2 · One question produced one trace.** Ask an agent something, then search that service and
+open the newest trace. You want a single trace whose root is `invoke_agent`, containing `chat`
+spans and `execute_tool` spans — not a scatter of unparented spans.
+
+**3 · The trace crosses into the MCP server.** Expand an `execute_tool` span: the MCP server's
+spans should be *inside* the agent's trace, and the `SELECT` below them. That join only
+happens because `traceparent` rides in the MCP request's `params._meta`. To see the failure
+mode deliberately, redeploy with `CAPYBARA_MCP_PROPAGATE_CONTEXT=false` — the SQL then starts
+a trace of its own and the tool span has nothing under it.
+
+**4 · Each agent speaks the vocabulary it should.** Click a `chat` span and read the tags:
+
+| Service | Expect | Because |
+|---|---|---|
+| `capybara-sre` | `gen_ai.*` from the framework | quarkus-langchain4j emits them directly |
+| `otter-sre` | `gen_ai.*`, natively | OpenLLMetry 0.62.3 already emits the conventions |
+| `beaver-sre` | **both** `llm.*` **and** `gen_ai.*` on the same span | the collector normalizes it, and `remove_originals: false` keeps the originals so you can see both |
+
+Beaver carrying both vocabularies at once is the check that the `gen_ai_normalizer` processor
+is actually in the pipeline. If you see only `llm.*`, the processor is not running; if you see
+only `gen_ai.*`, someone set `remove_originals: true` and the before/after demo is gone.
+
+**5 · The forensic attributes are where the talk says they are.** On a tool span, look for
+`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`. The finding the talk turns on is
+that the *libraries* do not write them — only the spans we wrote by hand do. If you suddenly
+find them everywhere, an upstream release has changed the story and the slide needs revisiting.
+
+**6 · What will not be in Jaeger, correctly.** The judge's `gen_ai.evaluation.result` is an
+**event in the logs data model**, not a span — Jaeger takes spans, so its absence there is the
+convention working as specified, not a broken demo. Read those from the collector instead:
+
+```bash
+kubectl logs -l app.kubernetes.io/name=opentelemetry-collector -f | grep -i evaluation
+```
+
+The same command with no filter is the fastest way to see raw spans arriving, which is what to
+check first when Jaeger looks empty.
 
 ---
 
