@@ -36,5 +36,9 @@
     "capAdd": [
       "IPC_LOCK"
     ],
+    "mounts": [
+      "source=ollama-models,target=/home/vscode/.ollama,type=volume"
+    ],
     "postCreateCommand": ".devcontainer/post-create.sh",
+    "postStartCommand": "nohup ollama serve > /tmp/ollama.log 2>&1 &",
   }
