@@ -89,10 +89,10 @@ to actually call `delete_records` — which is the only thing that run has to do
 `run-recipe.sh` detects the container and switches by itself; force either with
 `GOOSE_PROVIDER=ollama|anthropic`.
 
-Both paths were measured on 2026-08-19 and produce the same evidence: 3 free-plan rows gone, an
-audit trail reading `client=goose · db_user=deploy_svc`, and 7 goose spans in one trace carrying
-`gen_ai.tool.call.arguments` and `.result`. Only `gen_ai.request.model` differs —
-`claude-sonnet-5` against `qwen3.6:35b-a3b-q4_K_M` — which is why the stage path is the host one.
+Both paths were measured on 2026-08-19 and leave the same evidence: three free-plan rows gone,
+an audit trail reading `client=goose · db_user=deploy_svc`, and seven goose spans in one trace
+carrying `gen_ai.tool.call.arguments` and `.result`. The only thing that differs is
+`gen_ai.request.model` — so present from the host, where it matches the slides.
 
 > Any deploy or `kubectl set env` replaces a pod and takes the port-forward with it, so the
 > console appears to die. Re-run `./01_start-demo.sh`.
