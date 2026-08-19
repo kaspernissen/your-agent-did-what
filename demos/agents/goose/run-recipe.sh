@@ -12,6 +12,13 @@ cd "$(dirname "$0")"
 if [ -f ../../.env ]; then set -a; . ../../.env; set +a; fi   # demos/.env
 echo "✅ Loaded environment variables."
 
+# .env.template calls these optional and documents these exact defaults, so they have to
+# exist here too: under `set -u` an unset GOOSE_PROVIDER is a fatal unbound variable, and
+# every .env written before the template gained them is missing both. Exported because
+# goose reads them from the environment — the recipe no longer carries a settings block.
+export GOOSE_PROVIDER="${GOOSE_PROVIDER:-ollama}"
+export GOOSE_MODEL="${GOOSE_MODEL:-qwen3.6:35b-a3b-q4_K_M}"
+
 command -v goose >/dev/null || { echo "goose not installed: brew install block-goose-cli"; exit 1; }
 
 if [ "$GOOSE_PROVIDER" = "ollama" ]; then
