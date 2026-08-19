@@ -15,8 +15,6 @@ demos/            the demo — three agents, one incident, one collector, in kin
   cluster/        kind, secrets, helm installs
   ANALYSIS.md     the measurements, with dates and versions
 outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
-SPEAKER-NOTES.md  speaker notes, one section per slide, aligned to the same deck
-SLIDES-STYLE.md   type, colour and geometry spec for editing the Slides deck
 research.md       everything the talk is sourced from
 mascots/          42 transparent cut-outs, used by the README
 docs/superpowers/ the original specs and plans — history, not live documentation
@@ -43,16 +41,16 @@ exactly one respect. Adding a second difference does not weaken a finding, it de
 
 ## The slides are not in this repository
 
-The talk is delivered from **Google Slides**. This repo keeps what makes that deck
-maintainable — `outline.md`, `SPEAKER-NOTES.md`, `SLIDES-STYLE.md` — and nothing else.
+The talk is delivered from **Google Slides**. This repo keeps `outline.md` — what each
+slide has to land, and in what order — and nothing else about the deck.
 
-The HTML deck the Slides version was built from, together with its element exports and the
-tooling that produced them, is archived at `~/Documents/your-agent-did-what/presentation/`.
-It runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
+The speaker notes (`SPEAKER-NOTES.md`), the type spec (`SLIDES-STYLE.md`), and the HTML deck
+with its element exports and tooling are all archived at `~/Documents/your-agent-did-what/`.
+The deck runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
 second copy of a deck that is now maintained elsewhere, and two copies will drift.
 
-If you change what a slide claims, change `SPEAKER-NOTES.md` and `outline.md` with it — they
-are the only record in this repo of what is actually said on stage.
+If you change what a slide claims, change `outline.md` here and `SPEAKER-NOTES.md` in the
+archive with it. `outline.md` is the only record in this repo of what is said on stage.
 
 ## Running the demo
 

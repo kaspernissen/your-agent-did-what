@@ -66,8 +66,6 @@ not give you.
 | **[`demos/README.md`](demos/README.md)** | How to run it on stage: the flow, what to look at, and what breaks. |
 | **[`demos/ANALYSIS.md`](demos/ANALYSIS.md)** | The measurements, with versions and dates. The talk's evidence base. |
 | **[`outline.md`](outline.md)** | The talk, slide by slide, aligned to the 46-slide deck: sections, timing, and what each slide must land. |
-| **[`SPEAKER-NOTES.md`](SPEAKER-NOTES.md)** | Speaker notes, one section per slide, aligned to the same deck. |
-| **[`SLIDES-STYLE.md`](SLIDES-STYLE.md)** | Type, colour and geometry spec — fonts, sizes in px *and* pt, the palette. Keeps edits on-brand. |
 | **[`abstract.md`](abstract.md)** | The submitted abstract and ecosystem benefits. |
 | **[`research.md`](research.md)** | Everything the talk is sourced from: forensics, evaluations, the backend landscape, the state of the standards, and the link list. |
 | **[`mascots/`](mascots/)** | 42 cut-out mascots, transparent — capybara, beaver, otter and goose. |
@@ -77,14 +75,20 @@ not give you.
 
 ## Where the slides live
 
-The talk is delivered from **Google Slides**. This repository holds what keeps that deck
-coherent — the outline, the speaker notes and the style spec — but not the deck itself.
+The talk is delivered from **Google Slides**. This repository holds
+[`outline.md`](outline.md) — what each slide has to land, and in what order — and nothing
+else about the deck.
 
-The HTML deck the Slides version was built from, its element exports (backgrounds, diagrams,
-icons, mascots, the animated normalizer GIF) and the tooling that generated them are archived
-**outside this repository**, at `~/Documents/your-agent-did-what/presentation/`. They are kept
-out of the public repo deliberately: 71 MB of rendered PNGs, and a second copy of a deck that
-is now maintained in Slides.
+Everything else lives **outside this repository**, at `~/Documents/your-agent-did-what/`:
+
+| | |
+|---|---|
+| `SPEAKER-NOTES.md` | Speaker notes, one section per slide, aligned to the Slides deck. |
+| `SLIDES-STYLE.md` | Type, colour and geometry — sizes in px *and* pt, the palette, the page-setup step. |
+| `presentation/` | The HTML deck the Slides version was built from, its element exports (backgrounds, diagrams, icons, mascots, the animated normalizer GIF) and the tooling that generated them. |
+
+They are kept out of the public repo deliberately: 71 MB of rendered PNGs, the stage
+directions, and a second copy of a deck that is now maintained in Slides.
 
 If you need to regenerate an asset, that directory still works standalone — `python3
 check-deck.py`, `./start.sh`, and the `export-*.py` scripts all run from there with no

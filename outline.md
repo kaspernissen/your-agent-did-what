@@ -4,7 +4,8 @@
 Kasper Borg Nissen (Dash0) · Adriana Villela (Dynatrace) — 35 minutes.
 
 Aligned to the **Google Slides deck, 46 slides**. Slide numbers here are that deck's numbers.
-Full stage directions are in [`SPEAKER-NOTES.md`](SPEAKER-NOTES.md), one section per slide.
+Full stage directions are in `SPEAKER-NOTES.md`, kept with the deck archive at
+`~/Documents/your-agent-did-what/` — one section per slide.
 
 ## The argument in five sentences
 
@@ -136,10 +137,10 @@ Where the talk turns. **The live demo sits at slide 28.**
 
 ## What lives where
 
-- **Slides** — Google Slides. The HTML deck it came from is archived outside this repository;
-  see [`README.md`](README.md).
-- **Speaker notes** — [`SPEAKER-NOTES.md`](SPEAKER-NOTES.md), aligned slide-for-slide.
-- **Type and colour** — [`SLIDES-STYLE.md`](SLIDES-STYLE.md), so edits stay on-brand.
+- **Slides** — Google Slides. The HTML deck it came from is archived outside this
+  repository; see [`README.md`](README.md).
+- **Speaker notes** — `SPEAKER-NOTES.md`, aligned slide-for-slide, in `~/Documents/your-agent-did-what/`.
+- **Type and colour** — `SLIDES-STYLE.md`, same place, so edits stay on-brand.
 - **The demo** — [`demos/`](demos/), with the measured record in
   [`demos/ANALYSIS.md`](demos/ANALYSIS.md).
 - **Sourcing** — [`research.md`](research.md).
