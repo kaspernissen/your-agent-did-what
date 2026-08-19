@@ -50,6 +50,8 @@ platform, not the story. goose is not asked anything. goose is what happened.
 
 ## Run it
 
+Same three commands either way:
+
 ```bash
 cd demos
 cp .env.template .env      # then set ANTHROPIC_API_KEY
@@ -57,17 +59,47 @@ cp .env.template .env      # then set ANTHROPIC_API_KEY
 ./01_start-demo.sh         # port-forwards, waits until they answer
 ```
 
-Then open **<http://localhost:8088>** and pick an agent.
+Then open **<http://localhost:8088>** and pick an agent. `demos/.env` is git-ignored; only
+`.env.template` is committed.
 
-**Needs** Docker, kind, kubectl, helm, JDK 21, Python 3.11+, and an Anthropic API key.
-`demos/.env` is git-ignored; only `.env.template` is committed.
+### On your machine — the way the talk is given
+
+**Needs** Docker, kind, kubectl, helm, JDK 21, Python 3.11+, an Anthropic API key, and — for
+the coding agent that causes the incident — [goose](https://block.github.io/goose/) v1.46.0 or
+newer plus Ollama:
+
+```bash
+brew install block-goose-cli
+ollama pull qwen3.6:35b-a3b-q4_K_M
+demos/agents/goose/run-recipe.sh
+```
+
+Ollama has to be on the host: Docker cannot pass the GPU through on a Mac, so a containerised
+one falls back to CPU. This is the path the slides show, and the one to present from.
+
+### In the devcontainer — the way to develop it
+
+Open the repo in a devcontainer (VS Code, or `devcontainer up`). Everything above is
+preinstalled — Docker-in-Docker, kind, kubectl, helm, k9s, JDK, Python, goose — so only
+`ANTHROPIC_API_KEY` is yours to provide.
+
+The one difference is the coding agent: **goose runs on Anthropic in here, not Ollama.** There
+is no GPU to pass through, and a model small enough to be tolerable on CPU cannot be relied on
+to actually call `delete_records` — which is the only thing that run has to do.
+`run-recipe.sh` detects the container and switches by itself; force either with
+`GOOSE_PROVIDER=ollama|anthropic`.
+
+Both paths were measured on 2026-08-19 and produce the same evidence: 3 free-plan rows gone, an
+audit trail reading `client=goose · db_user=deploy_svc`, and 7 goose spans in one trace carrying
+`gen_ai.tool.call.arguments` and `.result`. Only `gen_ai.request.model` differs —
+`claude-sonnet-5` against `qwen3.6:35b-a3b-q4_K_M` — which is why the stage path is the host one.
 
 > Any deploy or `kubectl set env` replaces a pod and takes the port-forward with it, so the
 > console appears to die. Re-run `./01_start-demo.sh`.
 
-The deletion is a real coding-agent run against a local model. When that is inconvenient,
-`POST /incident/rehearse-deletion` reproduces the database state with the same credentials, so
-the investigation half stands on its own — see
+The deletion is a real coding-agent run. When that is inconvenient — no Ollama, a bad network,
+a model that will not call the tool — `POST /incident/rehearse-deletion` reproduces the database
+state with the same credentials, so the investigation half stands on its own. See
 [the extra door](demos/README.md#the-extra-door) for what it does and does not give you.
 
 ---
