@@ -62,7 +62,7 @@ cp .env.template .env      # then set ANTHROPIC_API_KEY
 Then open **<http://localhost:8088>** and pick an agent. `demos/.env` is git-ignored; only
 `.env.template` is committed.
 
-### On your machine — the way the talk is given
+### Option 1 · On your machine
 
 **Needs** Docker, kind, kubectl, helm, JDK 21, Python 3.11+, an Anthropic API key, and — for
 the coding agent that causes the incident — [goose](https://block.github.io/goose/) v1.46.0 or
@@ -75,9 +75,9 @@ demos/agents/goose/run-recipe.sh
 ```
 
 Ollama has to be on the host: Docker cannot pass the GPU through on a Mac, so a containerised
-one falls back to CPU. This is the path the slides show, and the one to present from.
+one falls back to CPU.
 
-### In the devcontainer — the way to develop it
+### Option 2 · In the devcontainer
 
 Open the repo in a devcontainer (VS Code, or `devcontainer up`). Everything above is
 preinstalled — Docker-in-Docker, kind, kubectl, helm, k9s, JDK, Python, goose — so only
@@ -89,10 +89,10 @@ to actually call `delete_records` — which is the only thing that run has to do
 `run-recipe.sh` detects the container and switches by itself; force either with
 `GOOSE_PROVIDER=ollama|anthropic`.
 
-Both paths were measured on 2026-08-19 and leave the same evidence: three free-plan rows gone,
-an audit trail reading `client=goose · db_user=deploy_svc`, and seven goose spans in one trace
+Both were measured on 2026-08-19 and leave the same evidence: three free-plan rows gone, an
+audit trail reading `client=goose · db_user=deploy_svc`, and seven goose spans in one trace
 carrying `gen_ai.tool.call.arguments` and `.result`. The only thing that differs is
-`gen_ai.request.model` — so present from the host, where it matches the slides.
+`gen_ai.request.model`.
 
 > Any deploy or `kubectl set env` replaces a pod and takes the port-forward with it, so the
 > console appears to die. Re-run `./01_start-demo.sh`.
