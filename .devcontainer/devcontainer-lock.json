@@ -1,10 +1,5 @@
 {
   "features": {
-    "ghcr.io/devcontainers-extra/features/kubectl-asdf:2": {
-      "version": "2.0.16",
-      "resolved": "ghcr.io/devcontainers-extra/features/kubectl-asdf@sha256:6cb74689a6ed2a71571b658e792deee75a640a93a77fafe6be1881b1c9759566",
-      "integrity": "sha256:6cb74689a6ed2a71571b658e792deee75a640a93a77fafe6be1881b1c9759566"
-    },
     "ghcr.io/devcontainers/features/docker-in-docker:4": {
       "version": "4.0.0",
       "resolved": "ghcr.io/devcontainers/features/docker-in-docker@sha256:4fa87399214366e320d489991769c4f3f461e1ffe461f54eea78a41b34945bb5",
