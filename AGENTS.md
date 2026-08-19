@@ -17,7 +17,6 @@ demos/            the demo — three agents, one incident, one collector, in kin
 outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
 research.md       everything the talk is sourced from
 mascots/          42 transparent cut-outs, used by the README
-docs/superpowers/ the original specs and plans — history, not live documentation
 ```
 
 
@@ -44,9 +43,9 @@ exactly one respect. Adding a second difference does not weaken a finding, it de
 The talk is delivered from **Google Slides**. This repo keeps `outline.md` — what each
 slide has to land, and in what order — and nothing else about the deck.
 
-The speaker notes (`SPEAKER-NOTES.md`), the type spec (`SLIDES-STYLE.md`), and the HTML deck
-with its element exports and tooling are all archived at `~/Documents/your-agent-did-what/`.
-The deck runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
+The speaker notes (`SPEAKER-NOTES.md`), the type spec (`SLIDES-STYLE.md`), the HTML deck with
+its element exports and tooling, and the original specs and plans (`docs/superpowers/`) are
+all archived at `~/Documents/your-agent-did-what/`. The deck runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
 second copy of a deck that is now maintained elsewhere, and two copies will drift.
 
 If you change what a slide claims, change `outline.md` here and `SPEAKER-NOTES.md` in the
