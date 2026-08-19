@@ -1,11 +1,13 @@
 #!/bin/bash
+# Container setup. Fail loudly: a silent failure here produces a container that looks built
+# and breaks at demo time, which is the worst moment to discover a half-finished install.
+set -euo pipefail
 
 ### -------------------
 ### Uncomment ll command in bashrc
 ### -------------------
 
 sed -i -e "s/#alias ll='ls -l'/alias ll='ls -al'/g" ~/.bashrc
-. $HOME/.bashrc
 
 ### -------------------
 ### Install Helm
@@ -19,8 +21,12 @@ rm -rf get_helm.sh
 ### -------------------
 ### Pre-requisites for running Goose
 ### -------------------
+### goose keeps provider secrets in a keyring, and errors out on a headless container
+### without one. dbus is launched once and its address written to ~/.bashrc: the variables
+### are shell-local, so a container-creation-only launch leaves every later terminal without
+### them and goose fails there instead.
 
-sudo apt update && sudo apt install -y \
+sudo apt-get update && sudo apt-get install -y \
   gnome-keyring \
   dbus-x11 \
   libsecret-1-0 \
@@ -29,32 +35,31 @@ sudo apt update && sudo apt install -y \
 
 mkdir -p ~/.local/share/keyrings
 touch ~/.local/share/keyrings/login.keyring
-eval $(dbus-launch)
-export $(dbus-launch)
+eval "$(dbus-launch --sh-syntax)"
+grep -q DBUS_SESSION_BUS_ADDRESS ~/.bashrc \
+  || echo "export DBUS_SESSION_BUS_ADDRESS='${DBUS_SESSION_BUS_ADDRESS}'" >> ~/.bashrc
 gnome-keyring-daemon --start --components=secrets
 echo "blah" | gnome-keyring-daemon -r --unlock --components=secret
 
-## Pinning down specific version
-# GOOSE_RELEASE="stable"
+### -------------------
+### Install Goose
+### -------------------
+### Pinned deliberately. Releases before 1.46.0 emit no gen_ai.* attributes at all — the two
+### PRs that added them merged four hours after 1.45.0 was cut — so an older goose produces a
+### run that looks fine and records nothing the talk is about.
+
 GOOSE_RELEASE="v1.46.0"
-curl -fsSL https://github.com/aaif-goose/goose/releases/download/${GOOSE_RELEASE}/download_cli.sh | bash
+curl -fsSL "https://github.com/aaif-goose/goose/releases/download/${GOOSE_RELEASE}/download_cli.sh" | bash
 
 ### -------------------
-### Install Ollama and pull model
+### No Ollama in here, on purpose
 ### -------------------
+### Docker cannot pass the GPU through on a Mac, so a containerised Ollama runs on CPU, and a
+### model small enough to be tolerable there cannot be relied on to call the tool this demo
+### turns on. In the container goose talks to Anthropic instead — same gen_ai.* spans, only
+### gen_ai.request.model differs — and demos/agents/goose/run-recipe.sh selects that itself.
+### The Ollama path stays on the host, which is where the talk is given from.
 
-OLLAMA_VERSION=$(curl -fsSL https://api.github.com/repos/ollama/ollama/releases/latest | grep -m1 '"tag_name"' | cut -d'"' -f4)
-ARCH=$(uname -m | sed 's/aarch64/arm64/;s/x86_64/amd64/')
-curl -fsSL "https://github.com/ollama/ollama/releases/download/${OLLAMA_VERSION}/ollama-linux-${ARCH}.tar.zst" -o /tmp/ollama.tar.zst
-sudo apt-get install -y zstd
-sudo tar -I zstd -xf /tmp/ollama.tar.zst -C /usr/local
-rm /tmp/ollama.tar.zst
-
-# Start the server just long enough to pull the model; postStartCommand
-# takes over running it for the rest of the container's life.
-ollama serve &
-for i in $(seq 1 30); do
-  curl -fs http://localhost:11434 >/dev/null 2>&1 && break
-  sleep 1
-done
-ollama pull qwen3.6:35b-a3b-q4_K_M
+echo
+echo "Container ready. goose will use Anthropic in here (ANTHROPIC_API_KEY in demos/.env)."
+echo "The Ollama path is host-only; see demos/agents/goose/run-recipe.sh."

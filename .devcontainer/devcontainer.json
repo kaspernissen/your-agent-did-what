@@ -36,9 +36,12 @@
     "capAdd": [
       "IPC_LOCK"
     ],
-    "mounts": [
-      "source=ollama-models,target=/home/vscode/.ollama,type=volume"
-    ],
+    // goose talks to Anthropic in here rather than a local Ollama: no GPU passthrough on a
+    // Mac, and a CPU-sized model cannot be trusted to call the tool the demo turns on.
+    // run-recipe.sh detects the container and picks this itself; setting it here means the
+    // choice is visible rather than inferred.
+    "containerEnv": {
+      "GOOSE_PROVIDER": "anthropic"
+    },
     "postCreateCommand": ".devcontainer/post-create.sh",
-    "postStartCommand": "nohup ollama serve > /tmp/ollama.log 2>&1 &",
   }

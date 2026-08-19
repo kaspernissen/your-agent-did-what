@@ -142,9 +142,21 @@ a tidy-up, the agent does what it was asked, and it succeeds because the credent
 
 ```bash
 brew install block-goose-cli        # v1.46.0 or newer; earlier releases emit no gen_ai.*
-ollama pull qwen3.6:35b-a3b-q4_K_M  # keep Ollama on the host: Docker cannot pass the GPU on a Mac
+ollama pull qwen3.6:35b-a3b-q4_K_M  # host only: Docker cannot pass the GPU through on a Mac
 agents/goose/run-recipe.sh
 ```
+
+`run-recipe.sh` picks its provider rather than asking you to remember which machine you are on:
+
+| Where | Provider | Model | Why |
+|---|---|---|---|
+| **Host** | `ollama` | `qwen3.6:35b-a3b-q4_K_M` | The path the slides show — a local model on the presenter's own laptop, on the GPU. |
+| **Devcontainer** | `anthropic` | `claude-sonnet-5` | No GPU passthrough there, and a CPU-sized model cannot be relied on to call `delete_records` — which is the only thing this run has to do. |
+
+Force either with `GOOSE_PROVIDER=ollama|anthropic`. Both were measured on 2026-08-19 and the
+telemetry is the same shape — 7 spans, one root, `gen_ai.tool.call.arguments` and
+`.result` both present. Only `gen_ai.request.model` differs, so a container run will not match
+the model name on the slides. Present from the host.
 
 What the audit trail then records, and why it is better than the button:
 
