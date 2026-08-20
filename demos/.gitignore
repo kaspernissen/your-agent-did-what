@@ -1,11 +1,11 @@
 .env
+.DS_Store
+
+# Python: these match at any depth, so one entry each covers every agent directory.
 __pycache__/
 *.pyc
 .venv/
-agent/.venv/
 .pytest_cache/
-agents/beaver-sre/.venv/
-agents/beaver-sre/.pytest_cache/
-**/__pycache__/
+
+# Java
 **/target/
-.DS_Store

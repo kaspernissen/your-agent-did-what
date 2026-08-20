@@ -3,7 +3,7 @@ package com.customerdb;
 import java.util.List;
 
 /**
- * The capybara customer database, as the tools see it.
+ * The customer database, as the tools see it.
  *
  * An interface so the same three tool implementations can run against real
  * Postgres in the demo and against memory in tests, without the tools — or the

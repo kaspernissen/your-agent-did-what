@@ -25,14 +25,16 @@ one proving what it did.
 ## Files
 
 ```
-agent.py        the loop, and the spans it writes by hand
-telemetry.py    installs OpenLLMetry and the OTLP exporter. The only file that differs from ../beaver-sre
+agent.py        the loop, and the spans it writes by hand — this and telemetry.py are
+                the two files that differ from ../beaver-sre; ../check-agents-agree.sh
+                holds the rest byte-identical
+telemetry.py    installs OpenLLMetry and the OTLP exporter
 tools.py        the four tools the model is offered
 db.py           PostgreSQL access
 mcp_db.py       the same four tools over MCP, which is what the cluster uses
 service.py      the HTTP service the capybara-sre console calls
 app.py          one-shot CLI
-tests/          20 tests, including one asserting this agent's vocabulary
+tests/          21 tests, including one asserting this agent's vocabulary
 ```
 
 ## Run it

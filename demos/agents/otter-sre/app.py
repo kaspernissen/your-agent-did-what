@@ -1,7 +1,7 @@
 """CLI entry point: wire telemetry to the agent and run one incident.
 
     ./run.sh
-    CAPYBARA_INSTRUMENTATION=openinference ./run.sh "…"
+    ./run.sh "Customers are reporting missing accounts. Investigate."
 
 Kept deliberately thin. Everything worth reading is in `agent.py` (the loop),
 `telemetry.py` (which convention) and `tools.py` (the database).
@@ -29,7 +29,9 @@ def main(argv: list[str]) -> int:
     print(f"\ninstrumentation  {convention}")
     print(f"model            {agent.model}")
     print(f"collector        {telemetry.endpoint()}")
-    print(f"records          {len(tools.list_records())} in the database")
+    count = tools.record_count()
+    print(f"records          {count} in the database" if count is not None
+          else "records          not counted (the MCP path returns text; see mcp_db.py)")
     print(f"\n>>> {prompt}\n")
     try:
         print(agent.run(prompt))

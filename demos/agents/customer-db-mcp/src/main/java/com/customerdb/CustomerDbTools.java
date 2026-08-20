@@ -94,7 +94,7 @@ public class CustomerDbTools {
         }
     }
 
-    @Tool(name = "list_records", description = "List all capybara customer records in the database.")
+    @Tool(name = "list_records", description = "List all customer records in the database.")
     public String listRecords(Meta meta) {
         return inCallerTrace("list_records", meta, () -> db.listRecords().toString());
     }

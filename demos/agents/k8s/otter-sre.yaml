@@ -5,7 +5,6 @@
 #
 # OpenLLMetry already emits gen_ai.* as of 0.62.3, so unlike beaver this agent needs no
 # normalizing at the collector — it is the branch of the fan-out that has already converged.
-# A third agent, same image, third vocabulary.
 #
 # OpenLLMetry is the other source gen_ai_normalizer knows about, and the collector keeps the
 # originals, so one trace view shows what Traceloop emitted beside what the collector made of it.

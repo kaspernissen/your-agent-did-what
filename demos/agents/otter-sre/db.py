@@ -4,8 +4,8 @@ Three implementations behind one small interface:
 
   PostgresDatabase  the real one, and the same one Capybara reads. Both agents then
                     report on the identical state, so when goose deletes the free plan
-                    from Capybara's console, Beaver sees exactly that and nothing it
-                    invented for itself.
+                    from Capybara's console, this agent sees exactly that and nothing
+                    it invented for itself.
 
   McpDatabase       the same rows, reached over MCP through sre-agents-mcp rather than
                     directly, so this agent executes its tools where Capybara executes its.
@@ -17,9 +17,9 @@ Three implementations behind one small interface:
                     button to press. That is a fabricated incident and the docstring
                     says so; the Postgres path fabricates nothing.
 
-Connecting as app_svc, the same role the MCP server uses, because Beaver is another
-well-behaved application rather than a privileged one. application_name is beaver-sre, so
-if it ever does write, the audit trail names it — and the role still says app_svc,
+Connecting as app_svc, the same role the MCP server uses, because this is another
+well-behaved application rather than a privileged one. application_name is the agent's own
+name, so if it ever does write, the audit trail names it — and the role still says app_svc,
 which is the distinction the whole demo turns on: the client name is self-reported, the
 role is authenticated.
 """
@@ -30,7 +30,12 @@ import os
 import mcp_db
 
 DSN_ENV = "CUSTOMER_DB_DSN"
-APPLICATION_NAME = "beaver-sre"
+
+# What Postgres records as `client`, and what the audit trail will name. Read from the
+# environment rather than written as a literal: this file is byte-identical in beaver-sre
+# and otter-sre by design (../check-agents-agree.sh), so a hardcoded name would make one
+# of the two agents misreport itself on the very column the demo is about.
+APPLICATION_NAME = os.environ.get("AGENT_NAME", "db-ops-agent")
 
 # The roster that infrastructure/postgres/init.sql seeds, mirrored for the in-memory
 # path so both implementations answer the same questions the same way.

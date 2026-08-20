@@ -33,10 +33,10 @@ import asyncio
 
 URL_ENV = "CUSTOMER_DB_MCP_URL"
 
-# Streamable HTTP, the transport MCP's 2025-03-26 revision introduced and quarkus-mcp-server
-# serves at its root path. The older SSE transport is still mounted at <root>/sse; nothing
-# here depends on which one the Java agent picked.
-DEFAULT_URL = "http://sre-agents-mcp.db.svc.cluster.local:8086/mcp"
+# The URL always comes from the environment (see db.from_env); the transport is Streamable
+# HTTP, which MCP's 2025-03-26 revision introduced and quarkus-mcp-server serves at its root
+# path. The older SSE transport is still mounted at <root>/sse; nothing here depends on
+# which one the Java agent picked.
 
 
 def _text(result) -> str:

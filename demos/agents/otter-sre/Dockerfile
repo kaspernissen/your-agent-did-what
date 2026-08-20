@@ -1,8 +1,7 @@
 # otter-sre as a container.
 #
-# One image, one instrumentation library. There used to be a single image switched by
-# CAPYBARA_INSTRUMENTATION at run time; now each agent is its own image, so what the image
-# emits is decided by which Dockerfile built it.
+# One image, one instrumentation library: requirements.txt installs OpenLLMetry and nothing
+# else, so what this image emits is decided at build time and cannot drift at run time.
 FROM python:3.12-slim
 
 WORKDIR /app

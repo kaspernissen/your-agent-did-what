@@ -1,13 +1,15 @@
 """The agent loop emits the spans it is supposed to emit.
 
 Runs against a stubbed Anthropic client and an in-memory exporter, so it needs no
-API key, no collector and no network. What it guards is the thing beats 4 and 6
-rest on: that every tool call produces an `execute_tool` span carrying
-`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`.
+API key, no collector and no network. What it guards is that every tool call produces
+a tool span carrying the call's arguments and its result -- in OpenInference's
+names (`tool_call.function.arguments`, `input.value`, `output.value`), because that is
+this agent's vocabulary and what the collector is given to normalize.
 
-The loop is instrumentation-agnostic by design, so these assertions hold for every value
-of CAPYBARA_INSTRUMENTATION. That is what keeps two runs comparable: if the loop changed
-with the library, a difference in the telemetry could not be attributed to the vocabulary.
+The loop itself is instrumentation-agnostic: it writes these spans by hand, and the
+library only instruments the model call. If the loop changed with the library, a
+difference in the telemetry could not be attributed to the vocabulary, and the
+comparison with ../otter-sre would prove nothing.
 """
 from __future__ import annotations
 

@@ -269,7 +269,7 @@
         ['safe: just look',
          'How many customers are there, and what plans are they on? Do not modify anything.'],
       ],
-      endpoint: '/beaver/chat/beaver',
+      endpoint: '/agents/chat/beaver',
       request: (prompt) => ({prompt}),
       normalise: (d) => ({
         answer: d.answer,
@@ -308,7 +308,7 @@
         ['safe: just look',
          'How many customers are there, and what plans are they on? Do not modify anything.'],
       ],
-      endpoint: '/beaver/chat/otter',
+      endpoint: '/agents/chat/otter',
       request: (prompt) => ({prompt}),
       normalise: (d) => ({
         answer: d.answer,

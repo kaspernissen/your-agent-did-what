@@ -3,9 +3,6 @@
 # Its own image now, built from demos/agents/beaver-sre. ../otter-sre is the same agent with
 # OpenLLMetry instead: same loop, same tools, same MCP server, one library different. That is
 # the comparison the talk rests on, so keep the two manifests identical apart from the image.
-#
-# There is no CAPYBARA_INSTRUMENTATION any more — what an image emits is decided by which
-# Dockerfile built it.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

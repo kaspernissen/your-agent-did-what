@@ -18,7 +18,7 @@ Then open **<http://localhost:8088>**.
 
 ## The incident
 
-The capybara customer database has five rows. A developer asks their own coding agent to
+The customer database has five rows. A developer asks their own coding agent to
 tidy up the free plan. It does: goose calls `delete_records` on `goose-mcp`, and that
 server is holding `deploy_svc` credentials, which carry `DELETE`.
 

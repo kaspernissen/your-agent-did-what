@@ -80,3 +80,19 @@ def test_from_env_falls_back_to_the_dsn(monkeypatch):
     monkeypatch.delenv(mcp_db.URL_ENV, raising=False)
     monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db.db.svc.cluster.local:5432/production")
     assert isinstance(db.from_env(), db.PostgresDatabase)
+
+
+def test_record_count_is_none_when_the_database_answers_in_text():
+    """The MCP path returns the server's reply verbatim, so there are no rows to count.
+
+    Regression test for a count that was `len()` of that string: on the MCP path — the one
+    the cluster actually runs — five records were reported as 408, the character count of
+    the Java `List.toString()` the server sends back. It read like a plausible number, and
+    every test passed because the in-memory database returns a real list.
+    """
+    import tools
+    tools.use(RecordingMcp())
+    assert tools.record_count() is None
+
+    tools.use(db.InMemoryDatabase(staged=False))
+    assert tools.record_count() == 5

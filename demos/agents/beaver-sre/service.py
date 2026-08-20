@@ -3,10 +3,9 @@
 Why a service rather than the CLI: it stays up, so asking a question costs one request
 instead of a container start. The capybara-sre console calls this endpoint.
 
-The instrumentation library is fixed for the lifetime of the process, deliberately.
-Both libraries patch the Anthropic SDK at import time, so a process cannot honestly
-switch between them at runtime -- whichever installed first would keep instrumenting.
-One process per convention is the only way the comparison stays valid.
+The instrumentation library is installed once, at import. There is nothing to switch:
+this image ships exactly one of the two libraries, which is what keeps the comparison
+with the sibling agent honest.
 
     POST /run     {"prompt": "..."}  ->  the answer, the tool calls, and the trace id
     GET  /healthz
@@ -37,8 +36,8 @@ TRACER = telemetry.configure(AGENT_NAME)
 def investigate(prompt: str) -> dict:
     """Run one investigation against whatever state the database is in.
 
-    Nothing is staged or reset here. Beaver reads the same database Capybara does, so the
-    incident is whatever actually happened — triggered from Capybara's console, by a
+    Nothing is staged or reset here. This agent reads the same database Capybara does, so
+    the incident is whatever actually happened — triggered from Capybara's console, by a
     coding agent borrowing the deploy_svc role. An agent that set up its own incident
     would be reporting on itself.
 
@@ -53,7 +52,8 @@ def investigate(prompt: str) -> dict:
         "agentName": AGENT_NAME,
         "model": agent.model,
         "prompt": prompt,
-        "records": len(tools.list_records()),
+        # None on the MCP path, which returns text rather than rows. See tools.record_count.
+        "records": tools.record_count(),
         "answer": answer,
         "toolCalls": agent.tool_calls,
         "traceId": agent.trace_id,

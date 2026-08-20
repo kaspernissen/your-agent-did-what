@@ -7,7 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 /**
- * The same capybara tools, registered as <em>locally declared</em>
+ * The same four tools, registered as <em>locally declared</em>
  * LangChain4j {@code @Tool} methods instead of being reached over MCP.
  *
  * This is the control arm of a controlled comparison. The bodies
@@ -32,7 +32,7 @@ public class CustomerLocalTools {
     @Inject
     CapybaraMetrics metrics;
 
-    @Tool("List all capybara customer records in the database.")
+    @Tool("List all customer records in the database.")
     public String list_records() {
         return db.listRecords().toString();
     }

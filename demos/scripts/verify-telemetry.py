@@ -84,7 +84,7 @@ def main() -> int:
         if not hit:
             missing.append(label)
 
-    print("\nFORENSIC CONTENT  (the beat-4 experiment)")
+    print("\nFORENSIC CONTENT  (the local-vs-MCP experiment)")
     counts = {a: len(re.findall(re.escape(a), text)) for a in FORENSIC}
     for a, n in counts.items():
         print(f"  {OK if n else NO} {a:<28} {n} occurrence(s)")

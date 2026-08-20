@@ -21,21 +21,22 @@ import java.time.Duration;
 import java.util.Map;
 
 /**
- * A thin pass-through to Beaver SRE, the same job on a different platform.
+ * A thin pass-through to the two Python SRE agents, beaver-sre and otter-sre -- the same
+ * job on a different platform.
  *
- * The browser cannot call it directly -- it lives inside the cluster, and a console
+ * The browser cannot call them directly -- they live inside the cluster, and a console
  * served from this origin would need a port-forward plus a hardcoded localhost port to
- * reach it. Proxying keeps the console a single URL with nothing to set up.
+ * reach them. Proxying keeps the console a single URL with nothing to set up.
  *
- * This is the only coupling between the two demos, and it is one-directional and
- * optional: Beaver does not know this exists, and if it is not deployed the endpoint
- * returns a message the console can show rather than failing.
+ * This is the only coupling between the demos, and it is one-directional and optional:
+ * neither Python agent knows this exists, and if one is not deployed the endpoint returns
+ * a message the console can show rather than failing.
  */
-@Path("/beaver")
+@Path("/agents")
 @Produces(MediaType.APPLICATION_JSON)
-public class BeaverResource {
+public class AgentProxyResource {
 
-    private static final Logger LOG = Logger.getLogger(BeaverResource.class);
+    private static final Logger LOG = Logger.getLogger(AgentProxyResource.class);
 
     /** Runs take as long as an agent loop with tool calls, so this is generous. */
     private static final Duration TIMEOUT = Duration.ofSeconds(120);
@@ -73,8 +74,8 @@ public class BeaverResource {
                     .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
             HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
-            // Pass the body through untouched: Beaver owns that shape, and re-modelling
-            // it here would be a second place to keep in sync.
+            // Pass the body through untouched: the Python agent owns that shape, and
+            // re-modelling it here would be a second place to keep in sync.
             return Response.status(response.statusCode())
                     .type(MediaType.APPLICATION_JSON)
                     .entity(response.body())

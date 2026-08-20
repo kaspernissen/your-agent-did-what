@@ -1,12 +1,12 @@
-"""The tools Beaver can call, and the schemas the model sees.
+"""The tools the agent can call, and the schemas the model sees.
 
 Deliberately thin: every function delegates to whichever database `db.py` selected, so
 this module describes the *toolbox* and nothing about storage. The agent loop
 (`agent.py`) knows about neither.
 
-Beaver does not stage its own incident. The state comes from the shared database, so the
-deletion goose makes through goose-mcp is the same event Beaver reports on —
-which is the point of pointing them at one database.
+This agent does not stage its own incident. The state comes from the shared database, so
+the deletion goose makes through goose-mcp is the same event the agent reports on — which is
+the point of pointing them all at one database.
 """
 from __future__ import annotations
 
@@ -39,6 +39,18 @@ def audit_log(limit=20):
 def delete_records(plan=None):
     """Delete records (all, or matching plan). Destructive."""
     return _DB.delete_records(plan)
+
+
+def record_count():
+    """How many records are in the database, or None when that cannot be known honestly.
+
+    The MCP path returns the server's reply as text and mcp_db.py deliberately does not
+    parse it, so there is no list to measure. `len()` on that string would report its
+    character count — a number that looks like a record count and is not. Callers say
+    "unknown" instead.
+    """
+    records = _DB.list_records()
+    return len(records) if isinstance(records, list) else None
 
 
 # Anthropic tool-use schemas.
