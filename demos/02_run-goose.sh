@@ -22,7 +22,16 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# What you set on the command line has to survive .env, which is sourced with `set -a` and
+# would otherwise assign straight over it — so `GOOSE_PROVIDER=anthropic ./02_run-goose.sh`
+# silently ran on Ollama for anyone who had it set in .env, and in the devcontainer it
+# overrode the container's own GOOSE_PROVIDER pin. Precedence is now: command line, then
+# .env, then detection.
+_cli_provider="${GOOSE_PROVIDER:-}"
+_cli_model="${GOOSE_MODEL:-}"
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
+[ -n "$_cli_provider" ] && GOOSE_PROVIDER="$_cli_provider"
+[ -n "$_cli_model" ]    && GOOSE_MODEL="$_cli_model"
 echo "✅ Loaded environment variables."
 
 # Pick the provider rather than making the operator remember which machine they are on.
