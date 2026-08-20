@@ -26,5 +26,5 @@ echo "--- 3/3 Applying manifests ---"
 kubectl apply -f k8s/ >/dev/null
 
 # :latest again, so apply sees no change and would leave the old page being served.
-kubectl rollout restart -n agents deployment/console
-kubectl rollout status  -n agents deployment/console --timeout=120s
+kubectl rollout restart -n frontend deployment/console
+kubectl rollout status  -n frontend deployment/console --timeout=120s

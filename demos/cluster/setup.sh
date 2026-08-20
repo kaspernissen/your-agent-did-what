@@ -20,12 +20,12 @@ else
 fi
 kubectl config use-context "kind-${CLUSTER}" >/dev/null
 
-# Three namespaces, by owner rather than by convenience: the agents, the database and its
-# MCP servers, and the observability stack. Secrets are namespaced, so each one has to be
-# created where it is consumed — a secret in the wrong namespace looks like a healthy cluster
-# until a pod cannot start.
+# Four namespaces, by owner rather than by convenience: the agents, the database and its
+# MCP servers, the observability stack, and the console in front of all of it. Secrets are
+# namespaced, so each one has to be created where it is consumed — a secret in the wrong
+# namespace looks like a healthy cluster until a pod cannot start.
 echo "--- Namespaces ---"
-for ns in agents db observability; do
+for ns in agents db observability frontend; do
   kubectl create namespace "$ns" --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 done
 kubectl config set-context --current --namespace=default >/dev/null

@@ -108,7 +108,7 @@ developer would actually meet it.
 
 ## Namespaces
 
-Three, by owner rather than by convenience — which also means every call the demo makes between
+Four, by owner rather than by convenience — which also means every call the demo makes between
 them is a real cross-namespace call, resolved by FQDN:
 
 | namespace | what runs there |
@@ -116,6 +116,7 @@ them is a real cross-namespace call, resolved by FQDN:
 | `agents` | capybara-sre, beaver-sre, otter-sre — and `anthropic-secret`, which only they need |
 | `db` | production-db, and both MCP servers: `sre-agents-mcp` and `goose-mcp` |
 | `observability` | the collector, Jaeger, Prometheus — and the vendor secrets the collector reads |
+| `frontend` | the console, which holds no secret at all: it serves five files and proxies |
 
 Secrets are namespaced, so each is created where it is consumed. A secret in the wrong namespace
 looks like a healthy cluster right up to the point a pod cannot start.

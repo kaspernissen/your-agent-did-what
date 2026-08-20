@@ -1,7 +1,8 @@
 # console — the page the demo is driven from, and the single origin in front of all three agents.
 #
-# In the `agents` namespace with the three agents it serves. It is not an agent itself, but
-# it is useless anywhere else, and keeping it here means one namespace to port-forward into.
+# Its own `frontend` namespace: it is not an agent, and the split says so. Reaching the
+# agents across a namespace boundary costs nothing here, because nginx already addresses
+# them by FQDN — its resolver ignores search domains, so short names were never an option.
 #
 # This is the only thing anyone port-forwards to run the demo. 01_start-demo.sh maps it to
 # localhost:8088 — the port capybara-sre used when it served the page itself, so the URL on
@@ -9,7 +10,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: agents
+  namespace: frontend
   name: console
   labels: { app: console, demo: conventions }
 spec:
@@ -37,7 +38,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: agents
+  namespace: frontend
   name: console
 spec:
   selector: { app: console }

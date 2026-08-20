@@ -15,7 +15,7 @@ TARGETS=(
   # The console is the only thing that needs forwarding to run the demo: it proxies to all
   # three agents itself. Port 8088 because that is what capybara-sre used when it served the
   # page, and the URL is on a slide.
-  "agents:console:8088:80:/healthz"
+  "frontend:console:8088:80:/healthz"
   "observability:jaeger:16686:16686:/"
   "observability:prometheus:9090:9090:/-/ready"
 )

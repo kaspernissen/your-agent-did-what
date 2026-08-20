@@ -17,7 +17,7 @@ demos/            the demo — three agents, one incident, one collector, in kin
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
   observability/  collector, jaeger and prometheus values
   cluster/        kind, secrets, helm installs
-  console/        the page, and the nginx that fronts all three agents
+  console/        the page, and the nginx that fronts all three agents (namespace: frontend)
 outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
 research.md       everything the talk is sourced from
 mascots/          42 transparent cut-outs, used by the README

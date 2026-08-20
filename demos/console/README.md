@@ -8,7 +8,7 @@ markdown.js             renders the agents' answers
 capybara/beaver/otter   the mascots
 default.conf.template   nginx: serve the files, proxy the four API calls
 Dockerfile              nginx:1.27-alpine + the five files
-k8s/console.yaml        Deployment + Service, namespace `agents`
+k8s/console.yaml        Deployment + Service, namespace `frontend`
 deploy.sh               build, load into kind, roll
 ```
 
