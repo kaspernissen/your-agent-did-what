@@ -32,7 +32,7 @@
   .wrap{max-width:1040px;margin:0 auto;padding:22px 24px 80px}
 
   /* The top bar: who you are talking to. */
-  .agentbar{display:flex;align-items:center;gap:10px;padding-bottom:14px;
+  .agentbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-bottom:14px;
     border-bottom:2px solid var(--paper-2)}
   .agentbar .eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
     letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:6px}
@@ -40,6 +40,8 @@
     border:2px solid transparent;border-radius:999px;background:var(--paper-2);
     color:var(--navy);font:inherit;font-weight:600;font-size:15px;cursor:pointer}
   .agentbar button img{height:34px;width:auto}
+  .agentbar .spacer{flex:1 1 auto}
+  .agentbar #reset{font-size:14px;padding:9px 14px}
   .agentbar button[aria-pressed="true"]{background:#fff;border-color:var(--amber)}
 
   /* The business card: who the agent is, before you ask it anything. */
@@ -55,8 +57,6 @@
   .facts dt{color:var(--muted)}
   .facts dd{margin:0;color:var(--navy)}
 
-  .stage{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px}
-  .stage button{font-size:14px;padding:10px 16px}
   .danger{background:var(--amber);color:var(--ink)}
   .quiet{background:var(--paper-2);color:var(--navy);font-weight:400}
   .state{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--muted)}
@@ -139,8 +139,14 @@
       <img src="beaver.png" alt=""> Beaver SRE
     </button>
     <button id="pick-otter" aria-pressed="false">
-      <span style="font-size:26px;line-height:1;width:34px;text-align:center">&#129446;</span> Otter SRE
+      <img src="otter.png" alt=""> Otter SRE
     </button>
+    <!-- The database belongs to the company, not to any one agent, so its reset belongs to
+         the page. It used to sit under the agent card and was hidden unless that agent had
+         stage:true, which made a shared control look like a capybara-sre feature. -->
+    <span class="spacer"></span>
+    <button id="reset" class="quiet">&#8634; Reset the database</button>
+    <span id="state" class="state"></span>
   </div>
 
   <div class="card-agent">
@@ -151,11 +157,6 @@
       <p class="role" id="a-role"></p>
       <dl class="facts" id="a-facts"></dl>
     </div>
-  </div>
-
-  <div class="stage" id="stage">
-    <button id="reset" class="quiet">&#8634; Reset the database</button>
-    <span id="state" class="state"></span>
   </div>
 
   <form id="f">
@@ -212,7 +213,7 @@
       name: 'Capybara, SRE',
       tagline: 'Motto: “Deploy Calmly”',
       image: 'capybara.png',
-      role: 'Owns the capybara customer database and answers questions about it. Reads by '
+      role: 'Reads the production customer database and answers questions about it. Reads by '
           + 'default — it will refuse or escalate rather than modify production data.',
       facts: [
         ['platform', 'Java · Quarkus + LangChain4j'],
@@ -221,7 +222,6 @@
         ['emits',    'gen_ai.* from the framework'],
         ['judged',   'LLM-as-judge → gen_ai.evaluation.result'],
       ],
-      stage: true,
       placeholder: 'Customers are reporting missing accounts. Investigate…',
       presets: [
         ['investigate the incident',
@@ -257,12 +257,11 @@
           + 'thing that differs is how the platform describes what it did.',
       facts: [
         ['platform', 'Python · Anthropic SDK'],
-        ['tools',    'plain functions, same process'],
+        ['tools',    'over MCP, to sre-agents-mcp'],
         ['data',     'the same PostgreSQL, as app_svc'],
         ['emits',    'openinference.* / llm.* — no OTel at all'],
         ['arrives',  'gen_ai.* via the collector’s gen_ai_normalizer'],
       ],
-      stage: false,
       placeholder: 'Customers are reporting missing accounts. Investigate…',
       presets: [
         ['investigate the incident',
@@ -292,17 +291,16 @@
     otter: {
       name: 'Otter, SRE',
       tagline: 'A third vocabulary for the same call',
-      image: '',
+      image: 'otter.png',
       role: 'The same Python agent again, instrumented by OpenLLMetry instead. Expected a third '
           + 'set of names; found the current OTel conventions, richer than our own Java stack’s.',
       facts: [
         ['platform', 'Python · Anthropic SDK'],
-        ['tools',    'plain functions, same process'],
+        ['tools',    'over MCP, to sre-agents-mcp'],
         ['data',     'the same PostgreSQL, as app_svc'],
         ['emits',    'gen_ai.* already, as of 0.62.3'],
         ['arrives',  'unchanged — nothing left to normalize'],
       ],
-      stage: false,
       placeholder: 'Customers are reporting missing accounts. Investigate…',
       presets: [
         ['investigate the incident',
@@ -343,10 +341,6 @@
     $('a-role').textContent = a.role;
     $('a-facts').innerHTML = a.facts
       .map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + esc(v) + '</dd>').join('');
-
-    // The incident controls act on Postgres, which only Capybara reads. Beaver stages its
-    // own incident per run, so showing them there would imply a link that does not exist.
-    $('stage').classList.toggle('hidden', !a.stage);
 
     $('q').placeholder = a.placeholder;
     $('presets').innerHTML = '<span class="label">Try:</span>' +
