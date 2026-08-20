@@ -98,7 +98,13 @@ class SreAgent:
             return "(max turns reached)"
 
     def _execute(self, block) -> dict:
-        """Run one tool_use block inside an execute_tool span; return its tool_result."""
+        """Run one tool_use block inside a hand-written tool span; return its tool_result.
+
+        The span is named for the tool, not "execute_tool <tool>": under OpenInference the
+        operation is an attribute, not the span name. Worth knowing while reading a trace,
+        because there IS an `execute_tool` span a few rows below this one -- it belongs to
+        sre-agents-mcp, which is a different service in a different process.
+        """
         name = block.name
         arguments = dict(block.input or {})
         arguments_json = json.dumps(arguments)
