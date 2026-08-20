@@ -1,8 +1,8 @@
 # The demo
 
 **One incident. Two SRE agents on different platforms. One collector.** Everything the
-talk claims is measured here rather than asserted — the measurements, with dates, are in
-[`ANALYSIS.md`](ANALYSIS.md).
+talk claims is measured here rather than asserted: run it, read the spans, and the numbers
+on the slides are the numbers you get.
 
 ```bash
 cp .env.template .env      # then set ANTHROPIC_API_KEY
@@ -214,8 +214,8 @@ DELETE  biscuit  client=goose  db_user=deploy_svc
 authenticated. One row, two questions, and only one of the answers can be forged.
 
 The agent's own telemetry lands in the same collector as everything else, so its
-`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` sit beside Capybara's investigation.
-See [`ANALYSIS.md`](ANALYSIS.md) for what that comparison shows.
+`gen_ai.tool.call.arguments` and `gen_ai.tool.call.result` sit beside Capybara's investigation
+— which records what its tool did, and which does not.
 
 ### The extra door
 
@@ -293,14 +293,15 @@ kubectl rollout restart -n agents deployment/capybara-sre   # or its MCP session
 ./01_start-demo.sh
 ```
 
-21 spans and the `SELECT` in a trace of its own. Set it back to `true` for 27 spans and one trace. See
-[`ANALYSIS.md`](ANALYSIS.md) for the measurement and why `@WithSpan` alone does not work.
+21 spans and the `SELECT` in a trace of its own. Set it back to `true` for 27 spans and one
+trace. `@WithSpan` alone does not close the gap: the tool body runs on a duplicated Vert.x
+context, so there is no context for a new span to attach to.
 
 ---
 
 ## What is measured, not asserted
 
-All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
+Every one of these reproduces from a clean run. The headlines:
 
 - **The MCP path loses the tool call's content.** 4 span attributes versus 6 on the local
   path; `gen_ai.tool.call.arguments` and `.result` absent. It is a *framework* gap, not an

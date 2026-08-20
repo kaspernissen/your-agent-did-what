@@ -2,8 +2,9 @@
 
 A conference talk: a slide deck, and a runnable demo that every factual claim in the deck
 comes from. The unusual constraint is that **the demo is the evidence**. A slide that says
-"we measured this" has to be backed by a measurement in `demos/ANALYSIS.md`, so changing a
-number in one place without the other is the main way to do damage here.
+"we measured this" has to be backed by a measurement in the archived `ANALYSIS.md` (see
+*The slides are not in this repository*), so changing a number in one place without the
+other is the main way to do damage here.
 
 ## Layout
 
@@ -16,7 +17,6 @@ demos/            the demo — three agents, one incident, one collector, in kin
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
   observability/  collector, jaeger and prometheus values
   cluster/        kind, secrets, helm installs
-  ANALYSIS.md     the measurements, with dates and versions
 outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
 research.md       everything the talk is sourced from
 mascots/          42 transparent cut-outs, used by the README
@@ -27,12 +27,12 @@ mascots/          42 transparent cut-outs, used by the README
 
 **Measure, do not reason.** Every number in the deck came off a live run. If you are about to
 write a plausible number, run it instead — several confident claims in this repo turned out
-to be wrong when finally measured, and one had to be withdrawn from the deck. `ANALYSIS.md`
-records dates and versions because most of this software is pre-1.0.
+to be wrong when finally measured, and one had to be withdrawn from the deck. The archived
+`ANALYSIS.md` records dates and versions because most of this software is pre-1.0.
 
 **Superseded measurements stay.** When a measurement is replaced, the old one moves to
-*Superseded and historical* in `ANALYSIS.md` with a note on what replaced it. Do not delete
-it. The talk claims an audit trail, so the audit trail has to exist.
+*Superseded and historical* in the archived `ANALYSIS.md` with a note on what replaced it.
+Do not delete it. The talk claims an audit trail, so the audit trail has to exist.
 
 **Comments explain the code, not the talk.** Code and configuration are read by people
 copying them, not by the audience. Say why a flag is set and what breaks without it. Do not
@@ -46,9 +46,9 @@ exactly one respect. Adding a second difference does not weaken a finding, it de
 The talk is delivered from **Google Slides**. This repo keeps `outline.md` — what each
 slide has to land, and in what order — and nothing else about the deck.
 
-The speaker notes (`SPEAKER-NOTES.md`), the type spec (`SLIDES-STYLE.md`), the HTML deck with
-its element exports and tooling, and the original specs and plans (`docs/superpowers/`) are
-all archived at `~/Documents/your-agent-did-what/`. The deck runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
+The speaker notes (`SPEAKER-NOTES.md`), the type spec (`SLIDES-STYLE.md`), the measurement
+log (`ANALYSIS.md`), the HTML deck with its element exports and tooling, and the original
+specs and plans (`docs/superpowers/`) are all archived at `~/Documents/your-agent-did-what/`. The deck runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
 second copy of a deck that is now maintained elsewhere, and two copies will drift.
 
 If you change what a slide claims, change `outline.md` here and `SPEAKER-NOTES.md` in the
@@ -59,7 +59,7 @@ archive with it. `outline.md` is the only record in this repo of what is said on
 ```bash
 cd demos
 cp .env.template .env       # ANTHROPIC_API_KEY
-./00_run.sh                 # cluster, database, both agents
+./00_run.sh                 # cluster, database, all three agents
 ./01_start-demo.sh          # port-forwards, waits until they answer
 ```
 
@@ -68,8 +68,8 @@ console then appears dead, `curl` returns `HTTP 000`, and nothing in the logs ex
 Re-run `./01_start-demo.sh`. This cost six debugging sessions before the script existed, so
 if something that worked a minute ago is unreachable, check this first.
 
-Tests: `./mvnw test` in each Java module (install `production-db-core` first, or the
-applications cannot resolve it), and `pytest` in `agents/beaver-sre`.
+Tests: `./mvnw test` in each Java module (install `customer-db-core` first, or the
+applications cannot resolve it), and `pytest` in `agents/beaver-sre` and `agents/otter-sre`.
 
 ## Things that have bitten, and will again
 

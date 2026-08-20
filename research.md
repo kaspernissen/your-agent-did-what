@@ -4,9 +4,10 @@ Everything the talk is sourced from, in one file: the forensics research, the ev
 research, the backend and normalization landscape, the state of the standards as we last
 checked them, and the link list.
 
-> **Precedence.** Where this document and [`demos/ANALYSIS.md`](demos/ANALYSIS.md) disagree,
-> **ANALYSIS.md wins.** It is the measured record — spans captured from real runs of the
-> demo. This file is research and reading, some of it gathered before the demo existed.
+> **Precedence.** Where this document and `ANALYSIS.md` disagree, **ANALYSIS.md wins.** It
+> is the measured record — spans captured from real runs of the demo — and it lives outside
+> this repo at `~/Documents/your-agent-did-what/`. This file is research and reading, some of
+> it gathered before the demo existed.
 
 > **Dates matter here.** Every claim about a version, a release or a repository is true as of
 > the date attached to it. This is a fast-moving area and several of these facts have already
@@ -24,7 +25,7 @@ checked them, and the link list.
 
 ## Forensics — what telemetry can and cannot reconstruct
 
-> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but [`demos/ANALYSIS.md`](demos/ANALYSIS.md) is the measured record and wins wherever the two disagree.
+> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but the archived `ANALYSIS.md` is the measured record and wins wherever the two disagree.
 
 Background research for the forensics half of *Your Agent Did What?* — what telemetry you actually need to reconstruct what an agent did when something goes wrong, and where today's GenAI observability stack falls short for post-incident forensics on non-deterministic systems.
 
@@ -143,7 +144,7 @@ This report was synthesized from automated search + adversarial verification, wh
 
 ## Evaluations — judging a run you cannot replay
 
-> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but [`demos/ANALYSIS.md`](demos/ANALYSIS.md) is the measured record and wins wherever the two disagree.
+> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but the archived `ANALYSIS.md` is the measured record and wins wherever the two disagree.
 
 Background research for the **evaluations** thread of *Your Agent Did What?* — how you
 know whether an agent's output was any good, how that becomes telemetry, and whether an
@@ -393,7 +394,7 @@ per-metric `threshold` that gates the build.
 
 ## The visualization and normalization landscape
 
-> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but [`demos/ANALYSIS.md`](demos/ANALYSIS.md) is the measured record and wins wherever the two disagree.
+> **Research notes.** Background reading gathered before the demo existed. Still the sourcing behind several slides, but the archived `ANALYSIS.md` is the measured record and wins wherever the two disagree.
 
 Talk content for the "where do GenAI traces actually go, and how do you stop the fragmentation" portion. Companion to `resources.md` (links), `research.md` (forensics), and the runnable `demos/` harness. Findings here are from primary-source research on 2026-06-07; verify versions before they age.
 
@@ -411,7 +412,7 @@ Once you have GenAI traces flowing, "observability" splits along two axes. Where
 - **OTel-semconv-native** (OpenLIT, OpenSearch Agent Traces, Dash0; Langfuse maps it): light up on `gen_ai.*`.
 - **OpenInference-native** (Arize Phoenix): lights up on OpenInference attributes. Feed it OTel `gen_ai.*` and it *accepts and stores* the spans but renders them as **plain spans** — no LLM views. Source: Phoenix "Translating Conventions" docs.
 
-**The teachable moment:** instrument one app once with OTel GenAI semconv, fan it out, and the differences you see are about the *viewer*, not the data. Phoenix looking bland on a `gen_ai.*` trace is not a bug — it's the fragmentation tax, visible on stage. (A fan-out harness that did exactly this was removed on 2026-08-11; the capture it produced is in `demos/ANALYSIS.md` under *Superseded and historical*.)
+**The teachable moment:** instrument one app once with OTel GenAI semconv, fan it out, and the differences you see are about the *viewer*, not the data. Phoenix looking bland on a `gen_ai.*` trace is not a bug — it's the fragmentation tax, visible on stage. (A fan-out harness that did exactly this was removed on 2026-08-11; the capture it produced is in the archived `ANALYSIS.md` under *Superseded and historical*.)
 
 #### Backend cheat-sheet (verified 2026-06-07)
 

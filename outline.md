@@ -141,8 +141,8 @@ Where the talk turns. **The live demo sits at slide 28.**
   repository; see [`README.md`](README.md).
 - **Speaker notes** — `SPEAKER-NOTES.md`, aligned slide-for-slide, in `~/Documents/your-agent-did-what/`.
 - **Type and colour** — `SLIDES-STYLE.md`, same place, so edits stay on-brand.
-- **The demo** — [`demos/`](demos/), with the measured record in
-  [`demos/ANALYSIS.md`](demos/ANALYSIS.md).
+- **The demo** — [`demos/`](demos/). The measured record is `ANALYSIS.md`, kept with the
+  speaker notes in `~/Documents/your-agent-did-what/`.
 - **Sourcing** — [`research.md`](research.md).
 
 ## One correction to make in the deck
