@@ -22,6 +22,44 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Three ways to run it. All three get the same telemetry wiring — the port-forwards and the
+# OTEL_* exports below — because that setup is the reason this script exists, not the recipe.
+#
+#   (no flag)      run the recipe and exit. The incident, reproducibly.
+#   --interactive  run the recipe, then stay in the session to poke at what it did.
+#   --session      no recipe: an interactive session with the MCP server attached, for asking
+#                  the coding agent your own questions on stage.
+#
+# --session exposes all four tools, where the recipe deliberately exposes only two. An agent
+# that can read audit_log is an agent that can read the trail it is about to appear in, which
+# muddies the forensics — fine while exploring, wrong for the scripted incident.
+MODE=recipe
+case "${1:-}" in
+  --interactive|-i) MODE=interactive ;;
+  --session|-s)     MODE=session ;;
+  '')               ;;
+  --help|-h)
+    cat <<'USAGE'
+02_run-goose.sh — the coding agent that causes the incident
+
+  ./02_run-goose.sh                run the recipe and exit (the scripted incident)
+  ./02_run-goose.sh --interactive  run the recipe, then stay in the session
+  ./02_run-goose.sh --session      interactive session, no recipe, MCP server attached
+
+All three export the same telemetry wiring, which is the point of the script:
+port-forwards to goose-mcp (namespace db) and the collector (namespace observability),
+OTEL_SERVICE_NAME=goose, and OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true —
+without that last one there are no tool arguments or results on the spans.
+
+Provider is chosen for you: Ollama on a host running it, Anthropic in a container.
+Override with GOOSE_PROVIDER=ollama|anthropic, and GOOSE_MODEL to pin a model.
+
+--session exposes all four tools; the recipe deliberately exposes only two.
+USAGE
+    exit 0 ;;
+  *) echo "unknown option: $1 (try --interactive, --session, --help)"; exit 1 ;;
+esac
+
 # What you set on the command line has to survive .env, which is sourced with `set -a` and
 # would otherwise assign straight over it — so `GOOSE_PROVIDER=anthropic ./02_run-goose.sh`
 # silently ran on Ollama for anyone who had it set in .env, and in the devcontainer it
@@ -135,7 +173,7 @@ export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 # were no free-plan rows. Cheaper to check the database directly and say so.
 free=$(kubectl exec -n db deploy/production-db -- \
   psql -U postgres -d production -tAc "select count(*) from customers where plan='free'" 2>/dev/null | tr -d ' \r')
-if [ "${free:-0}" = "0" ]; then
+if [ "${free:-0}" = "0" ] && [ "$MODE" != "session" ]; then
   echo
   echo "No free-plan records — the incident has already happened, or the seed was never restored."
   echo "goose would find nothing to delete and the run would prove nothing."
@@ -147,4 +185,11 @@ if [ "${free:-0}" = "0" ]; then
 fi
 
 echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · provider $GOOSE_PROVIDER · model $GOOSE_MODEL · $free free-plan records ---"
-goose run --recipe agents/goose/tidy-free-plan.yaml
+
+case "$MODE" in
+  recipe)      exec goose run --recipe agents/goose/tidy-free-plan.yaml ;;
+  interactive) exec goose run --recipe agents/goose/tidy-free-plan.yaml --interactive ;;
+  session)
+    # The recipe carries the MCP server as an extension; a bare session has to be handed it.
+    exec goose session --with-streamable-http-extension "http://localhost:8086/mcp" ;;
+esac

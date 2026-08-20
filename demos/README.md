@@ -178,6 +178,20 @@ ollama pull qwen3.6:35b-a3b-q4_K_M  # host only: Docker cannot pass the GPU thro
 ./02_run-goose.sh
 ```
 
+It runs three ways, all with the same telemetry wiring — that setup is the point of the script,
+not the recipe:
+
+```bash
+./02_run-goose.sh                # the scripted incident, then exit
+./02_run-goose.sh --interactive  # the incident, then stay in the session
+./02_run-goose.sh --session      # no recipe: ask the coding agent your own questions
+```
+
+`--session` attaches the MCP server with goose's `--with-streamable-http-extension`, so the
+agent has the tools without the recipe. It exposes all four, where the recipe deliberately
+exposes only two: an agent that can read `audit_log` can read the trail it is about to appear
+in, which is fine while exploring and wrong for the scripted incident.
+
 `02_run-goose.sh` picks its provider rather than asking you to remember which machine you are on:
 
 | Where | Provider | Model | Why |
