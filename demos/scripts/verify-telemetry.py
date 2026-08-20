@@ -13,9 +13,11 @@ collector's debug output and checks three things:
   3. EVALUATIONS — gen_ai.evaluation.result events from the judge.
 
 Usage
-  ./scripts/verify-telemetry.py                        # docker logs capy-col, path from $AGENT_TOOLS
-  ./scripts/verify-telemetry.py --path local           # override the expected path
-  docker logs capy-col | ./scripts/verify-telemetry.py -   # read a pipe or file
+  ./scripts/verify-telemetry.py                # the in-cluster collector, path from $AGENT_TOOLS
+  ./scripts/verify-telemetry.py --path local   # override the expected path
+  ./scripts/verify-telemetry.py run.log        # read a file
+  kubectl logs -n observability -l app.kubernetes.io/name=opentelemetry-collector \
+    | ./scripts/verify-telemetry.py -          # or a pipe
 """
 from __future__ import annotations
 
@@ -41,6 +43,28 @@ DEPRECATED = ["gen_ai.system", "gen_ai.prompt", "gen_ai.completion"]
 
 OK, NO, HM = "✓", "✗", "→"
 
+# The forensic question is about ONE agent's tool spans. Everything reaches one collector,
+# and otter-sre and goose both record tool content by design, so counting across the whole
+# log says "content arrived on the MCP path" no matter what capybara-sre did. That was a
+# standing false alarm telling the presenter to re-measure the talk's central finding.
+SUBJECT = "capybara-sre"
+_SERVICE = re.compile(r"-> service\.name: Str\(([^)]+)\)")
+
+
+def only(text: str, service: str) -> str:
+    """The parts of the collector's debug output belonging to one service.
+
+    The debug exporter prints a `-> service.name: Str(x)` line per resource, so each block
+    runs from one marker to the next. Crude, and it is reading a human-readable format that
+    carries no stability promise -- but the alternative is asking the backend, and this
+    script's whole point is checking what left the collector.
+    """
+    marks = list(_SERVICE.finditer(text))
+    return "\n".join(
+        text[m.start():(marks[i + 1].start() if i + 1 < len(marks) else len(text))]
+        for i, m in enumerate(marks) if m.group(1) == service
+    )
+
 
 def read_source(arg: str | None) -> tuple[str, str]:
     if arg == "-":
@@ -48,16 +72,27 @@ def read_source(arg: str | None) -> tuple[str, str]:
     if arg:
         with open(arg) as f:
             return f.read(), arg
-    container = os.environ.get("CAPYBARA_COLLECTOR", "capy-col")
+    # The collector runs in the cluster. This used to shell out to `docker logs capy-col`,
+    # from when the stack was docker-compose; that container has not existed for a while and
+    # the script simply failed with no arguments.
+    #
+    # --tail=-1 is the whole log, and it has to be. kubectl defaults to the most recent
+    # lines, and with three agents plus the MCP servers sharing one collector the judge's
+    # evaluation records scroll out of any fixed window within a couple of runs -- which
+    # reads as "the judge emitted nothing" when it emitted exactly what it should.
+    ns = os.environ.get("CAPYBARA_COLLECTOR_NS", "observability")
+    selector = os.environ.get("CAPYBARA_COLLECTOR_SELECTOR",
+                              "app.kubernetes.io/name=opentelemetry-collector")
+    cmd = ["kubectl", "logs", "-n", ns, "-l", selector, "--tail=-1"]
     try:
-        out = subprocess.run(["docker", "logs", container],
-                             capture_output=True, text=True, timeout=30)
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
     except FileNotFoundError:
-        sys.exit("docker not found — pass a file, or pipe collector output with '-'")
+        sys.exit("kubectl not found — pass a file, or pipe collector output with '-'")
     if out.returncode != 0:
-        sys.exit(f"could not read 'docker logs {container}':\n{out.stderr.strip()}\n"
-                 f"Pass a file instead, or set CAPYBARA_COLLECTOR.")
-    return out.stdout + out.stderr, f"docker logs {container}"
+        sys.exit(f"could not read the collector's logs:\n  {' '.join(cmd)}\n"
+                 f"{out.stderr.strip()}\n"
+                 f"Is the cluster up? ./00_run.sh")
+    return out.stdout + out.stderr, f"kubectl logs -n {ns} -l {selector}"
 
 
 def main() -> int:
@@ -84,8 +119,11 @@ def main() -> int:
         if not hit:
             missing.append(label)
 
-    print("\nFORENSIC CONTENT  (the local-vs-MCP experiment)")
-    counts = {a: len(re.findall(re.escape(a), text)) for a in FORENSIC}
+    print(f"\nFORENSIC CONTENT  (the local-vs-MCP experiment, {SUBJECT} only)")
+    subject = only(text, SUBJECT)
+    if not subject.strip():
+        print(f"  {HM} no {SUBJECT} spans in this output — ask it something and re-run")
+    counts = {a: len(re.findall(re.escape(a), subject)) for a in FORENSIC}
     for a, n in counts.items():
         print(f"  {OK if n else NO} {a:<28} {n} occurrence(s)")
 

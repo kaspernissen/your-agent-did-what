@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create the shared kind cluster both demos deploy into: a collector and Jaeger.
+# Create the shared kind cluster everything deploys into: the collector, Jaeger and Prometheus.
 #
 # Run once. Then ../infrastructure/deploy.sh and ../agents/deploy.sh add their workloads to
 # the same cluster, sending to the same collector. ../00_run.sh does all three in order.
@@ -94,14 +94,18 @@ cat <<EOF
 
 === Shared cluster ready ===
 
-  collector  otel-collector-opentelemetry-collector.default.svc:4317 (gRPC) / :4318 (HTTP)
-  jaeger UI  kubectl port-forward svc/jaeger 16686:16686  →  http://localhost:16686
-  prometheus kubectl port-forward svc/prometheus 9090:9090       →  http://localhost:9090
-  spans      kubectl logs -l app.kubernetes.io/name=opentelemetry-collector -f
+  collector  otel-collector-opentelemetry-collector.observability.svc:4317 (gRPC) / :4318 (HTTP)
+  jaeger UI  kubectl port-forward -n observability svc/jaeger 16686:16686
+  prometheus kubectl port-forward -n observability svc/prometheus 9090:9090
+  spans      kubectl logs -n observability -l app.kubernetes.io/name=opentelemetry-collector -f
+
+  Every one of those needs its -n: this script leaves the context on \`default\`, where
+  none of it runs. ../01_start-demo.sh opens the forwards for you.
 
 Next:
   ../infrastructure/deploy.sh   the database
-  ../agents/deploy.sh           both agents
+  ../agents/deploy.sh           the three agents and both MCP servers
+  ../console/deploy.sh          the console in front of them
 
 Or ../00_run.sh to do all of it, then ../01_start-demo.sh for the port-forwards.
 Tear down:  ../03_cleanup.sh

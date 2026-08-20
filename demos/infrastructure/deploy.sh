@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The database both agents read.
+# The database all three agents read.
 #
 # The schema is not duplicated into a manifest: the ConfigMap is built from
 # postgres/init.sql, the same file the compose path mounts, so there is one definition and

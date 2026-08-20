@@ -19,6 +19,11 @@
 ###
 ### Both of those are deliberate: the container has no GPU to pass through, and a model small
 ### enough to be tolerable on CPU cannot be relied on to call the tool the demo turns on.
+###
+### Nothing references this script; run it by hand when you want the Ollama path inside the
+### container. Without `set -e` a failed download fell through to tar and unpacked nothing,
+### which surfaced three steps later as "ollama: not found".
+set -euo pipefail
 
 OLLAMA_VERSION=$(curl -fsSL https://api.github.com/repos/ollama/ollama/releases/latest | grep -m1 '"tag_name"' | cut -d'"' -f4)
 ARCH=$(uname -m | sed 's/aarch64/arm64/;s/x86_64/amd64/')

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build and deploy both agents.
+# Build and deploy the three SRE agents and the two MCP servers.
 #
 #   capybara-sre      Java · Quarkus + LangChain4j, tools over MCP, reads PostgreSQL
 #   sre-agents-mcp   the MCP server it calls

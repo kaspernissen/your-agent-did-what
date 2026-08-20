@@ -45,9 +45,15 @@ fi
 
 # Kill only our own forwards, and only for these services, so an unrelated tunnel in
 # another terminal survives.
+#
+# The .* is load-bearing: the command line is `kubectl port-forward -n <ns> svc/<name>
+# <ports>`, so a pattern without it matches nothing at all once the namespace argument is
+# there — which is exactly what happened when this demo was split into namespaces. The
+# symptom is silent: the stale forward is never killed, the new one cannot bind, and the
+# old one keeps answering until it does not.
 for t in "${TARGETS[@]}"; do
   IFS=: read -r _ns svc local _ _ <<<"$t"
-  pkill -f "port-forward svc/${svc} ${local}:" 2>/dev/null
+  pkill -f "port-forward .*svc/${svc} ${local}:" 2>/dev/null
 done
 sleep 1
 
