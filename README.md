@@ -84,7 +84,7 @@ newer plus Ollama:
 ```bash
 brew install block-goose-cli
 ollama pull qwen3.6:35b-a3b-q4_K_M
-demos/agents/goose/run-recipe.sh
+demos/02_run-goose.sh
 ```
 
 Ollama has to be on the host: Docker cannot pass the GPU through on a Mac, so a containerised
@@ -99,7 +99,7 @@ preinstalled — Docker-in-Docker, kind, kubectl, helm, k9s, JDK, Python, goose 
 The one difference is the coding agent: **goose runs on Anthropic in here, not Ollama.** There
 is no GPU to pass through, and a model small enough to be tolerable on CPU cannot be relied on
 to actually call `delete_records` — which is the only thing that run has to do.
-`run-recipe.sh` detects the container and switches by itself; force either with
+`02_run-goose.sh` detects the container and switches by itself; force either with
 `GOOSE_PROVIDER=ollama|anthropic`.
 
 Both were measured on 2026-08-19 and leave the same evidence: three free-plan rows gone, an

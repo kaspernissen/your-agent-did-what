@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Run the goose recipe against the cluster's database, exporting to the cluster's collector.
 #
+# Third in the sequence: 00_run.sh builds the cluster, 01_start-demo.sh opens the tunnels,
+# this causes the incident, 03_cleanup.sh tears it all down. The recipe itself and the
+# optional Ollama installer stay in agents/goose/, next to the agent they configure.
+#
 # Two supported paths, and the provider decides which one you are on:
 #
 #   ollama     (default) goose talks to a local Ollama. This is the path the talk is given on:
@@ -18,7 +22,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-if [ -f ../../.env ]; then set -a; . ../../.env; set +a; fi   # demos/.env
+if [ -f .env ]; then set -a; . ./.env; set +a; fi
 echo "✅ Loaded environment variables."
 
 # Pick the provider rather than making the operator remember which machine they are on.
@@ -104,4 +108,4 @@ export OTEL_LOGS_EXPORTER=none
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
 echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · provider $GOOSE_PROVIDER · model $GOOSE_MODEL ---"
-goose run --recipe tidy-free-plan.yaml
+goose run --recipe agents/goose/tidy-free-plan.yaml

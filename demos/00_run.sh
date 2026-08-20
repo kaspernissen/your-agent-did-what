@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Build and deploy everything, from nothing to a cluster ready to present.
 #
-#   ./00_run.sh          the shared cluster, then both demos
+#   ./00_run.sh          the shared cluster, then every agent
 #   ./01_start-demo.sh   open the port-forwards and wait for them
-#   ./02_cleanup.sh      delete the cluster
+#   ./02_run-goose.sh    cause the incident with a real coding agent
+#   ./03_cleanup.sh      delete the cluster
 #
 # Safe to re-run: the cluster is reused if it exists, and each demo rebuilds and rolls its
 # own pods. Roughly five minutes cold, under two warm.
@@ -41,14 +42,14 @@ cat <<'DONE'
   Then, to walk the scenario:
 
     1. Reset the database, and show the five customers
-    2. Run agents/goose/run-recipe.sh — three rows gone, and not by these agents
+    2. Run ./02_run-goose.sh — three rows gone, and not by these agents
        no ollama, or goose stalling? curl -X POST localhost:8088/incident/rehearse-deletion
        puts the database in the same state, minus the coding agent's telemetry
     3. Watch capybara_records drop in Prometheus
     4. Ask Capybara what happened; read the judge
     5. Ask Beaver the same thing, and open its trace
 
-  Tear down with ./02_cleanup.sh
+  Tear down with ./03_cleanup.sh
 
 ═══════════════════════════════════════════════════════════════════════
 DONE

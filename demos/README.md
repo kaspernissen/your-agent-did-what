@@ -6,9 +6,10 @@ talk claims is measured here rather than asserted — the measurements, with dat
 
 ```bash
 cp .env.template .env      # then set ANTHROPIC_API_KEY
-./00_run.sh                # cluster, database, both agents  (~5 min cold)
+./00_run.sh                # cluster, database, every agent  (~5 min cold)
 ./01_start-demo.sh         # port-forwards, waits until they answer
-./02_cleanup.sh            # delete the cluster
+./02_run-goose.sh          # cause the incident with a real coding agent
+./03_cleanup.sh            # delete the cluster
 ```
 
 Then open **<http://localhost:8088>**.
@@ -129,7 +130,8 @@ kubectl logs -n observability -l app.kubernetes.io/name=opentelemetry-collector 
 ```
 00_run.sh              build and deploy everything
 01_start-demo.sh       open the port-forwards, wait for them  (--status to just check)
-02_cleanup.sh          delete the cluster
+02_run-goose.sh        cause the incident: the coding agent, on Ollama or Anthropic
+03_cleanup.sh          delete the cluster
 
 agents/
   capybara-sre/        the Java agent, and the console it serves at /
@@ -140,7 +142,8 @@ agents/
                        so each reads on its own; the only difference is telemetry.py and the
                        vocabulary agent.py writes. db.py reads Postgres directly, mcp_db.py
                        goes through the MCP server
-  goose/               the recipe and runner for the developer-with-an-agent path
+  goose/               the recipe, and the optional Ollama installer. The runner is
+                       ../02_run-goose.sh, with the rest of the sequence
   k8s/                 their deployments
   check-agents-agree.sh fails if beaver and otter drift apart in anything but the library
   deploy.sh            build every image, load into kind, roll out
@@ -172,10 +175,10 @@ a tidy-up, the agent does what it was asked, and it succeeds because the credent
 ```bash
 brew install block-goose-cli        # v1.46.0 or newer; earlier releases emit no gen_ai.*
 ollama pull qwen3.6:35b-a3b-q4_K_M  # host only: Docker cannot pass the GPU through on a Mac
-agents/goose/run-recipe.sh
+./02_run-goose.sh
 ```
 
-`run-recipe.sh` picks its provider rather than asking you to remember which machine you are on:
+`02_run-goose.sh` picks its provider rather than asking you to remember which machine you are on:
 
 | Where | Provider | Model | Why |
 |---|---|---|---|
@@ -228,7 +231,7 @@ It is not in the console, so nobody clicks it by accident while the room is watc
 
 **1 · Reset, and show the table.** Five customers, three on the free plan.
 
-**2 · Run the coding agent.** `agents/goose/run-recipe.sh`. A developer asks for a tidy-up,
+**2 · Run the coding agent.** `./02_run-goose.sh`. A developer asks for a tidy-up,
 goose calls `delete_records`, three rows gone. Nothing the investigating agents did caused it.
 
 > **The extra door.** This step is the one that depends on things outside the cluster: ollama

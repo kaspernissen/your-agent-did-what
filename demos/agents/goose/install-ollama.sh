@@ -14,7 +14,7 @@
 ###     does — there is no postStartCommand running it afterwards. Start it yourself in the
 ###     terminal you want to use it from.
 ###   * goose will still use Anthropic. devcontainer.json pins GOOSE_PROVIDER=anthropic, and an
-###     explicit value beats run-recipe.sh's own detection, so pass GOOSE_PROVIDER=ollama on the
+###     explicit value beats 02_run-goose.sh's own detection, so pass GOOSE_PROVIDER=ollama on the
 ###     run to get any benefit from having installed this.
 ###
 ### Both of those are deliberate: the container has no GPU to pass through, and a model small

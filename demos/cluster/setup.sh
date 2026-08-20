@@ -104,5 +104,5 @@ Next:
   ../agents/deploy.sh           both agents
 
 Or ../00_run.sh to do all of it, then ../01_start-demo.sh for the port-forwards.
-Tear down:  ../02_cleanup.sh
+Tear down:  ../03_cleanup.sh
 EOF

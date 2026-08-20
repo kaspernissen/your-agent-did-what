@@ -22,7 +22,7 @@ import java.util.Map;
  * The incident is caused by a coding agent. A developer asks goose to tidy up the free
  * plan, goose calls {@code delete_records} on {@code goose-mcp}, and that server is
  * holding {@code deploy_svc} credentials which carry DELETE. See
- * {@code agents/goose/run-recipe.sh}; that is the real path and the one to demo.
+ * {@code ./02_run-goose.sh}; that is the real path and the one to demo.
  *
  * It needs ollama and a local model, which a conference network cannot be relied on to
  * make available. So this endpoint reproduces the database state that run leaves behind:

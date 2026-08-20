@@ -67,9 +67,9 @@ curl -fsSL "https://github.com/aaif-goose/goose/releases/download/${GOOSE_RELEAS
 ### Docker cannot pass the GPU through on a Mac, so a containerised Ollama runs on CPU, and a
 ### model small enough to be tolerable there cannot be relied on to call the tool this demo
 ### turns on. In the container goose talks to Anthropic instead — same gen_ai.* spans, only
-### gen_ai.request.model differs — and demos/agents/goose/run-recipe.sh selects that itself.
+### gen_ai.request.model differs — and demos/02_run-goose.sh selects that itself.
 ### The Ollama path stays on the host, which is where the talk is given from.
 
 echo
 echo "Container ready. goose will use Anthropic in here (ANTHROPIC_API_KEY in demos/.env)."
-echo "The Ollama path is host-only; see demos/agents/goose/run-recipe.sh."
+echo "The Ollama path is host-only; see demos/02_run-goose.sh."
