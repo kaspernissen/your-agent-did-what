@@ -5,19 +5,19 @@ spans. It does not install instrumentation (see `telemetry.py`) and it does not 
 the tools do (see `tools.py`).
 
 The agent and tool spans are written by hand, because nothing auto-instruments a loop
-somebody wrote themselves. The names they are written in are OpenInference's, so the whole trace leaves here in one
-vocabulary and the collector's gen_ai_normalizer is what produces OTel semantics. Writing
-gen_ai.* here by hand would prove nothing about the collector, which is the point of
-having this agent at all.
+somebody wrote themselves. The names they are written in are OpenTelemetry GenAI's, matching what OpenLLMetry already emits for
+the model call, so the whole trace arrives in one vocabulary and nothing downstream has to
+translate it.
 
 The tool call's arguments and its result are both recorded. The conventions define them as
 opt-in — the spec says instrumentation SHOULD NOT capture them by default, for privacy and
 payload size — so nothing emits them unless somebody decides to. Deciding to is the
 difference between a trace that proves a tool ran and one that proves what it did.
 
-../otter-sre is this same loop with OpenLLMetry instead, writing gen_ai.* directly.
-The two directories are deliberately separate copies: each one is meant to be readable
-end to end as an example of instrumenting an agent under one convention.
+../beaver-sre is this same loop with OpenInference instead, writing llm.* /
+openinference.* and relying on the collector to translate. The two directories are
+deliberately separate copies: each one is meant to be readable end to end as an example
+of instrumenting an agent under one convention.
 """
 from __future__ import annotations
 
@@ -33,10 +33,9 @@ DEFAULT_MODEL = "claude-sonnet-5"
 DEFAULT_AGENT_NAME = "db-ops-agent"
 MAX_TURNS = 6
 
-    # OpenInference keys, exactly as upstream spells them: the collector's
-    # gen_ai_normalizer matches on these literal strings and silently ignores a near-miss.
-    # Span names stay framework-flavoured, which is what these libraries actually do — the
-    # operation is an attribute, not the span name.
+    # OTel GenAI names, matching what OpenLLMetry already emits for the model call, so the
+    # whole trace arrives in one vocabulary. gen_ai.tool.call.arguments and .result are
+    # Opt-In in the spec and deliberately switched on here — they are the talk's subject.
 
 
 class SreAgent:
@@ -76,10 +75,10 @@ class SreAgent:
         messages = [{"role": "user", "content": prompt}]
         self._tool_calls = []
         with self._tracer.start_as_current_span(
-            self._name, kind=SpanKind.INTERNAL
+            f"invoke_agent {self._name}", kind=SpanKind.INTERNAL
         ) as span:
-            span.set_attribute("openinference.span.kind", "AGENT")
-            span.set_attribute("agent.name", self._name)
+            span.set_attribute("gen_ai.operation.name", "invoke_agent")
+            span.set_attribute("gen_ai.agent.name", self._name)
             self._trace_id = format(span.get_span_context().trace_id, "032x")
             for _ in range(max_turns):
                 response = self._client.messages.create(
@@ -103,16 +102,16 @@ class SreAgent:
         arguments = dict(block.input or {})
         arguments_json = json.dumps(arguments)
         with self._tracer.start_as_current_span(
-            name, kind=SpanKind.INTERNAL
+            f"execute_tool {name}", kind=SpanKind.INTERNAL
         ) as span:
-            span.set_attribute("openinference.span.kind", "TOOL")
-            span.set_attribute("tool.name", name)
-            span.set_attribute("tool_call.id", block.id)
-            span.set_attribute("tool_call.function.arguments", arguments_json)
-            span.set_attribute("input.value", arguments_json)
+            span.set_attribute("gen_ai.operation.name", "execute_tool")
+            span.set_attribute("gen_ai.tool.name", name)
+            span.set_attribute("gen_ai.tool.call.id", block.id)
+            span.set_attribute("gen_ai.tool.type", "function")
+            span.set_attribute("gen_ai.tool.call.arguments", arguments_json)
             result = tools.dispatch(name)(**arguments)
             result_json = json.dumps(result)
-            span.set_attribute("output.value", result_json)
+            span.set_attribute("gen_ai.tool.call.result", result_json)
             self._tool_calls.append({"name": name, "args": arguments, "result": result})
         return {
             "type": "tool_result",

@@ -1,33 +1,36 @@
-# beaver-sre — the Python agent instrumented by OpenInference.
+# otter-sre — the Python agent instrumented by OpenLLMetry.
 #
-# Its own image now, built from demos/agents/beaver-sre. ../otter-sre is the same agent with
-# OpenLLMetry instead: same loop, same tools, same MCP server, one library different. That is
-# the comparison the talk rests on, so keep the two manifests identical apart from the image.
+# Its own image now, built from demos/agents/otter-sre. ../beaver-sre is the same agent with
+# OpenInference instead: same loop, same tools, same MCP server, one library different.
 #
-# There is no CAPYBARA_INSTRUMENTATION any more — what an image emits is decided by which
-# Dockerfile built it.
+# OpenLLMetry already emits gen_ai.* as of 0.62.3, so unlike beaver this agent needs no
+# normalizing at the collector — it is the branch of the fan-out that has already converged.
+# A third agent, same image, third vocabulary.
+#
+# OpenLLMetry is the other source gen_ai_normalizer knows about, and the collector keeps the
+# originals, so one trace view shows what Traceloop emitted beside what the collector made of it.
+# Worth knowing while looking at it: Traceloop offered these instrumentations to OpenTelemetry in
+# February 2025 and the proposal never landed.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: beaver-sre
-  labels: { app: beaver-sre, demo: conventions }
+  name: otter-sre
+  labels: { app: otter-sre, demo: conventions }
 spec:
   replicas: 1
   selector:
-    matchLabels: { app: beaver-sre }
+    matchLabels: { app: otter-sre }
   template:
     metadata:
-      labels: { app: beaver-sre, demo: conventions }
+      labels: { app: otter-sre, demo: conventions }
     spec:
       containers:
         - name: agent
-          image: beaver-sre:latest
+          image: otter-sre:latest
           imagePullPolicy: Never
           ports: [{ containerPort: 8000 }]
           env:
-            - { name: CAPYBARA_AGENT_NAME,      value: beaver-sre }
-            # The same database Capybara reads, as the same application role. Both agents
-            # then report on identical state rather than on separate fictions.
+            - { name: CAPYBARA_AGENT_NAME,      value: otter-sre }
             # The same MCP server Capybara uses, so all three agents execute their tools in
             # the same other process and differ only in what emits the telemetry. Remove this
             # and the DSN below takes over, reading the table directly.
@@ -49,7 +52,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: beaver-sre
+  name: otter-sre
 spec:
-  selector: { app: beaver-sre }
+  selector: { app: otter-sre }
   ports: [{ port: 8000, targetPort: 8000 }]

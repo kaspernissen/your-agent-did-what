@@ -1,4 +1,4 @@
-# beaver-sre as a container.
+# otter-sre as a container.
 #
 # One image, one instrumentation library. There used to be a single image switched by
 # CAPYBARA_INSTRUMENTATION at run time; now each agent is its own image, so what the image

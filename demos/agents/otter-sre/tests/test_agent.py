@@ -91,22 +91,21 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     assert [r["user"] for r in tools.list_records()] == ["cappuccino", "mochi"]
 
     by_name = {s.name: s for s in finished()}
-    # Span names are framework-flavoured under OpenInference: the operation is an attribute.
-    assert "db-ops-agent" in by_name
-    assert "query" in by_name
-    assert "delete_records" in by_name
+    assert "invoke_agent db-ops-agent" in by_name
+    assert "execute_tool query" in by_name
+    assert "execute_tool delete_records" in by_name
 
-    root = by_name["db-ops-agent"]
-    assert root.attributes["openinference.span.kind"] == "AGENT"
-    assert root.attributes["agent.name"] == "db-ops-agent"
+    root = by_name["invoke_agent db-ops-agent"]
+    assert root.attributes["gen_ai.operation.name"] == "invoke_agent"
+    assert root.attributes["gen_ai.agent.name"] == "db-ops-agent"
 
-    delete = by_name["delete_records"]
-    assert delete.attributes["openinference.span.kind"] == "TOOL"
-    assert delete.attributes["tool.name"] == "delete_records"
-    # The content the conventions make opt-in. This loop writes it explicitly, so unlike a
+    delete = by_name["execute_tool delete_records"]
+    assert delete.attributes["gen_ai.operation.name"] == "execute_tool"
+    assert delete.attributes["gen_ai.tool.name"] == "delete_records"
+    # The opt-in content. This loop writes it explicitly, so unlike a
     # framework-instrumented path it must always be present.
-    assert delete.attributes["tool_call.function.arguments"] == '{"plan": "free"}'
-    assert '"deleted": 3' in delete.attributes["output.value"]
+    assert delete.attributes["gen_ai.tool.call.arguments"] == '{"plan": "free"}'
+    assert '"deleted": 3' in delete.attributes["gen_ai.tool.call.result"]
 
 
 def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):
@@ -117,18 +116,15 @@ def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):
     answer = SreAgent(tracer, model="stub", name="db-ops-agent").run("say hello")
 
     assert answer == "Nothing to do."
-    assert [s.name for s in finished()] == ["db-ops-agent"]
+    assert [s.name for s in finished()] == ["invoke_agent db-ops-agent"]
 
 
-def test_openinference_vocabulary_emits_the_source_convention(spans, monkeypatch):
-    """Under OpenInference the loop must emit OpenInference keys, not gen_ai.* ones.
+def test_genai_vocabulary_is_written_directly(spans, monkeypatch):
+    """Under OpenLLMetry the loop writes gen_ai.* directly — nothing translates this agent.
 
-    This is what makes the collector's normalization demonstrable rather than assumed: if
-    these spans already arrived in OTel vocabulary, gen_ai_normalizer would have nothing
-    to do and the demo would prove nothing.
-
-    The exact strings matter — the processor matches on them, so a near-miss is a span it
-    silently ignores.
+    OpenLLMetry already emits the conventions for the model call, so writing anything else
+    here would leave one trace in two vocabularies for no reason. ../beaver-sre is the
+    counterpart that writes the source convention and relies on the collector.
     """
     from agent import SreAgent
 
@@ -138,22 +134,21 @@ def test_openinference_vocabulary_emits_the_source_convention(spans, monkeypatch
         [_Block(type="text", text="Two left.")],
     ])
 
-    SreAgent(tracer, model="stub", name="beaver-sre").run("what happened?")
+    SreAgent(tracer, model="stub", name="otter-sre").run("what happened?")
 
     by_name = {s.name: s for s in finished()}
-    # Span names stay framework-flavoured; the operation is an attribute, not the name.
-    assert "beaver-sre" in by_name
-    assert "list_records" in by_name
+    assert "invoke_agent otter-sre" in by_name
+    assert "execute_tool list_records" in by_name
 
-    agent_span = by_name["beaver-sre"]
-    assert agent_span.attributes["openinference.span.kind"] == "AGENT"
-    assert agent_span.attributes["agent.name"] == "beaver-sre"
-    assert not any(k.startswith("gen_ai.") for k in agent_span.attributes)
+    agent_span = by_name["invoke_agent otter-sre"]
+    assert agent_span.attributes["gen_ai.operation.name"] == "invoke_agent"
+    assert agent_span.attributes["gen_ai.agent.name"] == "otter-sre"
+    assert not any(k.startswith("openinference.") for k in agent_span.attributes)
 
-    tool_span = by_name["list_records"]
-    assert tool_span.attributes["openinference.span.kind"] == "TOOL"
-    assert tool_span.attributes["tool.name"] == "list_records"
-    assert tool_span.attributes["tool_call.id"] == "t9"
-    assert "tool_call.function.arguments" in tool_span.attributes
-    assert "output.value" in tool_span.attributes
-    assert not any(k.startswith("gen_ai.") for k in tool_span.attributes)
+    tool_span = by_name["execute_tool list_records"]
+    assert tool_span.attributes["gen_ai.operation.name"] == "execute_tool"
+    assert tool_span.attributes["gen_ai.tool.name"] == "list_records"
+    assert tool_span.attributes["gen_ai.tool.call.id"] == "t9"
+    assert "gen_ai.tool.call.arguments" in tool_span.attributes
+    assert "gen_ai.tool.call.result" in tool_span.attributes
+    assert not any(k.startswith("openinference.") for k in tool_span.attributes)

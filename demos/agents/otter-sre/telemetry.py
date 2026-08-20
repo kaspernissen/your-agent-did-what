@@ -1,12 +1,15 @@
-"""Telemetry wiring for beaver-sre: one library, no choices.
+"""Telemetry wiring for otter-sre: one library, no choices.
 
-OpenInference does not speak the OpenTelemetry names. It emits llm.* and
-openinference.* for the model call, and the collector's gen_ai_normalizer rewrites those
-into gen_ai.* as the spans pass through — keeping the originals, so one span carries both
-vocabularies at once. That is the only way to see that the translation is partial.
+OpenLLMetry (Traceloop) already emits the current gen_ai.* conventions as of 0.62.3,
+including the new message shape, so nothing downstream translates this agent. It is the
+branch of the fan-out that has already converged.
 
-For the other side of the comparison see ../otter-sre, which is this agent with
-OpenLLMetry instead. Nothing else about the two differs.
+The Anthropic instrumentation is used directly rather than traceloop-sdk, because that SDK
+installs its own exporter and processors, and only the vocabulary is meant to differ
+between these two agents.
+
+For the other side of the comparison see ../beaver-sre, which is this agent with
+OpenInference instead.
 
 The agent loop in `agent.py` does not import this module's opinions — it asks for a tracer
 and writes its own spans. What this file decides is who instruments the Anthropic SDK.
@@ -19,9 +22,9 @@ from opentelemetry import trace
 
 # Reported by the service and the CLI, and shown in the capybara-sre console. A
 # constant now rather than a lookup: this agent has exactly one answer.
-CONVENTION = "openinference"
+CONVENTION = "openllmetry"
 
-TRACER_NAME = "your-agent-did-what.beaver-sre"
+TRACER_NAME = "your-agent-did-what.otter-sre"
 
 
 def endpoint() -> str:
@@ -30,14 +33,14 @@ def endpoint() -> str:
 
 
 def configure(agent_name: str) -> trace.Tracer:
-    """Install OpenInference on the Anthropic SDK, and return the tracer for hand-written spans."""
+    """Install OpenLLMetry on the Anthropic SDK, and return the tracer for hand-written spans."""
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
     from opentelemetry.sdk.resources import SERVICE_NAME, Resource
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-    from openinference.instrumentation.anthropic import AnthropicInstrumentor
+    from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
 
     provider = TracerProvider(resource=Resource.create({SERVICE_NAME: agent_name}))
     provider.add_span_processor(

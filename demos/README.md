@@ -85,9 +85,13 @@ make true. The Python agents used to call their tools in-process, so any compari
 | tool span | the framework's, 6 attributes | hand-written, arguments only | hand-written, arguments and result |
 | judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged | not judged |
 
-The two Python agents run the same image and the same loop; `CAPYBARA_INSTRUMENTATION` picks the
-library. Their tool spans are hand-written, because nothing auto-instruments a loop somebody wrote
-by hand — which is why that row still says as much about our code as about their libraries.
+The two Python agents are separate directories and separate images — `agents/beaver-sre` and
+`agents/otter-sre` — so each is readable end to end as an example of instrumenting an agent under
+one convention. They are complete copies of each other apart from which library instruments the
+model call, and `agents/check-agents-agree.sh` fails the build if the files that are meant to be
+identical have drifted; `deploy.sh` runs it. Their tool spans are hand-written, because nothing
+auto-instruments a loop somebody wrote by hand — which is why that row still says as much about
+our code as about their libraries.
 
 All three are reachable from the one console: pick the agent in the top bar. The Java app serves
 that console and proxies to the Python pods, because the browser cannot see cluster-internal
@@ -110,11 +114,15 @@ agents/
   capybara-sre/        the Java agent, and the console it serves at /
   capybara-db-mcp/     the MCP server it calls
   capybara-db-core/    shared database access, plain JDBC, no framework
-  beaver-sre/          the Python agent, run twice: beaver (OpenInference), otter (OpenLLMetry)
-                       db.py reads Postgres directly, mcp_db.py goes through the MCP server
+  beaver-sre/          the Python agent, instrumented by OpenInference
+  otter-sre/           the same agent, instrumented by OpenLLMetry — a separate complete copy,
+                       so each reads on its own; the only difference is telemetry.py and the
+                       vocabulary agent.py writes. db.py reads Postgres directly, mcp_db.py
+                       goes through the MCP server
   goose/               the recipe and runner for the developer-with-an-agent path
   k8s/                 their deployments
-  deploy.sh            build all three images, load into kind, roll out
+  check-agents-agree.sh fails if beaver and otter drift apart in anything but the library
+  deploy.sh            build every image, load into kind, roll out
 
 infrastructure/
   postgres/init.sql    the schema, the trigger, the roles, the seed

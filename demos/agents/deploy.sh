@@ -4,6 +4,7 @@
 #   capybara-sre      Java · Quarkus + LangChain4j, tools over MCP, reads PostgreSQL
 #   capybara-db-mcp   the MCP server it calls
 #   beaver-sre        Python · Anthropic SDK, instrumented by OpenInference
+#   otter-sre         the same agent, instrumented by OpenLLMetry
 #
 # capybara-db-core is a shared library and has to be installed before either Java
 # application can resolve it — which is exactly what the original setup script got wrong.
@@ -17,13 +18,22 @@ echo "--- 1/4 Java modules (core first, then both applications) ---"
 (cd capybara-db-mcp  && ./mvnw -q package -DskipTests)
 (cd capybara-sre     && ./mvnw -q package -DskipTests)
 
+# The two Python agents are separate copies; this fails if they have drifted apart in
+# anything but the instrumentation library.
+./check-agents-agree.sh
+
 echo "--- 2/4 Images ---"
 docker build -q -f capybara-db-mcp/src/main/docker/Dockerfile.jvm -t capybara-db-mcp:latest  capybara-db-mcp >/dev/null
 docker build -q -f capybara-sre/src/main/docker/Dockerfile.jvm    -t capybara-sre:latest     capybara-sre    >/dev/null
+# One image per Python agent. They were a single image switched by an env var; separate
+# images mean what a pod emits is decided by the Dockerfile that built it, and each
+# directory is readable on its own as an example of instrumenting under one convention.
 docker build -q -t beaver-sre:latest beaver-sre >/dev/null
+docker build -q -t otter-sre:latest  otter-sre  >/dev/null
 
 echo "--- 3/4 Loading into kind ---"
-kind load docker-image capybara-db-mcp:latest capybara-sre:latest beaver-sre:latest --name "$CLUSTER"
+kind load docker-image capybara-db-mcp:latest capybara-sre:latest beaver-sre:latest \
+  otter-sre:latest --name "$CLUSTER"
 
 echo "--- 4/4 Applying manifests ---"
 kubectl apply -f k8s/ >/dev/null

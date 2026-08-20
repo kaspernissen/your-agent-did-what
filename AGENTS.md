@@ -9,7 +9,10 @@ number in one place without the other is the main way to do damage here.
 
 ```
 demos/            the demo — three agents, one incident, one collector, in kind
-  agents/         capybara-sre (Java) · capybara-db-mcp · prod-db-mcp · beaver-sre · otter-sre · goose
+  agents/         capybara-sre (Java) · capybara-db-mcp · prod-db-mcp · goose
+                  beaver-sre and otter-sre: the same Python agent twice, as separate
+                  complete copies, differing only in the instrumentation library.
+                  check-agents-agree.sh fails if the shared files drift apart.
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
   observability/  collector, jaeger and prometheus values
   cluster/        kind, secrets, helm installs

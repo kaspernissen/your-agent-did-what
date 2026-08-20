@@ -1,8 +1,8 @@
-# beaver-sre
+# otter-sre
 
-The Python SRE agent, instrumented by **OpenInference**.
+The Python SRE agent, instrumented by **OpenLLMetry**.
 
-`../otter-sre` is the same agent instrumented by **OpenLLMetry**. The two directories are
+`../beaver-sre` is the same agent instrumented by **OpenInference**. The two directories are
 deliberately **separate, complete copies**: same loop, same tools, same MCP server, same
 database, same collector — and one instrumentation library different. That is what lets the
 talk attribute a difference in the spans to the convention and nothing else, and it means each
@@ -12,9 +12,9 @@ directory can be read on its own as an example of instrumenting an agent under o
 
 | | |
 |---|---|
-| The model call | instrumented by OpenInference — emits `llm.*` and `openinference.*`, not the OTel names |
-| The agent and tool spans | written by hand in `agent.py`, in OpenInference names |
-| Downstream | the collector's `gen_ai_normalizer` rewrites this agent into `gen_ai.*`, keeping the originals — so one span carries both vocabularies and you can see what the translation does and does not cover |
+| The model call | instrumented by OpenLLMetry — as of 0.62.3 it already emits `gen_ai.*`, including the new message shape |
+| The agent and tool spans | written by hand in `agent.py`, in OTel GenAI names |
+| Downstream | nothing. This agent needs no normalizing — it is the branch of the fan-out that has already converged |
 
 Nothing auto-instruments a loop somebody wrote themselves, which is why the agent and tool
 spans are hand-written. `gen_ai.tool.call.arguments` and its result are **opt-in** in the
@@ -26,7 +26,7 @@ one proving what it did.
 
 ```
 agent.py        the loop, and the spans it writes by hand
-telemetry.py    installs OpenInference and the OTLP exporter. The only file that differs from ../otter-sre
+telemetry.py    installs OpenLLMetry and the OTLP exporter. The only file that differs from ../beaver-sre
 tools.py        the four tools the model is offered
 db.py           PostgreSQL access
 mcp_db.py       the same four tools over MCP, which is what the cluster uses
@@ -42,4 +42,4 @@ tests/          20 tests, including one asserting this agent's vocabulary
 ./.venv/bin/python -m pytest tests -q                               # tests
 ```
 
-In the cluster it is deployed by `../deploy.sh` from `../k8s/beaver-sre.yaml`, as its own image.
+In the cluster it is deployed by `../deploy.sh` from `../k8s/otter-sre.yaml`, as its own image.

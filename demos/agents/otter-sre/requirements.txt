@@ -1,6 +1,6 @@
-# beaver-sre: the Anthropic SDK, the OTel SDK, and OpenInference — nothing else.
+# otter-sre: the Anthropic SDK, the OTel SDK, and OpenLLMetry — nothing else.
 #
-# ../otter-sre is the same list with OpenLLMetry in place of OpenInference. That one line is
+# ../beaver-sre is the same list with OpenInference in place of OpenLLMetry. That one line is
 # the whole difference between the two agents.
 anthropic>=0.40
 
@@ -19,5 +19,7 @@ opentelemetry-api>=1.27
 opentelemetry-sdk>=1.27
 opentelemetry-exporter-otlp-proto-http>=1.27
 
-# llm.* / openinference.* for the model call — the vocabulary the collector rewrites.
-openinference-instrumentation-anthropic
+# Traceloop's Anthropic instrumentation. As of 0.62.3 it already emits gen_ai.*, so this
+# agent needs no normalizing. It ships an AnthropicInstrumentor on a different module path
+# from OpenInference's — only one of the two is installed in this image, which is the point.
+opentelemetry-instrumentation-anthropic>=0.62
