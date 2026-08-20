@@ -1,0 +1,28 @@
+# Where Perses reads from. GlobalDatasource rather than project-scoped: there is one
+# Prometheus and one Jaeger in this cluster, and every project should see both.
+#
+# `proxy`, not `directUrl`, and the distinction is the whole reason this works. directUrl
+# means the BROWSER queries the datasource itself — so it would be your laptop trying to
+# resolve a .svc.cluster.local name, which it cannot. proxy routes the query through the
+# Perses backend, which is inside the cluster and can. The symptom of getting it wrong is a
+# dashboard that loads with every panel empty, and a 500 from /proxy/globaldatasources/...
+#
+# It also means only Perses needs port-forwarding, not Prometheus and Jaeger as well.
+#
+# ONE RESOURCE PER FILE. Perses provisioning does not read multi-document YAML: given two
+# resources separated by ---, it loads the first and drops the second without logging
+# anything. That cost an afternoon of wondering where the Jaeger datasource went.
+kind: GlobalDatasource
+metadata:
+  name: prometheus
+spec:
+  default: true
+  display:
+    name: Prometheus
+  plugin:
+    kind: PrometheusDatasource
+    spec:
+      proxy:
+        kind: HTTPProxy
+        spec:
+          url: http://prometheus.observability.svc.cluster.local:9090

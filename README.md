@@ -76,7 +76,7 @@ Nothing runs in `default` — it is split by owner across four namespaces, so `k
 |---|---|
 | `agents` | capybara-sre, beaver-sre, otter-sre |
 | `db` | production-db, and both MCP servers — `sre-agents-mcp` and `goose-mcp` |
-| `observability` | the collector, Jaeger, Prometheus |
+| `observability` | the collector, Jaeger, Prometheus, Perses |
 | `frontend` | the console — the page, and the one origin in front of all three agents |
 
 Every call between them is a real cross-namespace call, resolved by FQDN. The scripts pass `-n`

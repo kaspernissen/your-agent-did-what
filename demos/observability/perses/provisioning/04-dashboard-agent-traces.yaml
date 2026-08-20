@@ -1,0 +1,156 @@
+# Every agent's traces, side by side, without switching tools.
+#
+# Jaeger's own UI shows one service at a time: pick a service, search, read. That is the
+# right shape for an investigation and the wrong shape for a comparison, which is what this
+# demo is — the same incident, the same question, three platforms, and the only difference
+# is what the telemetry says. Three tables on one screen makes that a glance.
+#
+# JaegerTraceQuery takes either a traceId or a service (schemas/jaeger-trace-query/query.cue
+# in perses/plugins). Service is what a comparison wants; traceId is what you would use to
+# pin one known run.
+#
+# One resource per file — see 01-datasource-prometheus.yaml.
+kind: Dashboard
+metadata:
+  name: agent-traces
+  project: agents
+spec:
+  display:
+    name: Agent traces
+    description: The same question asked of three platforms, and what each one recorded.
+  duration: 1h
+  refreshInterval: 30s
+
+  panels:
+    capybaraTraces:
+      kind: Panel
+      spec:
+        display:
+          name: Capybara · Java, Quarkus + LangChain4j
+          description: >-
+            Tools over MCP. Its execute_tool spans carry the tool's name and no content —
+            the finding the talk turns on.
+        plugin:
+          kind: TraceTable
+          spec: {}
+        queries:
+          - kind: TraceQuery
+            spec:
+              plugin:
+                kind: JaegerTraceQuery
+                spec:
+                  datasource:
+                    kind: JaegerDatasource
+                    name: jaeger
+                  service: capybara-sre
+                  limit: 20
+
+    beaverTraces:
+      kind: Panel
+      spec:
+        display:
+          name: Beaver · Python, OpenInference
+          description: >-
+            Emits no OTel vocabulary at all. What you see here has been rewritten in flight
+            by the collector's gen_ai_normalizer, which keeps the originals.
+        plugin:
+          kind: TraceTable
+          spec: {}
+        queries:
+          - kind: TraceQuery
+            spec:
+              plugin:
+                kind: JaegerTraceQuery
+                spec:
+                  datasource:
+                    kind: JaegerDatasource
+                    name: jaeger
+                  service: beaver-sre
+                  limit: 20
+
+    otterTraces:
+      kind: Panel
+      spec:
+        display:
+          name: Otter · Python, OpenLLMetry
+          description: >-
+            gen_ai.* for the model call, and traceloop.entity.* for the loop its own
+            decorators describe. Converged in one half, vendor namespace in the other.
+        plugin:
+          kind: TraceTable
+          spec: {}
+        queries:
+          - kind: TraceQuery
+            spec:
+              plugin:
+                kind: JaegerTraceQuery
+                spec:
+                  datasource:
+                    kind: JaegerDatasource
+                    name: jaeger
+                  service: otter-sre
+                  limit: 20
+
+    gooseTraces:
+      kind: Panel
+      spec:
+        display:
+          name: goose · the coding agent that did it
+          description: >-
+            Not asked anything by us. This is a developer's own agent, deleting rows through
+            an MCP server holding deploy_svc credentials — and it records both the tool's
+            arguments and its result, which none of the three above manage.
+        plugin:
+          kind: TraceTable
+          spec: {}
+        queries:
+          - kind: TraceQuery
+            spec:
+              plugin:
+                kind: JaegerTraceQuery
+                spec:
+                  datasource:
+                    kind: JaegerDatasource
+                    name: jaeger
+                  service: goose
+                  limit: 20
+
+  layouts:
+    - kind: Grid
+      spec:
+        display:
+          title: The three SRE agents, same incident
+          collapse:
+            open: true
+        items:
+          - x: 0
+            y: 0
+            width: 8
+            height: 9
+            content:
+              $ref: "#/spec/panels/capybaraTraces"
+          - x: 8
+            y: 0
+            width: 8
+            height: 9
+            content:
+              $ref: "#/spec/panels/beaverTraces"
+          - x: 16
+            y: 0
+            width: 8
+            height: 9
+            content:
+              $ref: "#/spec/panels/otterTraces"
+    - kind: Grid
+      spec:
+        display:
+          title: And the one that caused it
+          collapse:
+            open: true
+        items:
+          - x: 0
+            y: 0
+            width: 24
+            height: 8
+            content:
+              $ref: "#/spec/panels/gooseTraces"

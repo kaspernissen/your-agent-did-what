@@ -1,0 +1,22 @@
+# Jaeger's query API is on the same port as its UI. Perses 0.54.0 ships JaegerDatasource
+# and JaegerTraceQuery plugins, so the traces the agents produce can sit on a dashboard
+# beside the metrics rather than only in Jaeger's own UI.
+#
+# One resource per file — see 01-datasource-prometheus.yaml for why that matters.
+# Jaeger's query API is on the same port as its UI. Perses ships a JaegerDatasource and a
+# JaegerTraceQuery plugin, so the traces the agents produce can sit on a dashboard beside
+# the metrics rather than only in Jaeger's own UI.
+kind: GlobalDatasource
+metadata:
+  name: jaeger
+spec:
+  default: true
+  display:
+    name: Jaeger
+  plugin:
+    kind: JaegerDatasource
+    spec:
+      proxy:
+        kind: HTTPProxy
+        spec:
+          url: http://jaeger.observability.svc.cluster.local:16686

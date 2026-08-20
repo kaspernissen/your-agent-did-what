@@ -15,7 +15,8 @@ demos/            the demo — three agents, one incident, one collector, in kin
                   complete copies, differing only in the instrumentation library.
                   check-agents-agree.sh fails if the shared files drift apart.
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
-  observability/  collector, jaeger and prometheus values
+  observability/  collector, jaeger, prometheus and perses — values, and Perses'
+                  dashboards as provisioning files
   cluster/        kind, secrets, helm installs
   console/        the page, and the nginx that fronts all three agents (namespace: frontend)
 outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck

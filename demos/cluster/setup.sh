@@ -50,6 +50,25 @@ helm repo update >/dev/null
 helm upgrade --install prometheus prometheus-community/prometheus -n observability \
   -f ../observability/prometheus/values.yaml --wait
 
+echo "--- Perses (dashboards) ---"
+# The dashboards and datasources live as files in observability/perses/provisioning and are
+# mounted as a ConfigMap, the same arrangement as the database's init.sql: one definition,
+# no second copy inside a values file. --from-file on the directory takes every file in it,
+# so adding a dashboard is adding a file.
+kubectl create configmap perses-provisioning -n observability \
+  --from-file=../observability/perses/provisioning/ \
+  --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
+helm repo add perses https://perses.github.io/helm-charts >/dev/null 2>&1 || true
+helm repo update >/dev/null
+helm upgrade --install perses perses/perses --version 0.23.2 -n observability \
+  -f ../observability/perses/values.yaml --wait
+
+# Provisioning is read at startup, so a changed dashboard needs the pod replaced. apply on
+# an unchanged ConfigMap is a no-op and would leave the old dashboard being served.
+kubectl rollout restart -n observability statefulset/perses >/dev/null 2>&1 || \
+  kubectl rollout restart -n observability deployment/perses >/dev/null 2>&1 || true
+
 echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
 # The vendor path is opt-in on the token, exactly like the local compose path. Without
 # it the collector still exports to stdout and Jaeger, so the demo works offline.

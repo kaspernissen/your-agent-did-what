@@ -1,0 +1,122 @@
+# The incident, as two numbers.
+#
+# This is the metrics half of the demo: rows went missing, and the counter says which
+# database role removed them. No trace viewer needed to see that something happened — the
+# traces answer *why*, which is the other half.
+#
+# Both metrics come from capybara-sre (CapybaraMetrics.java). The gauge is observable and
+# reads the table on collection, so it cannot drift out of step with the database if
+# something deletes rows without telling us — which is precisely the scenario.
+kind: Dashboard
+metadata:
+  name: customer-records
+  project: agents
+spec:
+  display:
+    name: Customer records
+    description: What the database holds, and who removed anything.
+  # Wide enough to show the flat line before the deletion. The metric export interval is
+  # 15s, so a shorter window is mostly empty on a freshly reset stage.
+  duration: 30m
+  refreshInterval: 15s
+
+  panels:
+    recordsNow:
+      kind: Panel
+      spec:
+        display:
+          name: Records right now
+          description: Five before the coding agent runs, two after.
+        plugin:
+          kind: StatChart
+          spec:
+            calculation: last-number
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: customer_records
+
+    recordsOverTime:
+      kind: Panel
+      spec:
+        display:
+          name: Records over time
+          description: A flat line at five that steps down to two. That step is the incident.
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            yAxis:
+              format:
+                unit: decimal
+              min: 0
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: customer_records
+                  seriesNameFormat: customers
+
+    deletedByRole:
+      kind: Panel
+      spec:
+        display:
+          name: Deleted, by database role
+          description: >-
+            The whole argument in one panel. `db_user` is the role Postgres authenticated,
+            not a name the client chose for itself — so this says who, not who claims to be.
+        plugin:
+          kind: TimeSeriesChart
+          spec:
+            visual:
+              display: bar
+            yAxis:
+              format:
+                unit: decimal
+              min: 0
+        queries:
+          - kind: TimeSeriesQuery
+            spec:
+              plugin:
+                kind: PrometheusTimeSeriesQuery
+                spec:
+                  query: sum by (db_user) (customer_records_deleted_total)
+                  seriesNameFormat: "{{db_user}}"
+
+  layouts:
+    - kind: Grid
+      spec:
+        display:
+          title: The database
+          collapse:
+            open: true
+        items:
+          - x: 0
+            y: 0
+            width: 6
+            height: 6
+            content:
+              $ref: "#/spec/panels/recordsNow"
+          - x: 6
+            y: 0
+            width: 18
+            height: 6
+            content:
+              $ref: "#/spec/panels/recordsOverTime"
+    - kind: Grid
+      spec:
+        display:
+          title: Who did it
+          collapse:
+            open: true
+        items:
+          - x: 0
+            y: 0
+            width: 24
+            height: 7
+            content:
+              $ref: "#/spec/panels/deletedByRole"

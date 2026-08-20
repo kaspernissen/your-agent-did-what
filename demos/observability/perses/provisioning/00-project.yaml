@@ -1,0 +1,12 @@
+# Perses groups dashboards into projects, and a dashboard names the project it belongs to.
+# Provisioning does not create one implicitly: without this, the dashboard is rejected at
+# startup with "project 'agents' does not exist" and the UI comes up empty.
+#
+# Files are read in name order, which is why this one sorts first.
+kind: Project
+metadata:
+  name: agents
+spec:
+  display:
+    name: Agents
+    description: The SRE agents, the customer database, and what happened to it.

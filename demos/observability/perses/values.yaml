@@ -1,0 +1,37 @@
+# Perses: the dashboard half of the demo, next to Jaeger's traces.
+#
+# The dashboards and datasources are not in here. They are YAML files in ./provisioning/,
+# turned into a ConfigMap by cluster/setup.sh and mounted below — same arrangement as the
+# database's init.sql, and for the same reason: one definition, editable as a file, with no
+# second copy embedded in a values file to drift away from it.
+
+# Perses reads every resource in this folder at startup and re-reads on an interval, so a
+# dashboard deleted by hand in the UI comes back. That is the behaviour we want on a stage:
+# whatever the last person did to it, a restart puts the demo back.
+config:
+  provisioning:
+    folders:
+      - /etc/perses/provisioning
+
+volumes:
+  - name: provisioning
+    configMap:
+      name: perses-provisioning
+
+volumeMounts:
+  - name: provisioning
+    mountPath: /etc/perses/provisioning
+    readOnly: true
+
+# One replica and no persistence. Everything Perses serves is provisioned from files, so
+# there is no state worth keeping across a restart — and a PVC would only make `kind delete`
+# slower.
+replicas: 1
+persistence:
+  enabled: false
+
+resources:
+  requests:
+    memory: 128Mi
+  limits:
+    memory: 256Mi
