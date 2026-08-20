@@ -13,8 +13,9 @@ directory can be read on its own as an example of instrumenting an agent under o
 | | |
 |---|---|
 | The model call | instrumented by OpenLLMetry — as of 0.62.3 it already emits `gen_ai.*`, including the new message shape |
-| The agent and tool spans | written by hand in `agent.py`, in OTel GenAI names |
-| Downstream | nothing. This agent needs no normalizing — it is the branch of the fan-out that has already converged |
+| The tool's content | `traceloop.entity.input` and `traceloop.entity.output`. **Not** `gen_ai.tool.call.arguments` / `.result`, which this agent never emits |
+| The agent and tool spans | OpenLLMetry's own `@agent` and `@tool` decorators, applied in `agent.py` |
+| Downstream | the collector still has work to do. `traceloop.span.kind` becomes `gen_ai.operation.name`, and `traceloop.entity.input` / `.output` become `gen_ai.input.messages` / `.output.messages` — *message* attributes, on a tool span |
 
 Nothing auto-instruments a loop somebody wrote themselves, which is why the agent and tool
 spans are hand-written. `gen_ai.tool.call.arguments` and its result are **opt-in** in the

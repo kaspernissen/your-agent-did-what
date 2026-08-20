@@ -4,11 +4,21 @@ Two responsibilities and no more — drive the conversation, and describe what h
 spans. It does not install instrumentation (see `telemetry.py`) and it does not know what
 the tools do (see `tools.py`).
 
-The agent and tool spans are written by hand, because nothing auto-instruments a loop
-somebody wrote themselves. The names they are written in are OpenInference's, so the whole trace leaves here in one
-vocabulary and the collector's gen_ai_normalizer is what produces OTel semantics. Writing
-gen_ai.* here by hand would prove nothing about the collector, which is the point of
-having this agent at all.
+The agent and tool spans come from OpenInference's own tracing helpers, because nothing
+auto-instruments a loop somebody wrote themselves — a library can patch `messages.create`,
+but it cannot see a `for` loop in a file nobody shipped. What it can do is hand you an API
+for describing the loop yourself, and this uses it rather than setting attribute strings
+by hand: `openinference_span_kind` and the set_input / set_output / set_tool helpers, which
+is the documented manual-instrumentation path.
+
+That is worth more than saving keystrokes. The library owns the attribute names, so a
+rename upstream cannot leave this file emitting keys the collector's gen_ai_normalizer no
+longer matches — and set_tool records the description and JSON schema the model was shown,
+which no amount of hand-writing was going to bother with.
+
+Everything still arrives in OpenInference's vocabulary, so gen_ai_normalizer is what
+produces OTel semantics. Writing gen_ai.* here by hand would prove nothing about the
+collector, which is the point of having this agent at all.
 
 The tool call's arguments and its result are both recorded. The conventions define them as
 opt-in — the spec says instrumentation SHOULD NOT capture them by default, for privacy and
@@ -25,7 +35,8 @@ import json
 import os
 
 import anthropic
-from opentelemetry.trace import SpanKind, Tracer
+from openinference.semconv.trace import ToolCallAttributes
+from opentelemetry.trace import Status, StatusCode
 
 import tools
 
@@ -33,16 +44,14 @@ DEFAULT_MODEL = "claude-sonnet-5"
 DEFAULT_AGENT_NAME = "db-ops-agent"
 MAX_TURNS = 6
 
-# OpenInference keys, exactly as upstream spells them: the collector's
-# gen_ai_normalizer matches on these literal strings and silently ignores a near-miss.
 # Span names stay framework-flavoured, which is what these libraries actually do — the
-# operation is an attribute, not the span name.
+# operation is an attribute (openinference.span.kind), not the span name.
 
 
 class SreAgent:
     """A tool-calling Claude agent over the customer database."""
 
-    def __init__(self, tracer: Tracer, *, model: str | None = None, name: str | None = None):
+    def __init__(self, tracer, *, model: str | None = None, name: str | None = None):
         self._tracer = tracer
         self._model = model or os.environ.get("DEMO_MODEL", DEFAULT_MODEL)
         self._name = name or DEFAULT_AGENT_NAME
@@ -76,10 +85,9 @@ class SreAgent:
         messages = [{"role": "user", "content": prompt}]
         self._tool_calls = []
         with self._tracer.start_as_current_span(
-            self._name, kind=SpanKind.INTERNAL
+            self._name, openinference_span_kind="agent"
         ) as span:
-            span.set_attribute("openinference.span.kind", "AGENT")
-            span.set_attribute("agent.name", self._name)
+            span.set_input(prompt)
             self._trace_id = format(span.get_span_context().trace_id, "032x")
             for _ in range(max_turns):
                 response = self._client.messages.create(
@@ -91,10 +99,15 @@ class SreAgent:
                 messages.append({"role": "assistant", "content": response.content})
                 requested = [b for b in response.content if getattr(b, "type", None) == "tool_use"]
                 if not requested:
-                    return self._text_of(response)
+                    answer = self._text_of(response)
+                    span.set_output(answer)
+                    span.set_status(Status(StatusCode.OK))
+                    return answer
                 messages.append(
                     {"role": "user", "content": [self._execute(b) for b in requested]}
                 )
+            span.set_output("(max turns reached)")
+            span.set_status(Status(StatusCode.OK))
             return "(max turns reached)"
 
     def _execute(self, block) -> dict:
@@ -107,18 +120,29 @@ class SreAgent:
         """
         name = block.name
         arguments = dict(block.input or {})
-        arguments_json = json.dumps(arguments)
+        schema = tools.schema_for(name)
         with self._tracer.start_as_current_span(
-            name, kind=SpanKind.INTERNAL
+            name, openinference_span_kind="tool"
         ) as span:
-            span.set_attribute("openinference.span.kind", "TOOL")
-            span.set_attribute("tool.name", name)
-            span.set_attribute("tool_call.id", block.id)
-            span.set_attribute("tool_call.function.arguments", arguments_json)
-            span.set_attribute("input.value", arguments_json)
+            # The description and parameters the model was actually shown, not a guess from
+            # the Python signature. set_tool writes tool.name, tool.description and
+            # tool.parameters; the library owns those keys, so we cannot misspell them.
+            span.set_tool(
+                name=name,
+                description=schema["description"],
+                parameters=schema["input_schema"],
+            )
+            span.set_input(arguments)
+            # Not something set_tool covers: the id ties this span to the specific request
+            # the model made, and it only exists at runtime. The constant is upstream's.
+            span.set_attribute(ToolCallAttributes.TOOL_CALL_ID, block.id)
+            span.set_attribute(
+                ToolCallAttributes.TOOL_CALL_FUNCTION_ARGUMENTS_JSON, json.dumps(arguments)
+            )
             result = tools.dispatch(name)(**arguments)
             result_json = json.dumps(result)
-            span.set_attribute("output.value", result_json)
+            span.set_output(result)
+            span.set_status(Status(StatusCode.OK))
             self._tool_calls.append({"name": name, "args": arguments, "result": result})
         return {
             "type": "tool_result",

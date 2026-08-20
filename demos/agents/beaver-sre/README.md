@@ -13,7 +13,7 @@ directory can be read on its own as an example of instrumenting an agent under o
 | | |
 |---|---|
 | The model call | instrumented by OpenInference — emits `llm.*` and `openinference.*`, not the OTel names |
-| The agent and tool spans | written by hand in `agent.py`, in OpenInference names |
+| The agent and tool spans | OpenInference's own tracing helpers, used in `agent.py`: `openinference_span_kind` plus `set_input` / `set_output` / `set_tool` |
 | Downstream | the collector's `gen_ai_normalizer` rewrites this agent into `gen_ai.*`, keeping the originals — so one span carries both vocabularies and you can see what the translation does and does not cover |
 
 Nothing auto-instruments a loop somebody wrote themselves, which is why the agent and tool

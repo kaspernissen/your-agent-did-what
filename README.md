@@ -1,8 +1,7 @@
 # Your Agent Did What?
-
 **Forensic Observability for Systems That Don't Leave Obvious Footprints**
-A conference talk by **Kasper Borg Nissen** (Dash0) and **Adriana Villela** (Dynatrace), and
-the demo every factual claim in it comes from.
+
+This repository contains the demo for the conference talk delivered by **Kasper Borg Nissen** (Dash0) and **Adriana Villela** (Dynatrace).
 
 > GenAI observability is fragmented — OpenInference, OpenLLMetry and framework conventions all
 > naming the same things differently. OpenTelemetry is where they converge. This talk maps that
@@ -30,8 +29,9 @@ Emits no OTel vocabulary at all; the collector rewrites it in flight — most of
 <tr>
 <td width="130" align="center"><img src="mascots/otter-tablet.png" width="110" alt="Otter SRE"></td>
 <td><strong>Otter, SRE</strong> — the same Python agent, instrumented by OpenLLMetry.<br>
-Emits <code>gen_ai.*</code> natively, needs no normalizing, and is the only one of the three
-that records what a tool returned.</td>
+Emits <code>gen_ai.*</code> natively for the model call. Its own <code>@agent</code> and
+<code>@tool</code> decorators put the tool's arguments and result under
+<code>traceloop.entity.*</code> — content recorded, vendor namespace.</td>
 </tr>
 <tr>
 <td width="130" align="center"><img src="mascots/goose-walking.png" width="110" alt="goose"></td>
@@ -149,9 +149,20 @@ Beaver carrying both at once is the check that `gen_ai_normalizer` is in the pip
 `remove_originals: true` and the before/after demo is gone.
 
 **The forensic attributes.** On a tool span, look for `gen_ai.tool.call.arguments` and
-`.result`. The finding the talk turns on is that the libraries do not write them — only our
-hand-written spans do. If they start appearing everywhere, an upstream release has changed the
-story and the slide needs revisiting.
+`.result`. Each agent uses its own library's documented API for these spans — OpenInference's
+`set_tool` / `set_input` / `set_output`, OpenLLMetry's `@tool` — and **not one of the three
+produces `gen_ai.tool.call.result`.** Where the content lands instead:
+
+| Service | Arguments | Result |
+|---|---|---|
+| `beaver-sre` | `input.value`, normalized to `gen_ai.tool.call.arguments` | `output.value`, normalized to **nothing** |
+| `otter-sre` | `traceloop.entity.input`, normalized to `gen_ai.input.messages` | `traceloop.entity.output` → `gen_ai.output.messages` |
+| `capybara-sre` | absent on the MCP path | absent on the MCP path |
+
+Otter is the sharp one: the library that has already converged on `gen_ai.*` for the model
+call hands the tool's content over in a vendor namespace, and the collector then files it
+under *message* attributes on a tool span. If `gen_ai.tool.call.result` starts appearing
+anywhere, an upstream release has changed the story and the slide needs revisiting.
 
 **What is correctly absent.** `gen_ai.evaluation.result` is an event in the logs data model,
 not a span, so Jaeger will not show it. Read those — and check spans are arriving at all — from

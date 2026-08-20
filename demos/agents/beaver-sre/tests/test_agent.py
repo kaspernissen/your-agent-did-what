@@ -21,7 +21,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from opentelemetry.sdk.trace import TracerProvider
+# OpenInference's provider, not the SDK's: it is what hands out an OITracer, and the loop
+# now asks that tracer for openinference_span_kind and set_input / set_output / set_tool.
+from openinference.instrumentation import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
@@ -100,13 +102,19 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
 
     root = by_name["db-ops-agent"]
     assert root.attributes["openinference.span.kind"] == "AGENT"
-    assert root.attributes["agent.name"] == "db-ops-agent"
+    assert root.attributes["input.value"] == "delete the free plan"
+    assert "Deleted" in root.attributes["output.value"]
 
     delete = by_name["delete_records"]
     assert delete.attributes["openinference.span.kind"] == "TOOL"
     assert delete.attributes["tool.name"] == "delete_records"
-    # The content the conventions make opt-in. This loop writes it explicitly, so unlike a
+    # set_tool carries the schema the model was shown, which the hand-written version never
+    # bothered to record.
+    assert "Destructive" in delete.attributes["tool.description"]
+    assert '"plan"' in delete.attributes["tool.parameters"]
+    # The content the conventions make opt-in. This loop records it explicitly, so unlike a
     # framework-instrumented path it must always be present.
+    assert delete.attributes["input.value"] == '{"plan": "free"}'
     assert delete.attributes["tool_call.function.arguments"] == '{"plan": "free"}'
     assert '"deleted": 3' in delete.attributes["output.value"]
 
@@ -149,7 +157,6 @@ def test_openinference_vocabulary_emits_the_source_convention(spans, monkeypatch
 
     agent_span = by_name["beaver-sre"]
     assert agent_span.attributes["openinference.span.kind"] == "AGENT"
-    assert agent_span.attributes["agent.name"] == "beaver-sre"
     assert not any(k.startswith("gen_ai.") for k in agent_span.attributes)
 
     tool_span = by_name["list_records"]

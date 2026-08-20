@@ -21,9 +21,19 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from traceloop.sdk import Traceloop
+from traceloop.sdk.instruments import Instruments
+
+# One SDK for the module: see the `spans` fixture for why it cannot be per-test.
+_EXPORTER = InMemorySpanExporter()
+Traceloop.init(
+    app_name="test",
+    exporter=_EXPORTER,
+    disable_batch=True,
+    telemetry_enabled=False,
+    block_instruments={Instruments.MCP},
+)
 
 
 class _Block:
@@ -59,11 +69,21 @@ def _stub_anthropic(monkeypatch, turns):
 
 @pytest.fixture
 def spans(monkeypatch):
-    """An in-memory exporter plus a tracer, returned as (tracer, get_finished_spans)."""
-    exporter = InMemorySpanExporter()
-    provider = TracerProvider()
-    provider.add_span_processor(SimpleSpanProcessor(exporter))
-    return provider.get_tracer("test"), exporter.get_finished_spans
+    """An in-memory exporter plus a tracer, returned as (tracer, get_finished_spans).
+
+    Traceloop owns the provider here, because the loop's spans come from its @agent and
+    @tool decorators and those resolve the tracer from the global provider rather than
+    from anything we hand them. Traceloop.init(exporter=...) is the documented way to
+    point it at ours; disable_batch so a span is exported the moment it ends.
+
+    Initialised once for the whole module, and the exporter cleared per test. Traceloop
+    keeps one global SDK, so a second init() does not rebind the exporter -- every test
+    after the first would assert against spans that went somewhere else, which reads as
+    "the loop emitted nothing".
+    """
+    _EXPORTER.clear()
+    from opentelemetry import trace
+    return trace.get_tracer("test"), _EXPORTER.get_finished_spans
 
 
 @pytest.fixture(autouse=True)
@@ -93,21 +113,25 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     assert [r["user"] for r in tools.list_records()] == ["cappuccino", "mochi"]
 
     by_name = {s.name: s for s in finished()}
-    assert "invoke_agent db-ops-agent" in by_name
-    assert "execute_tool query" in by_name
-    assert "execute_tool delete_records" in by_name
+    # Traceloop's decorators name the spans, not us: "<entity>.agent" and "<entity>.tool".
+    assert "db-ops-agent.agent" in by_name
+    assert "query.tool" in by_name
+    assert "delete_records.tool" in by_name
 
-    root = by_name["invoke_agent db-ops-agent"]
-    assert root.attributes["gen_ai.operation.name"] == "invoke_agent"
+    root = by_name["db-ops-agent.agent"]
+    assert root.attributes["traceloop.span.kind"] == "agent"
     assert root.attributes["gen_ai.agent.name"] == "db-ops-agent"
 
-    delete = by_name["execute_tool delete_records"]
-    assert delete.attributes["gen_ai.operation.name"] == "execute_tool"
+    delete = by_name["delete_records.tool"]
+    assert delete.attributes["traceloop.span.kind"] == "tool"
     assert delete.attributes["gen_ai.tool.name"] == "delete_records"
-    # The opt-in content. This loop writes it explicitly, so unlike a
-    # framework-instrumented path it must always be present.
-    assert delete.attributes["gen_ai.tool.call.arguments"] == '{"plan": "free"}'
-    assert '"deleted": 3' in delete.attributes["gen_ai.tool.call.result"]
+    # The content IS recorded -- in Traceloop's namespace, not the convention's. This is
+    # the finding, so it is pinned rather than merely observed: if a release moves it to
+    # gen_ai.tool.call.*, this test fails and the talk needs re-measuring.
+    assert '"plan": "free"' in delete.attributes["traceloop.entity.input"]
+    assert '"deleted": 3' in delete.attributes["traceloop.entity.output"]
+    assert "gen_ai.tool.call.arguments" not in delete.attributes
+    assert "gen_ai.tool.call.result" not in delete.attributes
 
 
 def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):
@@ -118,15 +142,16 @@ def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):
     answer = SreAgent(tracer, model="stub", name="db-ops-agent").run("say hello")
 
     assert answer == "Nothing to do."
-    assert [s.name for s in finished()] == ["invoke_agent db-ops-agent"]
+    assert [s.name for s in finished()] == ["db-ops-agent.agent"]
 
 
-def test_genai_vocabulary_is_written_directly(spans, monkeypatch):
-    """Under OpenLLMetry the loop writes gen_ai.* directly — nothing translates this agent.
+def test_the_decorators_name_the_tool_but_not_its_content(spans, monkeypatch):
+    """OpenLLMetry converged on gen_ai.* for the model call, and not for the loop.
 
-    OpenLLMetry already emits the conventions for the model call, so writing anything else
-    here would leave one trace in two vocabularies for no reason. ../beaver-sre is the
-    counterpart that writes the source convention and relies on the collector.
+    Its @agent and @tool decorators put the tool's NAME under gen_ai.tool.name and the
+    call's arguments and result under traceloop.entity.*. So the one agent in this demo
+    that needs no normalizing for its model call still hands the forensic content over in
+    a vendor namespace. ../beaver-sre is the counterpart, in OpenInference throughout.
     """
     from agent import SreAgent
 
@@ -139,18 +164,15 @@ def test_genai_vocabulary_is_written_directly(spans, monkeypatch):
     SreAgent(tracer, model="stub", name="otter-sre").run("what happened?")
 
     by_name = {s.name: s for s in finished()}
-    assert "invoke_agent otter-sre" in by_name
-    assert "execute_tool list_records" in by_name
+    assert "otter-sre.agent" in by_name
+    assert "list_records.tool" in by_name
 
-    agent_span = by_name["invoke_agent otter-sre"]
-    assert agent_span.attributes["gen_ai.operation.name"] == "invoke_agent"
+    agent_span = by_name["otter-sre.agent"]
     assert agent_span.attributes["gen_ai.agent.name"] == "otter-sre"
     assert not any(k.startswith("openinference.") for k in agent_span.attributes)
 
-    tool_span = by_name["execute_tool list_records"]
-    assert tool_span.attributes["gen_ai.operation.name"] == "execute_tool"
+    tool_span = by_name["list_records.tool"]
     assert tool_span.attributes["gen_ai.tool.name"] == "list_records"
-    assert tool_span.attributes["gen_ai.tool.call.id"] == "t9"
-    assert "gen_ai.tool.call.arguments" in tool_span.attributes
-    assert "gen_ai.tool.call.result" in tool_span.attributes
+    assert "traceloop.entity.input" in tool_span.attributes
+    assert "traceloop.entity.output" in tool_span.attributes
     assert not any(k.startswith("openinference.") for k in tool_span.attributes)

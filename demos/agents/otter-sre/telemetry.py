@@ -1,18 +1,26 @@
 """Telemetry wiring for otter-sre: one library, no choices.
 
 OpenLLMetry (Traceloop) already emits the current gen_ai.* conventions as of 0.62.3,
-including the new message shape, so nothing downstream translates this agent. It is the
-branch of the fan-out that has already converged.
-
-The Anthropic instrumentation is used directly rather than traceloop-sdk, because that SDK
-installs its own exporter and processors, and only the vocabulary is meant to differ
-between these two agents.
+including the new message shape, so nothing downstream translates this agent's model call.
+It is the branch of the fan-out that has already converged.
 
 For the other side of the comparison see ../beaver-sre, which is this agent with
 OpenInference instead.
 
-The agent loop in `agent.py` does not import this module's opinions — it asks for a tracer
-and writes its own spans. What this file decides is who instruments the Anthropic SDK.
+This used to install `opentelemetry-instrumentation-anthropic` directly and avoid
+traceloop-sdk, on the grounds that the SDK brings its own exporter and processors. It does
+— but `Traceloop.init(exporter=...)` is the documented way to hand it yours instead, and
+going through the SDK is what makes the rest of the library available: the @agent and
+@tool decorators agent.py uses. Direct instrumentation covers the model call and nothing
+else, which left the loop hand-written in a way this agent's counterpart no longer is.
+
+Two things worth knowing about what init() does:
+
+  telemetry_enabled=False  stops the SDK reporting anonymous usage to Traceloop. On by
+                           default, and not something a demo should do quietly.
+  app_name                 becomes the resource's service.name, which is where the agent's
+                           identity lives. The decorators' own names are separate — see
+                           agent.py.
 """
 from __future__ import annotations
 
@@ -32,26 +40,29 @@ def endpoint() -> str:
     return os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4318")
 
 
-def configure(agent_name: str) -> trace.Tracer:
-    """Install OpenLLMetry on the Anthropic SDK, and return the tracer for hand-written spans."""
+def configure(agent_name: str):
+    """Initialise OpenLLMetry against our collector, and return a tracer for our own spans."""
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-    from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
-    from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-    from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+    from traceloop.sdk import Traceloop
+    from traceloop.sdk.instruments import Instruments
 
-    from opentelemetry.instrumentation.anthropic import AnthropicInstrumentor
-
-    provider = TracerProvider(resource=Resource.create({SERVICE_NAME: agent_name}))
-    provider.add_span_processor(
-        BatchSpanProcessor(OTLPSpanExporter(endpoint=f"{endpoint()}/v1/traces"))
+    # Our exporter, not Traceloop's. Passing one means the SDK's base URL, API key and
+    # header settings are ignored entirely, which is what we want: the spans go to the
+    # collector in this cluster and nowhere else.
+    #
+    # MCP is blocked because Traceloop 0.62.3's MCP instrumentor targets an older client:
+    # it looks for mcp.client.streamable_http.streamablehttp_client, and mcp 2.x renamed
+    # that to streamable_http_client. Left unblocked it logs
+    #   "Error initializing MCP instrumentor … most likely due to a circular import"
+    # on every start. Nothing is lost by blocking it — the mcp SDK traces itself, which is
+    # where the MCP spans in this agent's traces come from. See mcp_db.py.
+    Traceloop.init(
+        app_name=agent_name,
+        exporter=OTLPSpanExporter(endpoint=f"{endpoint()}/v1/traces"),
+        disable_batch=False,
+        telemetry_enabled=False,
+        block_instruments={Instruments.MCP},
     )
-    trace.set_tracer_provider(provider)
-
-    # The SDK's own HTTP calls, which mirrors what the Java agent shows. This does NOT cover
-    # the MCP client: mcp 2.x talks httpx2 and ships its own instrumentation. See mcp_db.py.
-    HTTPXClientInstrumentor().instrument(tracer_provider=provider)
-    AnthropicInstrumentor().instrument(tracer_provider=provider)
 
     return trace.get_tracer(TRACER_NAME)
 

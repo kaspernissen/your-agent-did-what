@@ -82,17 +82,28 @@ make true. The Python agents used to call their tools in-process, so any compari
 | tools | over MCP, to `sre-agents-mcp` | the same, over MCP | the same, over MCP |
 | data | PostgreSQL, as `app_svc` | via the MCP server | via the MCP server |
 | model call emits | `gen_ai.prompt` / `gen_ai.completion`, both removed from the spec | `llm.*` / `openinference.*` | `gen_ai.*`, already current |
-| arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` | unchanged, nothing to convert |
-| tool span | the framework's, 6 attributes | hand-written, arguments only | hand-written, arguments and result |
+| arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` | model call unchanged; the loop's `traceloop.*` gets normalized too |
+| tool span | the framework's, 3 attributes, no content | `set_tool` + `set_input` / `set_output` | `@tool` decorator |
+| the tool's result lands in | nowhere | `output.value` — normalized to nothing | `traceloop.entity.output` → `gen_ai.output.messages` |
 | judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged | not judged |
 
 The two Python agents are separate directories and separate images — `agents/beaver-sre` and
 `agents/otter-sre` — so each is readable end to end as an example of instrumenting an agent under
 one convention. They are complete copies of each other apart from which library instruments the
 model call, and `agents/check-agents-agree.sh` fails the build if the files that are meant to be
-identical have drifted; `deploy.sh` runs it. Their tool spans are hand-written, because nothing
-auto-instruments a loop somebody wrote by hand — which is why that row still says as much about
-our code as about their libraries.
+identical have drifted; `deploy.sh` runs it.
+
+Each writes its loop with its own library's documented API — OpenInference's
+`openinference_span_kind` plus `set_tool` / `set_input` / `set_output`, OpenLLMetry's `@agent`
+and `@tool`. Nothing auto-instruments a loop somebody wrote themselves: a library can patch
+`messages.create`, but it cannot see a `for` loop in a file nobody shipped. What it can do is
+hand you an API for describing the loop, and both do.
+
+Which makes that last row a statement about the libraries rather than about our code — and the
+answer is that **neither produces `gen_ai.tool.call.result`**. Otter is the sharp case: the
+library already emitting `gen_ai.*` for the model call files the tool's arguments and result
+under `traceloop.entity.*`, and the collector then maps those onto `gen_ai.input.messages` /
+`gen_ai.output.messages` — *message* attributes, on a tool span.
 
 All three are reachable from the one console: pick the agent in the top bar. The console is its
 own service — an nginx image holding the page, which also proxies each call to the agent that

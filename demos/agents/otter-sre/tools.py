@@ -91,3 +91,13 @@ _DISPATCH = {
 def dispatch(name):
     """Return the callable for a tool name."""
     return _DISPATCH[name]
+
+
+def schema_for(name):
+    """The schema the model was shown for a tool: name, description, input_schema.
+
+    Both agents hand this to their instrumentation library so the tool span carries the
+    description and parameters the model actually saw, rather than something inferred from
+    the Python signature — which would drift from the schema the moment the two disagree.
+    """
+    return next(s for s in TOOL_SCHEMAS if s["name"] == name)
