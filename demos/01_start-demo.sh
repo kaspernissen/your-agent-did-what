@@ -12,7 +12,10 @@ cd "$(dirname "$0")"
 
 # namespace:service:local:remote:probe-path
 TARGETS=(
-  "agents:capybara-sre:8088:8088:/"
+  # The console is the only thing that needs forwarding to run the demo: it proxies to all
+  # three agents itself. Port 8088 because that is what capybara-sre used when it served the
+  # page, and the URL is on a slide.
+  "agents:console:8088:80:/healthz"
   "observability:jaeger:16686:16686:/"
   "observability:prometheus:9090:9090:/-/ready"
 )
@@ -66,7 +69,7 @@ ok=$?
 
 cat <<EOF
 
-  console     http://localhost:8088     ask either agent
+  console     http://localhost:8088     ask any of the three agents
   jaeger      http://localhost:16686    traces
   prometheus  http://localhost:9090     graph customer_records
 

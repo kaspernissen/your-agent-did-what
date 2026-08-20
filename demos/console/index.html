@@ -3,17 +3,17 @@
 <title>Ask an SRE agent</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!--
-  A deliberately small console for asking either SRE agent questions live.
+  A deliberately small console for asking any of the three SRE agents questions live.
 
-  Served by the agent itself out of META-INF/resources, so there is no second service to
-  start on stage and no build step.
+  Its own service now (demos/console), an nginx image with these five files in it. nginx
+  also proxies every call below to the agent that answers it, so the page talks to one
+  origin and needs no CORS and no absolute URLs. There is still no build step.
 
-  Two agents, one interface. Capybara is this application: Java, tools over MCP, real
-  Postgres, an LLM judge. Beaver is another platform entirely -- Python, instrumented by
-  OpenInference -- reached through a pass-through on this server, because the browser
-  cannot see cluster-internal services. Presenting them identically is the point: when the
-  interface, the incident and the question are all the same, any difference in the
-  telemetry belongs to the platform.
+  Three agents, one interface. Capybara is Java: Quarkus and LangChain4j, tools over MCP,
+  real Postgres, an LLM judge. Beaver and Otter are the same Python agent twice, differing
+  only in the instrumentation library -- OpenInference and OpenLLMetry. Presenting them
+  identically is the point: when the interface, the incident and the question are all the
+  same, any difference in the telemetry belongs to the platform.
 
   Why the results show what they show: the response carries each tool call's name,
   arguments AND result, which is exactly the content the MCP path's execute_tool span does

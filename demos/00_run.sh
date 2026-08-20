@@ -10,8 +10,8 @@
 # own pods. Roughly five minutes cold, under two warm.
 #
 # The individual steps still exist and are still the thing to use while iterating on one
-# piece — cluster/setup.sh, infrastructure/deploy.sh, agents/deploy.sh. This just runs them
-# in the order they depend on each other.
+# piece — cluster/setup.sh, infrastructure/deploy.sh, agents/deploy.sh, console/deploy.sh.
+# This just runs them in the order they depend on each other.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -20,16 +20,20 @@ cd "$(dirname "$0")"
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
 : "${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY in demos/.env (see .env.template)}"
 
-echo "═══ 1/3 · Shared cluster ═══════════════════════════════════════════"
+echo "═══ 1/4 · Shared cluster ═══════════════════════════════════════════"
 ./cluster/setup.sh
 
 echo
-echo "═══ 2/3 · Infrastructure · the database both agents read ═══════════"
+echo "═══ 2/4 · Infrastructure · the database all three agents read ══════"
 ./infrastructure/deploy.sh
 
 echo
-echo "═══ 3/3 · Agents · Capybara, its MCP server, and Beaver ════════════"
+echo "═══ 3/4 · Agents · Capybara, its MCP server, Beaver and Otter ══════"
 ./agents/deploy.sh
+
+echo
+echo "═══ 4/4 · Console · the page, and the one origin in front of them ══"
+./console/deploy.sh
 
 cat <<'DONE'
 

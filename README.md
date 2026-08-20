@@ -67,7 +67,7 @@ Nothing runs in `default` — it is split by owner across three namespaces, so `
 
 | namespace | what runs there |
 |---|---|
-| `agents` | capybara-sre, beaver-sre, otter-sre |
+| `agents` | capybara-sre, beaver-sre, otter-sre, and the console in front of them |
 | `db` | production-db, and both MCP servers — `sre-agents-mcp` and `goose-mcp` |
 | `observability` | the collector, Jaeger, Prometheus |
 
@@ -200,6 +200,7 @@ the repo. [`AGENTS.md`](AGENTS.md) records where they live and how to work in he
 |---|---|
 | [`demos/`](demos/) | The demo: three SRE agents, one coding agent, one incident, one collector, in kind. |
 | [`demos/README.md`](demos/README.md) | How to run it on stage — the flow, what to watch, what breaks. |
+| [`demos/console/`](demos/console/) | The page the demo is driven from, and the one origin in front of all three agents. |
 | [`outline.md`](outline.md) | The talk slide by slide: sections, timing, what each slide must land. |
 | [`abstract.md`](abstract.md) | The submitted abstract. |
 | [`research.md`](research.md) | Everything the talk is sourced from, and the state of the standards. |

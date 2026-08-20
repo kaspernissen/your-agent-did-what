@@ -1,0 +1,44 @@
+# console — the page the demo is driven from, and the single origin in front of all three agents.
+#
+# In the `agents` namespace with the three agents it serves. It is not an agent itself, but
+# it is useless anywhere else, and keeping it here means one namespace to port-forward into.
+#
+# This is the only thing anyone port-forwards to run the demo. 01_start-demo.sh maps it to
+# localhost:8088 — the port capybara-sre used when it served the page itself, so the URL on
+# the slides did not have to change.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: agents
+  name: console
+  labels: { app: console, demo: conventions }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: console }
+  template:
+    metadata:
+      labels: { app: console, demo: conventions }
+    spec:
+      containers:
+        - name: console
+          image: console:latest
+          imagePullPolicy: Never
+          ports: [{ containerPort: 80 }]
+          # Static files and a proxy. No API key, no database, no collector — if this pod
+          # needs a secret, something has been put in the wrong place.
+          readinessProbe:
+            httpGet: { path: /healthz, port: 80 }
+            initialDelaySeconds: 2
+          resources:
+            requests: { memory: 32Mi }
+            limits:   { memory: 128Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: agents
+  name: console
+spec:
+  selector: { app: console }
+  ports: [{ port: 80, targetPort: 80 }]

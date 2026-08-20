@@ -94,13 +94,15 @@ identical have drifted; `deploy.sh` runs it. Their tool spans are hand-written, 
 auto-instruments a loop somebody wrote by hand — which is why that row still says as much about
 our code as about their libraries.
 
-All three are reachable from the one console: pick the agent in the top bar. The Java app serves
-that console and proxies to the Python pods, because the browser cannot see cluster-internal
-services. Keeping the console inside `capybara-sre` is a deliberate choice rather than an
-oversight: splitting it out would need its own image and a proxy for CORS, and it buys no
-telemetry improvement — the proxy's HTTP client is uninstrumented, so the Python agents' traces
-are already clean single-service roots. Goose is not in the console at all, by design: it runs in
-a terminal, which is where a developer would actually meet it.
+All three are reachable from the one console: pick the agent in the top bar. The console is its
+own service — an nginx image holding the page, which also proxies each call to the agent that
+answers it. That proxy is not optional: the browser cannot see cluster-internal services, so
+something has to forward. It used to be a Java resource inside `capybara-sre`, which is also
+where the page was served from; nginx does both jobs now, and the agent is only an agent.
+It stays same-origin either way, so nothing needs CORS, and no telemetry changes hands —
+neither proxy is instrumented, so the Python agents' traces are clean single-service roots.
+Goose is not in the console at all, by design: it runs in a terminal, which is where a
+developer would actually meet it.
 
 ---
 
@@ -133,8 +135,10 @@ kubectl logs -n observability -l app.kubernetes.io/name=opentelemetry-collector 
 02_run-goose.sh        cause the incident: the coding agent, on Ollama or Anthropic
 03_cleanup.sh          delete the cluster
 
+console/               the page, and the nginx that fronts all three agents
+
 agents/
-  capybara-sre/        the Java agent, and the console it serves at /
+  capybara-sre/        the Java agent
   sre-agents-mcp/     the MCP server it calls
   customer-db-core/    shared database access, plain JDBC, no framework
   beaver-sre/          the Python agent, instrumented by OpenInference

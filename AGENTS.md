@@ -17,6 +17,7 @@ demos/            the demo — three agents, one incident, one collector, in kin
   infrastructure/ postgres: the schema, the trigger, the roles, the seed
   observability/  collector, jaeger and prometheus values
   cluster/        kind, secrets, helm installs
+  console/        the page, and the nginx that fronts all three agents
 outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
 research.md       everything the talk is sourced from
 mascots/          42 transparent cut-outs, used by the README
@@ -86,3 +87,11 @@ applications cannot resolve it), and `pytest` in `agents/beaver-sre` and `agents
   its tool list at startup.
 - **The collector's `debug` exporter is the source of truth**, not the app's own logs. It
   shows what actually left the process, including whether a timestamp was set.
+- **Maven leaves deleted resources in `target/classes`.** An incremental `package` copies
+  new files in and never takes removed ones out, so a file you deleted keeps shipping. That
+  is how capybara-sre went on serving the console after it moved to `demos/console/`. Use
+  `clean` when the change is a deletion.
+- **nginx resolves `proxy_pass` hostnames at startup and refuses to boot if they are
+  missing**, unless the address goes through a variable — and its `resolver` ignores the
+  search domains in `/etc/resolv.conf`, so upstreams have to be fully qualified. Both are
+  written up in `demos/console/README.md`.

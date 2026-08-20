@@ -1,0 +1,98 @@
+# The console's whole backend: static files, and one origin in front of three agents.
+#
+# Everything the browser calls is same-origin, which is the point. The page used to be served
+# by capybara-sre, and reaching the two Python agents meant a Java pass-through resource
+# inside that application — the browser cannot see into the cluster, so something had to
+# forward. That something is now this file, which is also why the Java resource is gone.
+#
+# Keeping it same-origin is not just tidiness: the alternative is CORS plus absolute URLs
+# baked into index.html, and absolute URLs mean the page only works from the one port-forward
+# it was built for.
+#
+# A .template rather than a .conf because of the resolver below; the nginx image's entrypoint
+# runs envsubst over /etc/nginx/templates before starting. NGINX_ENVSUBST_FILTER in the
+# Dockerfile keeps that substitution to the one variable, so nginx's own $uri, $host and
+# $request_uri pass through untouched.
+
+# Written from /etc/resolv.conf at container start, so this is the cluster's DNS without
+# anything having to know its address. Needed because every proxy_pass below goes through a
+# variable — see the comment on the first one.
+resolver ${NGINX_LOCAL_RESOLVERS} valid=10s ipv6=off;
+
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # An agent run is a model call plus tool calls, and can take a minute or more. nginx
+    # defaults to 60s, which cuts the answer off exactly when the demo is most interesting.
+    proxy_read_timeout 180s;
+    proxy_send_timeout 180s;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+
+    # The console is rebuilt and redeployed often, and a browser holding a cached index.html
+    # looks exactly like a rendering bug in the page. Same reason capybara-sre had
+    # static-resources.caching-enabled=false when it served these files.
+    location / {
+        add_header Cache-Control "no-store";
+        try_files $uri $uri/ =404;
+    }
+
+    location = /healthz {
+        access_log off;
+        default_type application/json;
+        return 200 '{"status":"ok"}';
+    }
+
+    # capybara-sre: its own investigation, and the stage controls.
+    #
+    # Every proxy_pass here goes through a variable deliberately. Given a literal hostname
+    # nginx resolves it once, at startup, and REFUSES TO START if it cannot -- so a console
+    # deployed before the agents crash-loops instead of serving the page, and the friendly
+    # 503 below never gets a chance to happen. A variable defers the lookup to the request.
+    #
+    # The cost of that is that nginx then stops appending the matched location to the
+    # upstream URI, so each one states its target path in full. Hence $request_uri on the
+    # prefix match, which carries the whole original path.
+    #
+    # Fully qualified, and it has to be. `resolver` does its own DNS and ignores the search
+    # domains in /etc/resolv.conf, so the short name every other pod uses gets asked for as
+    # a bare `capybara-sre` and comes back NXDOMAIN — which reads on screen as "that agent
+    # is not reachable" while the agent is running perfectly well.
+    location = /chat {
+        set $capybara http://capybara-sre.agents.svc.cluster.local:8088;
+        proxy_pass $capybara/chat;
+    }
+
+    location /incident/ {
+        set $capybara http://capybara-sre.agents.svc.cluster.local:8088;
+        proxy_pass $capybara$request_uri;
+    }
+
+    # The two Python agents. Both take the same {"prompt": "..."} body the console already
+    # sends, so this forwards it untouched rather than re-modelling it — a second copy of
+    # that shape would be a second thing to keep in sync.
+    location = /agents/chat/beaver {
+        set $beaver http://beaver-sre.agents.svc.cluster.local:8000;
+        proxy_pass $beaver/run;
+    }
+
+    location = /agents/chat/otter {
+        set $otter http://otter-sre.agents.svc.cluster.local:8000;
+        proxy_pass $otter/run;
+    }
+
+    # When an agent is not deployed, nginx's own 502/504 is an HTML page. The console reads
+    # every response as JSON and shows `error`, so an HTML body surfaces as a parse failure
+    # rather than as the actual problem. Note there is no proxy_intercept_errors here: a real
+    # 500 from an agent carries its own JSON explanation and must pass through untouched.
+    error_page 502 503 504 = @agent_unreachable;
+
+    location @agent_unreachable {
+        default_type application/json;
+        return 503 '{"error":"That agent is not reachable. Deploy it: demos/agents/deploy.sh"}';
+    }
+}
