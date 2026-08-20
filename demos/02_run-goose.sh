@@ -91,11 +91,25 @@ pkill -f "port-forward svc/otel-collector" 2>/dev/null || true
 kubectl port-forward -n observability svc/otel-collector-opentelemetry-collector 4318:4318 >/tmp/pf-col.log 2>&1 &
 echo "✅ Set up port-forwarding."
 
+# No -f here, deliberately. The OTLP HTTP receiver has no handler at / and answers 404, and
+# `curl -f` treats that as failure — so the old probe could never succeed, waited the full
+# thirty seconds on every run, and then printed "Ready!" whether or not anything was
+# listening. Without -f, curl exits 0 on any HTTP response and non-zero only when the
+# connection fails, which is the actual question: is the tunnel up.
 echo "Waiting on OTel Collector readiness..."
+ready=0
 for _ in $(seq 1 30); do
-  curl -sf -o /dev/null "http://localhost:4318/" 2>/dev/null && break || sleep 1
-  echo "..."
+  if curl -s -o /dev/null --max-time 1 "http://localhost:4318/" 2>/dev/null; then ready=1; break; fi
+  printf '.'
+  sleep 1
 done
+if [ "$ready" -ne 1 ]; then
+  echo
+  echo "The collector never answered on localhost:4318. goose would run and its spans would go"
+  echo "nowhere — the rows would still be deleted, so this fails loudly instead."
+  echo "Check: kubectl get pods -n observability"
+  exit 1
+fi
 echo "✅ Ready!"
 
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
@@ -107,5 +121,21 @@ export OTEL_LOGS_EXPORTER=none
 # is the whole reason for pointing goose at this collector.
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
-echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · provider $GOOSE_PROVIDER · model $GOOSE_MODEL ---"
+# Nothing to delete means the incident cannot happen, and the model will spend a minute
+# discovering that — as it did once, calling list_records three times before concluding there
+# were no free-plan rows. Cheaper to check the database directly and say so.
+free=$(kubectl exec -n db deploy/production-db -- \
+  psql -U postgres -d production -tAc "select count(*) from customers where plan='free'" 2>/dev/null | tr -d ' \r')
+if [ "${free:-0}" = "0" ]; then
+  echo
+  echo "No free-plan records — the incident has already happened, or the seed was never restored."
+  echo "goose would find nothing to delete and the run would prove nothing."
+  echo
+  echo "Reset first, either way:"
+  echo "  the console's 'Reset the database' button, top right of http://localhost:8088"
+  echo "  or: curl -X POST http://localhost:8088/incident/reset"
+  exit 1
+fi
+
+echo "--- goose $(goose --version 2>/dev/null | tr -d '\n') · provider $GOOSE_PROVIDER · model $GOOSE_MODEL · $free free-plan records ---"
 goose run --recipe agents/goose/tidy-free-plan.yaml
