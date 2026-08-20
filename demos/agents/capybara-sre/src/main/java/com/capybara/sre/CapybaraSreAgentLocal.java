@@ -10,14 +10,14 @@ import jakarta.enterprise.context.ApplicationScoped;
  * Capybara SRE reaching the same tools as locally declared @Tool methods.
  *
  * Identical to {@link CapybaraSreAgent} — same model, same prompt, same three
- * operations over the same {@code CapybaraDatabase} — except that the tools are
+ * operations over the same {@code CustomerDatabase} — except that the tools are
  * registered here rather than fetched over MCP. Tool calls therefore go through
  * ToolSpanWrapper, which DOES honour include-tool-arguments and
  * include-tool-result.
  *
  * The pair is the experiment: one variable, two span shapes.
  */
-@RegisterAiService(tools = CapybaraLocalTools.class)
+@RegisterAiService(tools = CustomerLocalTools.class)
 @ApplicationScoped
 public interface CapybaraSreAgentLocal {
 

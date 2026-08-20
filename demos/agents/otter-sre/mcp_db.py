@@ -1,14 +1,14 @@
 """The same four tools, reached over MCP instead of over psycopg.
 
 Why this exists: with `PostgresDatabase`, Beaver and Otter hold the toolbox as local Python
-functions, while Capybara discovers its toolbox from `capybara-db-mcp` and executes it in
+functions, while Capybara discovers its toolbox from `customer-db-mcp` and executes it in
 another process. That difference confounds any comparison of their *tool* spans, because the
 one agent whose tool body runs across a process boundary is also the only one built on a
 framework. Pointing the Python agents at the same MCP server removes the variable: all three
 then call the same tools, in the same other process, and differ only in what emits the
 telemetry.
 
-The result is whatever the server sent back. `CapybaraDbTools` returns Java's
+The result is whatever the server sent back. `CustomerDbTools` returns Java's
 `List.toString()`, so it arrives as text like `[{user=biscuit, plan=free}]` rather than JSON.
 That is deliberately not parsed here: it is the same payload the Java agent receives over the
 same transport, so recording it verbatim is what makes the comparison fair. Whether it lands
@@ -31,12 +31,12 @@ from __future__ import annotations
 
 import asyncio
 
-URL_ENV = "CAPYBARA_MCP_URL"
+URL_ENV = "CUSTOMER_DB_MCP_URL"
 
 # Streamable HTTP, the transport MCP's 2025-03-26 revision introduced and quarkus-mcp-server
 # serves at its root path. The older SSE transport is still mounted at <root>/sse; nothing
 # here depends on which one the Java agent picked.
-DEFAULT_URL = "http://capybara-db-mcp:8086/mcp"
+DEFAULT_URL = "http://customer-db-mcp:8086/mcp"
 
 
 def _text(result) -> str:

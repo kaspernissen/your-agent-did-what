@@ -29,7 +29,7 @@ DEFAULT_PROMPT = "Customers are reporting missing accounts. Investigate what hap
 PORT = int(os.environ.get("PORT", "8000"))
 
 # Installed once, at import. See the module docstring for why this cannot be per-request.
-AGENT_NAME = os.environ.get("CAPYBARA_AGENT_NAME", "db-ops-agent")
+AGENT_NAME = os.environ.get("AGENT_NAME", "db-ops-agent")
 CONVENTION = telemetry.CONVENTION
 TRACER = telemetry.configure(AGENT_NAME)
 

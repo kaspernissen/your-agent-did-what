@@ -21,6 +21,6 @@ public interface CapybaraSreAgent {
 
     @SystemMessage(CapybaraPrompt.SYSTEM)
     @UserMessage("Incident: {incident}")
-    @McpToolBox("capybara-db")
+    @McpToolBox("production-db")
     Result<String> investigate(String incident);
 }

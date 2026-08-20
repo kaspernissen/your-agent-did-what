@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,26 +10,26 @@ import java.util.List;
  * no audit trail, because the audit trail is a Postgres trigger and inventing a
  * fake one here would let a test pass that the real database would fail.
  */
-public class InMemoryCapybaraDatabase implements CapybaraDatabase {
+public class InMemoryCustomerDatabase implements CustomerDatabase {
 
     // Fixed ids, so a test can assert on one. Real rows get a gen_random_uuid()
     // from Postgres; these only need to be well-formed and stable.
     private static final String ID = "00000000-0000-4000-8000-00000000000";
 
-    private final List<CapybaraRecord> seed = List.of(
-        new CapybaraRecord(ID + "1", "cappuccino", "pro"),
-        new CapybaraRecord(ID + "2", "biscuit", "free"),
-        new CapybaraRecord(ID + "3", "nibbles", "free"),
-        new CapybaraRecord(ID + "4", "mochi", "pro"),
-        new CapybaraRecord(ID + "5", "pepper", "free"));
+    private final List<CustomerRecord> seed = List.of(
+        new CustomerRecord(ID + "1", "cappuccino", "pro"),
+        new CustomerRecord(ID + "2", "biscuit", "free"),
+        new CustomerRecord(ID + "3", "nibbles", "free"),
+        new CustomerRecord(ID + "4", "mochi", "pro"),
+        new CustomerRecord(ID + "5", "pepper", "free"));
 
-    private List<CapybaraRecord> records = new ArrayList<>(seed);
-
-    @Override
-    public synchronized List<CapybaraRecord> listRecords() { return new ArrayList<>(records); }
+    private List<CustomerRecord> records = new ArrayList<>(seed);
 
     @Override
-    public synchronized List<CapybaraRecord> query(String plan) {
+    public synchronized List<CustomerRecord> listRecords() { return new ArrayList<>(records); }
+
+    @Override
+    public synchronized List<CustomerRecord> query(String plan) {
         if (plan == null) return listRecords();
         return new ArrayList<>(records.stream().filter(r -> r.plan().equals(plan)).toList());
     }

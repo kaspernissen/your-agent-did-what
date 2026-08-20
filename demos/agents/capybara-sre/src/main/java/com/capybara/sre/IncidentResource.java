@@ -1,6 +1,6 @@
 package com.capybara.sre;
 
-import com.capybara.db.CapybaraDatabase;
+import com.customerdb.CustomerDatabase;
 import io.quarkus.agroal.DataSource;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
@@ -60,18 +60,18 @@ public class IncidentResource {
     javax.sql.DataSource adminDataSource;
 
     @Inject
-    CapybaraDatabase db;
+    CustomerDatabase db;
 
     @POST
     @Path("/rehearse-deletion")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> rehearseDeletion() {
         try (Connection c = deployDataSource.getConnection();
-             PreparedStatement ps = c.prepareStatement("DELETE FROM capybaras WHERE plan = 'free'")) {
+             PreparedStatement ps = c.prepareStatement("DELETE FROM customers WHERE plan = 'free'")) {
             int deleted = ps.executeUpdate();
             // Attributed to the role, not to the client name the connection claims.
             metrics.recordDeletion("deploy_svc", deleted);
-            LOG.warnf("rehearsal: deleted %d free-plan capybaras as deploy_svc", deleted);
+            LOG.warnf("rehearsal: deleted %d free-plan customers as deploy_svc", deleted);
             return Map.of("deleted", deleted,
                           "by", "goose (db role: deploy_svc)",
                           "remaining", db.listRecords().size());
@@ -86,9 +86,9 @@ public class IncidentResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> reset() {
         try (Connection c = adminDataSource.getConnection()) {
-            exec(c, "DELETE FROM capybaras");
+            exec(c, "DELETE FROM customers");
             exec(c, """
-                    INSERT INTO capybaras (username, plan) VALUES
+                    INSERT INTO customers (username, plan) VALUES
                         ('cappuccino','pro'), ('biscuit','free'), ('nibbles','free'),
                         ('mochi','pro'), ('pepper','free')""");
             // Last, so restoring the seed is not itself the first thing in the trail.

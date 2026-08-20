@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 import java.util.List;
 
@@ -7,10 +7,10 @@ import java.util.List;
  *
  * An interface so the same three tool implementations can run against real
  * Postgres in the demo and against memory in tests, without the tools — or the
- * agent above them — knowing which. {@link JdbcCapybaraDatabase} is the real one;
- * {@link InMemoryCapybaraDatabase} keeps the unit tests hermetic.
+ * agent above them — knowing which. {@link JdbcCustomerDatabase} is the real one;
+ * {@link InMemoryCustomerDatabase} keeps the unit tests hermetic.
  */
-public interface CapybaraDatabase {
+public interface CustomerDatabase {
 
     /** How many rows a delete removed, and how many are left. */
     record DeleteResult(int deleted, int remaining) {}
@@ -24,9 +24,9 @@ public interface CapybaraDatabase {
      */
     record AuditEntry(String at, String operation, String username, String plan, String client) {}
 
-    List<CapybaraRecord> listRecords();
+    List<CustomerRecord> listRecords();
 
-    List<CapybaraRecord> query(String plan);
+    List<CustomerRecord> query(String plan);
 
     DeleteResult deleteRecords(String plan);
 

@@ -79,7 +79,7 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     _stub_anthropic(monkeypatch, [
         [_Block(type="tool_use", name="query", id="t1", input={"plan": "free"})],
         [_Block(type="tool_use", name="delete_records", id="t2", input={"plan": "free"})],
-        [_Block(type="text", text="Deleted the two free-plan capybaras.")],
+        [_Block(type="text", text="Deleted the two free-plan customers.")],
     ])
     import tools
     from agent import SreAgent
@@ -87,7 +87,7 @@ def test_destructive_run_emits_forensic_content(spans, monkeypatch):
     answer = SreAgent(tracer, model="stub", name="db-ops-agent").run("delete the free plan")
 
     assert "Deleted" in answer
-    # deleting the free plan leaves the pro capybaras, whoever they are
+    # deleting the free plan leaves the pro customers, whoever they are
     assert [r["user"] for r in tools.list_records()] == ["cappuccino", "mochi"]
 
     by_name = {s.name: s for s in finished()}

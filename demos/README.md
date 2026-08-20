@@ -72,14 +72,14 @@ Same database, same incident, same question, same tools, same MCP server, same c
 only thing that differs is what writes the telemetry — which is the point, and it took work to
 make true. The Python agents used to call their tools in-process, so any comparison of their
 *tool* spans measured the topology instead of the libraries. They now go through
-`capybara-db-mcp` like the Java one does; see `agents/beaver-sre/mcp_db.py`.
+`customer-db-mcp` like the Java one does; see `agents/beaver-sre/mcp_db.py`.
 
 | | **Capybara SRE** | **Beaver SRE** | **Otter SRE** |
 |---|---|---|---|
 | platform | Java · Quarkus + LangChain4j | Python · Anthropic SDK | Python · Anthropic SDK |
 | instrumented by | the framework | OpenInference | OpenLLMetry |
-| tools | over MCP, to `capybara-db-mcp` | the same, over MCP | the same, over MCP |
-| data | PostgreSQL, as `capybara_app` | via the MCP server | via the MCP server |
+| tools | over MCP, to `customer-db-mcp` | the same, over MCP | the same, over MCP |
+| data | PostgreSQL, as `app_svc` | via the MCP server | via the MCP server |
 | model call emits | `gen_ai.prompt` / `gen_ai.completion`, both removed from the spec | `llm.*` / `openinference.*` | `gen_ai.*`, already current |
 | arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` | unchanged, nothing to convert |
 | tool span | the framework's, 6 attributes | hand-written, arguments only | hand-written, arguments and result |
@@ -112,8 +112,8 @@ a terminal, which is where a developer would actually meet it.
 
 agents/
   capybara-sre/        the Java agent, and the console it serves at /
-  capybara-db-mcp/     the MCP server it calls
-  capybara-db-core/    shared database access, plain JDBC, no framework
+  customer-db-mcp/     the MCP server it calls
+  customer-db-core/    shared database access, plain JDBC, no framework
   beaver-sre/          the Python agent, instrumented by OpenInference
   otter-sre/           the same agent, instrumented by OpenLLMetry — a separate complete copy,
                        so each reads on its own; the only difference is telemetry.py and the
@@ -141,7 +141,7 @@ scripts/               verify-telemetry.py
 
 ## The developer with an agent (optional, alongside)
 
-A second MCP server, `prod-db-mcp`, runs the *same image* as `capybara-db-mcp` but is handed the
+A second MCP server, `prod-db-mcp`, runs the *same image* as `customer-db-mcp` but is handed the
 `deploy_svc` role's credentials and `application_name=goose`. Same server code, different grants,
 which is the real failure: the MCP server is fine, the credentials it was given are not.
 
@@ -205,7 +205,7 @@ It is not in the console, so nobody clicks it by accident while the room is watc
 
 ## On stage
 
-**1 · Reset, and show the table.** Five capybaras, three on the free plan.
+**1 · Reset, and show the table.** Five customers, three on the free plan.
 
 **2 · Run the coding agent.** `agents/goose/run-recipe.sh`. A developer asks for a tidy-up,
 goose calls `delete_records`, three rows gone. Nothing the investigating agents did caused it.
@@ -240,17 +240,17 @@ judge's reasoning naming the evidence that decided it.
 carries `llm.*` **and** `gen_ai.*` at once: what the library emitted, and what the
 collector made of it.
 
-**7 · Then the forensic gap.** `kubectl set env deployment/capybara-sre CAPYBARA_TOOLS=local`,
+**7 · Then the forensic gap.** `kubectl set env deployment/capybara-sre AGENT_TOOLS=local`,
 re-run, and diff the tool spans. Same binary, same prompt, same database — only the
 registration differs. Re-run `./01_start-demo.sh` afterwards; changing env rolls the pod
 and takes the port-forward with it.
 
 **8 · And the context gap, with the fix in your hand.** The tool body's SQL joins the agent's trace
-because `CapybaraDbTools` reads `traceparent` out of the MCP request's `_meta` itself. To show the gap
+because `CustomerDbTools` reads `traceparent` out of the MCP request's `_meta` itself. To show the gap
 as quarkus-mcp-server leaves it:
 
 ```sh
-kubectl set env deployment/capybara-db-mcp CAPYBARA_MCP_PROPAGATE_CONTEXT=false
+kubectl set env deployment/customer-db-mcp MCP_PROPAGATE_CONTEXT=false
 kubectl rollout restart deployment/capybara-sre   # or its MCP session dies with the server
 ./01_start-demo.sh
 ```
@@ -304,7 +304,7 @@ All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
 | the judge panel is empty | the judge's JSON was truncated. `max-tokens` is set to 4096; the raw reply is logged on failure |
 | no SQL spans anywhere | `quarkus.datasource.jdbc.telemetry=true` is opt-in. Worth knowing: "we use OTel" does not mean every layer is instrumented |
 | the agent boots with no tools | it resolves its tool list at startup and the MCP server was not up. `agents/deploy.sh` orders this correctly |
-| the tool body's SQL is in its own trace | `CAPYBARA_MCP_PROPAGATE_CONTEXT` is `false`, which is the gap mode. `true` restores it. If it is already `true`, restart `capybara-sre` — a stale MCP session survives the server restart |
+| the tool body's SQL is in its own trace | `MCP_PROPAGATE_CONTEXT` is `false`, which is the gap mode. `true` restores it. If it is already `true`, restart `capybara-sre` — a stale MCP session survives the server restart |
 | a schema change seems not to apply | `init.sql` only runs on an empty data directory. `infrastructure/deploy.sh` stamps its hash on the pod template so a change recreates the pod |
 | goose stalls, or the model never calls the tool | do not debug it live. `curl -X POST http://localhost:8088/incident/rehearse-deletion` puts the database in the same state with the same `deploy_svc` credentials. You lose the coding agent's telemetry and nothing else |
 | the local model is not installed at all | same door. The investigation half of the demo needs no model beyond the agents' own |

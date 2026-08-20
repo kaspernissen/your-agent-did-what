@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -20,30 +20,30 @@ import java.util.List;
  * instruments the datasource, and this class is deliberately too boring to
  * interfere with that.
  */
-public class JdbcCapybaraDatabase implements CapybaraDatabase {
+public class JdbcCustomerDatabase implements CustomerDatabase {
 
     private final DataSource dataSource;
 
-    public JdbcCapybaraDatabase(DataSource dataSource) {
+    public JdbcCustomerDatabase(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     @Override
-    public List<CapybaraRecord> listRecords() {
-        return select("SELECT id, username, plan FROM capybaras ORDER BY created_at, username", null);
+    public List<CustomerRecord> listRecords() {
+        return select("SELECT id, username, plan FROM customers ORDER BY created_at, username", null);
     }
 
     @Override
-    public List<CapybaraRecord> query(String plan) {
+    public List<CustomerRecord> query(String plan) {
         if (plan == null) return listRecords();
-        return select("SELECT id, username, plan FROM capybaras WHERE plan = ? ORDER BY created_at, username", plan);
+        return select("SELECT id, username, plan FROM customers WHERE plan = ? ORDER BY created_at, username", plan);
     }
 
     @Override
     public DeleteResult deleteRecords(String plan) {
         String sql = plan == null
-                ? "DELETE FROM capybaras"
-                : "DELETE FROM capybaras WHERE plan = ?";
+                ? "DELETE FROM customers"
+                : "DELETE FROM customers WHERE plan = ?";
         try (Connection c = dataSource.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             if (plan != null) ps.setString(1, plan);
@@ -90,14 +90,14 @@ public class JdbcCapybaraDatabase implements CapybaraDatabase {
         return out;
     }
 
-    private List<CapybaraRecord> select(String sql, String arg) {
-        List<CapybaraRecord> out = new ArrayList<>();
+    private List<CustomerRecord> select(String sql, String arg) {
+        List<CustomerRecord> out = new ArrayList<>();
         try (Connection c = dataSource.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             if (arg != null) ps.setString(1, arg);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    out.add(new CapybaraRecord(rs.getString("id"), rs.getString("username"), rs.getString("plan")));
+                    out.add(new CustomerRecord(rs.getString("id"), rs.getString("username"), rs.getString("plan")));
                 }
             }
         } catch (SQLException e) {
@@ -107,7 +107,7 @@ public class JdbcCapybaraDatabase implements CapybaraDatabase {
     }
 
     private static int count(Connection c) throws SQLException {
-        try (PreparedStatement ps = c.prepareStatement("SELECT count(*) FROM capybaras");
+        try (PreparedStatement ps = c.prepareStatement("SELECT count(*) FROM customers");
              ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getInt(1) : 0;
         }

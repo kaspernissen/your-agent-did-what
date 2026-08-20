@@ -40,7 +40,7 @@ cat <<'DONE'
 
   Then, to walk the scenario:
 
-    1. Reset the database, and show the five capybaras
+    1. Reset the database, and show the five customers
     2. Run agents/goose/run-recipe.sh — three rows gone, and not by these agents
        no ollama, or goose stalling? curl -X POST localhost:8088/incident/rehearse-deletion
        puts the database in the same state, minus the coding agent's telemetry

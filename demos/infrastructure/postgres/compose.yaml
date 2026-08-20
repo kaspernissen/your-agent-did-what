@@ -1,22 +1,22 @@
 # Postgres for the capybara-sre demo.
 #
 # Separate from the agent so it survives agent restarts — the demo restarts the
-# agent to switch CAPYBARA_TOOLS, and losing the database with it would reset the
+# agent to switch AGENT_TOOLS, and losing the database with it would reset the
 # incident every time.
 services:
-  capybara-db:
+  production-db:
     image: postgres:18.2-alpine
-    container_name: capybara-db
+    container_name: production-db
     environment:
-      POSTGRES_DB: capybara
-      POSTGRES_USER: capybara
-      POSTGRES_PASSWORD: capybara
+      POSTGRES_DB: production
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U capybara -d capybara"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d production"]
       interval: 2s
       timeout: 3s
       retries: 20

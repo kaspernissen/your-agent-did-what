@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capybara-db-mcp
+  name: customer-db-mcp
   labels:
-    app: capybara-db-mcp
+    app: customer-db-mcp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: capybara-db-mcp
+      app: customer-db-mcp
   template:
     metadata:
       labels:
-        app: capybara-db-mcp
+        app: customer-db-mcp
     spec:
       containers:
-        - name: capybara-db-mcp
-          image: capybara-db-mcp:latest
+        - name: customer-db-mcp
+          image: customer-db-mcp:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8086
           env:
-            - name: CAPYBARA_DB_URL
-              value: "jdbc:postgresql://capybara-db:5432/capybara"
+            - name: CUSTOMER_DB_URL
+              value: "jdbc:postgresql://production-db:5432/production"
             - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: grpc
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -43,12 +43,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: capybara-db-mcp
+  name: customer-db-mcp
   labels:
-    app: capybara-db-mcp
+    app: customer-db-mcp
 spec:
   selector:
-    app: capybara-db-mcp
+    app: customer-db-mcp
   ports:
     - port: 8086
       targetPort: 8086

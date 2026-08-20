@@ -13,7 +13,7 @@ collector's debug output and checks three things:
   3. EVALUATIONS — gen_ai.evaluation.result events from the judge.
 
 Usage
-  ./scripts/verify-telemetry.py                        # docker logs capy-col, path from $CAPYBARA_TOOLS
+  ./scripts/verify-telemetry.py                        # docker logs capy-col, path from $AGENT_TOOLS
   ./scripts/verify-telemetry.py --path local           # override the expected path
   docker logs capy-col | ./scripts/verify-telemetry.py -   # read a pipe or file
 """
@@ -64,8 +64,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(add_help=True)
     ap.add_argument("source", nargs="?", help="file with collector output, or '-' for stdin")
     ap.add_argument("--path", choices=["local", "mcp"],
-                    default=os.environ.get("CAPYBARA_TOOLS", "mcp").lower(),
-                    help="which tool path the run used (default: $CAPYBARA_TOOLS or mcp)")
+                    default=os.environ.get("AGENT_TOOLS", "mcp").lower(),
+                    help="which tool path the run used (default: $AGENT_TOOLS or mcp)")
     args = ap.parse_args()
 
     text, origin = read_source(args.source)

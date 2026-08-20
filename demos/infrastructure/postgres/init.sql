@@ -1,4 +1,4 @@
--- The capybara customer database, and the audit trail that makes an incident
+-- The customer customer database, and the audit trail that makes an incident
 -- attributable.
 --
 -- The demo's whole forensic question is "who deleted these rows?". Postgres can
@@ -15,7 +15,7 @@
 -- when the truth is only that the table has been reset a few times. UUIDs remove
 -- the shortcut, so the audit trail is the only place the answer can come from,
 -- which is the point the demo is making.
-CREATE TABLE capybaras (
+CREATE TABLE customers (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username    TEXT NOT NULL UNIQUE,
     plan        TEXT NOT NULL CHECK (plan IN ('free', 'pro')),
@@ -39,7 +39,7 @@ CREATE TABLE audit_log (
     db_user      TEXT NOT NULL
 );
 
-CREATE OR REPLACE FUNCTION record_capybara_change() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION record_customer_change() RETURNS TRIGGER AS $$
 BEGIN
     INSERT INTO audit_log (operation, username, plan, client, db_user)
     VALUES (
@@ -62,25 +62,25 @@ $$ LANGUAGE plpgsql
 -- tamper with the trail it appears in.
 SECURITY DEFINER;
 
-CREATE TRIGGER capybaras_audit
-    AFTER INSERT OR UPDATE OR DELETE ON capybaras
-    FOR EACH ROW EXECUTE FUNCTION record_capybara_change();
+CREATE TRIGGER customers_audit
+    AFTER INSERT OR UPDATE OR DELETE ON customers
+    FOR EACH ROW EXECUTE FUNCTION record_customer_change();
 
 -- Two roles, because in a real system services do not share credentials.
 --
---   capybara_app  what the read-only MCP server and the investigating agents connect
+--   app_svc  what the read-only MCP server and the investigating agents connect
 --                 as. Read and write the table, which is what a customer-facing app
 --                 needs — and more than an investigator should hold. See ANALYSIS.md.
 --   deploy_svc    a deployment service account. The kind of credential a developer
 --                 legitimately has, in a .env file or a password manager, and the kind
 --                 they hand to a tool without thinking of it as handing over DELETE.
 --                 The root cause sits in this grant rather than in anyone's code.
-CREATE ROLE capybara_app LOGIN PASSWORD 'capybara_app';
-GRANT SELECT, INSERT, UPDATE, DELETE ON capybaras TO capybara_app;
-GRANT SELECT ON audit_log TO capybara_app;
+CREATE ROLE app_svc LOGIN PASSWORD 'app_svc';
+GRANT SELECT, INSERT, UPDATE, DELETE ON customers TO app_svc;
+GRANT SELECT ON audit_log TO app_svc;
 
 CREATE ROLE deploy_svc LOGIN PASSWORD 'deploy_svc';
-GRANT SELECT, DELETE ON capybaras TO deploy_svc;   -- the over-grant. This is the bug.
+GRANT SELECT, DELETE ON customers TO deploy_svc;   -- the over-grant. This is the bug.
 
 -- Naming, because it is load-bearing for the demo. The audit trail records db_user, the
 -- role Postgres authenticated, and client, which the connection self-reports through
@@ -91,7 +91,7 @@ GRANT SELECT, DELETE ON capybaras TO deploy_svc;   -- the over-grant. This is th
 -- Seed. Deliberately small so every row is accounted for on a slide. created_at
 -- gives the roster a stable order; UUIDs sort arbitrarily.
 
-INSERT INTO capybaras (username, plan) VALUES
+INSERT INTO customers (username, plan) VALUES
     ('cappuccino', 'pro'),
     ('biscuit',    'free'),
     ('nibbles',    'free'),

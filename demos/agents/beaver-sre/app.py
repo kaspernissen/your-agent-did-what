@@ -23,8 +23,8 @@ def main(argv: list[str]) -> int:
     prompt = " ".join(argv[1:]) or DEFAULT_PROMPT
     convention = telemetry.CONVENTION
 
-    tracer = telemetry.configure(os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
-    agent = SreAgent(tracer, name=os.environ.get("CAPYBARA_AGENT_NAME", DEFAULT_AGENT_NAME))
+    tracer = telemetry.configure(os.environ.get("AGENT_NAME", DEFAULT_AGENT_NAME))
+    agent = SreAgent(tracer, name=os.environ.get("AGENT_NAME", DEFAULT_AGENT_NAME))
 
     print(f"\ninstrumentation  {convention}")
     print(f"model            {agent.model}")

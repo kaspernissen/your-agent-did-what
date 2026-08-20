@@ -126,10 +126,10 @@ needs the processor for its tool telemetry.
 
 > The live tool-path experiment. Still the source for beat 4's 4-versus-6 numbers.
 
-Same binary, same prompt, same `CapybaraDatabase`, same incident. Only
-`CAPYBARA_TOOLS` differs.
+Same binary, same prompt, same `CustomerDatabase`, same incident. Only
+`AGENT_TOOLS` differs.
 
-| | `CAPYBARA_TOOLS=mcp` | `CAPYBARA_TOOLS=local` |
+| | `AGENT_TOOLS=mcp` | `AGENT_TOOLS=local` |
 |---|---|---|
 | span name | `tools/call delete_records` | `langchain4j.tools.delete_records` |
 | span kind | Client | Internal |
@@ -186,7 +186,7 @@ the registry upstream — confirming beat 4's "which revision matters" in our ow
 
 The same run, the same binary, the same database — only the tool path differs.
 
-| | `CAPYBARA_TOOLS=local` | `CAPYBARA_TOOLS=mcp` |
+| | `AGENT_TOOLS=local` | `AGENT_TOOLS=mcp` |
 |---|---|---|
 | spans in the `invoke_agent` trace | 24 | 18 |
 | SQL spans in that trace | **2** | **0** |
@@ -194,7 +194,7 @@ The same run, the same binary, the same database — only the tool path differs.
 
 ```
 88ca8e78...  18 spans  sql=0  invoke_agent=True     <- the investigation
-a29f6b98...   1 span   sql=1  SELECT capybara.capybaras
+a29f6b98...   1 span   sql=1  SELECT capybara.customers
 e3d811cf...   1 span   sql=1  SELECT capybara.audit_log
 ```
 
@@ -218,7 +218,7 @@ path you have both. Two different failures from one boundary.
 since the reply travels on the same HTTP request rather than a channel opened earlier. The
 server already speaks it — `POST /mcp` answers 200 with an `Mcp-Session-Id`, no server
 change — and quarkus-langchain4j 1.12.2 supports `transport-type=streamable-http`. With
-both switched: still 0 SQL spans in the agent's trace, and `capybara-db-mcp` now
+both switched: still 0 SQL spans in the agent's trace, and `customer-db-mcp` now
 contributes **no span at all**, because nothing emits a server span for `POST /mcp`.
 Reverted. The transport is not the variable.
 
@@ -233,14 +233,14 @@ With it on, the server's spans land **inside the agent's trace**, correctly pare
 ```
 [capybara-sre   ] tools/call list_records          children=2
 [capybara-sre   ]   POST                           children=1
-[capybara-db-mcp]     POST /mcp/messages/:id       children=1
-[capybara-db-mcp]       tools/call list_records    children=0   <- the tool body
+[customer-db-mcp]     POST /mcp/messages/:id       children=1
+[customer-db-mcp]       tools/call list_records    children=0   <- the tool body
 ```
 
 21 spans, up from 15. `tools/list` appears too, so even the startup handshake is explained.
 
 **What remains is one hop, and it is not ours.** The tool body still runs with no context,
-so `SELECT capybara.capybaras` is still its own single-span root trace. That is
+so `SELECT capybara.customers` is still its own single-span root trace. That is
 [quarkiverse/quarkus-mcp-server#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789),
 open since 2026-05-15: `McpMessageHandler.operation(...)` executes on a *new* duplicated
 Vert.x context, which carries none of the request's OTel context. The maintainer's reply is
@@ -698,7 +698,7 @@ difference being demonstrated if nothing else moved.
 
 | Demo | Switch | Held constant | Varies |
 |---|---|---|---|
-| `capybara-sre` | `CAPYBARA_TOOLS=local\|mcp` | one prompt (`CapybaraPrompt.SYSTEM`), one `CapybaraDatabase` (in `capybara-db-core`, depended on by both modules), one binary | how the tool is registered → whether `gen_ai.tool.call.arguments` survives |
+| `capybara-sre` | `AGENT_TOOLS=local\|mcp` | one prompt (`CapybaraPrompt.SYSTEM`), one `CustomerDatabase` (in `customer-db-core`, depended on by both modules), one binary | how the tool is registered → whether `gen_ai.tool.call.arguments` survives |
 | `agent` + `normalizer` | `CAPYBARA_INSTRUMENTATION=openlit\|openinference` | one loop, one tool set, the same hand-written `execute_tool` spans | the vocabulary on the `chat` span → what the normalizer must rewrite |
 
 **What was wrong before.** `demos/agents/beaver-sre/app.py` was a stripped copy of
@@ -824,7 +824,7 @@ dispatch_tool_call
   gen_ai.tool.name              production_db__list_records
   gen_ai.tool.call.id           …
   gen_ai.tool.call.arguments    {}
-  gen_ai.tool.call.result       {"content":[{"type":"text","text":"[CapybaraRecord[id=ac3d…
+  gen_ai.tool.call.result       {"content":[{"type":"text","text":"[CustomerRecord[id=ac3d…
 ```
 
 The same operation on capybara-sre, Quarkus + quarkus-langchain4j 1.12.2, also over MCP:
@@ -943,7 +943,7 @@ trace. Anywhere the talk implies the spec is silent on MCP, it is now wrong.
 
 Re-measured against the running demo on 2026-08-17, and the split is narrower than "MCP loses trace
 context" suggests. The client-to-server half works: one `POST /chat` produced a single 21-span trace
-spanning both services, with `capybara-db-mcp / tools/call audit_log` correctly parented under the
+spanning both services, with `customer-db-mcp / tools/call audit_log` correctly parented under the
 client span of the same name. What does not survive is the handoff into the tool body, so
 `SELECT capybara.audit_log` is a one-span root trace of its own. Half the written convention is
 implemented; the demo's gap is the other half.
@@ -1023,11 +1023,11 @@ those tools the same way:
 
 | | tool declaration | executed | who can see the call |
 |---|---|---|---|
-| `capybara-sre` | discovered from `capybara-db-mcp` over MCP | **another process** | the MCP client listener, not the tool wrapper |
+| `capybara-sre` | discovered from `customer-db-mcp` over MCP | **another process** | the MCP client listener, not the tool wrapper |
 | `beaver-sre` | `TOOL_SCHEMAS` in `tools.py`, dispatched in `agent.py` | in-process | the instrumentation, directly |
 | `otter-sre` | same code, same schemas | in-process | the instrumentation, directly |
 
-`agents/beaver-sre/db.py:83` connects with plain psycopg as `capybara_app`, the same role the MCP
+`agents/beaver-sre/db.py:83` connects with plain psycopg as `app_svc`, the same role the MCP
 server uses, with `application_name=beaver-sre`.
 
 So the model-call comparison across the three is sound: one provider, one prompt, three libraries.
@@ -1037,7 +1037,7 @@ the result. That is the same conclusion the local-versus-MCP test reached inside
 a second way, so it is corroboration rather than a flaw — but it must be stated, not glossed.
 
 **Done, 2026-08-17.** `mcp_db.py` gives the Python agents an `McpDatabase` with the same four
-methods, and `from_env()` prefers it whenever `CAPYBARA_MCP_URL` is set, so all three agents now run
+methods, and `from_env()` prefers it whenever `CUSTOMER_DB_MCP_URL` is set, so all three agents now run
 their tools in the same other process and differ only in what writes the telemetry. Results below.
 
 ---
@@ -1074,7 +1074,7 @@ implements the convention's *structure* and skips only the two opt-in content at
 **Trace context crosses without help.** `inject_trace_context` writes W3C traceparent into the
 request's `_meta`, which is the SEP-414 mechanism the convention prescribes, and
 quarkus-mcp-server reads the same envelope. Verified by removing our own injection: the Python
-agent's 19-span trace still spans both services, with `capybara-db-mcp / tools/call audit_log`
+agent's 19-span trace still spans both services, with `customer-db-mcp / tools/call audit_log`
 parented to `beaver-sre / MCP send tools/call audit_log`. So on this path, propagation is solved and
 only content is missing.
 
@@ -1104,12 +1104,12 @@ credential carries, and it gets it by asking for a tool by name.
 Verified against the running database:
 
 ```
-                      grants on capybaras                          exposed tool
-capybara_app   SELECT, INSERT, UPDATE, DELETE                      delete_records
+                      grants on customers                          exposed tool
+app_svc   SELECT, INSERT, UPDATE, DELETE                      delete_records
 deploy_svc     SELECT, DELETE                                      delete_records
 ```
 
-`capybara-db-mcp` connects as `capybara_app` and serves the three investigator agents.
+`customer-db-mcp` connects as `app_svc` and serves the three investigator agents.
 `prod-db-mcp` runs the same image as `deploy_svc` and serves Goose. Both advertise `delete_records`
 in `tools/list` — confirmed by calling it — and nothing filters the toolbox on the client side for
 capybara-sre; only the Goose recipe restricts `available_tools`.
@@ -1117,11 +1117,11 @@ capybara-sre; only the Goose recipe restricts `available_tools`.
 So **all four agents can delete every row right now**, and the only thing preventing it during an
 investigation is the model choosing not to ask.
 
-The uncomfortable part is *why* `capybara_app` has DELETE. `init.sql` says it plainly: "Read and
+The uncomfortable part is *why* `app_svc` has DELETE. `init.sql` says it plainly: "Read and
 write the table, which is what a customer-facing app needs." The role was scoped to the
 application's needs, years of habit say that is correct, and then an agent was pointed at it and
 inherited the lot. `init.sql` labels `deploy_svc`'s SELECT+DELETE "the over-grant. This is the bug",
-and it is — but `capybara_app` is the same class of mistake with a better excuse, and it is the one
+and it is — but `app_svc` is the same class of mistake with a better excuse, and it is the one
 the *investigating* agents sit behind.
 
 This is the confused deputy, and it is why the audit trail cannot name the agent: Postgres records
@@ -1141,10 +1141,10 @@ backwards.
 Two bugs were hiding the half of this path that matters, and neither was in the agent.
 
 **`OTEL_SERVICE_NAME` does nothing in Quarkus.** `prod-db-mcp` runs the same image as
-`capybara-db-mcp` and had only `OTEL_SERVICE_NAME=prod-db-mcp` set, so every span it produced was
-filed under `capybara-db-mcp` — the name baked in at build time from `quarkus.application.name`.
+`customer-db-mcp` and had only `OTEL_SERVICE_NAME=prod-db-mcp` set, so every span it produced was
+filed under `customer-db-mcp` — the name baked in at build time from `quarkus.application.name`.
 `prod-db-mcp` never appeared in Jaeger's service list at all, while `tools/call delete_records` and
-`DELETE capybara.capybaras` sat under the *investigators'* server. The over-privileged path and the
+`DELETE capybara.customers` sat under the *investigators'* server. The over-privileged path and the
 read-only path looked like one service. Fixed with `QUARKUS_OTEL_SERVICE_NAME`, which is
 runtime-overridable; the standard variable is kept beside it with a comment, because the next person
 will reach for it too.
@@ -1341,16 +1341,16 @@ propagation off   18-21 spans   SQL in the agent's trace: no
 propagation on    27 spans      SQL in the agent's trace: yes
 
   capybara-sre     tools/call audit_log
-    capybara-db-mcp  tools/call audit_log
-    capybara-db-mcp  execute_tool audit_log        <- ours, parented from _meta
-      capybara-db-mcp  DataSource.getConnection
-      capybara-db-mcp  SELECT capybara.audit_log   <- the query that touched the rows
+    customer-db-mcp  tools/call audit_log
+    customer-db-mcp  execute_tool audit_log        <- ours, parented from _meta
+      customer-db-mcp  DataSource.getConnection
+      customer-db-mcp  SELECT capybara.audit_log   <- the query that touched the rows
 ```
 
-`capybara.mcp.propagate-context` switches it, defaulting to on, so the gap stays demonstrable:
+`mcp.propagate-context` switches it, defaulting to on, so the gap stays demonstrable:
 
 ```sh
-kubectl set env deployment/capybara-db-mcp CAPYBARA_MCP_PROPAGATE_CONTEXT=false
+kubectl set env deployment/customer-db-mcp MCP_PROPAGATE_CONTEXT=false
 ```
 
 Note what the workaround also buys: the span is named `execute_tool <name>` and carries
@@ -1362,6 +1362,6 @@ So the honest position moves from "the framework has a bug, wait for #789" to "t
 here are twenty lines that close it, and the protocol already carried what those lines needed". That is a
 better thing to say on stage and a better thing to post on the issue.
 
-One operational note earned the hard way while running it: restarting `capybara-db-mcp` under a live agent
+One operational note earned the hard way while running it: restarting `customer-db-mcp` under a live agent
 kills the agent's MCP session and the next request returns 500. Restart the server first, then the agent —
 which is the order `agents/deploy.sh` already uses.

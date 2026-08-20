@@ -26,14 +26,14 @@ spec:
                 secretKeyRef:
                   name: anthropic-secret
                   key: api-key
-            - name: CAPYBARA_MCP_URL
-              value: "http://capybara-db-mcp:8086/mcp/sse"
+            - name: CUSTOMER_DB_MCP_URL
+              value: "http://customer-db-mcp:8086/mcp/sse"
             # One variable serves all three datasources — app, deploy and admin —
             # because each appends its own ApplicationName to this base URL.
-            - name: CAPYBARA_DB_URL
-              value: "jdbc:postgresql://capybara-db:5432/capybara"
+            - name: CUSTOMER_DB_URL
+              value: "jdbc:postgresql://production-db:5432/production"
             # mcp (default) or local: which instrumentation sees the tool call.
-            - name: CAPYBARA_TOOLS
+            - name: AGENT_TOOLS
               value: "mcp"
             - name: OTEL_JAVAAGENT_ENABLED
               value: "false"

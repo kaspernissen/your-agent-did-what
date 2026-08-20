@@ -8,7 +8,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-kubectl create configmap capybara-db-init --from-file=init.sql=postgres/init.sql \
+kubectl create configmap production-db-init --from-file=init.sql=postgres/init.sql \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 
 kubectl apply -f k8s/ >/dev/null
@@ -16,7 +16,7 @@ kubectl apply -f k8s/ >/dev/null
 # init.sql only runs on an empty data directory, so a schema change has to recreate the
 # pod or the cluster keeps serving the old tables. Stamping the schema hash on the pod
 # template rolls it exactly when the schema changed, and is a no-op otherwise.
-kubectl patch deployment capybara-db --type=merge -p \
+kubectl patch deployment production-db --type=merge -p \
   "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"capybara.dev/schema-hash\":\"$(shasum -a 256 postgres/init.sql | cut -c1-12)\"}}}}}" >/dev/null
 
-kubectl rollout status deployment/capybara-db --timeout=180s
+kubectl rollout status deployment/production-db --timeout=180s

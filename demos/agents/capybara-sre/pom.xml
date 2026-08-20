@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>com.capybara</groupId>
-      <artifactId>capybara-db-core</artifactId>
+      <artifactId>customer-db-core</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>

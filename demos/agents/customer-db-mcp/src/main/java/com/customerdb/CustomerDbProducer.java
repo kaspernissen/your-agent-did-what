@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
@@ -9,14 +9,14 @@ import javax.sql.DataSource;
 /**
  * Produces the database the MCP tools talk to — the same Postgres the agent uses.
  */
-public class CapybaraDbProducer {
+public class CustomerDbProducer {
 
     @Inject
     DataSource dataSource;
 
     @Produces
     @ApplicationScoped
-    CapybaraDatabase capybaraDatabase() {
-        return new JdbcCapybaraDatabase(dataSource);
+    CustomerDatabase capybaraDatabase() {
+        return new JdbcCustomerDatabase(dataSource);
     }
 }

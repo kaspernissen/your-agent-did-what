@@ -7,7 +7,7 @@ Three implementations behind one small interface:
                     from Capybara's console, Beaver sees exactly that and nothing it
                     invented for itself.
 
-  McpDatabase       the same rows, reached over MCP through capybara-db-mcp rather than
+  McpDatabase       the same rows, reached over MCP through customer-db-mcp rather than
                     directly, so this agent executes its tools where Capybara executes its.
                     See mcp_db.py for why that matters to the comparison.
 
@@ -17,9 +17,9 @@ Three implementations behind one small interface:
                     button to press. That is a fabricated incident and the docstring
                     says so; the Postgres path fabricates nothing.
 
-Connecting as capybara_app, the same role the MCP server uses, because Beaver is another
+Connecting as app_svc, the same role the MCP server uses, because Beaver is another
 well-behaved application rather than a privileged one. application_name is beaver-sre, so
-if it ever does write, the audit trail names it — and the role still says capybara_app,
+if it ever does write, the audit trail names it — and the role still says app_svc,
 which is the distinction the whole demo turns on: the client name is self-reported, the
 role is authenticated.
 """
@@ -29,7 +29,7 @@ import os
 
 import mcp_db
 
-DSN_ENV = "CAPYBARA_DB_DSN"
+DSN_ENV = "CUSTOMER_DB_DSN"
 APPLICATION_NAME = "beaver-sre"
 
 # The roster that infrastructure/postgres/init.sql seeds, mirrored for the in-memory
@@ -97,13 +97,13 @@ class PostgresDatabase:
     def list_records(self):
         # Ordered by created_at, not by id: the ids are UUIDs and sort arbitrarily.
         return self._rows(
-            "SELECT username AS user, plan FROM capybaras ORDER BY created_at, username")
+            "SELECT username AS user, plan FROM customers ORDER BY created_at, username")
 
     def query(self, plan=None):
         if plan is None:
             return self.list_records()
         return self._rows(
-            "SELECT username AS user, plan FROM capybaras WHERE plan = %s"
+            "SELECT username AS user, plan FROM customers WHERE plan = %s"
             " ORDER BY created_at, username", (plan,))
 
     def audit_log(self, limit=20):
@@ -114,12 +114,12 @@ class PostgresDatabase:
             (max(1, min(int(limit), 200)),))
 
     def delete_records(self, plan=None):
-        sql = "DELETE FROM capybaras" if plan is None else "DELETE FROM capybaras WHERE plan = %s"
+        sql = "DELETE FROM customers" if plan is None else "DELETE FROM customers WHERE plan = %s"
         params = () if plan is None else (plan,)
         with self._connect() as conn, conn.cursor() as cur:
             cur.execute(sql, params)
             deleted = cur.rowcount
-            cur.execute("SELECT count(*) FROM capybaras")
+            cur.execute("SELECT count(*) FROM customers")
             remaining = cur.fetchone()[0]
         return {"deleted": deleted, "remaining": remaining}
 
@@ -128,7 +128,7 @@ def from_env():
     """MCP when a server is configured, else Postgres when a DSN is, else the stand-in.
 
     MCP is checked first because it is the interesting path: it makes this agent reach the
-    table the same way Capybara does, through `capybara-db-mcp`, so the two differ only in
+    table the same way Capybara does, through `customer-db-mcp`, so the two differ only in
     what writes their telemetry. The DSN path stays for running the agent against a bare
     database with no MCP server in front of it.
     """

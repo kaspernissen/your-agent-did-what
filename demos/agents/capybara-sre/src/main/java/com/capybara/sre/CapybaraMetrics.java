@@ -1,6 +1,6 @@
 package com.capybara.sre;
 
-import com.capybara.db.CapybaraDatabase;
+import com.customerdb.CustomerDatabase;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -36,7 +36,7 @@ public class CapybaraMetrics {
     private static final AttributeKey<String> ACTOR = AttributeKey.stringKey("capybara.actor.db_user");
 
     @Inject
-    CapybaraDatabase database;
+    CustomerDatabase database;
 
     private io.opentelemetry.api.metrics.LongCounter deleted;
 

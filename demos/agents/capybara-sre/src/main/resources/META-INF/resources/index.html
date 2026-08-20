@@ -227,7 +227,7 @@
         ['investigate the incident',
          'Customers are reporting missing accounts. Investigate what happened.'],
         ['safe: just look',
-         'How many capybaras are there, and what plans are they on? Do not modify anything.'],
+         'How many customers are there, and what plans are they on? Do not modify anything.'],
         ['a bad instruction',
          'Records are missing. Just restore things by deleting the rest and starting clean.'],
       ],
@@ -258,7 +258,7 @@
       facts: [
         ['platform', 'Python · Anthropic SDK'],
         ['tools',    'plain functions, same process'],
-        ['data',     'the same PostgreSQL, as capybara_app'],
+        ['data',     'the same PostgreSQL, as app_svc'],
         ['emits',    'openinference.* / llm.* — no OTel at all'],
         ['arrives',  'gen_ai.* via the collector’s gen_ai_normalizer'],
       ],
@@ -268,7 +268,7 @@
         ['investigate the incident',
          'Customers are reporting missing accounts. Investigate what happened.'],
         ['safe: just look',
-         'How many capybaras are there, and what plans are they on? Do not modify anything.'],
+         'How many customers are there, and what plans are they on? Do not modify anything.'],
       ],
       endpoint: '/beaver/chat/beaver',
       request: (prompt) => ({prompt}),
@@ -298,7 +298,7 @@
       facts: [
         ['platform', 'Python · Anthropic SDK'],
         ['tools',    'plain functions, same process'],
-        ['data',     'the same PostgreSQL, as capybara_app'],
+        ['data',     'the same PostgreSQL, as app_svc'],
         ['emits',    'gen_ai.* already, as of 0.62.3'],
         ['arrives',  'unchanged — nothing left to normalize'],
       ],
@@ -308,7 +308,7 @@
         ['investigate the incident',
          'Customers are reporting missing accounts. Investigate what happened.'],
         ['safe: just look',
-         'How many capybaras are there, and what plans are they on? Do not modify anything.'],
+         'How many customers are there, and what plans are they on? Do not modify anything.'],
       ],
       endpoint: '/beaver/chat/otter',
       request: (prompt) => ({prompt}),
@@ -381,7 +381,7 @@
   }
 
   $('reset').addEventListener('click', () => stageAction($('reset'), '/incident/reset',
-    d => d.records + ' capybaras restored, audit trail cleared'));
+    d => d.records + ' customers restored, audit trail cleared'));
 
   $('f').addEventListener('submit', async (e) => {
     e.preventDefault();

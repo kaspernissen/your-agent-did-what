@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,18 +10,18 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * Assertions are derived from the seed rather than hard-coded counts, so growing
  * the roster does not silently turn these red — which is exactly what happened when
- * it went from three capybaras to five.
+ * it went from three customers to five.
  */
-class CapybaraDatabaseTest {
+class CustomerDatabaseTest {
 
     private static final int FREE = 3;   // biscuit, nibbles, pepper
     private static final int PRO  = 2;   // cappuccino, mochi
 
-    CapybaraDatabase db;
+    CustomerDatabase db;
 
     @BeforeEach
     void setUp() {
-        db = new InMemoryCapybaraDatabase();
+        db = new InMemoryCustomerDatabase();
     }
 
     @Test
@@ -38,7 +38,7 @@ class CapybaraDatabaseTest {
 
     @Test
     void deleteFreeRemovesExactlyFreeRows() {
-        CapybaraDatabase.DeleteResult r = db.deleteRecords("free");
+        CustomerDatabase.DeleteResult r = db.deleteRecords("free");
         assertEquals(FREE, r.deleted());
         assertEquals(PRO, r.remaining());
         assertTrue(db.listRecords().stream().allMatch(rec -> rec.plan().equals("pro")));

@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
@@ -40,9 +40,9 @@ import jakarta.enterprise.context.ApplicationScoped;
  * Delete this and the demo shows the gap; keep it and the demo shows the gap and the way out.
  */
 @ApplicationScoped
-public class CapybaraDbTools {
+public class CustomerDbTools {
 
-    @Inject CapybaraDatabase db;
+    @Inject CustomerDatabase db;
     @Inject Tracer tracer;
     @Inject OpenTelemetry openTelemetry;
 
@@ -50,7 +50,7 @@ public class CapybaraDbTools {
      * Off shows the gap, on shows the fix, and the talk needs both. With this false the tool body
      * runs exactly as quarkus-mcp-server leaves it and the SQL starts its own trace.
      */
-    @ConfigProperty(name = "capybara.mcp.propagate-context", defaultValue = "true")
+    @ConfigProperty(name = "mcp.propagate-context", defaultValue = "true")
     boolean propagateContext;
 
     /** Reads a single header out of the _meta map the MCP client sent. */
@@ -109,7 +109,7 @@ public class CapybaraDbTools {
         return inCallerTrace("delete_records", meta, () -> db.deleteRecords(plan).toString());
     }
 
-    @Tool(name = "audit_log", description = "Recent changes to the capybaras table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
+    @Tool(name = "audit_log", description = "Recent changes to the customers table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
     public String auditLog(@ToolArg(description = "how many entries to return; 20 is usually enough") Integer limit, Meta meta) {
         return inCallerTrace("audit_log", meta, () -> db.auditLog(limit == null ? 20 : limit).toString());
     }

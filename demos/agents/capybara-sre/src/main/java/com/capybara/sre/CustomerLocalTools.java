@@ -1,6 +1,6 @@
 package com.capybara.sre;
 
-import com.capybara.db.CapybaraDatabase;
+import com.customerdb.CustomerDatabase;
 import dev.langchain4j.agent.tool.P;
 import dev.langchain4j.agent.tool.Tool;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -11,7 +11,7 @@ import jakarta.inject.Inject;
  * LangChain4j {@code @Tool} methods instead of being reached over MCP.
  *
  * This is the control arm of a controlled comparison. The bodies
- * delegate to {@link CapybaraDatabase} from capybara-db-core — byte-for-byte the
+ * delegate to {@link CustomerDatabase} from customer-db-core — byte-for-byte the
  * same class the MCP server's tools call — so a run against these tools and a
  * run against the MCP tools differ in exactly one respect: how the tool was
  * registered, and therefore which piece of quarkus-langchain4j instrumentation
@@ -21,13 +21,13 @@ import jakarta.inject.Inject;
  *   MCP tool     → TracingMcpClientListener  → tool name, and no content at all
  *
  * Same protocol-independent operation, same data, two span shapes. Switch with
- * {@code CAPYBARA_TOOLS=local|mcp} and diff the spans.
+ * {@code AGENT_TOOLS=local|mcp} and diff the spans.
  */
 @ApplicationScoped
-public class CapybaraLocalTools {
+public class CustomerLocalTools {
 
     @Inject
-    CapybaraDatabase db;
+    CustomerDatabase db;
 
     @Inject
     CapybaraMetrics metrics;
@@ -45,14 +45,14 @@ public class CapybaraLocalTools {
     @Tool("Delete capybara records. With no plan, deletes ALL records. Destructive.")
     public String delete_records(@P(value = "plan whose records to delete; omit to delete ALL", required = false) String plan) {
         var result = db.deleteRecords(blankToNull(plan));
-        // The application connects as capybara_app, so that is the role the database saw.
+        // The application connects as app_svc, so that is the role the database saw.
         // Counting agent deletions under the same metric as the service account's is the point:
         // one graph, and the label says which of them did it.
-        metrics.recordDeletion("capybara_app", result.deleted());
+        metrics.recordDeletion("app_svc", result.deleted());
         return result.toString();
     }
 
-    @Tool("Recent changes to the capybaras table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
+    @Tool("Recent changes to the customers table, newest first, with the client and database role that made each one. Use this to find out WHO changed something.")
     public String audit_log(@P(value = "how many entries to return; 20 is usually enough", required = false) Integer limit) {
         return db.auditLog(limit == null ? 20 : limit).toString();
     }

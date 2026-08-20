@@ -1,7 +1,7 @@
 package com.capybara.sre;
 
-import com.capybara.db.CapybaraDatabase;
-import com.capybara.db.JdbcCapybaraDatabase;
+import com.customerdb.CustomerDatabase;
+import com.customerdb.JdbcCustomerDatabase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
@@ -15,14 +15,14 @@ import javax.sql.DataSource;
  * same Postgres instance, so the beat-4 comparison no longer has to caveat that
  * each side kept its own copy of the data.
  */
-public class CapybaraDbProducer {
+public class CustomerDbProducer {
 
     @Inject
     DataSource dataSource;
 
     @Produces
     @ApplicationScoped
-    CapybaraDatabase capybaraDatabase() {
-        return new JdbcCapybaraDatabase(dataSource);
+    CustomerDatabase capybaraDatabase() {
+        return new JdbcCustomerDatabase(dataSource);
     }
 }

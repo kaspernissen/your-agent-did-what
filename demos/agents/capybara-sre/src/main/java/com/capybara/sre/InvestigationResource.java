@@ -37,7 +37,7 @@ public class InvestigationResource {
      * difference is whether the execute_tool spans carry
      * gen_ai.tool.call.arguments and gen_ai.tool.call.result.
      */
-    @ConfigProperty(name = "capybara.tools", defaultValue = "mcp")
+    @ConfigProperty(name = "agent.tools", defaultValue = "mcp")
     String toolPath;
 
     @Inject

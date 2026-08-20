@@ -1,4 +1,4 @@
-package com.capybara.db;
+package com.customerdb;
 
 /**
  * One customer row.
@@ -8,4 +8,4 @@ package com.capybara.db;
  * them and reach confident, wrong conclusions; the audit trail is the only honest
  * source for what happened to a row.
  */
-public record CapybaraRecord(String id, String user, String plan) {}
+public record CustomerRecord(String id, String user, String plan) {}

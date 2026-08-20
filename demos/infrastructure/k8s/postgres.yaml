@@ -1,6 +1,6 @@
 # Postgres for the in-cluster demo.
 #
-# The schema is NOT duplicated here. deploy.sh builds the capybara-db-init ConfigMap
+# The schema is NOT duplicated here. deploy.sh builds the production-db-init ConfigMap
 # from postgres/init.sql -- the same file the compose path mounts -- so there is one
 # schema definition and the two paths genuinely cannot drift. An earlier version of
 # this file embedded a copy and claimed the same thing, which was how a UUID migration
@@ -9,24 +9,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: capybara-db
-  labels: { app: capybara-db }
+  name: production-db
+  labels: { app: production-db }
 spec:
   replicas: 1
   selector:
-    matchLabels: { app: capybara-db }
+    matchLabels: { app: production-db }
   template:
     metadata:
-      labels: { app: capybara-db }
+      labels: { app: production-db }
     spec:
       containers:
         - name: postgres
           image: postgres:18.2-alpine
           ports: [{ containerPort: 5432 }]
           env:
-            - { name: POSTGRES_DB,       value: capybara }
-            - { name: POSTGRES_USER,     value: capybara }
-            - { name: POSTGRES_PASSWORD, value: capybara }
+            - { name: POSTGRES_DB,       value: production }
+            - { name: POSTGRES_USER,     value: postgres }
+            - { name: POSTGRES_PASSWORD, value: postgres }
             # Postgres refuses to initialise into a non-empty dir; a subdir of the
             # mount keeps emptyDir's lost+found out of the way.
             - { name: PGDATA,            value: /var/lib/postgresql/data/pgdata }
@@ -34,21 +34,21 @@ spec:
             - { name: init, mountPath: /docker-entrypoint-initdb.d }
             - { name: data, mountPath: /var/lib/postgresql/data }
           readinessProbe:
-            exec: { command: ["pg_isready", "-U", "capybara", "-d", "capybara"] }
+            exec: { command: ["pg_isready", "-U", "postgres", "-d", "production"] }
             initialDelaySeconds: 5
             periodSeconds: 3
       volumes:
         - name: init
-          configMap: { name: capybara-db-init }
+          configMap: { name: production-db-init }
         - name: data
           emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: capybara-db
-  labels: { app: capybara-db }
+  name: production-db
+  labels: { app: production-db }
 spec:
-  selector: { app: capybara-db }
+  selector: { app: production-db }
   ports: [{ port: 5432, targetPort: 5432 }]
   type: ClusterIP

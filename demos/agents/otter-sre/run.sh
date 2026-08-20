@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 if [ -f ../../.env ]; then set -a; . ../../.env; set +a; fi   # demos/.env
 : "${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY (see demos/.env.template)}"
 export OTEL_EXPORTER_OTLP_ENDPOINT="${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4318}"
-export CAPYBARA_AGENT_NAME="${CAPYBARA_AGENT_NAME:-otter-sre}"
+export AGENT_NAME="${AGENT_NAME:-otter-sre}"
 
 # Create the venv on first use, and reinstall whenever requirements.txt changes — checking
 # only for .venv's existence silently leaves a stale environment behind, which shows up as a

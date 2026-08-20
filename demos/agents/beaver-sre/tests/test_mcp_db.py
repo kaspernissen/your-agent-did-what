@@ -71,12 +71,12 @@ def test_text_joins_every_text_block():
 
 
 def test_from_env_prefers_mcp_over_a_dsn(monkeypatch):
-    monkeypatch.setenv(mcp_db.URL_ENV, "http://capybara-db-mcp:8086/mcp")
-    monkeypatch.setenv(db.DSN_ENV, "postgresql://capybara_app@capybara-db:5432/capybara")
+    monkeypatch.setenv(mcp_db.URL_ENV, "http://customer-db-mcp:8086/mcp")
+    monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db:5432/production")
     assert isinstance(db.from_env(), mcp_db.McpDatabase)
 
 
 def test_from_env_falls_back_to_the_dsn(monkeypatch):
     monkeypatch.delenv(mcp_db.URL_ENV, raising=False)
-    monkeypatch.setenv(db.DSN_ENV, "postgresql://capybara_app@capybara-db:5432/capybara")
+    monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db:5432/production")
     assert isinstance(db.from_env(), db.PostgresDatabase)
