@@ -62,6 +62,19 @@ cp .env.template .env      # then set ANTHROPIC_API_KEY
 Then open **<http://localhost:8088>** and pick an agent. `demos/.env` is git-ignored; only
 `.env.template` is committed.
 
+Nothing runs in `default` — it is split by owner across three namespaces, so `kubectl` needs
+`-n`:
+
+| namespace | what runs there |
+|---|---|
+| `agents` | capybara-sre, beaver-sre, otter-sre |
+| `db` | production-db, and both MCP servers — `sre-agents-mcp` and `goose-mcp` |
+| `observability` | the collector, Jaeger, Prometheus |
+
+Every call between them is a real cross-namespace call, resolved by FQDN. The scripts pass `-n`
+already; see [`demos/README.md`](demos/README.md#namespaces) for why the secrets are split the
+same way.
+
 ### Option 1 · On your machine
 
 **Needs** Docker, kind, kubectl, helm, JDK 21, Python 3.11+, an Anthropic API key, and — for
