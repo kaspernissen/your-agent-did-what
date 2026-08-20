@@ -111,7 +111,8 @@ rehearsal: a silent instrumentation regression looks exactly like a working demo
 
 **Services reporting.** The dropdown should list `capybara-sre`, `beaver-sre`, `otter-sre`,
 `sre-agents-mcp`, `goose-mcp`, and `goose` once the recipe has run. A missing one has not
-been asked anything yet, or its exporter never connected.
+been asked anything yet, or its exporter never connected. Service names are unaffected by
+namespaces — they come from `OTEL_SERVICE_NAME`, not from where the pod runs.
 
 **One question, one trace.** Open the newest trace for a service: a single tree rooted at
 `invoke_agent`, with `chat` and `execute_tool` beneath it — not a scatter of unparented spans.
@@ -143,11 +144,11 @@ not a span, so Jaeger will not show it. Read those — and check spans are arriv
 the collector:
 
 ```bash
-kubectl logs -l app.kubernetes.io/name=opentelemetry-collector -f
+kubectl logs -n observability -l app.kubernetes.io/name=opentelemetry-collector -f
 ```
 
 > If the dropdown lists services that no longer exist, Jaeger's store is in memory.
-> `kubectl rollout restart deployment/jaeger` clears it, and clears your traces with it — so
+> `kubectl rollout restart -n observability deployment/jaeger` clears it, and clears your traces with it — so
 > before a rehearsal, never during one.
 
 ---

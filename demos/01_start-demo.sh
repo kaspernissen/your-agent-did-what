@@ -10,11 +10,11 @@
 set -uo pipefail
 cd "$(dirname "$0")"
 
-# service:local:remote:probe-path
+# namespace:service:local:remote:probe-path
 TARGETS=(
-  "capybara-sre:8088:8088:/"
-  "jaeger:16686:16686:/"
-  "prometheus:9090:9090:/-/ready"
+  "agents:capybara-sre:8088:8088:/"
+  "observability:jaeger:16686:16686:/"
+  "observability:prometheus:9090:9090:/-/ready"
 )
 
 reachable() {   # port, path
@@ -24,7 +24,7 @@ reachable() {   # port, path
 status() {
   local all_ok=0
   for t in "${TARGETS[@]}"; do
-    IFS=: read -r svc local _ path <<<"$t"
+    IFS=: read -r _ns svc local _ path <<<"$t"
     if reachable "$local" "$path"; then
       printf '  %-22s http://localhost:%-6s up\n' "$svc" "$local"
     else
@@ -43,16 +43,16 @@ fi
 # Kill only our own forwards, and only for these services, so an unrelated tunnel in
 # another terminal survives.
 for t in "${TARGETS[@]}"; do
-  IFS=: read -r svc local _ _ <<<"$t"
+  IFS=: read -r _ns svc local _ _ <<<"$t"
   pkill -f "port-forward svc/${svc} ${local}:" 2>/dev/null
 done
 sleep 1
 
 for t in "${TARGETS[@]}"; do
-  IFS=: read -r svc local remote _ <<<"$t"
+  IFS=: read -r ns svc local remote _ <<<"$t"
   # nohup, because a plain background job dies with the shell that started it — which is
   # how several of these forwards were lost without anyone noticing.
-  nohup kubectl port-forward "svc/${svc}" "${local}:${remote}" >"/tmp/pf-${svc}.log" 2>&1 &
+  nohup kubectl port-forward -n "$ns" "svc/${svc}" "${local}:${remote}" >"/tmp/pf-${svc}.log" 2>&1 &
 done
 
 echo "Waiting for the tunnels…"

@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: db
   name: sre-agents-mcp
   labels:
     app: sre-agents-mcp
@@ -22,11 +23,11 @@ spec:
             - containerPort: 8086
           env:
             - name: CUSTOMER_DB_URL
-              value: "jdbc:postgresql://production-db:5432/production"
+              value: "jdbc:postgresql://production-db.db.svc.cluster.local:5432/production"
             - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: grpc
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://otel-collector-opentelemetry-collector.default.svc.cluster.local:4317"
+              value: "http://otel-collector-opentelemetry-collector.observability.svc.cluster.local:4317"
           livenessProbe:
             httpGet:
               path: /q/health
@@ -43,6 +44,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: db
   name: sre-agents-mcp
   labels:
     app: sre-agents-mcp

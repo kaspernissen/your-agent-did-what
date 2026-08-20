@@ -82,9 +82,9 @@ esac
 
 # The MCP server the recipe points at, and the collector goose reports to.
 pkill -f "port-forward svc/goose-mcp" 2>/dev/null || true
-kubectl port-forward svc/goose-mcp 8086:8086 >/tmp/pf-prod-mcp.log 2>&1 &
+kubectl port-forward -n db svc/goose-mcp 8086:8086 >/tmp/pf-prod-mcp.log 2>&1 &
 pkill -f "port-forward svc/otel-collector" 2>/dev/null || true
-kubectl port-forward svc/otel-collector-opentelemetry-collector 4318:4318 >/tmp/pf-col.log 2>&1 &
+kubectl port-forward -n observability svc/otel-collector-opentelemetry-collector 4318:4318 >/tmp/pf-col.log 2>&1 &
 echo "✅ Set up port-forwarding."
 
 echo "Waiting on OTel Collector readiness..."

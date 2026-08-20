@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: agents
   name: capybara-sre
   labels:
     app: capybara-sre
@@ -27,11 +28,11 @@ spec:
                   name: anthropic-secret
                   key: api-key
             - name: CUSTOMER_DB_MCP_URL
-              value: "http://sre-agents-mcp:8086/mcp/sse"
+              value: "http://sre-agents-mcp.db.svc.cluster.local:8086/mcp/sse"
             # One variable serves all three datasources — app, deploy and admin —
             # because each appends its own ApplicationName to this base URL.
             - name: CUSTOMER_DB_URL
-              value: "jdbc:postgresql://production-db:5432/production"
+              value: "jdbc:postgresql://production-db.db.svc.cluster.local:5432/production"
             # mcp (default) or local: which instrumentation sees the tool call.
             - name: AGENT_TOOLS
               value: "mcp"
@@ -40,7 +41,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: grpc
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://otel-collector-opentelemetry-collector.default.svc.cluster.local:4317"
+              value: "http://otel-collector-opentelemetry-collector.observability.svc.cluster.local:4317"
           livenessProbe:
             httpGet:
               path: /q/health
@@ -57,6 +58,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: agents
   name: capybara-sre
   labels:
     app: capybara-sre

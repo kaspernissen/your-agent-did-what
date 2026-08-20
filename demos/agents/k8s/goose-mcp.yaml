@@ -11,6 +11,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: db
   name: goose-mcp
   labels: { app: goose-mcp }
 spec:
@@ -40,9 +41,9 @@ spec:
             - { name: QUARKUS_DATASOURCE_USERNAME,   value: deploy_svc }
             - { name: QUARKUS_DATASOURCE_PASSWORD,   value: deploy_svc }
             - { name: QUARKUS_DATASOURCE_JDBC_URL,
-                value: "jdbc:postgresql://production-db:5432/production?ApplicationName=goose" }
+                value: "jdbc:postgresql://production-db.db.svc.cluster.local:5432/production?ApplicationName=goose" }
             - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
-                value: http://otel-collector-opentelemetry-collector.default.svc:4317 }
+                value: http://otel-collector-opentelemetry-collector.observability.svc.cluster.local:4317 }
             # Stated for parity with sre-agents-mcp. The image already defaults to grpc; leaving
             # the two servers configured differently is how you end up debugging the wrong one.
             - { name: OTEL_EXPORTER_OTLP_PROTOCOL, value: grpc }
@@ -57,6 +58,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: db
   name: goose-mcp
 spec:
   selector: { app: goose-mcp }

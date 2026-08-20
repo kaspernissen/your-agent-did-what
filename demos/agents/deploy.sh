@@ -49,11 +49,11 @@ kubectl apply -f k8s/ >/dev/null
 # Both MCP servers, and goose-mcp is easy to forget: it runs the same image under different
 # credentials, so a stale replica silently serves the Goose path with old code. It did, for
 # three days, which is why that path emitted no server spans at all.
-kubectl rollout restart deployment/sre-agents-mcp deployment/goose-mcp
-kubectl rollout status  deployment/sre-agents-mcp --timeout=180s
-kubectl rollout status  deployment/goose-mcp    --timeout=180s
+kubectl rollout restart -n db deployment/sre-agents-mcp deployment/goose-mcp
+kubectl rollout status  -n db deployment/sre-agents-mcp --timeout=180s
+kubectl rollout status  -n db deployment/goose-mcp    --timeout=180s
 
-kubectl rollout restart deployment/capybara-sre deployment/beaver-sre deployment/otter-sre
-kubectl rollout status  deployment/capybara-sre --timeout=180s
-kubectl rollout status  deployment/beaver-sre   --timeout=180s
-kubectl rollout status  deployment/otter-sre    --timeout=180s
+kubectl rollout restart -n agents deployment/capybara-sre deployment/beaver-sre deployment/otter-sre
+kubectl rollout status  -n agents deployment/capybara-sre --timeout=180s
+kubectl rollout status  -n agents deployment/beaver-sre   --timeout=180s
+kubectl rollout status  -n agents deployment/otter-sre    --timeout=180s

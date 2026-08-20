@@ -20,10 +20,20 @@ else
 fi
 kubectl config use-context "kind-${CLUSTER}" >/dev/null
 
-echo "--- The Anthropic key, as a secret both demos can use ---"
+# Three namespaces, by owner rather than by convenience: the agents, the database and its
+# MCP servers, and the observability stack. Secrets are namespaced, so each one has to be
+# created where it is consumed — a secret in the wrong namespace looks like a healthy cluster
+# until a pod cannot start.
+echo "--- Namespaces ---"
+for ns in agents db observability; do
+  kubectl create namespace "$ns" --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+done
+kubectl config set-context --current --namespace=default >/dev/null
+
+echo "--- The Anthropic key, as a secret the agents can use ---"
 if [ -f ../.env ]; then set -a; . ../.env; set +a; fi
 : "${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY in demos/.env}"
-kubectl create secret generic anthropic-secret \
+kubectl create secret generic anthropic-secret -n agents \
   --from-literal=api-key="$ANTHROPIC_API_KEY" \
   --dry-run=client -o yaml | kubectl apply -f -
 
@@ -31,13 +41,13 @@ echo "--- Jaeger ---"
 helm repo add jaegertracing https://jaegertracing.github.io/helm-charts >/dev/null 2>&1 || true
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts >/dev/null 2>&1 || true
 helm repo update >/dev/null
-helm upgrade --install jaeger jaegertracing/jaeger --version 4.12.0 \
+helm upgrade --install jaeger jaegertracing/jaeger --version 4.12.0 -n observability \
   -f ../observability/jaeger/values.yaml --wait
 
 echo "--- Prometheus ---"
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts >/dev/null 2>&1 || true
 helm repo update >/dev/null
-helm upgrade --install prometheus prometheus-community/prometheus \
+helm upgrade --install prometheus prometheus-community/prometheus -n observability \
   -f ../observability/prometheus/values.yaml --wait
 
 echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
@@ -50,7 +60,7 @@ echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
 # rather than exploding. Do not "simplify" it back.
 DASH0_VALUES=()
 if [ -n "${DASH0_AUTH_TOKEN:-}" ]; then
-  kubectl create secret generic dash0-secret \
+  kubectl create secret generic dash0-secret -n observability \
     --from-literal=token="$DASH0_AUTH_TOKEN" \
     --from-literal=dataset="${DASH0_DATASET:-default}" \
     --from-literal=endpoint="${DASH0_ENDPOINT_OTLP_GRPC_HOSTNAME:-ingress.eu-west-1.aws.dash0.com}" \
@@ -64,7 +74,7 @@ fi
 
 DYNATRACE_VALUES=()
 if [ -n "${DT_API_TOKEN:-}" ]; then
-  kubectl create secret generic dynatrace-secret \
+  kubectl create secret generic dynatrace-secret -n observability \
     --from-literal=token="$DT_API_TOKEN" \
     --from-literal=endpoint="${DT_ENDPOINT:?DT_API_TOKEN is set but DT_ENDPOINT is not — both are needed, see demos/.env.template}" \
     --dry-run=client -o yaml | kubectl apply -f -
@@ -75,7 +85,7 @@ else
 fi
 
 
-helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
+helm upgrade --install otel-collector open-telemetry/opentelemetry-collector -n observability \
   -f ../observability/collector/values.yaml \
   ${DASH0_VALUES[@]+"${DASH0_VALUES[@]}"} \
   ${DYNATRACE_VALUES[@]+"${DYNATRACE_VALUES[@]}"} --wait

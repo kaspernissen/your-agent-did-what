@@ -103,6 +103,27 @@ a terminal, which is where a developer would actually meet it.
 
 ---
 
+## Namespaces
+
+Three, by owner rather than by convenience — which also means every call the demo makes between
+them is a real cross-namespace call, resolved by FQDN:
+
+| namespace | what runs there |
+|---|---|
+| `agents` | capybara-sre, beaver-sre, otter-sre — and `anthropic-secret`, which only they need |
+| `db` | production-db, and both MCP servers: `sre-agents-mcp` and `goose-mcp` |
+| `observability` | the collector, Jaeger, Prometheus — and the vendor secrets the collector reads |
+
+Secrets are namespaced, so each is created where it is consumed. A secret in the wrong namespace
+looks like a healthy cluster right up to the point a pod cannot start.
+
+`kubectl` needs `-n` for almost everything now. The scripts already pass it; the one to remember
+by hand is the collector's logs:
+
+```bash
+kubectl logs -n observability -l app.kubernetes.io/name=opentelemetry-collector -f
+```
+
 ## Layout
 
 ```
@@ -240,7 +261,7 @@ judge's reasoning naming the evidence that decided it.
 carries `llm.*` **and** `gen_ai.*` at once: what the library emitted, and what the
 collector made of it.
 
-**7 · Then the forensic gap.** `kubectl set env deployment/capybara-sre AGENT_TOOLS=local`,
+**7 · Then the forensic gap.** `kubectl set env -n agents deployment/capybara-sre AGENT_TOOLS=local`,
 re-run, and diff the tool spans. Same binary, same prompt, same database — only the
 registration differs. Re-run `./01_start-demo.sh` afterwards; changing env rolls the pod
 and takes the port-forward with it.
@@ -250,8 +271,8 @@ because `CustomerDbTools` reads `traceparent` out of the MCP request's `_meta` i
 as quarkus-mcp-server leaves it:
 
 ```sh
-kubectl set env deployment/sre-agents-mcp MCP_PROPAGATE_CONTEXT=false
-kubectl rollout restart deployment/capybara-sre   # or its MCP session dies with the server
+kubectl set env -n db deployment/sre-agents-mcp MCP_PROPAGATE_CONTEXT=false
+kubectl rollout restart -n agents deployment/capybara-sre   # or its MCP session dies with the server
 ./01_start-demo.sh
 ```
 
@@ -300,7 +321,7 @@ All of it is in [`ANALYSIS.md`](ANALYSIS.md) with dates. The headlines:
 |---|---|
 | the console stops answering | a pod was replaced and took the port-forward with it. `./01_start-demo.sh` |
 | `HTTP 000` from curl | same thing. Check with `./01_start-demo.sh --status` |
-| Jaeger's dropdown lists services that no longer exist | its store is in memory and keeps old traces. `kubectl rollout restart deployment/jaeger` clears it — and clears your traces, so do it before a rehearsal, not during |
+| Jaeger's dropdown lists services that no longer exist | its store is in memory and keeps old traces. `kubectl rollout restart -n observability deployment/jaeger` clears it — and clears your traces, so do it before a rehearsal, not during |
 | the judge panel is empty | the judge's JSON was truncated. `max-tokens` is set to 4096; the raw reply is logged on failure |
 | no SQL spans anywhere | `quarkus.datasource.jdbc.telemetry=true` is opt-in. Worth knowing: "we use OTel" does not mean every layer is instrumented |
 | the agent boots with no tools | it resolves its tool list at startup and the MCP server was not up. `agents/deploy.sh` orders this correctly |

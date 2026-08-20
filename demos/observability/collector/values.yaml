@@ -50,7 +50,7 @@ config:
     # the same shape of path as traces: app -> collector -> backend. No scrape config,
     # no /metrics endpoint on the apps to expose.
     otlphttp/prometheus:
-      endpoint: http://prometheus.default.svc:9090/api/v1/otlp
+      endpoint: http://prometheus.observability.svc.cluster.local:9090/api/v1/otlp
       tls: { insecure: true }
 
   extensions:

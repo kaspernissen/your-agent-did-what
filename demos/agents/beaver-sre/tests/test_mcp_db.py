@@ -71,12 +71,12 @@ def test_text_joins_every_text_block():
 
 
 def test_from_env_prefers_mcp_over_a_dsn(monkeypatch):
-    monkeypatch.setenv(mcp_db.URL_ENV, "http://sre-agents-mcp:8086/mcp")
-    monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db:5432/production")
+    monkeypatch.setenv(mcp_db.URL_ENV, "http://sre-agents-mcp.db.svc.cluster.local:8086/mcp")
+    monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db.db.svc.cluster.local:5432/production")
     assert isinstance(db.from_env(), mcp_db.McpDatabase)
 
 
 def test_from_env_falls_back_to_the_dsn(monkeypatch):
     monkeypatch.delenv(mcp_db.URL_ENV, raising=False)
-    monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db:5432/production")
+    monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db.db.svc.cluster.local:5432/production")
     assert isinstance(db.from_env(), db.PostgresDatabase)
