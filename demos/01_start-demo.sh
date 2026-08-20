@@ -20,7 +20,7 @@ TARGETS=(
   "observability:prometheus:9090:9090:/-/ready"
   # Perses queries Prometheus and Jaeger server-side through its own proxy, so this one
   # forward is enough for the dashboards to have data in them.
-  "observability:perses:3000:8080:/api/v1/health"
+  "observability:perses:8080:8080:/api/v1/health"
 )
 
 reachable() {   # port, path
@@ -81,7 +81,7 @@ cat <<EOF
   console     http://localhost:8088     ask any of the three agents
   jaeger      http://localhost:16686    traces
   prometheus  http://localhost:9090     graph customer_records
-  perses      http://localhost:3000     dashboards: the records, and every agent's traces
+  perses      http://localhost:8080     dashboards: the records, and every agent's traces
 
 EOF
 

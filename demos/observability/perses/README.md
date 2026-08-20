@@ -42,7 +42,8 @@ platforms — so four trace tables on one screen is a glance rather than four ta
 itself — so your laptop would try to resolve `prometheus.observability.svc.cluster.local`,
 and every panel comes up empty. `proxy` routes the query through the Perses backend, which
 is inside the cluster. It also means only Perses needs port-forwarding: `01_start-demo.sh`
-maps it to **<http://localhost:3000>** and Prometheus and Jaeger are reached from there.
+maps it to **<http://localhost:8080>** — Perses' own port, like Jaeger's and Prometheus'
+are theirs — and Prometheus and Jaeger are reached from there.
 
 **One resource per file.** Perses provisioning does not read multi-document YAML. Given two
 resources separated by `---` it loads the first and drops the second, logging nothing.
