@@ -37,7 +37,7 @@ class InvestigationResourceTest {
         Mockito.when(toolExecution.result()).thenReturn("42 records found");
 
         Result<String> cannedResult = Result.<String>builder()
-                .content("All systems nominal. Found 42 capybara records. No action needed.")
+                .content("All systems nominal. Found 42 customer records. No action needed.")
                 .toolExecutions(List.of(toolExecution))
                 .build();
 
@@ -47,7 +47,7 @@ class InvestigationResourceTest {
     @Test
     void chatReturnsContractShape() {
         given().contentType("application/json")
-                .body("{\"prompt\":\"list the capybara records\"}")
+                .body("{\"prompt\":\"list the customer records\"}")
         .when().post("/chat")
         .then().statusCode(200)
                 .body("response", notNullValue())

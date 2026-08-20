@@ -33,14 +33,14 @@ DEFAULT_MODEL = "claude-sonnet-5"
 DEFAULT_AGENT_NAME = "db-ops-agent"
 MAX_TURNS = 6
 
-    # OpenInference keys, exactly as upstream spells them: the collector's
-    # gen_ai_normalizer matches on these literal strings and silently ignores a near-miss.
-    # Span names stay framework-flavoured, which is what these libraries actually do — the
-    # operation is an attribute, not the span name.
+# OpenInference keys, exactly as upstream spells them: the collector's
+# gen_ai_normalizer matches on these literal strings and silently ignores a near-miss.
+# Span names stay framework-flavoured, which is what these libraries actually do — the
+# operation is an attribute, not the span name.
 
 
 class SreAgent:
-    """A tool-calling Claude agent over the capybara customer database."""
+    """A tool-calling Claude agent over the customer database."""
 
     def __init__(self, tracer: Tracer, *, model: str | None = None, name: str | None = None):
         self._tracer = tracer

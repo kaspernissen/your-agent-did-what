@@ -33,13 +33,13 @@ DEFAULT_MODEL = "claude-sonnet-5"
 DEFAULT_AGENT_NAME = "db-ops-agent"
 MAX_TURNS = 6
 
-    # OTel GenAI names, matching what OpenLLMetry already emits for the model call, so the
-    # whole trace arrives in one vocabulary. gen_ai.tool.call.arguments and .result are
-    # Opt-In in the spec and deliberately switched on here — they are the talk's subject.
+# OTel GenAI names, matching what OpenLLMetry already emits for the model call, so the
+# whole trace arrives in one vocabulary. gen_ai.tool.call.arguments and .result are
+# Opt-In in the spec and deliberately switched on here — they are the talk's subject.
 
 
 class SreAgent:
-    """A tool-calling Claude agent over the capybara customer database."""
+    """A tool-calling Claude agent over the customer database."""
 
     def __init__(self, tracer: Tracer, *, model: str | None = None, name: str | None = None):
         self._tracer = tracer

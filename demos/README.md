@@ -262,8 +262,8 @@ goose calls `delete_records`, three rows gone. Nothing the investigating agents 
 > is a deliberate escape hatch, not a cheat, but it is worth saying out loud if the room can see
 > the terminal.
 
-**3 · Watch the metric.** In Prometheus, `capybara_records` steps from 5 to 2, and
-`capybara_records_deleted_total` broken down by `capybara_actor_db_user` says who — the same
+**3 · Watch the metric.** In Prometheus, `customer_records` steps from 5 to 2, and
+`customer_records_deleted_total` broken down by `db_user` says who — the same
 distinction the audit trail makes, one signal earlier. The gauge is observable, so it reads
 the table when the SDK collects and cannot drift from reality even when something deletes
 rows without telling us. Export interval is 15s: start the run and keep talking.

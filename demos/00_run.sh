@@ -45,7 +45,7 @@ cat <<'DONE'
     2. Run ./02_run-goose.sh — three rows gone, and not by these agents
        no ollama, or goose stalling? curl -X POST localhost:8088/incident/rehearse-deletion
        puts the database in the same state, minus the coding agent's telemetry
-    3. Watch capybara_records drop in Prometheus
+    3. Watch customer_records drop in Prometheus
     4. Ask Capybara what happened; read the judge
     5. Ask Beaver the same thing, and open its trace
 

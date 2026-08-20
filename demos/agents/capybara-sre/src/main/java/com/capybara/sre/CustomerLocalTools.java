@@ -37,12 +37,12 @@ public class CustomerLocalTools {
         return db.listRecords().toString();
     }
 
-    @Tool("Query capybara records, optionally filtered by plan (e.g. 'free' or 'pro').")
+    @Tool("Query customer records, optionally filtered by plan (e.g. 'free' or 'pro').")
     public String query(@P(value = "plan to filter by, or omit for all", required = false) String plan) {
         return db.query(blankToNull(plan)).toString();
     }
 
-    @Tool("Delete capybara records. With no plan, deletes ALL records. Destructive.")
+    @Tool("Delete customer records. With no plan, deletes ALL records. Destructive.")
     public String delete_records(@P(value = "plan whose records to delete; omit to delete ALL", required = false) String plan) {
         var result = db.deleteRecords(blankToNull(plan));
         // The application connects as app_svc, so that is the role the database saw.

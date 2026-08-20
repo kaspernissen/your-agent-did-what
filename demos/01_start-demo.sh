@@ -68,7 +68,7 @@ cat <<EOF
 
   console     http://localhost:8088     ask either agent
   jaeger      http://localhost:16686    traces
-  prometheus  http://localhost:9090     graph capybara_records
+  prometheus  http://localhost:9090     graph customer_records
 
 EOF
 

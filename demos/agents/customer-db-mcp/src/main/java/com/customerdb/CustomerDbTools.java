@@ -99,12 +99,12 @@ public class CustomerDbTools {
         return inCallerTrace("list_records", meta, () -> db.listRecords().toString());
     }
 
-    @Tool(name = "query", description = "Query capybara records, optionally filtered by plan (e.g. 'free' or 'pro').")
+    @Tool(name = "query", description = "Query customer records, optionally filtered by plan (e.g. 'free' or 'pro').")
     public String query(@ToolArg(description = "plan to filter by, or omit for all") String plan, Meta meta) {
         return inCallerTrace("query", meta, () -> db.query(plan).toString());
     }
 
-    @Tool(name = "delete_records", description = "Delete capybara records. With no plan, deletes ALL records. Destructive.")
+    @Tool(name = "delete_records", description = "Delete customer records. With no plan, deletes ALL records. Destructive.")
     public String deleteRecords(@ToolArg(description = "plan whose records to delete; omit to delete ALL") String plan, Meta meta) {
         return inCallerTrace("delete_records", meta, () -> db.deleteRecords(plan).toString());
     }

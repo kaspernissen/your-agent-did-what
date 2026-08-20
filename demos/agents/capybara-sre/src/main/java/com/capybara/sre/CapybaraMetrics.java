@@ -15,9 +15,9 @@ import org.jboss.logging.Logger;
  * Two metrics, so the incident is visible without reading a single trace.
  *
  * <ul>
- *   <li>{@code capybara.records} -- how many customers exist right now. On a graph this
+ *   <li>{@code customer.records} -- how many customers exist right now. On a graph this
  *       is the whole story: a flat line at five that drops to two.</li>
- *   <li>{@code capybara.records.deleted} -- a counter, labelled with the database role
+ *   <li>{@code customer.records.deleted} -- a counter, labelled with the database role
  *       that did it. This is the metric that distinguishes "rows went missing" from
  *       "the deploy_svc role deleted them", which is the same distinction the audit trail
  *       makes, one signal earlier.</li>
@@ -33,7 +33,7 @@ public class CapybaraMetrics {
     private static final Logger LOG = Logger.getLogger(CapybaraMetrics.class);
 
     /** The authenticated role, not the self-reported client name. Same reasoning as the audit trail. */
-    private static final AttributeKey<String> ACTOR = AttributeKey.stringKey("capybara.actor.db_user");
+    private static final AttributeKey<String> ACTOR = AttributeKey.stringKey("db.user");
 
     @Inject
     CustomerDatabase database;
@@ -51,12 +51,12 @@ public class CapybaraMetrics {
     void register(@Observes StartupEvent ignored) {
         Meter meter = GlobalOpenTelemetry.get().getMeter("com.capybara.sre");
 
-        deleted = meter.counterBuilder("capybara.records.deleted")
+        deleted = meter.counterBuilder("customer.records.deleted")
                 .setDescription("Customer records deleted, by the database role that deleted them")
                 .setUnit("{record}")
                 .build();
 
-        meter.gaugeBuilder("capybara.records")
+        meter.gaugeBuilder("customer.records")
                 .ofLongs()
                 .setDescription("Customer records currently in the database")
                 .setUnit("{record}")

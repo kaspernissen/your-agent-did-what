@@ -1,4 +1,4 @@
-"""Where the capybara records live, for Beaver.
+"""Where the customer records live.
 
 Three implementations behind one small interface:
 
