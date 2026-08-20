@@ -7,7 +7,7 @@ Three implementations behind one small interface:
                     from Capybara's console, Beaver sees exactly that and nothing it
                     invented for itself.
 
-  McpDatabase       the same rows, reached over MCP through customer-db-mcp rather than
+  McpDatabase       the same rows, reached over MCP through sre-agents-mcp rather than
                     directly, so this agent executes its tools where Capybara executes its.
                     See mcp_db.py for why that matters to the comparison.
 
@@ -128,7 +128,7 @@ def from_env():
     """MCP when a server is configured, else Postgres when a DSN is, else the stand-in.
 
     MCP is checked first because it is the interesting path: it makes this agent reach the
-    table the same way Capybara does, through `customer-db-mcp`, so the two differ only in
+    table the same way Capybara does, through `sre-agents-mcp`, so the two differ only in
     what writes their telemetry. The DSN path stays for running the agent against a bare
     database with no MCP server in front of it.
     """

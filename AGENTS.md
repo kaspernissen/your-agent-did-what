@@ -9,7 +9,7 @@ number in one place without the other is the main way to do damage here.
 
 ```
 demos/            the demo — three agents, one incident, one collector, in kind
-  agents/         capybara-sre (Java) · capybara-db-mcp · prod-db-mcp · goose
+  agents/         capybara-sre (Java) · sre-agents-mcp · goose-mcp · goose
                   beaver-sre and otter-sre: the same Python agent twice, as separate
                   complete copies, differing only in the instrumentation library.
                   check-agents-agree.sh fails if the shared files drift apart.
@@ -68,7 +68,7 @@ console then appears dead, `curl` returns `HTTP 000`, and nothing in the logs ex
 Re-run `./01_start-demo.sh`. This cost six debugging sessions before the script existed, so
 if something that worked a minute ago is unreachable, check this first.
 
-Tests: `./mvnw test` in each Java module (install `capybara-db-core` first, or the
+Tests: `./mvnw test` in each Java module (install `production-db-core` first, or the
 applications cannot resolve it), and `pytest` in `agents/beaver-sre`.
 
 ## Things that have bitten, and will again

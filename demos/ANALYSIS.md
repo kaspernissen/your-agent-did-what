@@ -218,7 +218,7 @@ path you have both. Two different failures from one boundary.
 since the reply travels on the same HTTP request rather than a channel opened earlier. The
 server already speaks it — `POST /mcp` answers 200 with an `Mcp-Session-Id`, no server
 change — and quarkus-langchain4j 1.12.2 supports `transport-type=streamable-http`. With
-both switched: still 0 SQL spans in the agent's trace, and `customer-db-mcp` now
+both switched: still 0 SQL spans in the agent's trace, and `sre-agents-mcp` now
 contributes **no span at all**, because nothing emits a server span for `POST /mcp`.
 Reverted. The transport is not the variable.
 
@@ -233,8 +233,8 @@ With it on, the server's spans land **inside the agent's trace**, correctly pare
 ```
 [capybara-sre   ] tools/call list_records          children=2
 [capybara-sre   ]   POST                           children=1
-[customer-db-mcp]     POST /mcp/messages/:id       children=1
-[customer-db-mcp]       tools/call list_records    children=0   <- the tool body
+[sre-agents-mcp]     POST /mcp/messages/:id       children=1
+[sre-agents-mcp]       tools/call list_records    children=0   <- the tool body
 ```
 
 21 spans, up from 15. `tools/list` appears too, so even the startup handshake is explained.
@@ -502,6 +502,31 @@ Phoenix ingestion confirmed on the same run: 2 traces, 6.5s p50, from `gen_ai.*`
 ---
 
 ## Superseded and historical
+
+### Names that changed, and why older entries use the old ones (2026-08-20)
+
+Entries above this line may refer to identifiers that no longer exist. They are left as
+written — the record is only worth having if it says what was actually run.
+
+| was | now | why |
+|---|---|---|
+| `capybara-db` | `production-db` | the database is the company's, not capybara-sre's; a table called `capybaras` inside `capybara-db` read as though the agent owned it |
+| table `capybaras` | `customers` | |
+| role `capybara_app` | `app_svc` | pairs with `deploy_svc`, and the contrast is the bug |
+| superuser `capybara` | `postgres` | |
+| `com.capybara.db` | `com.customerdb` | data types, not agent types: `CapybaraRecord` → `CustomerRecord` |
+| `capybara-db-mcp` (deployment) | `sre-agents-mcp` | named for its consumer, and `agents-mcp` alone would not distinguish it — goose is an agent too |
+| `prod-db-mcp` (deployment) | `goose-mcp` | |
+| `CAPYBARA_INSTRUMENTATION` | *(gone)* | beaver-sre and otter-sre are separate images now, so nothing switches at run time |
+
+The MCP **image** stays `customer-db-mcp`: one implementation serves both deployments, and
+naming it after either consumer would be wrong. What differs between them is the credential —
+`app_svc` for `sre-agents-mcp`, `deploy_svc` for `goose-mcp`.
+
+`capybara-sre` keeps its name, and so do `CapybaraSreAgent`, `CapybaraJudge`, `CapybaraPrompt`
+and `CapybaraMetrics`. The dividing line is what a name refers to: data and database became
+Customer, the agent stayed Capybara.
+
 
 Kept on purpose. A measurement that was replaced is more useful with its replacement noted than deleted — and one of these records a demo that no longer exists.
 
@@ -817,7 +842,7 @@ The beat-4 finding had a control from the OpenTelemetry Demo's Python stack. Thi
 one, because it is a different product, on a laptop, talking to the *same* MCP server, exporting
 to the *same* collector, and it is a current release.
 
-goose v1.46.0 (Ollama, `qwen3.6:35b-a3b-q4_K_M`) driven by a recipe against `prod-db-mcp`:
+goose v1.46.0 (Ollama, `qwen3.6:35b-a3b-q4_K_M`) driven by a recipe against `goose-mcp`:
 
 ```
 dispatch_tool_call
@@ -943,7 +968,7 @@ trace. Anywhere the talk implies the spec is silent on MCP, it is now wrong.
 
 Re-measured against the running demo on 2026-08-17, and the split is narrower than "MCP loses trace
 context" suggests. The client-to-server half works: one `POST /chat` produced a single 21-span trace
-spanning both services, with `customer-db-mcp / tools/call audit_log` correctly parented under the
+spanning both services, with `sre-agents-mcp / tools/call audit_log` correctly parented under the
 client span of the same name. What does not survive is the handoff into the tool body, so
 `SELECT capybara.audit_log` is a one-span root trace of its own. Half the written convention is
 implemented; the demo's gap is the other half.
@@ -1023,7 +1048,7 @@ those tools the same way:
 
 | | tool declaration | executed | who can see the call |
 |---|---|---|---|
-| `capybara-sre` | discovered from `customer-db-mcp` over MCP | **another process** | the MCP client listener, not the tool wrapper |
+| `capybara-sre` | discovered from `sre-agents-mcp` over MCP | **another process** | the MCP client listener, not the tool wrapper |
 | `beaver-sre` | `TOOL_SCHEMAS` in `tools.py`, dispatched in `agent.py` | in-process | the instrumentation, directly |
 | `otter-sre` | same code, same schemas | in-process | the instrumentation, directly |
 
@@ -1074,7 +1099,7 @@ implements the convention's *structure* and skips only the two opt-in content at
 **Trace context crosses without help.** `inject_trace_context` writes W3C traceparent into the
 request's `_meta`, which is the SEP-414 mechanism the convention prescribes, and
 quarkus-mcp-server reads the same envelope. Verified by removing our own injection: the Python
-agent's 19-span trace still spans both services, with `customer-db-mcp / tools/call audit_log`
+agent's 19-span trace still spans both services, with `sre-agents-mcp / tools/call audit_log`
 parented to `beaver-sre / MCP send tools/call audit_log`. So on this path, propagation is solved and
 only content is missing.
 
@@ -1109,8 +1134,8 @@ app_svc   SELECT, INSERT, UPDATE, DELETE                      delete_records
 deploy_svc     SELECT, DELETE                                      delete_records
 ```
 
-`customer-db-mcp` connects as `app_svc` and serves the three investigator agents.
-`prod-db-mcp` runs the same image as `deploy_svc` and serves Goose. Both advertise `delete_records`
+`sre-agents-mcp` connects as `app_svc` and serves the three investigator agents.
+`goose-mcp` runs the same image as `deploy_svc` and serves Goose. Both advertise `delete_records`
 in `tools/list` — confirmed by calling it — and nothing filters the toolbox on the client side for
 capybara-sre; only the Goose recipe restricts `available_tools`.
 
@@ -1140,16 +1165,16 @@ backwards.
 
 Two bugs were hiding the half of this path that matters, and neither was in the agent.
 
-**`OTEL_SERVICE_NAME` does nothing in Quarkus.** `prod-db-mcp` runs the same image as
-`customer-db-mcp` and had only `OTEL_SERVICE_NAME=prod-db-mcp` set, so every span it produced was
-filed under `customer-db-mcp` — the name baked in at build time from `quarkus.application.name`.
-`prod-db-mcp` never appeared in Jaeger's service list at all, while `tools/call delete_records` and
+**`OTEL_SERVICE_NAME` does nothing in Quarkus.** `goose-mcp` runs the same image as
+`sre-agents-mcp` and had only `OTEL_SERVICE_NAME=goose-mcp` set, so every span it produced was
+filed under `sre-agents-mcp` — the name baked in at build time from `quarkus.application.name`.
+`goose-mcp` never appeared in Jaeger's service list at all, while `tools/call delete_records` and
 `DELETE capybara.customers` sat under the *investigators'* server. The over-privileged path and the
 read-only path looked like one service. Fixed with `QUARKUS_OTEL_SERVICE_NAME`, which is
 runtime-overridable; the standard variable is kept beside it with a comment, because the next person
 will reach for it too.
 
-**`agents/deploy.sh` never restarted `prod-db-mcp`.** It rebuilds the image and restarts four
+**`agents/deploy.sh` never restarted `goose-mcp`.** It rebuilds the image and restarts four
 deployments; the fifth ran a three-day-old replica. Now both MCP servers restart together.
 
 With both fixed, one Goose run over the recipe:
@@ -1175,7 +1200,7 @@ records what our platform framework, over the same protocol, does not.
 
 Two things it gets wrong, both worth stating on stage:
 
-- **It does not propagate trace context over MCP.** `prod-db-mcp` produced six separate single-span
+- **It does not propagate trace context over MCP.** `goose-mcp` produced six separate single-span
   traces, all orphaned. The MCP Python SDK does this correctly through `_meta`; goose 1.46.0 does not.
 - **Token totals appear three times per trace.** The three provider calls sum to exactly the figures
   on `reply_stream` and again on `reply` (6261 / 339). Summing across the trace triples the bill.
@@ -1341,16 +1366,16 @@ propagation off   18-21 spans   SQL in the agent's trace: no
 propagation on    27 spans      SQL in the agent's trace: yes
 
   capybara-sre     tools/call audit_log
-    customer-db-mcp  tools/call audit_log
-    customer-db-mcp  execute_tool audit_log        <- ours, parented from _meta
-      customer-db-mcp  DataSource.getConnection
-      customer-db-mcp  SELECT capybara.audit_log   <- the query that touched the rows
+    sre-agents-mcp  tools/call audit_log
+    sre-agents-mcp  execute_tool audit_log        <- ours, parented from _meta
+      sre-agents-mcp  DataSource.getConnection
+      sre-agents-mcp  SELECT capybara.audit_log   <- the query that touched the rows
 ```
 
 `mcp.propagate-context` switches it, defaulting to on, so the gap stays demonstrable:
 
 ```sh
-kubectl set env deployment/customer-db-mcp MCP_PROPAGATE_CONTEXT=false
+kubectl set env deployment/sre-agents-mcp MCP_PROPAGATE_CONTEXT=false
 ```
 
 Note what the workaround also buys: the span is named `execute_tool <name>` and carries
@@ -1362,6 +1387,6 @@ So the honest position moves from "the framework has a bug, wait for #789" to "t
 here are twenty lines that close it, and the protocol already carried what those lines needed". That is a
 better thing to say on stage and a better thing to post on the issue.
 
-One operational note earned the hard way while running it: restarting `customer-db-mcp` under a live agent
+One operational note earned the hard way while running it: restarting `sre-agents-mcp` under a live agent
 kills the agent's MCP session and the next request returns 500. Restart the server first, then the agent —
 which is the order `agents/deploy.sh` already uses.

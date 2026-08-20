@@ -27,7 +27,7 @@ spec:
                   name: anthropic-secret
                   key: api-key
             - name: CUSTOMER_DB_MCP_URL
-              value: "http://customer-db-mcp:8086/mcp/sse"
+              value: "http://sre-agents-mcp:8086/mcp/sse"
             # One variable serves all three datasources — app, deploy and admin —
             # because each appends its own ApplicationName to this base URL.
             - name: CUSTOMER_DB_URL

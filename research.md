@@ -549,7 +549,7 @@ Each of these is a real defect we hit, and each is on a slide or in a note somew
 
 - **Quarkus ignores `OTEL_SERVICE_NAME`.** You must set `QUARKUS_OTEL_SERVICE_NAME`. With only
   the standard variable set, spans file themselves under the name baked into the image — which
-  is how `prod-db-mcp`'s spans spent a week appearing as `capybara-db-mcp`.
+  is how `goose-mcp`'s spans spent a week appearing as `sre-agents-mcp`.
 - **`TextMapPropagator` is not injectable in Quarkus.** Use `OpenTelemetry.getPropagators()`.
 - **quarkus-mcp-server [#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789)
   (open):** the tool body runs on a *fresh duplicated Vert.x context*, and Quarkus keeps the
@@ -557,7 +557,7 @@ Each of these is a real defect we hit, and each is on a slide or in a note somew
   The SQL that touched the rows was in a different trace from the agent that asked for it.
   Closed from the tool side by extracting `traceparent` out of `_meta` and re-parenting:
   **21 spans → 27 spans**, with the `SELECT` inside the agent's trace. Toggle with
-  `capybara.mcp.propagate-context` / `CAPYBARA_MCP_PROPAGATE_CONTEXT=false` to show the gap.
+  `capybara.mcp.propagate-context` / `MCP_PROPAGATE_CONTEXT=false` to show the gap.
 - **MCP Python SDK 2.0.0** ships its own OTel instrumentation (`mcp/shared/_otel.py`,
   `inject_trace_context`) and emits `MCP send <method>` spans. `streamable_http_client` yields
   a **2-tuple** and talks **httpx2**, so an httpx instrumentation never sees it — which costs

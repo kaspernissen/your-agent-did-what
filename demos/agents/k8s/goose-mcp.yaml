@@ -1,6 +1,6 @@
 # The MCP server a developer's coding agent connects to.
 #
-# Same image as customer-db-mcp, and that is the point: the server is not the problem. It is
+# Same image as sre-agents-mcp, and that is the point: the server is not the problem. It is
 # handed the `deploy_svc` role's credentials, which carry DELETE on a table they have no business
 # deleting from, so anything driving this server inherits that. The over-grant is the bug and it
 # lives in the grants, not in anyone's code.
@@ -11,18 +11,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prod-db-mcp
-  labels: { app: prod-db-mcp }
+  name: goose-mcp
+  labels: { app: goose-mcp }
 spec:
   replicas: 1
   selector:
-    matchLabels: { app: prod-db-mcp }
+    matchLabels: { app: goose-mcp }
   template:
     metadata:
-      labels: { app: prod-db-mcp }
+      labels: { app: goose-mcp }
     spec:
       containers:
-        - name: prod-db-mcp
+        - name: goose-mcp
           image: customer-db-mcp:latest
           imagePullPolicy: Never
           ports: [{ containerPort: 8086 }]
@@ -32,18 +32,18 @@ spec:
             # changed by env; OTEL_SERVICE_NAME is the SDK's own override and works at runtime.
             # QUARKUS_OTEL_SERVICE_NAME, not OTEL_SERVICE_NAME. Quarkus ignores the standard
             # variable: service.name comes from quarkus.application.name, which is build-time and
-            # baked into this shared image as customer-db-mcp. With only OTEL_SERVICE_NAME set,
+            # baked into this shared image as sre-agents-mcp. With only OTEL_SERVICE_NAME set,
             # every span this server produced was filed under the *other* MCP server's name, so the
             # over-privileged path and the investigators' path looked like one service.
-            - { name: QUARKUS_OTEL_SERVICE_NAME,     value: prod-db-mcp }
-            - { name: OTEL_SERVICE_NAME,             value: prod-db-mcp }
+            - { name: QUARKUS_OTEL_SERVICE_NAME,     value: goose-mcp }
+            - { name: OTEL_SERVICE_NAME,             value: goose-mcp }
             - { name: QUARKUS_DATASOURCE_USERNAME,   value: deploy_svc }
             - { name: QUARKUS_DATASOURCE_PASSWORD,   value: deploy_svc }
             - { name: QUARKUS_DATASOURCE_JDBC_URL,
                 value: "jdbc:postgresql://production-db:5432/production?ApplicationName=goose" }
             - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
                 value: http://otel-collector-opentelemetry-collector.default.svc:4317 }
-            # Stated for parity with customer-db-mcp. The image already defaults to grpc; leaving
+            # Stated for parity with sre-agents-mcp. The image already defaults to grpc; leaving
             # the two servers configured differently is how you end up debugging the wrong one.
             - { name: OTEL_EXPORTER_OTLP_PROTOCOL, value: grpc }
           readinessProbe:
@@ -57,7 +57,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prod-db-mcp
+  name: goose-mcp
 spec:
-  selector: { app: prod-db-mcp }
+  selector: { app: goose-mcp }
   ports: [{ port: 8086, targetPort: 8086 }]

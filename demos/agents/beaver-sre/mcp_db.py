@@ -1,7 +1,7 @@
 """The same four tools, reached over MCP instead of over psycopg.
 
 Why this exists: with `PostgresDatabase`, Beaver and Otter hold the toolbox as local Python
-functions, while Capybara discovers its toolbox from `customer-db-mcp` and executes it in
+functions, while Capybara discovers its toolbox from `sre-agents-mcp` and executes it in
 another process. That difference confounds any comparison of their *tool* spans, because the
 one agent whose tool body runs across a process boundary is also the only one built on a
 framework. Pointing the Python agents at the same MCP server removes the variable: all three
@@ -36,7 +36,7 @@ URL_ENV = "CUSTOMER_DB_MCP_URL"
 # Streamable HTTP, the transport MCP's 2025-03-26 revision introduced and quarkus-mcp-server
 # serves at its root path. The older SSE transport is still mounted at <root>/sse; nothing
 # here depends on which one the Java agent picked.
-DEFAULT_URL = "http://customer-db-mcp:8086/mcp"
+DEFAULT_URL = "http://sre-agents-mcp:8086/mcp"
 
 
 def _text(result) -> str:

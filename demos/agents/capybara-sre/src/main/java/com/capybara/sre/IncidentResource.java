@@ -20,7 +20,7 @@ import java.util.Map;
  * <h2>Why a rehearsal endpoint exists at all</h2>
  *
  * The incident is caused by a coding agent. A developer asks goose to tidy up the free
- * plan, goose calls {@code delete_records} on {@code prod-db-mcp}, and that server is
+ * plan, goose calls {@code delete_records} on {@code goose-mcp}, and that server is
  * holding {@code deploy_svc} credentials which carry DELETE. See
  * {@code agents/goose/run-recipe.sh}; that is the real path and the one to demo.
  *

@@ -5,7 +5,7 @@ this module describes the *toolbox* and nothing about storage. The agent loop
 (`agent.py`) knows about neither.
 
 Beaver does not stage its own incident. The state comes from the shared database, so the
-deletion goose makes through prod-db-mcp is the same event Beaver reports on —
+deletion goose makes through goose-mcp is the same event Beaver reports on —
 which is the point of pointing them at one database.
 """
 from __future__ import annotations

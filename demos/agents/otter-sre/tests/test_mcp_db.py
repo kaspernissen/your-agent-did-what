@@ -71,7 +71,7 @@ def test_text_joins_every_text_block():
 
 
 def test_from_env_prefers_mcp_over_a_dsn(monkeypatch):
-    monkeypatch.setenv(mcp_db.URL_ENV, "http://customer-db-mcp:8086/mcp")
+    monkeypatch.setenv(mcp_db.URL_ENV, "http://sre-agents-mcp:8086/mcp")
     monkeypatch.setenv(db.DSN_ENV, "postgresql://app_svc@production-db:5432/production")
     assert isinstance(db.from_env(), mcp_db.McpDatabase)
 

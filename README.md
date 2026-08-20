@@ -110,7 +110,7 @@ state with the same credentials, so the investigation half stands on its own. Se
 rehearsal: a silent instrumentation regression looks exactly like a working demo.
 
 **Services reporting.** The dropdown should list `capybara-sre`, `beaver-sre`, `otter-sre`,
-`capybara-db-mcp`, `prod-db-mcp`, and `goose` once the recipe has run. A missing one has not
+`sre-agents-mcp`, `goose-mcp`, and `goose` once the recipe has run. A missing one has not
 been asked anything yet, or its exporter never connected.
 
 **One question, one trace.** Open the newest trace for a service: a single tree rooted at
@@ -118,7 +118,7 @@ been asked anything yet, or its exporter never connected.
 
 **The trace crosses into MCP.** Expand `execute_tool` and the MCP server's spans should be
 inside it, with the `SELECT` below them. That join exists only because `traceparent` rides in
-the request's `params._meta`. Redeploy with `CAPYBARA_MCP_PROPAGATE_CONTEXT=false` to watch it
+the request's `params._meta`. Redeploy with `MCP_PROPAGATE_CONTEXT=false` to watch it
 break on purpose.
 
 **Each agent speaks its own vocabulary.** Open a `chat` span and read the tags:

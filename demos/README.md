@@ -18,7 +18,7 @@ Then open **<http://localhost:8088>**.
 ## The incident
 
 The capybara customer database has five rows. A developer asks their own coding agent to
-tidy up the free plan. It does: goose calls `delete_records` on `prod-db-mcp`, and that
+tidy up the free plan. It does: goose calls `delete_records` on `goose-mcp`, and that
 server is holding `deploy_svc` credentials, which carry `DELETE`.
 
 ```
@@ -72,13 +72,13 @@ Same database, same incident, same question, same tools, same MCP server, same c
 only thing that differs is what writes the telemetry — which is the point, and it took work to
 make true. The Python agents used to call their tools in-process, so any comparison of their
 *tool* spans measured the topology instead of the libraries. They now go through
-`customer-db-mcp` like the Java one does; see `agents/beaver-sre/mcp_db.py`.
+`sre-agents-mcp` like the Java one does; see `agents/beaver-sre/mcp_db.py`.
 
 | | **Capybara SRE** | **Beaver SRE** | **Otter SRE** |
 |---|---|---|---|
 | platform | Java · Quarkus + LangChain4j | Python · Anthropic SDK | Python · Anthropic SDK |
 | instrumented by | the framework | OpenInference | OpenLLMetry |
-| tools | over MCP, to `customer-db-mcp` | the same, over MCP | the same, over MCP |
+| tools | over MCP, to `sre-agents-mcp` | the same, over MCP | the same, over MCP |
 | data | PostgreSQL, as `app_svc` | via the MCP server | via the MCP server |
 | model call emits | `gen_ai.prompt` / `gen_ai.completion`, both removed from the spec | `llm.*` / `openinference.*` | `gen_ai.*`, already current |
 | arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` | unchanged, nothing to convert |
@@ -112,7 +112,7 @@ a terminal, which is where a developer would actually meet it.
 
 agents/
   capybara-sre/        the Java agent, and the console it serves at /
-  customer-db-mcp/     the MCP server it calls
+  sre-agents-mcp/     the MCP server it calls
   customer-db-core/    shared database access, plain JDBC, no framework
   beaver-sre/          the Python agent, instrumented by OpenInference
   otter-sre/           the same agent, instrumented by OpenLLMetry — a separate complete copy,
@@ -141,7 +141,7 @@ scripts/               verify-telemetry.py
 
 ## The developer with an agent (optional, alongside)
 
-A second MCP server, `prod-db-mcp`, runs the *same image* as `customer-db-mcp` but is handed the
+A second MCP server, `goose-mcp`, runs the *same image* as `sre-agents-mcp` but is handed the
 `deploy_svc` role's credentials and `application_name=goose`. Same server code, different grants,
 which is the real failure: the MCP server is fine, the credentials it was given are not.
 
@@ -250,7 +250,7 @@ because `CustomerDbTools` reads `traceparent` out of the MCP request's `_meta` i
 as quarkus-mcp-server leaves it:
 
 ```sh
-kubectl set env deployment/customer-db-mcp MCP_PROPAGATE_CONTEXT=false
+kubectl set env deployment/sre-agents-mcp MCP_PROPAGATE_CONTEXT=false
 kubectl rollout restart deployment/capybara-sre   # or its MCP session dies with the server
 ./01_start-demo.sh
 ```

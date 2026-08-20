@@ -34,7 +34,7 @@ spec:
             # The same MCP server Capybara uses, so all three agents execute their tools in
             # the same other process and differ only in what emits the telemetry. Remove this
             # and the DSN below takes over, reading the table directly.
-            - { name: CUSTOMER_DB_MCP_URL, value: http://customer-db-mcp:8086/mcp }
+            - { name: CUSTOMER_DB_MCP_URL, value: http://sre-agents-mcp:8086/mcp }
             - { name: CUSTOMER_DB_DSN,
                 value: "postgresql://app_svc:app_svc@production-db:5432/production" }
             - { name: OTEL_EXPORTER_OTLP_ENDPOINT,
