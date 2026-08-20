@@ -3,14 +3,21 @@
 
 This repository contains the demo for the conference talk delivered by **Kasper Borg Nissen** (Dash0) and **Adriana Villela** (Dynatrace).
 
-> GenAI observability is fragmented — OpenInference, OpenLLMetry and framework conventions all
-> naming the same things differently. OpenTelemetry is where they converge. This talk maps that
-> honestly, bridges the gap at the collector with `gen_ai_normalizer`, and then asks the harder
-> question: something just deleted a database — what does your telemetry actually tell you?
+## Abstract
 
-**SREday London**, then **OSS Summit EU** in October.
+The GenAI observability space is fragmented right now. OpenInference, OpenLLMetry, framework-specific conventions are all solving the same problems with incompatible attribute names. That made sense when OTel’s GenAI support was thin. It makes less sense today.
 
----
+OTel is where this converges. Getting there from where most teams actually are isn’t obvious. Kasper and Adriana cover the current landscape, how the genainormalizer processor bridges the gap at the collector layer, and what a realistic path to OTel-native GenAI observability looks like.
+
+Then the harder question: your agent just deleted a database. What does your telemetry actually tell you? Non-deterministic systems don’t leave obvious footprints, and most teams discover that at the worst possible time.
+
+## Conferences
+
+- **SREday London** on September 24
+- **Observability Summit EU** in October 5, Prague
+- **Open Source Summit EU** in October 9, Prague
+- **KCD UK** in October 20, Edinburgh
+
 
 ## The cast
 

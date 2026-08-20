@@ -259,8 +259,9 @@
         ['platform', 'Python · Anthropic SDK'],
         ['tools',    'over MCP, to sre-agents-mcp'],
         ['data',     'the same PostgreSQL, as app_svc'],
+        ['loop',     'OpenInference’s own set_tool / set_input / set_output'],
         ['emits',    'openinference.* / llm.* — no OTel at all'],
-        ['arrives',  'gen_ai.* via the collector’s gen_ai_normalizer'],
+        ['arrives',  'gen_ai.* via gen_ai_normalizer — the arguments, not the result'],
       ],
       placeholder: 'Customers are reporting missing accounts. Investigate…',
       presets: [
@@ -280,6 +281,8 @@
         meta: [d.convention, 'service ' + d.agentName, d.model],
         toolNote: 'This platform emits no OTel vocabulary at all — the tool span left as '
           + '<code>openinference.span.kind=TOOL</code> with <code>tool.name</code>, '
+          + '<code>tool.description</code> and <code>tool.parameters</code> — the schema the '
+          + 'model was shown, straight from the library’s <code>set_tool</code> — plus '
           + '<code>tool_call.id</code>, its arguments and its result. The collector turned '
           + 'that into <code>gen_ai.operation.name=execute_tool</code>, '
           + '<code>gen_ai.tool.name</code>, <code>gen_ai.tool.call.id</code> and '
@@ -292,14 +295,17 @@
       name: 'Otter, SRE',
       tagline: 'A third vocabulary for the same call',
       image: 'otter.png',
-      role: 'The same Python agent again, instrumented by OpenLLMetry instead. Expected a third '
-          + 'set of names; found the current OTel conventions, richer than our own Java stack’s.',
+      role: 'The same Python agent again, instrumented by OpenLLMetry instead. Its model call is '
+          + 'already in the current OTel conventions — and then its own @agent and @tool '
+          + 'decorators describe the loop in a vendor namespace, which the collector files under '
+          + 'message attributes on a tool span.',
       facts: [
         ['platform', 'Python · Anthropic SDK'],
         ['tools',    'over MCP, to sre-agents-mcp'],
         ['data',     'the same PostgreSQL, as app_svc'],
-        ['emits',    'gen_ai.* already, as of 0.62.3'],
-        ['arrives',  'unchanged — nothing left to normalize'],
+        ['loop',     'OpenLLMetry’s own @agent and @tool decorators'],
+        ['emits',    'gen_ai.* for the model call; traceloop.entity.* for the tools'],
+        ['arrives',  'entity.input/output → gen_ai.input.messages / output.messages'],
       ],
       placeholder: 'Customers are reporting missing accounts. Investigate…',
       presets: [
@@ -315,11 +321,18 @@
         toolCalls: d.toolCalls || [],
         evaluations: [],
         traceId: d.traceId,
-        traceFind: 'messages.create',
+        // Traceloop names the model call anthropic.chat; OpenInference calls the same call
+        // messages.create. The deep link highlights it, so a stale name highlights nothing.
+        traceFind: 'anthropic.chat',
         meta: [d.convention, 'service ' + d.agentName, d.model],
-        toolNote: 'Measured surprise: OpenLLMetry already emits the current OTel conventions, so '
-          + 'the normalizer has nothing to do here. Traceloop’s code donation to OpenTelemetry never '
-          + 'landed, and they converged the vocabulary anyway.',
+        toolNote: 'Measured surprise, and not the one we expected. OpenLLMetry already emits the '
+          + 'current OTel conventions for the <em>model call</em> — but its own <code>@tool</code> '
+          + 'decorator files the arguments and result above under '
+          + '<code>traceloop.entity.input</code> and <code>traceloop.entity.output</code>. No '
+          + '<code>gen_ai.tool.call.arguments</code>, no <code>.result</code>. The collector then '
+          + 'maps them to <code>gen_ai.input.messages</code> and '
+          + '<code>gen_ai.output.messages</code> — <em>message</em> attributes, on a tool span. '
+          + 'The library that converged still hands the forensics over in its own namespace.',
       }),
     },
   };
