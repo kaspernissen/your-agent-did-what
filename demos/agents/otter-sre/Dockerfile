@@ -2,7 +2,10 @@
 #
 # One image, one instrumentation library: requirements.txt installs OpenLLMetry and nothing
 # else, so what this image emits is decided at build time and cannot drift at run time.
-FROM python:3.12-slim
+# Pinned by digest for the same reason requirements.txt is pinned by version: a floating tag
+# re-resolves on every rebuild. This is the multi-arch index digest, not a single platform's,
+# so it still builds on both arm64 and amd64. Currently 3.12.14-slim-trixie.
+FROM python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea
 
 WORKDIR /app
 

@@ -2,22 +2,33 @@
 #
 # ../beaver-sre is the same list with OpenInference in place of OpenLLMetry. That one line is
 # the whole difference between the two agents.
-anthropic>=0.40
+#
+# Every version is exact, and deliberately so. These were floating `>=` until a rebuild
+# resolved anthropic to 1.x, whose move to httpx2 dropped the transitive httpx that
+# traceloop-sdk imports without declaring, and this agent crash-looped on import. Nothing in
+# the repo had changed; the resolution had. A demo that is rebuilt on the morning of a talk
+# cannot resolve against whatever PyPI shipped overnight. Bump these on purpose, then re-run
+# ./deploy.sh and ../scripts/verify-telemetry.py.
+#
+# The two agents pin identical versions for every shared dependency below. That is what
+# keeps the comparison honest: they differ in the instrumentation library, not in the SDK
+# underneath it.
+anthropic==1.3.0
 
 # Reads the same PostgreSQL the other agents do, so all of them report identical state.
-psycopg[binary]>=3.2
+psycopg[binary]==3.3.5
 
 # CAPYBARA_MCP_URL → reach the same tools over MCP instead, the way capybara-sre does.
 # 2.x, whose client API differs from 1.x: streamable_http_client yields two streams, and
 # call_tool takes the `_meta` map that carries trace context. See mcp_db.py.
-mcp>=2.0
+mcp==2.1.1
 
 # Spans for the Anthropic SDK's own HTTP calls. Note this does NOT cover the MCP client:
 # mcp 2.x talks httpx2 and ships its own OTel instrumentation. See mcp_db.py.
-opentelemetry-instrumentation-httpx>=0.48b0
-opentelemetry-api>=1.27
-opentelemetry-sdk>=1.27
-opentelemetry-exporter-otlp-proto-http>=1.27
+opentelemetry-instrumentation-httpx==0.65b0
+opentelemetry-api==1.44.0
+opentelemetry-sdk==1.44.0
+opentelemetry-exporter-otlp-proto-http==1.44.0
 
 # OpenLLMetry, the whole SDK rather than the Anthropic instrumentation alone. As of 0.62.3
 # it already emits gen_ai.* for the model call, so this agent needs no normalizing there.
@@ -25,4 +36,10 @@ opentelemetry-exporter-otlp-proto-http>=1.27
 # The SDK is what carries the @agent and @tool decorators agent.py uses; it pulls in
 # opentelemetry-instrumentation-anthropic itself. It also brings its own exporter, which
 # telemetry.py replaces with ours the documented way, via Traceloop.init(exporter=...).
-traceloop-sdk>=0.62
+traceloop-sdk==0.62.3
+
+# httpx, which traceloop-sdk 0.62.3 imports and does not declare: importing the SDK reaches
+# evaluator.py, whose first line is `import httpx`. Neither anthropic 1.x nor mcp 2.x brings
+# it any more — both moved to httpx2, a separate distribution installing a separate module —
+# so it has to be named here. The two coexist fine. Remove when traceloop declares it.
+httpx==0.28.1
