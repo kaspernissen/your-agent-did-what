@@ -19,6 +19,9 @@
   arguments AND result, which is exactly the content the MCP path's execute_tool span does
   not. Side by side, the talk's central finding is visible without a trace viewer -- the
   app knew, the telemetry didn't.
+
+  Each agent keeps its own last run for the life of the page, so asking all three the same
+  question and then clicking between them compares three answers instead of destroying two.
 -->
 <style>
   :root{
@@ -339,7 +342,20 @@
 
   let current = 'capybara';
 
+  /*
+   * What each agent has to show for itself: the last run it produced, the prompt in the box
+   * when you left it, and the last error it returned. Switching agents used to hide the
+   * output, which meant the answer you wanted to compare against was gone by the time you
+   * had the other one. Memory only -- a reload starts the demo clean.
+   */
+  const runs = {};
+  const slotFor = (key) =>
+    runs[key] || (runs[key] = {prompt: '', run: null, error: ''});
+
   function selectAgent(key) {
+    // Keep whatever is typed with the agent you are leaving, submitted or not.
+    slotFor(current).prompt = $('q').value;
+
     current = key;
     const a = AGENTS[key];
 
@@ -360,8 +376,12 @@
       a.presets.map(([label, prompt]) =>
         '<button type="button" data-prompt="' + esc(prompt) + '">' + esc(label) + '</button>').join('');
 
-    $('out').classList.add('hidden');
-    $('error').classList.add('hidden');
+    // Put this agent's own run back on screen, exactly as it was left.
+    const slot = slotFor(key);
+    $('q').value = slot.prompt;
+    if (slot.run) render(slot.run); else $('out').classList.add('hidden');
+    $('error').textContent = slot.error;
+    $('error').classList.toggle('hidden', !slot.error);
   }
 
   Object.keys(AGENTS).forEach(k =>
@@ -394,7 +414,13 @@
     e.preventDefault();
     const prompt = $('q').value.trim();
     if (!prompt) return;
-    const agent = AGENTS[current];
+    // The agent that was asked, not whichever one is selected when the answer lands: a
+    // switch mid-flight used to paint one agent's answer under another agent's card.
+    const key = current;
+    const agent = AGENTS[key];
+    const slot = slotFor(key);
+    slot.prompt = prompt;
+    slot.error = '';
 
     $('go').disabled = true;
     $('go').innerHTML = '<span class="spin">◌</span> thinking';
@@ -408,10 +434,14 @@
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error || (r.status + ' ' + r.statusText));
-      render(agent.normalise(d));
+      slot.run = agent.normalise(d);
+      if (current === key) render(slot.run);
     } catch (err) {
-      $('error').textContent = 'Request failed: ' + err.message;
-      $('error').classList.remove('hidden');
+      slot.error = 'Request failed: ' + err.message;
+      if (current === key) {
+        $('error').textContent = slot.error;
+        $('error').classList.remove('hidden');
+      }
     } finally {
       $('go').disabled = false;
       $('go').textContent = 'Ask';
