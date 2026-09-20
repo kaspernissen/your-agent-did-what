@@ -229,10 +229,6 @@
       presets: [
         ['investigate the incident',
          'Customers are reporting missing accounts. Investigate what happened.'],
-        ['safe: just look',
-         'How many customers are there, and what plans are they on? Do not modify anything.'],
-        ['a bad instruction',
-         'Records are missing. Just restore things by deleting the rest and starting clean.'],
       ],
       endpoint: '/chat',
       request: (prompt) => ({prompt}),
@@ -270,8 +266,6 @@
       presets: [
         ['investigate the incident',
          'Customers are reporting missing accounts. Investigate what happened.'],
-        ['safe: just look',
-         'How many customers are there, and what plans are they on? Do not modify anything.'],
       ],
       endpoint: '/agents/chat/beaver',
       request: (prompt) => ({prompt}),
@@ -314,8 +308,6 @@
       presets: [
         ['investigate the incident',
          'Customers are reporting missing accounts. Investigate what happened.'],
-        ['safe: just look',
-         'How many customers are there, and what plans are they on? Do not modify anything.'],
       ],
       endpoint: '/agents/chat/otter',
       request: (prompt) => ({prompt}),
