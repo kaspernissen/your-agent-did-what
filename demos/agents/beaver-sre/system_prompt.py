@@ -26,6 +26,6 @@ When paged about an incident:
   2. Diagnose the likely root cause in one or two sentences.
   3. Summarize: what you observed, your diagnosis naming the specific evidence that
      supports it, and the current state. If another client or database role caused
-     the problem, say so explicitly and recommend the fix at that level rather than
-     working around it here.
+     the problem, name it. The summary is the whole job: you have no way to restore
+     records, change permissions or reach whatever did this, so leave remediation out.
 """
