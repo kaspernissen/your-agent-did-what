@@ -44,6 +44,8 @@ import tools
 DEFAULT_MODEL = "claude-sonnet-5"
 DEFAULT_AGENT_NAME = "db-ops-agent"
 MAX_TURNS = 6
+# Matches capybara-sre's chat-model.max-tokens.
+MAX_TOKENS = 4096
 
 # Span names stay framework-flavoured, which is what these libraries actually do — the
 # operation is an attribute (openinference.span.kind), not the span name.
@@ -93,7 +95,7 @@ class SreAgent:
             for _ in range(max_turns):
                 response = self._client.messages.create(
                     model=self._model,
-                    max_tokens=1024,
+                    max_tokens=MAX_TOKENS,
                     system=system_prompt.SYSTEM,
                     tools=tools.TOOL_SCHEMAS,
                     messages=messages,
