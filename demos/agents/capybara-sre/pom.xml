@@ -52,9 +52,13 @@
       <artifactId>customer-db-core</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
+    <!-- Ahead of the BOM: 1.13.1+ omits top_k when it is not configured, which
+         claude-sonnet-5 requires. The MCP extension stays on the BOM version, which
+         still offers the `http` (SSE) transport. -->
     <dependency>
       <groupId>io.quarkiverse.langchain4j</groupId>
       <artifactId>quarkus-langchain4j-anthropic</artifactId>
+      <version>1.13.3</version>
     </dependency>
     <dependency>
       <groupId>io.quarkiverse.langchain4j</groupId>
