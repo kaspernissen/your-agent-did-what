@@ -35,6 +35,7 @@ from opentelemetry import trace
 from traceloop.sdk.decorators import agent as agent_span
 from traceloop.sdk.decorators import tool as tool_span
 
+import system_prompt
 import tools
 
 DEFAULT_MODEL = "claude-sonnet-5"
@@ -98,6 +99,7 @@ class SreAgent:
             response = self._client.messages.create(
                 model=self._model,
                 max_tokens=1024,
+                system=system_prompt.SYSTEM,
                 tools=tools.TOOL_SCHEMAS,
                 messages=messages,
             )

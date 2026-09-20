@@ -53,7 +53,9 @@ def record_count():
     return len(records) if isinstance(records, list) else None
 
 
-# Anthropic tool-use schemas.
+# Anthropic tool-use schemas. The names, descriptions, argument descriptions and order
+# match capybara-sre's @Tool/@P declarations and customer-db-mcp's. They are copies;
+# nothing keeps them in sync.
 TOOL_SCHEMAS = [
     {
         "name": "list_records",
@@ -62,21 +64,45 @@ TOOL_SCHEMAS = [
     },
     {
         "name": "query",
-        "description": "Query records, optionally filtered by plan (e.g. 'free' or 'pro').",
-        "input_schema": {"type": "object", "properties": {"plan": {"type": "string"}}},
+        "description": "Query customer records, optionally filtered by plan (e.g. 'free' or 'pro').",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "plan": {
+                    "type": "string",
+                    "description": "plan to filter by, or omit for all",
+                }
+            },
+        },
+    },
+    {
+        "name": "delete_records",
+        "description": "Delete customer records. With no plan, deletes ALL records. Destructive.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "plan": {
+                    "type": "string",
+                    "description": "plan whose records to delete; omit to delete ALL",
+                }
+            },
+        },
     },
     {
         "name": "audit_log",
         "description": (
-            "Recent changes to the customer table: what happened, and which client and "
-            "database role did it. Use this to find out who changed something."
+            "Recent changes to the customers table, newest first, with the client and "
+            "database role that made each one. Use this to find out WHO changed something."
         ),
-        "input_schema": {"type": "object", "properties": {"limit": {"type": "integer"}}},
-    },
-    {
-        "name": "delete_records",
-        "description": "Delete records. With no plan, deletes ALL records. Destructive.",
-        "input_schema": {"type": "object", "properties": {"plan": {"type": "string"}}},
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "description": "how many entries to return; 20 is usually enough",
+                }
+            },
+        },
     },
 ]
 

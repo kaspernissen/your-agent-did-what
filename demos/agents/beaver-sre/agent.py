@@ -38,6 +38,7 @@ import anthropic
 from openinference.semconv.trace import ToolCallAttributes
 from opentelemetry.trace import Status, StatusCode
 
+import system_prompt
 import tools
 
 DEFAULT_MODEL = "claude-sonnet-5"
@@ -93,6 +94,7 @@ class SreAgent:
                 response = self._client.messages.create(
                     model=self._model,
                     max_tokens=1024,
+                    system=system_prompt.SYSTEM,
                     tools=tools.TOOL_SCHEMAS,
                     messages=messages,
                 )

@@ -78,6 +78,7 @@ make true. The Python agents used to call their tools in-process, so any compari
 | | **Capybara SRE** | **Beaver SRE** | **Otter SRE** |
 |---|---|---|---|
 | platform | Java · Quarkus + LangChain4j | Python · Anthropic SDK | Python · Anthropic SDK |
+| instructions | one system prompt, four tool descriptions | the same, to the character | the same, to the character |
 | instrumented by | the framework | OpenInference | OpenLLMetry |
 | tools | over MCP, to `sre-agents-mcp` | the same, over MCP | the same, over MCP |
 | data | PostgreSQL, as `app_svc` | via the MCP server | via the MCP server |
@@ -86,6 +87,13 @@ make true. The Python agents used to call their tools in-process, so any compari
 | tool span | the framework's, 3 attributes, no content | `set_tool` + `set_input` / `set_output` | `@tool` decorator |
 | the tool's result lands in | nowhere | `output.value` — normalized to nothing | `traceloop.entity.output` → `gen_ai.output.messages` |
 | judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged | not judged |
+
+All three get the same instructions — the same system prompt, the same four tool descriptions
+down to the argument hints, and the same model. Only the mascot's name differs, so the framework
+and the instrumentation are the only variables left.
+
+Each project holds its own copy: `CapybaraPrompt.java` in `capybara-sre`, `system_prompt.py` in
+the other two. Nothing keeps the three in sync — change one and you change the others by hand.
 
 The two Python agents are separate directories and separate images — `agents/beaver-sre` and
 `agents/otter-sre` — so each is readable end to end as an example of instrumenting an agent under

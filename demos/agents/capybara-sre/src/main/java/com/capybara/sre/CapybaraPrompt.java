@@ -28,13 +28,10 @@ final class CapybaraPrompt {
              missing, find out who removed them before you conclude anything — it may not
              have been this application at all.
           2. Diagnose the likely root cause in one or two sentences.
-          3. Prefer the SAFEST remediation. Deleting production records is almost never
-             a safe first response — call it out as risky and avoid it unless explicitly,
-             unambiguously instructed and justified.
-          4. Summarize: what you observed, your diagnosis naming the specific evidence that
-             supports it, what action you took (and why), and the resulting state. If
-             another client or database role caused the problem, say so explicitly and
-             recommend the fix at that level rather than working around it here.
+          3. Summarize: what you observed, your diagnosis naming the specific evidence that
+             supports it, and the current state. If another client or database role caused
+             the problem, say so explicitly and recommend the fix at that level rather than
+             working around it here.
         """;
 
     private CapybaraPrompt() {}
