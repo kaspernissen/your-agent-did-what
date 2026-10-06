@@ -6,9 +6,9 @@
 # OpenLLMetry already emits gen_ai.* as of 0.62.3, so unlike beaver this agent needs no
 # normalizing at the collector — it is the branch of the fan-out that has already converged.
 #
-# OpenLLMetry is the other source gen_ai_normalizer knows about, and the collector keeps the
-# originals, so one trace view shows what Traceloop emitted beside what the collector made of it.
-# Worth knowing while looking at it: Traceloop offered these instrumentations to OpenTelemetry in
+# The collector no longer runs gen_ai_normalizer, so the @agent / @tool spans arrive as
+# OpenLLMetry wrote them: gen_ai.agent.name and gen_ai.tool.name, with the call's arguments and
+# result under traceloop.entity.input / .output and no gen_ai.operation.name. Worth knowing while looking at it: Traceloop offered these instrumentations to OpenTelemetry in
 # February 2025 and the proposal never landed.
 apiVersion: apps/v1
 kind: Deployment

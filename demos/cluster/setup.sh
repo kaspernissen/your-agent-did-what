@@ -69,7 +69,7 @@ helm upgrade --install perses perses/perses --version 0.23.2 -n observability \
 kubectl rollout restart -n observability statefulset/perses >/dev/null 2>&1 || \
   kubectl rollout restart -n observability deployment/perses >/dev/null 2>&1 || true
 
-echo "--- OpenTelemetry Collector (with gen_ai_normalizer) ---"
+echo "--- OpenTelemetry Collector ---"
 # The vendor path is opt-in on the token, exactly like the local compose path. Without
 # it the collector still exports to stdout and Jaeger, so the demo works offline.
 # These stay empty when their token is absent, and an empty array is where this

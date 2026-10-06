@@ -149,27 +149,29 @@ break on purpose.
 |---|---|---|
 | `capybara-sre` | `gen_ai.*` | quarkus-langchain4j emits them directly |
 | `otter-sre` | `gen_ai.*` | OpenLLMetry 0.62.3 already emits the conventions |
-| `beaver-sre` | **both** `llm.*` **and** `gen_ai.*` | the collector normalizes it, and `remove_originals: false` keeps both |
+| `beaver-sre` | **both** `llm.*` **and** `gen_ai.*` | OpenInference writes both itself, with `OPENINFERENCE_ENABLE_GENAI_SEMCONV=true` |
 
-Beaver carrying both at once is the check that `gen_ai_normalizer` is in the pipeline. Only
-`llm.*` means the processor is not running; only `gen_ai.*` means someone set
-`remove_originals: true` and the before/after demo is gone.
+Beaver carrying both at once is the check that the variable reached the pod. Only `llm.*`
+means it is not set, or `openinference-instrumentation` is older than 0.1.51. The collector
+still defines `gen_ai_normalizer` but runs no pipeline through it, so nothing is rewritten in
+flight.
 
 **The forensic attributes.** On a tool span, look for `gen_ai.tool.call.arguments` and
 `.result`. Each agent uses its own library's documented API for these spans — OpenInference's
-`set_tool` / `set_input` / `set_output`, OpenLLMetry's `@tool` — and **not one of the three
-produces `gen_ai.tool.call.result`.** Where the content lands instead:
+`set_tool` / `set_input` / `set_output`, OpenLLMetry's `@tool` — and only one of the three
+gets both into `gen_ai.*`, with one of them wrong:
 
 | Service | Arguments | Result |
 |---|---|---|
-| `beaver-sre` | `input.value`, normalized to `gen_ai.tool.call.arguments` | `output.value`, normalized to **nothing** |
-| `otter-sre` | `traceloop.entity.input`, normalized to `gen_ai.input.messages` | `traceloop.entity.output` → `gen_ai.output.messages` |
+| `beaver-sre` | `input.value`; `gen_ai.tool.call.arguments` holds the tool's **schema**, not the arguments | `output.value` → `gen_ai.tool.call.result` |
+| `otter-sre` | `traceloop.entity.input` only | `traceloop.entity.output` only |
 | `capybara-sre` | absent on the MCP path | absent on the MCP path |
 
-Otter is the sharp one: the library that has already converged on `gen_ai.*` for the model
-call hands the tool's content over in a vendor namespace, and the collector then files it
-under *message* attributes on a tool span. If `gen_ai.tool.call.result` starts appearing
-anywhere, an upstream release has changed the story and the slide needs revisiting.
+Beaver's arguments are wrong upstream: OpenInference derives `gen_ai.tool.call.arguments` from
+`tool.parameters`, which is the JSON schema `set_tool` records. The real arguments are on the
+same span in `tool_call.function.arguments`. Otter is the other sharp one: the library that has
+already converged on `gen_ai.*` for the model call hands the tool's content over in a vendor
+namespace, and with no normalizer in the collector it stays there.
 
 **What is correctly absent.** `gen_ai.evaluation.result` is an event in the logs data model,
 not a span, so Jaeger will not show it. Read those — and check spans are arriving at all — from
@@ -195,8 +197,10 @@ reading the spans, which is how they were arrived at in the first place:
 - **The MCP path also loses the trace, at one named hop.** The tool body runs on a new
   duplicated Vert.x context, so its SQL starts a root trace of its own —
   [quarkus-mcp-server#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789), open.
-- **The normalizer converts the structure, not the result.** Arguments carry across; the
-  tool's result has no mapping. The same missing half, reached by a different road.
+- **OpenInference's own GenAI output gets the result, and the arguments wrong.** With
+  `OPENINFERENCE_ENABLE_GENAI_SEMCONV=true`, `gen_ai.tool.call.result` arrives and
+  `gen_ai.tool.call.arguments` carries the tool's schema. The collector's normalizer, which
+  this replaced, had the opposite gap: arguments mapped, no mapping for the result.
 - **Evaluations are log records, not span events.** Which is what the convention asks for, and
   what most implementations get wrong.
 

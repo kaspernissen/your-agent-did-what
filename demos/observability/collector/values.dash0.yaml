@@ -33,7 +33,9 @@ config:
     pipelines:
       traces:
         receivers: [otlp]
-        processors: [gen_ai_normalizer, batch]
+        # Re-enable to translate OpenInference / OpenLLMetry at the collector instead:
+        # processors: [gen_ai_normalizer, batch]
+        processors: [batch]
         exporters: [debug, otlp/jaeger, otlp/dash0]
       metrics:
         receivers: [otlp]

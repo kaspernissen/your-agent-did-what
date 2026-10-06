@@ -259,8 +259,8 @@
         ['tools',    'over MCP, to sre-agents-mcp'],
         ['data',     'the same PostgreSQL, as app_svc'],
         ['loop',     'OpenInference’s own set_tool / set_input / set_output'],
-        ['emits',    'openinference.* / llm.* — no OTel at all'],
-        ['arrives',  'gen_ai.* via gen_ai_normalizer — the arguments, not the result'],
+        ['emits',    'openinference.* / llm.*, plus gen_ai.* via OPENINFERENCE_ENABLE_GENAI_SEMCONV'],
+        ['arrives',  'unchanged — tool.call.result included, tool.call.arguments holds the schema'],
       ],
       placeholder: 'Customers are reporting missing accounts. Investigate…',
       presets: [

@@ -32,3 +32,8 @@ opentelemetry-exporter-otlp-proto-http==1.44.0
 
 # llm.* / openinference.* for the model call — the vocabulary the collector rewrites.
 openinference-instrumentation-anthropic==2.1.1
+
+# The core package the instrumentor depends on, pinned in its own right because the
+# deployment relies on it directly: OPENINFERENCE_ENABLE_GENAI_SEMCONV (the only source of
+# gen_ai.* for this agent) needs >= 0.1.51. 0.1.60 is what the measured runs used.
+openinference-instrumentation==0.1.60

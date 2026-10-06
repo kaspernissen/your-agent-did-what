@@ -1,10 +1,16 @@
 # The shared collector, used by both demos.
 #
-# gen_ai_normalizer is enabled for every pipeline, including the traffic that does not
-# need it. That is safe by design: the processor only rewrites the source conventions
-# listed under `sources`, so spans already in gen_ai.* pass through untouched while
-# OpenInference spans are rewritten. One collector serves both without per-service
-# routing.
+# gen_ai_normalizer is configured below but left out of the traces pipeline. Every agent
+# now emits gen_ai.* itself: capybara-sre through its framework, otter-sre through
+# OpenLLMetry, and beaver-sre through OpenInference's OPENINFERENCE_ENABLE_GENAI_SEMCONV
+# (set in agents/k8s/beaver-sre.yaml). Measured side by side, OpenInference's own output
+# covered every attribute the normalizer produced from the same spans, and more.
+#
+# Without the processor, otter-sre's hand-written agent and tool spans keep their call
+# content in traceloop.entity.* only. Put gen_ai_normalizer back in the traces pipeline
+# (here and in values.dash0.yaml / values.dynatrace.yaml, which restate it) to translate
+# that at the collector again. It only rewrites the sources listed under `sources`, so
+# spans already in gen_ai.* pass through untouched.
 mode: deployment
 replicaCount: 1
 image:
@@ -62,7 +68,9 @@ config:
     pipelines:
       traces:
         receivers: [otlp]
-        processors: [gen_ai_normalizer, batch]
+        # Re-enable to translate OpenInference / OpenLLMetry at the collector instead:
+        # processors: [gen_ai_normalizer, batch]
+        processors: [batch]
         exporters: [debug, otlp/jaeger]
       metrics:
         receivers: [otlp]

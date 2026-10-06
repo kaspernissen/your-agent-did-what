@@ -12,9 +12,14 @@ directory can be read on its own as an example of instrumenting an agent under o
 
 | | |
 |---|---|
-| The model call | instrumented by OpenInference — emits `llm.*` and `openinference.*`, not the OTel names |
+| The model call | instrumented by OpenInference — emits `llm.*` and `openinference.*` |
 | The agent and tool spans | OpenInference's own tracing helpers, used in `agent.py`: `openinference_span_kind` plus `set_input` / `set_output` / `set_tool` |
-| Downstream | the collector's `gen_ai_normalizer` rewrites this agent into `gen_ai.*`, keeping the originals — so one span carries both vocabularies and you can see what the translation does and does not cover |
+| OTel names | `OPENINFERENCE_ENABLE_GENAI_SEMCONV=true` (set in `../k8s/beaver-sre.yaml`) makes OpenInference write `gen_ai.*` beside its own attributes when each span ends, so one span carries both vocabularies. Needs `openinference-instrumentation` ≥ 0.1.51. The collector passes them through unchanged |
+
+With the flag on, OpenInference's `gen_ai.tool.call.arguments` holds the tool's JSON
+**schema**, not the arguments the model sent: it is derived from `tool.parameters`, which is
+the schema `set_tool` records. The real arguments are still in `tool_call.function.arguments`
+and `input.value`. `gen_ai.tool.call.result` is correct, taken from `output.value`.
 
 Nothing auto-instruments a loop somebody wrote themselves, which is why the agent and tool
 spans are hand-written. `gen_ai.tool.call.arguments` and its result are **opt-in** in the
