@@ -12,13 +12,13 @@ by hand: `openinference_span_kind` and the set_input / set_output / set_tool hel
 is the documented manual-instrumentation path.
 
 That is worth more than saving keystrokes. The library owns the attribute names, so a
-rename upstream cannot leave this file emitting keys the collector's gen_ai_normalizer no
-longer matches — and set_tool records the description and JSON schema the model was shown,
+rename upstream cannot leave this file emitting keys OpenInference's own GenAI conversion no
+longer reads — and set_tool records the description and JSON schema the model was shown,
 which no amount of hand-writing was going to bother with.
 
-Everything still arrives in OpenInference's vocabulary, so gen_ai_normalizer is what
-produces OTel semantics. Writing gen_ai.* here by hand would prove nothing about the
-collector, which is the point of having this agent at all.
+Nothing here writes gen_ai.* by hand. With OPENINFERENCE_ENABLE_GENAI_SEMCONV=true the
+OITracer derives gen_ai.* from these OpenInference attributes as each span ends, so what
+arrives is what the library makes of them. Writing gen_ai.* here would hide that.
 
 The tool call's arguments and its result are both recorded. The conventions define them as
 opt-in — the spec says instrumentation SHOULD NOT capture them by default, for privacy and

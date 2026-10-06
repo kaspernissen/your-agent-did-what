@@ -82,10 +82,10 @@ make true. The Python agents used to call their tools in-process, so any compari
 | instrumented by | the framework | OpenInference | OpenLLMetry |
 | tools | over MCP, to `sre-agents-mcp` | the same, over MCP | the same, over MCP |
 | data | PostgreSQL, as `app_svc` | via the MCP server | via the MCP server |
-| model call emits | `gen_ai.prompt` / `gen_ai.completion`, both removed from the spec | `llm.*` / `openinference.*` | `gen_ai.*`, already current |
-| arrives as | unchanged | `gen_ai.*`, via `gen_ai_normalizer` | model call unchanged; the loop's `traceloop.*` gets normalized too |
+| model call emits | `gen_ai.prompt` / `gen_ai.completion`, both removed from the spec | `llm.*` / `openinference.*`, plus `gen_ai.*` via `OPENINFERENCE_ENABLE_GENAI_SEMCONV` | `gen_ai.*`, already current |
+| arrives as | unchanged | unchanged, both vocabularies on one span | unchanged; the loop's call content stays in `traceloop.*` |
 | tool span | the framework's, 3 attributes, no content | `set_tool` + `set_input` / `set_output` | `@tool` decorator |
-| the tool's result lands in | nowhere | `output.value` — normalized to nothing | `traceloop.entity.output` → `gen_ai.output.messages` |
+| the tool's result lands in | nowhere | `output.value` → `gen_ai.tool.call.result` | `traceloop.entity.output` only |
 | judged | LLM-as-judge → `gen_ai.evaluation.result` | not judged | not judged |
 
 All three get the same instructions — the same system prompt, the same four tool descriptions
@@ -108,10 +108,20 @@ and `@tool`. Nothing auto-instruments a loop somebody wrote themselves: a librar
 hand you an API for describing the loop, and both do.
 
 Which makes that last row a statement about the libraries rather than about our code — and the
-answer is that **neither produces `gen_ai.tool.call.result`**. Otter is the sharp case: the
-library already emitting `gen_ai.*` for the model call files the tool's arguments and result
-under `traceloop.entity.*`, and the collector then maps those onto `gen_ai.input.messages` /
-`gen_ai.output.messages` — *message* attributes, on a tool span.
+answer has changed. With `OPENINFERENCE_ENABLE_GENAI_SEMCONV=true`, OpenInference writes
+`gen_ai.tool.call.result` itself, from `output.value`. Its `gen_ai.tool.call.arguments` is
+wrong, though: it is filled from `tool.parameters`, so it carries the tool's JSON schema, not
+the arguments the model sent. Otter is now the sharp case: the library already emitting
+`gen_ai.*` for the model call keeps the tool's arguments and result under
+`traceloop.entity.*`, and with no normalizer in the collector they stay there.
+
+The collector still defines `gen_ai_normalizer`, but no pipeline uses it. Measured on
+2026-10-06, the same beaver-sre investigation with the normalizer on and the flag off, then the
+reverse: OpenInference's own output had every `gen_ai.*` key the normalizer produced, plus
+`response.finish_reasons`, `response.id`, `response.model`, `request.max_tokens`,
+`tool.definitions`, `tool.call.result` and `tool.type`. The normalizer also wrote an empty
+`gen_ai.output.messages` for the final model call in that run. To translate at the collector
+again, put it back in the traces pipeline in `observability/collector/values*.yaml`.
 
 All three are reachable from the one console: pick the agent in the top bar. The console is its
 own service — an nginx image holding the page, which also proxies each call to the agent that
@@ -337,9 +347,12 @@ Every one of these reproduces from a clean run. The headlines:
   the extension runs the tool on a new duplicated Vert.x context —
   [#789](https://github.com/quarkiverse/quarkus-mcp-server/issues/789), open, "No ETA".
   Streamable HTTP was tried and is worse, so the transport is not the variable.
-- **The normalizer is partial, and asymmetric.** It converts the whole structure —
-  AGENT→`invoke_agent`, TOOL→`execute_tool`, LLM→`chat` — and the tool call's *arguments*,
-  but there is no mapping for the *result*. Two roads to the same missing half.
+- **OpenInference now converts at the source, with one wrong field.** With
+  `OPENINFERENCE_ENABLE_GENAI_SEMCONV=true` (openinference-instrumentation ≥ 0.1.51) it
+  writes the structure — AGENT→`invoke_agent`, TOOL→`execute_tool`, LLM→`chat` — and the
+  tool call's *result*, but `gen_ai.tool.call.arguments` holds the tool's schema rather than
+  its arguments. The collector's `gen_ai_normalizer`, which this replaced, had the opposite
+  gap: arguments mapped, no mapping for the result.
 - **Evaluations are log records, not span events**, which is what the convention asks for
   and what most implementations get wrong. They do not appear in Jaeger; Jaeger takes spans.
 

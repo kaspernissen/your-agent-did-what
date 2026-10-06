@@ -1,9 +1,11 @@
 """Telemetry wiring for beaver-sre: one library, no choices.
 
-OpenInference does not speak the OpenTelemetry names. It emits llm.* and
-openinference.* for the model call, and the collector's gen_ai_normalizer rewrites those
-into gen_ai.* as the spans pass through — keeping the originals, so one span carries both
-vocabularies at once. That is the only way to see that the translation is partial.
+OpenInference's own vocabulary is llm.* and openinference.*. Since
+openinference-instrumentation 0.1.51 it can also write the OpenTelemetry names: with
+OPENINFERENCE_ENABLE_GENAI_SEMCONV=true (set in the deployment, read by TraceConfig) every
+OITracer span gets gen_ai.* derived from its OpenInference attributes when it ends. The
+originals stay, so one span carries both vocabularies. Nothing is configured for this
+here: TraceConfig reads the variable whenever no explicit value is passed.
 
 For the other side of the comparison see ../otter-sre, which is this agent with
 OpenLLMetry instead. Nothing else about the two differs.

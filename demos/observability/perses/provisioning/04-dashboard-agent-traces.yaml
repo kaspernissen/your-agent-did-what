@@ -51,8 +51,9 @@ spec:
         display:
           name: Beaver · Python, OpenInference
           description: >-
-            Emits no OTel vocabulary at all. What you see here has been rewritten in flight
-            by the collector's gen_ai_normalizer, which keeps the originals.
+            Emits OpenInference's llm.* / openinference.* and, with
+            OPENINFERENCE_ENABLE_GENAI_SEMCONV=true, OTel gen_ai.* beside them on the same
+            span. The collector passes both through unchanged.
         plugin:
           kind: TraceTable
           spec: {}

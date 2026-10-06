@@ -4,7 +4,7 @@ Runs against a stubbed Anthropic client and an in-memory exporter, so it needs n
 API key, no collector and no network. What it guards is that every tool call produces
 a tool span carrying the call's arguments and its result -- in OpenInference's
 names (`tool_call.function.arguments`, `input.value`, `output.value`), because that is
-this agent's vocabulary and what the collector is given to normalize.
+this agent's vocabulary and what OpenInference derives its gen_ai.* attributes from.
 
 The loop itself is instrumentation-agnostic: it writes these spans by hand, and the
 library only instruments the model call. If the loop changed with the library, a
@@ -61,7 +61,13 @@ def _stub_anthropic(monkeypatch, turns):
 
 @pytest.fixture
 def spans(monkeypatch):
-    """An in-memory exporter plus a tracer, returned as (tracer, get_finished_spans)."""
+    """An in-memory exporter plus a tracer, returned as (tracer, get_finished_spans).
+
+    OpenInference's GenAI output is off here whatever the shell says: TraceConfig reads
+    OPENINFERENCE_ENABLE_GENAI_SEMCONV when the provider is built, and the source-convention
+    test below must see OpenInference's vocabulary alone.
+    """
+    monkeypatch.delenv("OPENINFERENCE_ENABLE_GENAI_SEMCONV", raising=False)
     exporter = InMemorySpanExporter()
     provider = TracerProvider()
     provider.add_span_processor(SimpleSpanProcessor(exporter))
@@ -133,12 +139,11 @@ def test_run_without_tool_calls_still_opens_the_agent_span(spans, monkeypatch):
 def test_openinference_vocabulary_emits_the_source_convention(spans, monkeypatch):
     """Under OpenInference the loop must emit OpenInference keys, not gen_ai.* ones.
 
-    This is what makes the collector's normalization demonstrable rather than assumed: if
-    these spans already arrived in OTel vocabulary, gen_ai_normalizer would have nothing
-    to do and the demo would prove nothing.
+    The loop writes OpenInference's vocabulary only. Any gen_ai.* on these spans has to
+    come from the library's own conversion (see the test below), never from this file.
 
-    The exact strings matter — the processor matches on them, so a near-miss is a span it
-    silently ignores.
+    The exact strings matter — that conversion reads them, so a near-miss is an attribute
+    it silently skips.
     """
     from agent import SreAgent
 
@@ -166,3 +171,47 @@ def test_openinference_vocabulary_emits_the_source_convention(spans, monkeypatch
     assert "tool_call.function.arguments" in tool_span.attributes
     assert "output.value" in tool_span.attributes
     assert not any(k.startswith("gen_ai.") for k in tool_span.attributes)
+
+
+def test_openinference_writes_genai_semconv_when_enabled(monkeypatch):
+    """OPENINFERENCE_ENABLE_GENAI_SEMCONV=true adds gen_ai.* beside OpenInference's keys.
+
+    This is what the deployment runs with, and the collector no longer translates anything,
+    so this conversion is the only source of OTel names for this agent. It needs
+    openinference-instrumentation >= 0.1.51.
+
+    gen_ai.tool.call.arguments is pinned to what OpenInference actually writes: the tool's
+    JSON schema, taken from tool.parameters, not the call's arguments. If this assertion
+    starts failing, upstream has fixed it and the README note can go.
+    """
+    import json
+
+    from agent import SreAgent
+
+    monkeypatch.setenv("OPENINFERENCE_ENABLE_GENAI_SEMCONV", "true")
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    _stub_anthropic(monkeypatch, [
+        [_Block(type="tool_use", name="audit_log", id="t9", input={"limit": 5})],
+        [_Block(type="text", text="Two left.")],
+    ])
+
+    SreAgent(provider.get_tracer("test"), model="stub", name="beaver-sre").run("what happened?")
+
+    by_name = {s.name: s for s in exporter.get_finished_spans()}
+    agent_span = by_name["beaver-sre"]
+    assert agent_span.attributes["openinference.span.kind"] == "AGENT"
+    assert agent_span.attributes["gen_ai.operation.name"] == "invoke_agent"
+
+    tool_span = by_name["audit_log"]
+    # Both vocabularies on one span: the originals are kept.
+    assert tool_span.attributes["openinference.span.kind"] == "TOOL"
+    assert tool_span.attributes["gen_ai.operation.name"] == "execute_tool"
+    assert tool_span.attributes["gen_ai.tool.name"] == "audit_log"
+    assert tool_span.attributes["gen_ai.tool.call.id"] == "t9"
+    assert tool_span.attributes["gen_ai.tool.call.result"] == tool_span.attributes["output.value"]
+    assert json.loads(tool_span.attributes["tool_call.function.arguments"]) == {"limit": 5}
+    assert json.loads(tool_span.attributes["gen_ai.tool.call.arguments"]) == json.loads(
+        tool_span.attributes["tool.parameters"]
+    )

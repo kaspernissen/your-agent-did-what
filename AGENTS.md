@@ -19,7 +19,6 @@ demos/            the demo — three agents, one incident, one collector, in kin
                   dashboards as provisioning files
   cluster/        kind, secrets, helm installs
   console/        the page, and the nginx that fronts all three agents (namespace: frontend)
-outline.md        the talk slide by slide, aligned to the 46-slide Google Slides deck
 research.md       everything the talk is sourced from
 mascots/          42 transparent cut-outs, used by the README
 ```
@@ -45,16 +44,14 @@ exactly one respect. Adding a second difference does not weaken a finding, it de
 
 ## The slides are not in this repository
 
-The talk is delivered from **Google Slides**. This repo keeps `outline.md` — what each
-slide has to land, and in what order — and nothing else about the deck.
+The talk is delivered from **Google Slides**. This repo keeps nothing about the deck.
 
 The speaker notes (`SPEAKER-NOTES.md`), the type spec (`SLIDES-STYLE.md`), the measurement
 log (`ANALYSIS.md`), the HTML deck with its element exports and tooling, and the original
 specs and plans (`docs/superpowers/`) are all archived at `~/Documents/your-agent-did-what/`. The deck runs standalone from there. Do not reintroduce it here: it is 71 MB of rendered PNGs and a
 second copy of a deck that is now maintained elsewhere, and two copies will drift.
 
-If you change what a slide claims, change `outline.md` here and `SPEAKER-NOTES.md` in the
-archive with it. `outline.md` is the only record in this repo of what is said on stage.
+If you change what a slide claims, change `SPEAKER-NOTES.md` in the archive with it.
 
 ## Running the demo
 

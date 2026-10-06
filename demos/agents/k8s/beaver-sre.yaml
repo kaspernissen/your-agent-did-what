@@ -2,7 +2,8 @@
 #
 # Its own image now, built from demos/agents/beaver-sre. ../otter-sre is the same agent with
 # OpenLLMetry instead: same loop, same tools, same MCP server, one library different. That is
-# the comparison the talk rests on, so keep the two manifests identical apart from the image.
+# the comparison the talk rests on, so keep the two manifests identical apart from the image
+# and OPENINFERENCE_ENABLE_GENAI_SEMCONV, which is part of configuring the library.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,6 +25,13 @@ spec:
           ports: [{ containerPort: 8000 }]
           env:
             - { name: AGENT_NAME,      value: beaver-sre }
+            # OpenInference writes OTel GenAI attributes (gen_ai.*) next to its own llm.* /
+            # openinference.* when each span ends. Needs openinference-instrumentation >= 0.1.51.
+            # Without it this agent emits no gen_ai.* at all, because the collector no longer
+            # runs gen_ai_normalizer. Known upstream gap: gen_ai.tool.call.arguments is filled
+            # from tool.parameters, so it carries the tool's JSON schema, not the call's
+            # arguments. The arguments are still in tool_call.function.arguments / input.value.
+            - { name: OPENINFERENCE_ENABLE_GENAI_SEMCONV, value: "true" }
             # The same database Capybara reads, as the same application role. Both agents
             # then report on identical state rather than on separate fictions.
             # The same MCP server Capybara uses, so all three agents execute their tools in
